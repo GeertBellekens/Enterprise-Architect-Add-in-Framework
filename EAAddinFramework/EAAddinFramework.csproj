@@ -45,7 +45,48 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EAWrappers\AggregationKind.cs" />
+    <Compile Include="EAWrappers\Association.cs" />
+    <Compile Include="EAWrappers\AssociationEnd.cs" />
+    <Compile Include="EAWrappers\Attribute.cs" />
+    <Compile Include="EAWrappers\Class.cs" />
+    <Compile Include="EAWrappers\ConnectorWrapper.cs" />
+    <Compile Include="EAWrappers\Dependency.cs" />
+    <Compile Include="EAWrappers\DescriptionComment.cs" />
+    <Compile Include="EAWrappers\Diagram.cs" />
+    <Compile Include="EAWrappers\DiagramLinkWrapper.cs" />
+    <Compile Include="EAWrappers\DiagramObjectWrapper.cs" />
+    <Compile Include="EAWrappers\Element.cs" />
+    <Compile Include="EAWrappers\ElementWrapper.cs" />
+    <Compile Include="EAWrappers\Factory.cs" />
+    <Compile Include="EAWrappers\Generalization.cs" />
+    <Compile Include="EAWrappers\Interface.cs" />
+    <Compile Include="EAWrappers\InterfaceRealization.cs" />
+    <Compile Include="EAWrappers\Message.cs" />
+    <Compile Include="EAWrappers\Model.cs" />
+    <Compile Include="EAWrappers\NoteComment.cs" />
+    <Compile Include="EAWrappers\Operation.cs" />
+    <Compile Include="EAWrappers\Parameter.cs" />
+    <Compile Include="EAWrappers\ParameterDirectionKind.cs" />
+    <Compile Include="EAWrappers\ParameterReturnType.cs" />
+    <Compile Include="EAWrappers\ParameterWrapper.cs" />
+    <Compile Include="EAWrappers\PrimitiveType.cs" />
+    <Compile Include="EAWrappers\Realization.cs" />
+    <Compile Include="EAWrappers\Stereotype.cs" />
+    <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EAWrappers" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EAWrappers\README" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UML Tooling Framework\UMToolingFramework.csproj">
+      <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
+      <Name>UMToolingFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
