@@ -258,6 +258,7 @@ namespace EAAddinFramework
 		/// <returns>Return True to enable deletion of the method from the model. Return False to disable deletion of the method.</returns>
 		public virtual bool EA_OnPreDeleteMethod(EA.Repository Repository, EA.EventProperties Info){return true;}
 		
+		/// <summary>
 		/// EA_OnPreDeleteConnector notifies Add-Ins that an connector is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the connector.
 		/// This event occurs when a user attempts to permanently delete a connector on a diagram.
 		/// The notification is provided immediately before the connector is deleted, so that the Add-In can disable deletion of the connector.
@@ -764,7 +765,7 @@ namespace EAAddinFramework
         /// </summary>
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-        /// <param name="sLocation">The name of the template requested. This should match the location attribute in the <ModelTemplates> section of an MDG Technology File. For more information, see the Incorporate Model Templates in a Technology topic.</param>	
+        /// <param name="sLocation">The name of the template requested. This should match the location attribute in the [ModelTemplates] section of an MDG Technology File. For more information, see the Incorporate Model Templates in a Technology topic.</param>	
         /// <returns>Return a string containing the XMI export of the model that is being used as a template.</returns>
         public virtual string EA_OnRetrieveModelTemplate(EA.Repository Repository,string sLocation){return string.Empty;}
         
@@ -966,7 +967,7 @@ namespace EAAddinFramework
         /// Poll its members to retrieve model data and user interface status information.</param>
 		/// <param name="PackageGuid">The GUID identifying the Enterprise Architect package sub-tree that is controlled by the Add-In.</param>
 		/// <param name="CodeID">Identifies the code element in the following format:
-		/// <type>ElementPart<type>ElementPart...
+		/// [type]ElementPart[type]ElementPart...
 		/// where each element is proceeded with a token identifying its type:
 		/// @ -namespace
 		/// # - Class
