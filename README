@@ -2,18 +2,23 @@ Enterprise Architect Add-in Framework
 by Geert Bellekens (geert@bellekens.com)
 Copyright 2011 , Geert Bellekens
 
+Homepage:
+http://geertbellekens.github.com/Enterprise-Architect-Add-in-Framework/
+
 Description:
 The Enterprise Architect Add-in Framework contains useful stuff for 
 developing add-ins and tools upon Sparx Systems Enterprise Architect.
 
-Contains
+Contains:
 - EAAddinFramework/ 
-	- EAAddinBase.cs 	base class containing all EA defined events that can be used by add-ins, 
-						complete with documentation. Extend this class to make a new EA add-in.
-	- EAWrappers/		Set of wrapper classes for the EA API objects, implementing the UML metamodel interfaces in UML Tooling framework	
-- EAAddinTester/		A test application for testing menu driven functionality of your add-ins
-- MyAddin/				Example add-in
+	- EAAddinBase.cs base class containing all EA defined events that can be used by add-ins, complete with documentation. Extend this class to make a new EA add-in.
+	- EAWrappers/ Set of wrapper classes for the EA API objects, implementing the UML metamodel interfaces in UML Tooling framework	
+- EAAddinTester/ A test application for testing menu driven functionality of your add-ins
+- MyAddin/		Example add-in
 
 
 Dependencies:
 - UML Tooling Framework: https://github.com/GeertBellekens/UML-Tooling-Framework
+
+More info:
+http://geertbellekens.wordpress.com
