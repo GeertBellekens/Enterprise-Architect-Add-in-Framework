@@ -1,0 +1,38 @@
+﻿<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<DirectoryRef Id="TARGETDIR">
+			<Directory Id="ProgramFilesFolder" Name="PFiles">
+				<Directory Id="INSTALLDIR" Name="MyAddin">
+					<Component Id="MyAddinFiles" Guid="5C526B21-FB62-42AD-9897-F990FEA7E164" DiskId="1">
+						<File Id="EAAddinFramework.dll" Name="EAAddinFramework.dll" Source="..\MyAddin\bin\Debug\EAAddinFramework.dll" />
+						<File Id="UMToolingFramework.dll" Name="UMToolingFramework.dll" Source="..\MyAddin\bin\Debug\UMToolingFramework.dll" />
+						<File Id="EAAddinFramework.pdb" Name="EAAddinFramework.pdb" Source="..\MyAddin\bin\Debug\EAAddinFramework.pdb" />
+						<File Id="Interop.EA.dll" Name="Interop.EA.dll" Source="..\MyAddin\bin\Debug\Interop.EA.dll" />
+						<File Id="MyAddin.pdb" Name="MyAddin.pdb" Source="..\MyAddin\bin\Debug\MyAddin.pdb" />
+						<File Id="MyAddin.tlb" Name="MyAddin.tlb" Source="..\MyAddin\bin\Debug\MyAddin.tlb" />
+						<File Id="UMToolingFramework.pdb" Name="UMToolingFramework.pdb" Source="..\MyAddin\bin\Debug\UMToolingFramework.pdb" />
+						<Class Id="{10BC65F1-32C0-3ED4-98A0-17661A8C4455}" Context="InprocServer32" Description="MyAddin.MyAddinClass" ThreadingModel="both" ForeignServer="mscoree.dll">
+		                    <ProgId Id="MyAddin.MyAddinClass" Description="MyAddin.MyAddinClass" />
+		                </Class>
+		                <File Id="filCC4172BEC1312562EDEF49648E45AE0D" Name="MyAddin.dll" KeyPath="yes" Source="..\MyAddin\bin\Debug\MyAddin.dll" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}" Value="" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32\1.0.0.0" Name="Class" Value="MyAddin.MyAddinClass" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32\1.0.0.0" Name="Assembly" Value="MyAddin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32\1.0.0.0" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32\1.0.0.0" Name="CodeBase" Value="file:///[#filCC4172BEC1312562EDEF49648E45AE0D]" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32" Name="Class" Value="MyAddin.MyAddinClass" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32" Name="Assembly" Value="MyAddin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32" Name="RuntimeVersion" Value="v4.0.30319" Type="string" Action="write" />
+		                <RegistryValue Root="HKCR" Key="CLSID\{10BC65F1-32C0-3ED4-98A0-17661A8C4455}\InprocServer32" Name="CodeBase" Value="file:///[#filCC4172BEC1312562EDEF49648E45AE0D]" Type="string" Action="write" />
+					</Component>
+					<Component Id="MyAddinRegEntries" Guid="8439A7F4-D42F-43AC-B91D-CBF823A89DDE">
+						<RegistryKey Root="HKCU" Key="Software\Sparx Systems\EAAddins\MyAddin" Action="createAndRemoveOnUninstall">
+							<RegistryValue Type="string" Value="MyAddin.MyAddinClass" />
+						</RegistryKey>
+					</Component>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+ 	</Fragment>
+</Wix>

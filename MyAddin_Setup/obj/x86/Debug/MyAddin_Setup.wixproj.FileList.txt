@@ -1,0 +1,4 @@
+C:\Documents and Settings\wij\My Documents\Development\MyAddin_Setup\bin\Debug\MyAddin_Setup.wixpdb
+obj\x86\Debug\Files.wixobj
+obj\x86\Debug\Setup.wixobj
+C:\Documents and Settings\wij\My Documents\Development\Enterprise Architect Add-in Framework\MyAddin_Setup\bin\Debug\MyAddin_Setup.wixpdb

@@ -98,5 +98,6 @@ namespace MyAddin
             MessageBox.Show("Goodbye World");
             this.shouldWeSayHello = true;
         }
+        
     }
 }
