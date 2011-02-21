@@ -92,9 +92,9 @@
     <None Include="EAWrappers\README" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UML Tooling Framework\UMLToolingFramework\UMToolingFramework.csproj">
+    <ProjectReference Include="..\..\UML Tooling Framework\UMLToolingFramework\UMLToolingFramework.csproj">
       <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
-      <Name>UMToolingFramework</Name>
+      <Name>UMLToolingFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
