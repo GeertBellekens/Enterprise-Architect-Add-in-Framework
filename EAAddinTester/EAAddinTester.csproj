@@ -80,7 +80,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Enterprise Architect Toolpack\EANavigator\EANavigator.csproj">
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EANavigator\EANavigator.csproj">
       <Project>{2BFBE8B8-528D-4844-BE0D-ECC68FE1CD1D}</Project>
       <Name>EANavigator</Name>
     </ProjectReference>
