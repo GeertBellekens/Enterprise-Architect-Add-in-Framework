@@ -19,49 +19,74 @@
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_Connect(EA.Repository)">
             <summary>
-            Called Before EA starts to check Add-In Exists
-            Nothing is done here.
-            This operation needs to exists for the addin to work
+            EA_Connect events enable Add-Ins to identify their type and to respond to Enterprise Architect start up.
+            This event occurs when Enterprise Architect first loads your Add-In. Enterprise Architect itself is loading at this time so that while a Repository object is supplied, there is limited information that you can extract from it.
+            The chief uses for EA_Connect are in initializing global Add-In data and for identifying the Add-In as an MDG Add-In.
+            Also look at EA_Disconnect.
             </summary>
-            <param name="Repository">the EA repository</param>
-            <returns>a string</returns>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <returns>String identifying a specialized type of Add-In: 
+            - "MDG" : MDG Add-Ins receive MDG Events and extra menu options.
+            - "" : None-specialized Add-In.</returns>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_GetMenuItems(EA.Repository,System.String,System.String)">
             <summary>
-            Called when user Clicks Add-Ins Menu item from within EA.
-            Populates the Menu with our desired selections.
-            Location can be "TreeView" "MainMenu" or "Diagram".
+            The EA_GetMenuItems event enables the Add-In to provide the Enterprise Architect user interface with additional Add-In menu options in various context and main menus. When a user selects an Add-In menu option, an event is raised and passed back to the Add-In that originally defined that menu option.
+            This event is raised just before Enterprise Architect has to show particular menu options to the user, and its use is described in the Define Menu Items topic.
+            Also look at:
+            - EA_MenuClick
+            - EA_GetMenuState.
             </summary>
-            <param name="Repository">the repository</param>
-            <param name="Location">the location of the menu</param>
-            <param name="MenuName">the name of the menu</param>
-            <returns></returns>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="MenuLocation">String representing the part of the user interface that brought up the menu. 
+            Can be TreeView, MainMenu or Diagram.</param>
+            <param name="MenuName">The name of the parent menu for which sub-items are to be defined. In the case of the top-level menu it is an empty string.</param>
+            <returns>One of the following types:
+            - A string indicating the label for a single menu option.
+            - An array of strings indicating a multiple menu options.
+            - Empty (Visual Basic/VB.NET) or null (C#) to indicate that no menu should be displayed.
+            In the case of the top-level menu it should be a single string or an array containing only one item, or Empty/null.</returns>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_GetMenuState(EA.Repository,System.String,System.String,System.String,System.Boolean@,System.Boolean@)">
             <summary>
-            Called once Menu has been opened to see what menu items should active.
+            The EA_GetMenuState event enables the Add-In to set a particular menu option to either enabled or disabled. This is useful when dealing with locked packages and other situations where it is convenient to show a menu option, but not enable it for use.
+            This event is raised just before Enterprise Architect has to show particular menu options to the user. Its use is described in the Define Menu Items topic.
+            Also look at EA_GetMenuItems.
             </summary>
-            <param name="Repository">the repository</param>
-            <param name="Location">the location of the menu</param>
-            <param name="MenuName">the name of the menu</param>
-            <param name="ItemName">the name of the menu item</param>
-            <param name="IsEnabled">boolean indicating whether the menu item is enabled</param>
-            <param name="IsChecked">boolean indicating whether the menu is checked</param>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="MenuLocation">String representing the part of the user interface that brought up the menu. 
+            Can be TreeView, MainMenu or Diagram.</param>
+            <param name="MenuName">The name of the parent menu for which sub-items must be defined. In the case of the top-level menu it is an empty string.</param>
+            <param name="ItemName">The name of the option actually clicked, for example, Create a New Invoice.</param>
+            <param name="IsEnabled">Boolean. Set to False to disable this particular menu option.</param>
+            <param name="IsChecked">Boolean. Set to True to check this particular menu option.</param>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_MenuClick(EA.Repository,System.String,System.String,System.String)">
             <summary>
-            Called when user makes a selection in the menu.
-            This is your main exit point to the rest of your Add-in
+            EA_MenuClick events are received by an Add-In in response to user selection of a menu option.
+            The event is raised when the user clicks on a particular menu option. When a user clicks on one of your non-parent menu options, your Add-In receives a MenuClick event, defined as follows:
+            Sub EA_MenuClick(Repository As EA.Repository, ByVal MenuName As String, ByVal ItemName As String)
+            Notice that your code can directly access Enterprise Architect data and UI elements using Repository methods.
+            Also look at EA_GetMenuItems.
             </summary>
-            <param name="Repository">the repository</param>
-            <param name="Location">the location of the menu</param>
-            <param name="MenuName">the name of the menu</param>
-            <param name="ItemName">the name of the selected menu item</param>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="MenuLocation">String representing the part of the user interface that brought up the menu. 
+            Can be TreeView, MainMenu or Diagram.</param>
+            <param name="MenuName">The name of the parent menu for which sub-items must be defined. In the case of the top-level menu it is an empty string.</param>
+            <param name="ItemName">The name of the option actually clicked, for example, Create a New Invoice.</param>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_Disconnect">
             <summary>
-            EA calls this operation when it exists. 
-            Can be used to do some cleanup work.
+            The EA_Disconnect event enables the Add-In to respond to user requests to disconnect the model branch from an external project.
+            This function is called when the Enterprise Architect closes. If you have stored references to Enterprise Architect objects (not particularly recommended anyway), you must release them here.
+            In addition, .NET users must call memory management functions as shown below:
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            Also look at EA_Connect.
             </summary>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnOutputItemClicked(EA.Repository,System.String,System.String,System.Int64)">
