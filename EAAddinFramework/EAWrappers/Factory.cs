@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     /// returns the singleton instance for a new model
-    public static Factory getInstance(){
+    public static new Factory getInstance(){
       return getInstance(new Model());
     }
 

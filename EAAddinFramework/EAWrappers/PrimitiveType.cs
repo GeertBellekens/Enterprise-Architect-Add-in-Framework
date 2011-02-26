@@ -81,8 +81,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return null;}
+      set { 
+      	// do nothing, in EA primitives don't have an owner
+      }
     }
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {

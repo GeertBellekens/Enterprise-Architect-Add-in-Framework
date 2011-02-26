@@ -82,7 +82,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
+      get { 
+    		// if the parentID is filled in then this element is owned by
+    		// another element, otherwise it is owned by a package
+    		if (this.wrappedElement.ParentID > 0)
+    		{
+    			return this.model.getElementWrapperByID(this.wrappedElement.ParentID);
+    		}else
+    		{
+    			return this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+    		}
+    	}
       set { throw new NotImplementedException(); }
     }
     
