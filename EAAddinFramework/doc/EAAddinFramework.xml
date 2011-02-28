@@ -926,6 +926,18 @@
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getUsingAttributes">
+            <summary>
+            returns the attributes that use this Element as type
+            </summary>
+            <returns>the attributes that use this Element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getUsingOperations">
+            <summary>
+            returns the operations having parameters that use this Element as type
+            </summary>
+            <returns>the operations with parameters that use this element as type</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
             the stereotypes defined on this Relationship
         </member>
@@ -964,6 +976,18 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String)">
             creates a new element of the given type as an owned element of this 
             element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingAttributes">
+            <summary>
+            returns the attributes that use this Element as type
+            </summary>
+            <returns>the attributes that use this Element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingOperations">
+            <summary>
+            returns the operations having parameters that use this Element as type
+            </summary>
+            <returns>the operations with parameters that use this element as type</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
             indicates whether this element is abstract.
@@ -1082,6 +1106,13 @@
             Finds the EA.Element with the given id and returns an EAElementwrapper 
             wrapping this element.
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByGUID(System.String)">
+            <summary>
+            gets the Attribute with the given GUID
+            </summary>
+            <param name="GUID">the attribute's GUID</param>
+            <returns>the Attribute with the given GUID</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
             generic query operation on the model.
             Returns results in an xml format
@@ -1108,6 +1139,18 @@
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.PrimitiveType.getUsingAttributes">
+            <summary>
+            returns the attributes that use this Element as type
+            </summary>
+            <returns>the attributes that use this Element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.PrimitiveType.getUsingOperations">
+            <summary>
+            returns the operations having parameters that use this Element as type
+            </summary>
+            <returns>the operations with parameters that use this element as type</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.

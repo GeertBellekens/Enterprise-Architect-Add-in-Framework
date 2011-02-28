@@ -266,5 +266,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
         return returnedDiagrams;
     }
+    /// <summary>
+    /// returns the attributes that use this Element as type
+    /// </summary>
+    /// <returns>the attributes that use this Element as type</returns>
+    public HashSet<UML.Classes.Kernel.Property> getUsingAttributes()
+    {
+    	string sqlGetAttributes = @"select a.ea_guid from t_attribute a
+    								where a.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
+    	return new HashSet<UML.Classes.Kernel.Property>(this.model.getAttributesByQuery(sqlGetAttributes));
+    	
+    }
+    /// <summary>
+    /// returns the operations having parameters that use this Element as type
+    /// </summary>
+    /// <returns>the operations with parameters that use this element as type</returns>
+	public HashSet<UML.Classes.Kernel.Parameter> getUsingOperations()
+	{
+		throw new NotImplementedException();
+	}
   }
 }

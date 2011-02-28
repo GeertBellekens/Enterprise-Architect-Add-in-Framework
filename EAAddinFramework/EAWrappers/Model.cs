@@ -46,6 +46,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return null;
       }
     }
+    /// <summary>
+    /// gets the Attribute with the given GUID
+    /// </summary>
+    /// <param name="GUID">the attribute's GUID</param>
+    /// <returns>the Attribute with the given GUID</returns>
+    public Attribute getAttributeByGUID (string GUID)
+    {
+    	try
+    	{
+    		return this.factory.createElement(this.wrappedModel.GetAttributeByGuid(GUID)) as Attribute;
+    	}catch (Exception)
+    	{
+    		// attribute not found, return null
+    		return null;
+    	}
+    	
+    }
     
     public UML.Diagrams.Diagram selectedDiagram {
       get {
@@ -79,6 +96,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
       }
       return relations;
+    }
+    
+      internal List<Attribute> getAttributesByQuery(string SQLQuery){
+      // get the nodes with the name "ea_guid"
+      XmlDocument xmlAttributeIDs = this.SQLQuery(SQLQuery);
+      XmlNodeList attributeIDNodes = xmlAttributeIDs.SelectNodes("//ea_guid");
+      List<Attribute> attributes = new List<Attribute>();
+      
+      foreach( XmlNode attributeIDNode in attributeIDNodes ) 
+      {
+        Attribute attribute = this.getAttributeByGUID(attributeIDNode.InnerText);
+        if (attribute != null)
+        {
+        	attributes.Add(attribute);
+        }
+      }
+      return attributes;
     }
 
     /// generic query operation on the model.
