@@ -31,12 +31,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-
-    public override UML.Classes.Kernel.Operation operation {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
-    
+   
     public override bool isOrdered {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
@@ -116,7 +111,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
+      get { return this._owner; }
       set { throw new NotImplementedException(); }
     }
     

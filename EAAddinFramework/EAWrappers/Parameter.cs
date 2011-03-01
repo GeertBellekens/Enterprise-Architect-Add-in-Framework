@@ -15,7 +15,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       { get; set; }
     public abstract UML.Classes.Kernel.ValueSpecification lowerValue 
       { get; set; }
-    public abstract UML.Classes.Kernel.Operation operation { get; set; }
+    public UML.Classes.Kernel.Operation operation 
+    {
+    	get { return this.owner as UML.Classes.Kernel.Operation; }
+     	set { throw new NotImplementedException(); }
+    }
     public abstract UML.Classes.Kernel.UnlimitedNatural upper { get; set; }
     public abstract UML.Classes.Kernel.Type type { get; set; }
     public abstract UML.Classes.Kernel.VisibilityKind visibility { get; set; }

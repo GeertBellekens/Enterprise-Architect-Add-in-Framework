@@ -63,6 +63,36 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	}
     	
     }
+    /// <summary>
+    /// gets the parameter by its GUID.
+    /// This is a tricky one since EA doesn't provide a getParameterByGUID operation
+    /// we have to first get the operation, then loop the pamarameters to find the one
+    /// with the GUID
+    /// </summary>
+    /// <param name="GUID">the parameter's GUID</param>
+    /// <returns>the Parameter with the given GUID</returns>
+    public ParameterWrapper getParameterByGUID (string GUID)
+    {
+    	
+    		//first need to get the operation for the parameter
+    		string getOperationSQL = @"select p.OperationID from t_operationparams p
+    									where p.ea_guid = '" + GUID +"'";
+    		//first get the operation id
+    		List<Operation> operations = this.getOperationsByQuery(getOperationSQL);
+    		if (operations.Count > 0)
+    		{
+    			// the list of operations should only contain one operation
+    			Operation operation = operations[0];
+    			foreach ( ParameterWrapper parameter in operation.ownedParameters) {
+    				if (parameter.ID == GUID) 
+    				{
+    					return parameter;
+    				}
+    			}
+    		}
+    	//parameter not found, return null
+    	return null;
+    }
     
     public UML.Diagrams.Diagram selectedDiagram {
       get {
@@ -114,6 +144,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return attributes;
     }
+    internal List<Parameter>getParametersByQuery(string SQLQuery)
+    {
+      // get the nodes with the name "ea_guid"
+      XmlDocument xmlParameterIDs = this.SQLQuery(SQLQuery);
+      XmlNodeList parameterIDNodes = xmlParameterIDs.SelectNodes("//ea_guid");
+      List<Parameter> parameters = new List<Parameter>();
+      
+      foreach( XmlNode parameterIDNode in parameterIDNodes ) 
+      {
+        Parameter parameter = this.getParameterByGUID(parameterIDNode.InnerText);
+        if (parameter != null)
+        {
+        	parameters.Add(parameter);
+        }
+      }
+      return parameters;
+    }
+    internal List<Operation>getOperationsByQuery(string SQLQuery)
+    {
+      // get the nodes with the name "OperationID"
+      XmlDocument xmlOperationIDs = this.SQLQuery(SQLQuery);
+      XmlNodeList operationIDNodes = xmlOperationIDs.SelectNodes("//OperationID");
+      List<Operation> operations = new List<Operation>();
+      
+      foreach( XmlNode operationIDNode in operationIDNodes ) 
+      {
+      	int operationID;
+      	if (int.TryParse(operationIDNode.InnerText,out operationID))
+      	{
+        	Operation operation = this.getOperationByID(operationID) as Operation;
+      	    if (operation != null)
+		    {
+		       	operations.Add(operation);
+		    }    
+      	}
+ 
+      }
+      return operations;
+    }
 
     /// generic query operation on the model.
     /// Returns results in an xml format
@@ -163,6 +232,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
         return this.factory.createElement(this.wrappedModel.GetMethodByGuid(guid)) as UML.Classes.Kernel.Operation;
     }
+    internal UML.Classes.Kernel.Operation getOperationByID(int operationID)
+    {
+        return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as UML.Classes.Kernel.Operation;
+    }
 
     public void selectElement(UML.Classes.Kernel.Element element)
     {
@@ -180,6 +253,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         else if (element is Diagram)
         {
             this.wrappedModel.ShowInProjectView(((Diagram)element).wrappedDiagram);
+        }else if (element is Parameter)
+        {
+        	Operation operation = (Operation)((Parameter)element).operation;
+        	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
         }
     }
   }

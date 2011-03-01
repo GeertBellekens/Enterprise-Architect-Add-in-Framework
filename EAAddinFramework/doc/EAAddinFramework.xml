@@ -926,18 +926,6 @@
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getUsingAttributes">
-            <summary>
-            returns the attributes that use this Element as type
-            </summary>
-            <returns>the attributes that use this Element as type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getUsingOperations">
-            <summary>
-            returns the operations having parameters that use this Element as type
-            </summary>
-            <returns>the operations with parameters that use this element as type</returns>
-        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
             the stereotypes defined on this Relationship
         </member>
@@ -983,11 +971,23 @@
             </summary>
             <returns>the attributes that use this Element as type</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingOperations">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getDependentTypedElements``1">
             <summary>
-            returns the operations having parameters that use this Element as type
+            gets the TypedElements of the given type that use this element as type
             </summary>
-            <returns>the operations with parameters that use this element as type</returns>
+            <returns>the TypedElements that use this element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingParameters">
+            <summary>
+            returns the parameters having use this Element as type
+            </summary>
+            <returns>the parameters that use this element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getOperationsWithMeAsReturntype">
+            <summary>
+            returns the operations that have this element as return type
+            </summary>
+            <returns>the operations that have this element as return type</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
             indicates whether this element is abstract.
@@ -1113,6 +1113,16 @@
             <param name="GUID">the attribute's GUID</param>
             <returns>the Attribute with the given GUID</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getParameterByGUID(System.String)">
+            <summary>
+            gets the parameter by its GUID.
+            This is a tricky one since EA doesn't provide a getParameterByGUID operation
+            we have to first get the operation, then loop the pamarameters to find the one
+            with the GUID
+            </summary>
+            <param name="GUID">the parameter's GUID</param>
+            <returns>the Parameter with the given GUID</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
             generic query operation on the model.
             Returns results in an xml format
@@ -1139,18 +1149,6 @@
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.PrimitiveType.getUsingAttributes">
-            <summary>
-            returns the attributes that use this Element as type
-            </summary>
-            <returns>the attributes that use this Element as type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.PrimitiveType.getUsingOperations">
-            <summary>
-            returns the operations having parameters that use this Element as type
-            </summary>
-            <returns>the operations with parameters that use this element as type</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.

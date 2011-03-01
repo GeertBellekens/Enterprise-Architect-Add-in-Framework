@@ -24,8 +24,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+    	get { return this.model.getOperationByID(this.wrappedParameter.OperationID); }
+      	set { throw new NotImplementedException(); }
     }
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
@@ -53,11 +53,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    public override UML.Classes.Kernel.Operation operation {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
-    
+        
     public override bool isOrdered {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
@@ -135,6 +131,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override String notes {
       get { return this.wrappedParameter.Notes;  }
       set { this.wrappedParameter.Notes = value; }
+    }
+    internal string ID {
+    	get{return this.wrappedParameter.ParameterGUID;}
+    	set{this.wrappedParameter.ParameterGUID = value;}
     }
   }
 }

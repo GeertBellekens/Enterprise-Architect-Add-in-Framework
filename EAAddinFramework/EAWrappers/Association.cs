@@ -19,5 +19,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         this.memberEnds = value.Cast<UML.Classes.Kernel.Property>().ToList();   
       }
     }
+    
+	public HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
+    {
+		throw new NotImplementedException();
+    }
   }
 }

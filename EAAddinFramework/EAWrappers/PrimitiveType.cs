@@ -115,21 +115,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return String.Empty; }
       set { /* do nothing, primitive types do not have comments in EA */ }
     }
-    /// <summary>
-    /// returns the attributes that use this Element as type
-    /// </summary>
-    /// <returns>the attributes that use this Element as type</returns>
-    public HashSet<UML.Classes.Kernel.Property> getUsingAttributes()
+
+	public HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
     {
 		throw new NotImplementedException();
     }
-    /// <summary>
-    /// returns the operations having parameters that use this Element as type
-    /// </summary>
-    /// <returns>the operations with parameters that use this element as type</returns>
-	public HashSet<UML.Classes.Kernel.Parameter> getUsingOperations()
-	{
-		throw new NotImplementedException();
-	}
   }
 }

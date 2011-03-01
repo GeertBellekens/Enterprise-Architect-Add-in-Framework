@@ -278,12 +278,57 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	
     }
     /// <summary>
-    /// returns the operations having parameters that use this Element as type
+    /// gets the TypedElements of the given type that use this element as type
     /// </summary>
-    /// <returns>the operations with parameters that use this element as type</returns>
-	public HashSet<UML.Classes.Kernel.Parameter> getUsingOperations()
+    /// <returns>the TypedElements that use this element as type</returns>
+    public HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
+    {
+    	HashSet<T> dependentTypedElements = new HashSet<T>();
+    	// get the attributes
+    	foreach (UML.Classes.Kernel.Property attribute in this.getUsingAttributes())
+    	{
+    		if (attribute is T)
+    		{
+    			dependentTypedElements.Add((T)attribute);
+    		}
+    	}
+    	// get the parameters
+    	foreach (UML.Classes.Kernel.Parameter parameter in this.getUsingParameters())
+    	{
+    		if (parameter is T)
+    		{
+    			dependentTypedElements.Add((T)parameter);
+    		}
+    	}
+    	return dependentTypedElements;
+    }
+    /// <summary>
+    /// returns the parameters having use this Element as type
+    /// </summary>
+    /// <returns>the parameters that use this element as type</returns>
+	public HashSet<UML.Classes.Kernel.Parameter> getUsingParameters()
 	{
-		throw new NotImplementedException();
+		// get the "regular" parameters
+		string sqlGetParameters = @"select p.ea_guid from t_operationparams p
+    								where p.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
+    	HashSet<UML.Classes.Kernel.Parameter> parameters = new HashSet<UML.Classes.Kernel.Parameter>(this.model.getParametersByQuery(sqlGetParameters));
+    	// get the return parameters
+    	foreach (Operation operation in this.getOperationsWithMeAsReturntype()) 
+    	{
+    		parameters.Add(((Factory)this.model.factory).createEAParameterReturnType(operation));
+    	} 
+    	return parameters;
+	}
+	/// <summary>
+	/// returns the operations that have this element as return type
+	/// </summary>
+	/// <returns>the operations that have this element as return type</returns>
+	public HashSet<UML.Classes.Kernel.Operation> getOperationsWithMeAsReturntype()
+	{
+		// get the return parameters
+    	string sqlGetReturnParameters = @"select o.OperationID from t_operation o
+    								where o.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
+    	return new HashSet<UML.Classes.Kernel.Operation>(this.model.getOperationsByQuery(sqlGetReturnParameters));
 	}
   }
 }
