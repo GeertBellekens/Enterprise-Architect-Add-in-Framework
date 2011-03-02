@@ -325,7 +325,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// <returns>the operations that have this element as return type</returns>
 	public HashSet<UML.Classes.Kernel.Operation> getOperationsWithMeAsReturntype()
 	{
-		// get the return parameters
+		// get the return-parameters
     	string sqlGetReturnParameters = @"select o.OperationID from t_operation o
     								where o.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
     	return new HashSet<UML.Classes.Kernel.Operation>(this.model.getOperationsByQuery(sqlGetReturnParameters));
