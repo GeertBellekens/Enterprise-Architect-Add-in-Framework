@@ -80,10 +80,20 @@ namespace MyAddin
                     break;
             }
         }
+        /// <summary>
+        /// Called when EA start model validation. Just shows a message box
+        /// </summary>
+        /// <param name="Repository">the repository</param>
+        /// <param name="Args">the arguments</param>
 		public override void EA_OnStartValidation(EA.Repository Repository, object Args)
 		{
 			MessageBox.Show("Validation started");
 		}
+		/// <summary>
+		/// Called when EA ends model validation. Just shows a message box
+		/// </summary>
+		/// <param name="Repository">the repository</param>
+		/// <param name="Args">the arguments</param>
 		public override void EA_OnEndValidation(EA.Repository Repository, object Args)
 		{
 			MessageBox.Show("Validation ended");
