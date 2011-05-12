@@ -693,7 +693,7 @@ namespace EAAddinFramework
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
         /// <param name="Args">Contains a (Variant) list of Rule Categories that are active for the current invocation of model validation.</param>
-        public virtual void EA_OnStartValidation(EA.Repository Repository, params object[] Args){}
+        public virtual void EA_OnStartValidation(EA.Repository Repository,object Args){}
         
         /// <summary>
         /// EA_OnEndValidation notifies Add-Ins that model validation has completed. Use this event to arrange any clean-up operations arising from the validation.
@@ -701,7 +701,7 @@ namespace EAAddinFramework
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
         /// <param name="Args">Contains a (Variant) list of Rule Categories that were active for the invocation of model validation that has just completed.</param>
-        public virtual void EA_OnEndValidation(EA.Repository Repository, params object[] Args){}
+        public virtual void EA_OnEndValidation(EA.Repository Repository, object Args){}
         
         /// <summary>
         /// This event is triggered once for each rule defined in EA_OnInitializeUserRules to be performed on each element in the selection being validated. If you don't want to perform the rule defined by RuleID on the given element, then simply return without performing any action. On performing any validation, if a validation error is found, use the Repository.ProjectInterface.PublishResult method to notify Enterprise Architect.

@@ -80,7 +80,14 @@ namespace MyAddin
                     break;
             }
         }
-
+		public override void EA_OnStartValidation(EA.Repository Repository, object Args)
+		{
+			MessageBox.Show("Validation started");
+		}
+		public override void EA_OnEndValidation(EA.Repository Repository, object Args)
+		{
+			MessageBox.Show("Validation ended");
+		}
         /// <summary>
         /// Say Hello to the world
         /// </summary>
