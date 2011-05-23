@@ -54,10 +54,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EAWrappers\Action.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />
     <Compile Include="EAWrappers\Association.cs" />
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
+    <Compile Include="EAWrappers\CallOperationAction.cs" />
     <Compile Include="EAWrappers\Class.cs" />
     <Compile Include="EAWrappers\ConnectorWrapper.cs" />
     <Compile Include="EAWrappers\Dependency.cs" />

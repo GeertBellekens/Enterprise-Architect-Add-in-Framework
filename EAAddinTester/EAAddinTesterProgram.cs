@@ -125,6 +125,7 @@ namespace EAAddinTester
             try
             {
                 return ((EA.App)Marshal.GetActiveObject("EA.App")).Repository;
+                
             }
             catch (COMException)
             {

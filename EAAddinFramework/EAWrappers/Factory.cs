@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using UML=TSF.UmlToolingFramework.UML;
+using System.Xml;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Factory : UML.UMLFactory {
@@ -156,6 +156,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
           return new Interface(this.model as Model,elementToWrap);
         case "Note":
           return new NoteComment(this.model as Model, elementToWrap);
+        case "Action":
+        	// figure out wether this Action is a standard action or a
+			// specialized action
+			//elementToWrap.Properties;			
+			XmlDocument descriptionXml = ((Model)this.model).SQLQuery(@"SELECT x.Description FROM t_object o
+										inner join t_xref x on x.Client = o.ea_guid
+										where o.Object_ID = " + elementToWrap.ElementID.ToString());
+			XmlNode descriptionNode = descriptionXml.SelectSingleNode("//Description");
+			if (descriptionNode != null)
+			{
+				if (descriptionNode.InnerText.Contains("CallOperation"))
+				    {
+						return new CallOperationAction(this.model as Model, elementToWrap);
+				    }
+			}
+			// simple Action
+			return new Action (this.model as Model, elementToWrap);
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }

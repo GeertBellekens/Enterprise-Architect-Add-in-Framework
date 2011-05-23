@@ -47,6 +47,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
     /// <summary>
+    /// returns the elementwrappers that are identified by the Object_ID's returned by the given query
+    /// </summary>
+    /// <param name="sqlQuery">query returning the Object_ID's</param>
+    /// <returns>elementwrappers returned by the query</returns>
+    public List<ElementWrapper> getElementWrappersByQuery(string sqlQuery)
+    {
+      // get the nodes with the name "ObjectID"
+      XmlDocument xmlObjectIDs = this.SQLQuery(sqlQuery);
+      XmlNodeList objectIDNodes = xmlObjectIDs.SelectNodes("//Object_ID");
+      List<ElementWrapper> elements = new List<ElementWrapper>();
+      
+      foreach( XmlNode objectIDNode in objectIDNodes ) 
+      {
+      	ElementWrapper element = this.getElementWrapperByID(int.Parse(objectIDNode.InnerText));
+        if (element != null)
+        {
+        	elements.Add(element);
+        }
+      }
+      return elements;
+    }
+    /// <summary>
     /// gets the Attribute with the given GUID
     /// </summary>
     /// <param name="GUID">the attribute's GUID</param>
@@ -258,6 +280,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         	Operation operation = (Operation)((Parameter)element).operation;
         	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
         }
+    }
+    internal void executeSQL(string SQLString)
+    {
+    	this.wrappedModel.Execute(SQLString);
     }
   }
 }

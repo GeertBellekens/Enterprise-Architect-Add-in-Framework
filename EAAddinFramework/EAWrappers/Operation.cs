@@ -229,6 +229,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
            return returnedMessages;
           
     }
+    /// <summary>
+    /// returns all CallOperationActions that call this operation
+    /// </summary>
+    /// <returns>all CallOperationActions that call this operation</returns>
+    public HashSet<UML.Actions.BasicActions.CallOperationAction> getDependentCallOperationActions()
+    {
+    	string sqlCallOperationActions = 
+    		@"SELECT a.Object_ID FROM t_operation op 
+			inner join t_object a on op.ea_guid = a.Classifier_guid
+			where op.OperationID = " +this.wrappedOperation.MethodID;
+    	return new HashSet<UML.Actions.BasicActions.CallOperationAction>(this.model.getElementWrappersByQuery(sqlCallOperationActions).Cast<UML.Actions.BasicActions.CallOperationAction>());
+    }
     
     public override HashSet<T> getUsingDiagrams<T>()
     {

@@ -591,7 +591,7 @@
             <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
             Poll its members to retrieve model data and user interface status information.</param>
         </member>
-        <member name="M:EAAddinFramework.EAAddinBase.EA_OnStartValidation(EA.Repository,System.Object[])">
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnStartValidation(EA.Repository,System.Object)">
             <summary>
             EA_OnStartValidation notifies Add-Ins that a user has invoked the model validation command from Enterprise Architect.
             </summary>
@@ -599,7 +599,7 @@
             Poll its members to retrieve model data and user interface status information.</param>
             <param name="Args">Contains a (Variant) list of Rule Categories that are active for the current invocation of model validation.</param>
         </member>
-        <member name="M:EAAddinFramework.EAAddinBase.EA_OnEndValidation(EA.Repository,System.Object[])">
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnEndValidation(EA.Repository,System.Object)">
             <summary>
             EA_OnEndValidation notifies Add-Ins that model validation has completed. Use this event to arrange any clean-up operations arising from the validation.
             </summary>
@@ -912,6 +912,11 @@
             Set these options in the constructor of the derived add-in class
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
+            <summary>
+            Description of Action.
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getOwner``1">
             returns the owner of the given type
             This operation will keep on looking upwards through the owners until 
@@ -925,31 +930,6 @@
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
-            the stereotypes defined on this Relationship
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
-            returns the related elements.
-            In EA the Connectoris a binary relationship. So only two Elements will 
-            ever be returned.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
-            Each end represents participation of instances of the classifier 
-            connected to the end in links of the association. This is
-            an ordered association. Subsets Namespace::member.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
-            isStatic is not supported by AssociationEnd in EA
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.type">
-            The type of an associationend is stored in the EA.Association class
-            itself in the fields ClientID and SupplierID
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Attribute.isStatic">
-            the isStatic property defines context of the attribute.
-            If true then the context is the class
-            If false then the context is the instance.
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
             returns the Relationships with the given type T
@@ -1022,6 +1002,94 @@
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.supplierDependencies">
             from Dependencies.Named Element.
             contains the dependencies that have this element as supplier
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.context">
+            <summary>
+            The classifier that owns the behavior of which this action is a part.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.input">
+            <summary>
+            The ordered set of input pins connected to the Action. These are among the total set of inputs. {Specializes
+            Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.output">
+             <summary>
+            The ordered set of output pins connected to the Action. The action places its results onto pins in this set.
+            {Specializes Element::ownedElement}
+             </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
+            the stereotypes defined on this Relationship
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
+            returns the related elements.
+            In EA the Connectoris a binary relationship. So only two Elements will 
+            ever be returned.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
+            Each end represents participation of instances of the classifier 
+            connected to the end in links of the association. This is
+            an ordered association. Subsets Namespace::member.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
+            isStatic is not supported by AssociationEnd in EA
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.type">
+            The type of an associationend is stored in the EA.Association class
+            itself in the fields ClientID and SupplierID
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Attribute.isStatic">
+            the isStatic property defines context of the attribute.
+            If true then the context is the class
+            If false then the context is the instance.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
+            <summary>
+            CallOperationAction is an action that transmits an operation call request to the target object, where it may cause the
+            invocation of associated behavior. The argument values of the action are available to the execution of the invoked
+            behavior. If the action is marked synchronous, the execution of the call operation action waits until the execution of the
+            invoked behavior completes and a reply transmission is returned to the caller; otherwise, execution of the action is
+            complete when the invocation of the operation is established and the execution of the invoked operation proceeds
+            concurrently with the execution of the calling behavior. Any values returned as part of the reply transmission are put on
+            the result output pins of the call operation action. Upon receipt of the reply transmission, execution of the call operation
+            action is complete.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            constructor, no special treatment
+            </summary>
+            <param name="model">the model</param>
+            <param name="wrappedElement">the EA.Element to wrap</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.operation">
+            <summary>
+            The operation to be invoked by the action execution.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.target">
+            <summary>
+            The target object to which the request is sent. The classifier of the target object is used to dynamically determine a
+            behavior to invoke. This object constitutes the context of the execution of the operation. {Subsets Action::input} 
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.isSynchronous">
+            <summary>
+            If true, the call is synchronous and the caller waits for completion of the invoked behavior. If false, the call is
+            asynchronous and the caller proceeds immediately and does not expect a return value.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.result">
+            <summary>
+            A list of output pins where the results of performing the invocation are placed. {Subsets Action::input} 
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.arguments">
+            <summary>
+            Specification of the ordered set of argument values that appear during execution. 
+            </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
             find the diagramlink object (if any) that represents the given 
@@ -1106,6 +1174,13 @@
             Finds the EA.Element with the given id and returns an EAElementwrapper 
             wrapping this element.
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrappersByQuery(System.String)">
+            <summary>
+            returns the elementwrappers that are identified by the Object_ID's returned by the given query
+            </summary>
+            <param name="sqlQuery">query returning the Object_ID's</param>
+            <returns>elementwrappers returned by the query</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByGUID(System.String)">
             <summary>
             gets the Attribute with the given GUID
@@ -1146,6 +1221,12 @@
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Operation">
             The EAoperation wraps the EA.Method and is both an operation from Kernel 
             as an Operation from Interfaces
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getDependentCallOperationActions">
+            <summary>
+            returns all CallOperationActions that call this operation
+            </summary>
+            <returns>all CallOperationActions that call this operation</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
