@@ -249,7 +249,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     //returns a list of diagrams that somehow use this element.
     public override HashSet<T> getUsingDiagrams<T>() 
     {
-        string sqlGetDiagrams = @"select disctinct d.diagram_ID from DiagramObjects d
+        string sqlGetDiagrams = @"select distinct d.Diagram_ID from t_DiagramObjects d
                                   where d.Object_ID = " + this.wrappedElement.ElementID;
         List<UML.Diagrams.Diagram> allDiagrams = this.model.getDiagramsByQuery(sqlGetDiagrams).Cast<UML.Diagrams.Diagram>().ToList(); ; ;
         HashSet<T> returnedDiagrams = new HashSet<T>();

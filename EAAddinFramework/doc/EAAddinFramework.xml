@@ -1263,6 +1263,12 @@
             </summary>
             <returns>all CallOperationActions that call this operation</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getUsingDiagrams``1">
+            <summary>
+            returns all diagrams that somehow use this operation
+            </summary>
+            <returns>all diagrams that use this operation</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
         </member>

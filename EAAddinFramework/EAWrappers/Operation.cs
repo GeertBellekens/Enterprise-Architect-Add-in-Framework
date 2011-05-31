@@ -241,10 +241,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			where op.OperationID = " +this.wrappedOperation.MethodID;
     	return new HashSet<UML.Actions.BasicActions.CallOperationAction>(this.model.getElementWrappersByQuery(sqlCallOperationActions).Cast<UML.Actions.BasicActions.CallOperationAction>());
     }
-    
+    /// <summary>
+    /// returns all diagrams that somehow use this operation
+    /// </summary>
+    /// <returns>all diagrams that use this operation</returns>
     public override HashSet<T> getUsingDiagrams<T>()
     {
         HashSet<T> diagrams = new HashSet<T>();
+        //sequence diagrams that contain a message calling this operation
         foreach (Message message in this.getCallingMessages())
         {
             foreach (T diagram in message.getUsingDiagrams<T>())
@@ -254,6 +258,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                     diagrams.Add(diagram);
                 }
             }
+        }
+        //Activity diagrams containing a CallOperationAction calling this operation
+        foreach (CallOperationAction action in this.getDependentCallOperationActions()) 
+        {
+        	foreach (T diagram in  action.getUsingDiagrams<T>()) 
+        	{
+        		if (!diagrams.Contains(diagram))
+                {
+                    diagrams.Add(diagram);
+                }
+        	}
+        	
         }
         return diagrams;
     }
