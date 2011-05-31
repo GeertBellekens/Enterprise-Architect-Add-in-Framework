@@ -320,6 +320,18 @@ namespace EAAddinFramework
 		/// <returns>Return True to enable deletion of the package from the model. Return False to disable deletion of the package.</returns>
 		public virtual bool EA_OnPreDeletePackage(EA.Repository Repository, EA.EventProperties Info){return true;}
 		
+		/// <summary>
+		/// EA_OnPreDeleteGlossaryTerm notifies Add-Ins that a glossary term is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the glossary term.
+		/// The notification is provided immediately before the glossary term is deleted, so that the Add-In can disable deletion of the glossary term.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True to enable deletion of the glossary term from the model. Return False to disable deletion of the glossary term.</returns>
+		public virtual bool EA_OnPreDeleteGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		
 		#endregion EA Pre-Deletion Events
 		
 		#region EA Pre-New Events
@@ -431,6 +443,18 @@ namespace EAAddinFramework
 		/// <returns>Return True to enable addition of the new package to the model. Return False to disable addition of the new package.</returns>
 		public virtual bool EA_OnPreNewPackage(EA.Repository Repository, EA.EventProperties Info){return true;}
 		
+		/// <summary>
+		/// EA_OnPreNewGlossaryTerm notifies Add-Ins that a new glossary term is about to be created. It enables Add-Ins to permit or deny creation of the new glossary term.
+		/// The notification is provided immediately before the glossary term is created, so that the Add-In can disable addition of the element.
+		/// Also look at EA_OnPostNewGlossaryTerm.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True to enable addition of the new glossary term to the model. Return False to disable addition of the new glossary term.</returns>
+		public virtual bool EA_OnPreNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
+				
 		#endregion EA Pre-New Events
 		
 		/// <summary>
@@ -526,6 +550,18 @@ namespace EAAddinFramework
 		/// - PackageID: A long value corresponding to Package.PackageID.</param>
 		/// <returns>Return True if the package has been updated during this notification. Return False otherwise.</returns>
 		public virtual bool EA_OnPostNewPackage(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewGlossaryTerm notifies Add-Ins that a new glossary term has been created. It enables Add-Ins to modify the glossary term upon creation.
+		/// The notification is provided immediately after the glossary term is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewGlossaryTerm.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True if the glossary term has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return false;}
 		
 		#endregion EA Post-New Events
 		/// <summary>

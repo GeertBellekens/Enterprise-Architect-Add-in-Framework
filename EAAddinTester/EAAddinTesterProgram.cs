@@ -124,10 +124,11 @@ namespace EAAddinTester
         {
             try
             {
+          	
                 return ((EA.App)Marshal.GetActiveObject("EA.App")).Repository;
                 
             }
-            catch (COMException)
+            catch (COMException )
             {
                 DialogResult result = MessageBox.Show("Could not find running instance of EA.\nStart EA and try again"
                                    , "EA not running",MessageBoxButtons.RetryCancel,MessageBoxIcon.Warning);

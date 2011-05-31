@@ -247,6 +247,17 @@
             - PackageID: A long value corresponding to Package.PackageID.</param>	
             <returns>Return True to enable deletion of the package from the model. Return False to disable deletion of the package.</returns>
         </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnPreDeleteGlossaryTerm(EA.Repository,EA.EventProperties)">
+            <summary>
+            EA_OnPreDeleteGlossaryTerm notifies Add-Ins that a glossary term is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the glossary term.
+            The notification is provided immediately before the glossary term is deleted, so that the Add-In can disable deletion of the glossary term.
+            </summary>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+            TermID: A long value corresponding to Term.TermID.</param>
+            <returns>Return True to enable deletion of the glossary term from the model. Return False to disable deletion of the glossary term.</returns>
+        </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnPreNewElement(EA.Repository,EA.EventProperties)">
             <summary>
             EA_OnPreNewElement notifies Add-Ins that a new element is about to be created on a diagram. It enables Add-Ins to permit or deny creation of the new element.
@@ -354,6 +365,18 @@
             DiagramID: A long value corresponding to the ID of the diagram to which the package is being added. </param>
             <returns>Return True to enable addition of the new package to the model. Return False to disable addition of the new package.</returns>
         </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnPreNewGlossaryTerm(EA.Repository,EA.EventProperties)">
+            <summary>
+            EA_OnPreNewGlossaryTerm notifies Add-Ins that a new glossary term is about to be created. It enables Add-Ins to permit or deny creation of the new glossary term.
+            The notification is provided immediately before the glossary term is created, so that the Add-In can disable addition of the element.
+            Also look at EA_OnPostNewGlossaryTerm.
+            </summary>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+            TermID: A long value corresponding to Term.TermID.</param>
+            <returns>Return True to enable addition of the new glossary term to the model. Return False to disable addition of the new glossary term.</returns>
+        </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnPreExitInstance(EA.Repository)">
             <summary>
             EA_OnPreExitInstance is not currently used.
@@ -445,6 +468,18 @@
             <param name="Info">Contains the following EventProperty object for the new package:
             - PackageID: A long value corresponding to Package.PackageID.</param>
             <returns>Return True if the package has been updated during this notification. Return False otherwise.</returns>
+        </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnPostNewGlossaryTerm(EA.Repository,EA.EventProperties)">
+            <summary>
+            EA_OnPostNewGlossaryTerm notifies Add-Ins that a new glossary term has been created. It enables Add-Ins to modify the glossary term upon creation.
+            The notification is provided immediately after the glossary term is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+            Also look at EA_OnPreNewGlossaryTerm.
+            </summary>
+            <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+            TermID: A long value corresponding to Term.TermID.</param>
+            <returns>Return True if the glossary term has been updated during this notification. Return False otherwise.</returns>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnPostInitialized(EA.Repository)">
             <summary>
