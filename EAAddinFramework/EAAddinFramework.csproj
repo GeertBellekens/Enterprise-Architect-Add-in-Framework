@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EAWrappers\Action.cs" />
+    <Compile Include="EAWrappers\Activity.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />
     <Compile Include="EAWrappers\Association.cs" />
     <Compile Include="EAWrappers\AssociationEnd.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="EAWrappers\ElementWrapper.cs" />
     <Compile Include="EAWrappers\Factory.cs" />
     <Compile Include="EAWrappers\Generalization.cs" />
+    <Compile Include="EAWrappers\Interaction.cs" />
     <Compile Include="EAWrappers\Interface.cs" />
     <Compile Include="EAWrappers\InterfaceRealization.cs" />
     <Compile Include="EAWrappers\Message.cs" />

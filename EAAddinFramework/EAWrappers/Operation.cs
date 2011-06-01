@@ -184,6 +184,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
     
+
+    /// <summary>
+    /// A behavioral description that implements the behavioral feature. There may be at most one behavior for a particular
+    /// pairing of a classifier (as owner of the behavior) and a behavioral feature (as specification of the behavior).
+    /// </summary>
+	public HashSet<UML.CommonBehaviors.BasicBehaviors.Behavior> methods
+	{
+		get
+		{
+			//in EA we will find only one behavior
+			HashSet<UML.CommonBehaviors.BasicBehaviors.Behavior> behaviors = new HashSet<TSF.UmlToolingFramework.UML.CommonBehaviors.BasicBehaviors.Behavior>();
+			// the Behavior property of an operation either contains some text, or a GUID of a Behavior element.
+			// we try to find the element 
+			EA.ElementWrapper behavior = this.model.getElementWrapperByGUID (this.wrappedOperation.Behavior);
+			if (behavior != null && behavior is UML.CommonBehaviors.BasicBehaviors.Behavior) behaviors.Add((UML.CommonBehaviors.BasicBehaviors.Behavior)behavior);
+			return behaviors;
+		}
+    		
+		set {throw new NotImplementedException(); }
+	}
+    
     internal override void saveElement(){
       this.wrappedOperation.Update();
     }

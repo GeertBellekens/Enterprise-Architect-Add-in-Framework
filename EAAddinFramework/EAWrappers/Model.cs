@@ -46,6 +46,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return null;
       }
     }
+    
+
+    
+    /// <summary>
+    /// Finds the EA.Element with the given GUID and returns an EAElementwrapper 
+    /// wrapping this element.
+    /// </summary>
+    /// <param name="GUID">the GUID of the element</param>
+    /// <returns>the element with the given GUID</returns>
+    public ElementWrapper getElementWrapperByGUID(string GUID){
+      try{
+        return this.factory.createElement
+          (this.wrappedModel.GetElementByGuid(GUID)) as ElementWrapper;
+      } catch( Exception )  {
+        // element not found, return null
+        return null;
+      }
+    }
     /// <summary>
     /// returns the elementwrappers that are identified by the Object_ID's returned by the given query
     /// </summary>

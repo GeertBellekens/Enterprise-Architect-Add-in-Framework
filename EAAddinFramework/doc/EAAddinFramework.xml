@@ -1055,6 +1055,18 @@
             {Specializes Element::ownedElement}
              </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Activity">
+            <summary>
+            Description of Activity.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Activity.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
             the stereotypes defined on this Relationship
         </member>
@@ -1199,6 +1211,18 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.translateTypeName(System.String)">
             translates the UML type name to the EA equivalent
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Interaction">
+            <summary>
+            Description of InterAction.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Interaction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor">
             Creates a model connecting to the first running instance of EA
         </member>
@@ -1208,6 +1232,14 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByID(System.Int32)">
             Finds the EA.Element with the given id and returns an EAElementwrapper 
             wrapping this element.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByGUID(System.String)">
+            <summary>
+            Finds the EA.Element with the given GUID and returns an EAElementwrapper 
+            wrapping this element.
+            </summary>
+            <param name="GUID">the GUID of the element</param>
+            <returns>the element with the given GUID</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrappersByQuery(System.String)">
             <summary>
@@ -1268,6 +1300,12 @@
             returns all diagrams that somehow use this operation
             </summary>
             <returns>all diagrams that use this operation</returns>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Operation.methods">
+            <summary>
+            A behavioral description that implements the behavioral feature. There may be at most one behavior for a particular
+            pairing of a classifier (as owner of the behavior) and a behavioral feature (as specification of the behavior).
+            </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
