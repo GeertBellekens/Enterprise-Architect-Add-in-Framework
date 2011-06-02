@@ -294,5 +294,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
         return diagrams;
     }
+  	
+	public HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> ownedDiagrams {
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
   }
 }

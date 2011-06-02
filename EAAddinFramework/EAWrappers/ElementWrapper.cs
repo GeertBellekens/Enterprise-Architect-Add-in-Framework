@@ -5,7 +5,8 @@ using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class ElementWrapper : Element, UML.Classes.Kernel.NamedElement {
+  public class ElementWrapper : Element, UML.Classes.Kernel.NamedElement 
+  {
     internal global::EA.Element wrappedElement {get; set; }
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
@@ -246,6 +247,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return this.wrappedElement.Notes;  }
       set { this.wrappedElement.Notes = value; }
     }
+    public HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> ownedDiagrams {
+		get {
+    		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
+    		foreach ( global::EA.Diagram eaDiagram in this.wrappedElement.Diagrams)
+    		{
+    			diagrams.Add(((Factory)this.model.factory).createDiagram(eaDiagram));
+    		}
+    		return diagrams;
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
     //returns a list of diagrams that somehow use this element.
     public override HashSet<T> getUsingDiagrams<T>() 
     {

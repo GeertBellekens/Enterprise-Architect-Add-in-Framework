@@ -32,6 +32,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return new Diagram(this.model as Model, diagramToWrap);
     }
     
+    
     public UML.Diagrams.DiagramElement createDiagramElement
       (global::EA.DiagramObject objectToWrap)
     {
@@ -173,6 +174,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 			// simple Action
 			return new Action (this.model as Model, elementToWrap);
+		case "Interaction":
+			return new Interaction(this.model as Model, elementToWrap);
+		case "Activity":
+			return new Activity(this.model as Model, elementToWrap);
+		case "StateMachine":
+			return new StateMachine(this.model as Model, elementToWrap);
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }

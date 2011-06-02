@@ -1310,6 +1310,18 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
+            <summary>
+            Description of StateMachine.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.
             If not then the owning namespace of the owner is returned
