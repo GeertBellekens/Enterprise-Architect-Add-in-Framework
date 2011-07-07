@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,6 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MyAddinClass.cs" />
+    <Compile Include="MyEAControl.cs" />
+    <Compile Include="MyEAControl.Designer.cs">
+      <DependentUpon>MyEAControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +59,11 @@
       <Project>{4161DD26-375F-4744-BA96-B70366E19A78}</Project>
       <Name>EAAddinFramework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MyEAControl.resx">
+      <DependentUpon>MyEAControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
