@@ -962,6 +962,16 @@
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: EAElementWrapper.
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.select">
+            <summary>
+            selects the element. 
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.open">
+            <summary>
+            opens the element. 
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
@@ -1003,6 +1013,13 @@
             returns the operations that have this element as return type
             </summary>
             <returns>the operations that have this element as return type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
+            <summary>
+            gets the item from the given relative path.
+            </summary>
+            <param name="relativePath">the "." separated path</param>
+            <returns>the item with the given path</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
             indicates whether this element is abstract.
@@ -1149,6 +1166,14 @@
             on the diagram.
             To make this a bit faster the list of id's is retrieved using an sql 
             query
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
+            <summary>
+            searches downward for the item with the given relative path
+            This relative path includes the own name
+            </summary>
+            <param name="relativePath">list of names inlcuding the own name</param>
+            <returns>the item matching the path</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.
@@ -1307,8 +1332,29 @@
             pairing of a classifier (as owner of the behavior) and a behavioral feature (as specification of the behavior).
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Package">
+            <summary>
+            Description of Package.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
             saves the parameter to the case tool.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RootPackage">
+            <summary>
+            Description of rootPackage.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.GetHashCode">
+            <summary>
+            return the hashcode based on the elements guid
+            </summary>
+            <returns>hashcode based on the elements guid</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
             <summary>

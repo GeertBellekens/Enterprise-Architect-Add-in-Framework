@@ -136,5 +136,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	get{return this.wrappedParameter.ParameterGUID;}
     	set{this.wrappedParameter.ParameterGUID = value;}
     }
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		return null;
+	}
   }
 }

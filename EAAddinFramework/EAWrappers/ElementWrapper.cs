@@ -15,7 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedElement = wrappedElement;
     }
 
-    public String name {
+    public virtual String name {
       get { return this.wrappedElement.Name;  }
       set { this.wrappedElement.Name = value; }
     }
@@ -247,7 +247,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return this.wrappedElement.Notes;  }
       set { this.wrappedElement.Notes = value; }
     }
-    public HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> ownedDiagrams {
+    public virtual HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> ownedDiagrams {
 		get {
     		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
     		foreach ( global::EA.Diagram eaDiagram in this.wrappedElement.Diagrams)
@@ -343,6 +343,90 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	string sqlGetReturnParameters = @"select o.OperationID from t_operation o
     								where o.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
     	return new HashSet<UML.Classes.Kernel.Operation>(this.model.getOperationsByQuery(sqlGetReturnParameters));
+	}
+	public override void open()
+	{
+		this.model.selectedElement = this;
+	}
+	public override void select()
+	{
+		this.model.selectedElement = this;
+	}
+	/// <summary>
+  	/// gets the item from the given relative path.
+  	/// </summary>
+  	/// <param name="relativePath">the "." separated path</param>
+  	/// <returns>the item with the given path</returns>
+	public override UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		UML.UMLItem item = null;
+		List<string> filteredPath = relativePath;
+		if (filterName( filteredPath,this.name))
+		{
+			if (filteredPath.Count > 1)
+			{
+				//remove first item from filteredPath
+				filteredPath.RemoveAt(0);
+				//search deeper
+				foreach ( UML.Classes.Kernel.Element element in this.ownedElements) 
+				{
+				
+					item = element.getItemFromRelativePath(filteredPath);
+					if (item != null)
+					{
+						return item;
+					}
+				}
+				//still not found, now search diagram
+				foreach ( UML.Diagrams.Diagram diagram in this.ownedDiagrams) 
+				{
+					item = diagram.getItemFromRelativePath(filteredPath);
+					if (item != null)
+					{
+						return item;
+					}
+				}
+
+			}
+			else
+			{
+				item = this;
+			}
+		}
+		
+		return item;
+	}
+	internal static bool filterName(List<string> path, string name)
+	{
+		List<string> nameparts = name.Split('.').ToList<string>();
+		List<string> newPath = new List<string>();
+		bool found = false;
+		if (path.Count > 0 
+		    && path.Count >= nameparts.Count)
+		{
+			foreach (string namePart  in nameparts) 
+			{
+				// if "(" is present in the path then only check the part before the "("
+				if (path[0].IndexOf("(") > 0)
+				{
+					path[0] = path[0].Substring(0,path[0].IndexOf("("));
+				}
+				if (namePart == path[0])
+				{
+					//pop the first one of the path
+					path.RemoveAt(0);
+				}
+				else
+				{
+					//not correct, don't bother searching further
+					return false;
+				}						
+			}
+			//all strings matched, add name as first item;
+			path.Insert(0,name);
+			found = true;
+		}
+		return found;
 	}
   }
 }

@@ -206,5 +206,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { this.wrappedConnector.Notes = value; }
     }
 
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		UML.UMLItem item = null;
+		if (ElementWrapper.filterName(relativePath,this.name))
+		{
+	    	if (relativePath.Count ==1)
+	    	{
+	    		item = this;
+	    	}
+		}
+		return this; 
+	}
   }
 }

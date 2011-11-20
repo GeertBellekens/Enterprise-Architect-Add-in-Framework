@@ -129,5 +129,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		return null;
+	}
   }
 }

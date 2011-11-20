@@ -78,22 +78,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override UML.Classes.Kernel.Element createElement
       (Object objectToWrap)
     {
-      if( objectToWrap is global::EA.Element ) {
-        return this.createEAElementWrapper
-          (objectToWrap as global::EA.Element);
-      } else if( objectToWrap is global::EA.Attribute )  {
+      if( objectToWrap is global::EA.Element ) 
+      {
+        return this.createEAElementWrapper (objectToWrap as global::EA.Element);
+      } 
+      else if( objectToWrap is global::EA.Attribute )  
+      {
         return this.createEAAttribute(objectToWrap as global::EA.Attribute);
-      } else if( objectToWrap is global::EA.Connector )  {
-        return this.createEAConnectorWrapper
-          (objectToWrap as global::EA.Connector);
-      } else if( objectToWrap is global::EA.Method )  {
+      }
+      else if( objectToWrap is global::EA.Connector )  
+      {
+        return this.createEAConnectorWrapper (objectToWrap as global::EA.Connector);
+      }
+      else if( objectToWrap is global::EA.Method )
+      {
         return this.createOperation(objectToWrap as global::EA.Method);
-      } else if( objectToWrap is global::EA.Parameter )  {
+      } 
+      else if( objectToWrap is global::EA.Parameter )
+      {
         return this.createParameter(objectToWrap as global::EA.Parameter);
       }
-
+      else if (objectToWrap is global::EA.Package)
+      {
+        return this.createPackage(objectToWrap as global::EA.Package);	
+      }
+      
       return null;
     }
+    
+    private Package createPackage(global::EA.Package package)
+	{
+    	if (package.Element == null)
+    	{
+    		return new RootPackage(this.model as Model,package);
+    	}
+    	else
+    	{
+    		return new Package(this.model as Model,package);
+    	}
+	}
 
     /// returns a new EAParameter based on the given EA.Parameter
     private ParameterWrapper createParameter(global::EA.Parameter parameter){

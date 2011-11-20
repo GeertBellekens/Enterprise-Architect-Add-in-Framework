@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml;
+using System.Linq;
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -28,6 +29,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         this.wrappedModel.GetContextItem(out selectedItem);
         return this.factory.createElement(selectedItem);
       }
+    	set
+    	{
+    		if (value is Package)
+    		{
+    			this.wrappedModel.ShowInProjectView(((Package)value).wrappedPackage);
+    		}
+    		else if (value is ElementWrapper)
+    		{
+    			this.wrappedModel.ShowInProjectView(((ElementWrapper)value).wrappedElement);
+    		}
+	        else if (value is Operation)
+	        {
+	            this.wrappedModel.ShowInProjectView(((Operation)value).wrappedOperation);
+	        }
+	        else if (value is Attribute)
+	        {
+	            this.wrappedModel.ShowInProjectView(((Attribute)value).wrappedAttribute);
+	        }
+	        else if (value is Parameter)
+	        {
+	        	Operation operation = (Operation)((Parameter)value).operation;
+	        	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
+	        }
+    	}
     }
     
     /// returns the correct type of factory for this model
@@ -134,7 +159,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return null;
     }
     
-    public UML.Diagrams.Diagram selectedDiagram {
+    public UML.Diagrams.Diagram currentDiagram {
       get {
         return ((Factory)this.factory).createDiagram
           ( this.wrappedModel.GetCurrentDiagram() );
@@ -277,31 +302,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as UML.Classes.Kernel.Operation;
     }
 
-    public void selectElement(UML.Classes.Kernel.Element element)
-    {
-        if (element is ElementWrapper){
-            this.wrappedModel.ShowInProjectView(((ElementWrapper)element).wrappedElement);
-        }
-        else if (element is Operation)
-        {
-            this.wrappedModel.ShowInProjectView(((Operation)element).wrappedOperation);
-        }
-        else if (element is Attribute)
-        {
-            this.wrappedModel.ShowInProjectView(((Attribute)element).wrappedAttribute);
-        }
-        else if (element is Diagram)
-        {
-            this.wrappedModel.ShowInProjectView(((Diagram)element).wrappedDiagram);
-        }else if (element is Parameter)
-        {
-        	Operation operation = (Operation)((Parameter)element).operation;
-        	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
-        }
-    }
+    
     internal void executeSQL(string SQLString)
     {
     	this.wrappedModel.Execute(SQLString);
     }
+  	
+	public void selectDiagram(Diagram diagram)
+	{
+		this.wrappedModel.ShowInProjectView(diagram.wrappedDiagram);
+	}
+  	
+	public UML.UMLItem getItemFromFQN(string FQN)
+	{
+		//split the FQN in the different parts
+		UML.UMLItem foundItem = null;
+		foreach(UML.Classes.Kernel.Package package in  this.rootPackages)
+		{
+			
+			foundItem = package.getItemFromRelativePath(FQN.Split('.').ToList<string>());
+			if (foundItem != null)
+			{
+				break;
+			}
+		}
+		return foundItem;
+	}
+  	
+	public HashSet<UML.Classes.Kernel.Package> rootPackages {
+		get 
+		{
+			
+			return new HashSet<UML.Classes.Kernel.Package>(this.factory.createElements(this.wrappedModel.Models).Cast<UML.Classes.Kernel.Package>());
+		}
+	}
   }
 }

@@ -49,5 +49,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return this.body;  }
       set { this.body = value; }
     }
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		return null;
+	}
   }
 }

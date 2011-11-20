@@ -303,5 +303,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		UML.UMLItem item = null;
+		if (ElementWrapper.filterName(relativePath,this.name))
+		{
+	    	if (relativePath.Count ==1)
+	    	{
+	    		item = this;
+	    	}
+		}
+		return item; 
+	}
+	
+	
   }
 }

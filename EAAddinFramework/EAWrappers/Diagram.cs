@@ -148,7 +148,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public void open() {
-      this.model.selectedDiagram = this;
+      this.model.currentDiagram = this;
     }
     
     public String comment {
@@ -163,5 +163,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
         return obj is Diagram && ((Diagram)obj).GetHashCode() == this.GetHashCode();
     }
+  	
+	public void select()
+	{
+		this.model.selectDiagram(this);
+	}
+    /// <summary>
+    /// searches downward for the item with the given relative path
+    /// This relative path includes the own name
+    /// </summary>
+    /// <param name="relativePath">list of names inlcuding the own name</param>
+    /// <returns>the item matching the path</returns>
+	public TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		UML.UMLItem item = null;
+		
+		if (ElementWrapper.filterName( relativePath,this.name))
+		{
+	    	if (relativePath.Count ==1)
+	    	{
+	    		item = this;
+	    	}
+		}
+		return item; 
+	}
   }
 }

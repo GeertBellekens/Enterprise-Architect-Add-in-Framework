@@ -134,5 +134,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return String.Empty; }
       set { /* do nothing, returntypes do not have comments in EA */ }
     }
+  	
+
+  	
+	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	{
+		return null;
+	}
   }
 }

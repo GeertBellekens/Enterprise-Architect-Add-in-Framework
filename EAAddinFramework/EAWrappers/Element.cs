@@ -73,5 +73,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
         throw new NotImplementedException();
     }
+  	
+    /// <summary>
+    /// selects the element. 
+    /// </summary>
+	public virtual void select()
+	{
+		this.model.selectedElement = this;
+	}
+  	/// <summary>
+  	/// opens the element. 
+  	/// </summary>
+	public virtual void open()
+	{
+		this.model.selectedElement = this;
+	}
+
+  	
+	public abstract TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath);
+	
+	
   }
 }
