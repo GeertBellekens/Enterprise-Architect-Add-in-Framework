@@ -360,7 +360,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override UML.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
 		UML.UMLItem item = null;
-		List<string> filteredPath = relativePath;
+		List<string> filteredPath = new List<string>(relativePath);
 		if (filterName( filteredPath,this.name))
 		{
 			if (filteredPath.Count > 1)
@@ -406,8 +406,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			foreach (string namePart  in nameparts) 
 			{
-				// if "(" is present in the path then only check the part before the "("
-				if (path[0].IndexOf("(") > 0)
+				// if "(" is present in the path, and not in the name
+				// then only check the part before the "("
+				if (path[0].Contains("(")
+				    && !name.Contains("("))
 				{
 					path[0] = path[0].Substring(0,path[0].IndexOf("("));
 				}

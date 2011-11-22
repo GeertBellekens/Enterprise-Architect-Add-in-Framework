@@ -307,9 +307,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
 		UML.UMLItem item = null;
-		if (ElementWrapper.filterName(relativePath,this.name))
+		List<string> filteredPath = new List<string>(relativePath);
+		if (ElementWrapper.filterName(filteredPath,this.name))
 		{
-	    	if (relativePath.Count ==1)
+	    	if (filteredPath.Count ==1)
 	    	{
 	    		item = this;
 	    	}
