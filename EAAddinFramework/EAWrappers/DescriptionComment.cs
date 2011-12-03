@@ -54,5 +54,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return null;
 	}
+  	
+	public string name {
+		get {
+			return string.Empty;
+		}
+	}
   }
 }

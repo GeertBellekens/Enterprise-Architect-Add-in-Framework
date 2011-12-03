@@ -92,6 +92,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	
 	public abstract TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath);
 	
-	
+	public string name 
+	{
+		get 
+		{
+			return string.Empty;
+		}
+	}
   }
 }

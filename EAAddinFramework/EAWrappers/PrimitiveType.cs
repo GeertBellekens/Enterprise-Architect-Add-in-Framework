@@ -118,7 +118,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
 	public HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
     {
-		throw new NotImplementedException();
+		return new HashSet<T>();
     }
   	
 	public HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> ownedDiagrams {

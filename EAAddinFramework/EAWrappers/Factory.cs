@@ -21,7 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return getInstance(new Model());
     }
 
-    public Diagram createDiagram(global::EA.Diagram diagramToWrap){
+    public override UML.Diagrams.Diagram createDiagram(object diagramToWrap){
         //Diagram newDiagram;
         //switch diagramToWrap.Type
         //{
@@ -29,7 +29,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         //        newDiagram = new SequenceDiagram
         //}
         //if (diagramToWrap.Type ==
-      return new Diagram(this.model as Model, diagramToWrap);
+        return new Diagram(this.model as Model, diagramToWrap as global::EA.Diagram);
     }
     
     

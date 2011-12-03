@@ -329,11 +329,55 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return foundItem;
 	}
   	
-	public HashSet<UML.Classes.Kernel.Package> rootPackages {
+	public  HashSet<UML.Classes.Kernel.Package> rootPackages {
 		get 
 		{
 			
 			return new HashSet<UML.Classes.Kernel.Package>(this.factory.createElements(this.wrappedModel.Models).Cast<UML.Classes.Kernel.Package>());
+		}
+	}
+  	
+	public  UML.Diagrams.Diagram selectedDiagram
+	{
+		get
+		{
+			object item ;
+			this.wrappedModel.GetTreeSelectedItem(out item);
+			global::EA.Diagram diagram = item as global::EA.Diagram;
+			if (diagram != null)
+			{
+				return this.factory.createDiagram(diagram);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		set
+		{
+			value.select();
+			
+		}
+	}
+	public  TSF.UmlToolingFramework.UML.UMLItem selectedItem {
+		get {
+		 	UML.UMLItem item = this.selectedElement;
+		 	if (item == null)
+		 	{
+		 		item = this.selectedDiagram;
+		 	}
+		 	return item;
+		}
+		set 
+		{
+			if (value is UML.Diagrams.Diagram)
+			{
+				this.selectedDiagram = value as UML.Diagrams.Diagram;
+			}
+			else if (value is UML.Classes.Kernel.Element)
+			{
+				this.selectedElement = value as UML.Classes.Kernel.Element;
+			}
 		}
 	}
   }
