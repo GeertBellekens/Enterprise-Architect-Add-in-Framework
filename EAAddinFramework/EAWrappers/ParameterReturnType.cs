@@ -65,10 +65,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get {
         // for some strange reason the classifierid of the parameter is a 
         // string, where all other id the the EA API are integers.
-        UML.Classes.Kernel.Type type = this.model.getElementWrapperByID
-          ( int.Parse(this.wrappedOperation.ClassifierID)) 
-            as UML.Classes.Kernel.Type;
-            
+        int ClassifierID;
+        UML.Classes.Kernel.Type type = null;
+        if (int.TryParse(this.wrappedOperation.ClassifierID,out ClassifierID))
+        {
+           	type = this.model.getElementWrapperByID(ClassifierID) as UML.Classes.Kernel.Type;
+        }
         // check if the type is defined as an element in the model.
         if( type == null ) {
           // no element, create primitive type based on the name of the 
@@ -82,7 +84,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override String name {
-      get { return String.Empty; }
+      get { return "returntype of " + this.operation.name; }
       set { throw new NotImplementedException(); }
     }
     public override UML.Classes.Kernel.VisibilityKind visibility {

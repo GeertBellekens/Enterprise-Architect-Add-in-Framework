@@ -318,6 +318,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return item; 
 	}
 	
+	#region Equals and GetHashCode implementation
+	public override bool Equals(object obj)
+	{
+		Operation other = obj as Operation;
+		if (other != null)
+		{
+			if (other.wrappedOperation.MethodGUID == this.wrappedOperation.MethodGUID)
+			{
+				return true;	
+			}
+		}
+		return false;
+	}
+	
+	public override int GetHashCode()
+	{
+		return new Guid(this.wrappedOperation.MethodGUID).GetHashCode();
+	}
+	
+	#endregion
 	
   }
 }

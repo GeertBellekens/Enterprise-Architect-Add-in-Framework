@@ -256,5 +256,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return item; 
 	}
+	#region Equals and GetHashCode implementation
+	public override bool Equals(object obj)
+	{
+		Attribute other = obj as Attribute;
+		if (other != null)
+		{
+			if (other.wrappedAttribute.AttributeGUID == this.wrappedAttribute.AttributeGUID)
+			{
+				return true;	
+			}
+		}
+		return false;
+	}
+	
+	public override int GetHashCode()
+	{
+		return new Guid(this.wrappedAttribute.AttributeGUID).GetHashCode();
+	}
+	#endregion
+
   }
 }

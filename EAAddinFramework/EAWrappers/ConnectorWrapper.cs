@@ -219,5 +219,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return this; 
 	}
+	#region Equals and GetHashCode implementation
+	public override bool Equals(object obj)
+	{
+		ConnectorWrapper other = obj as ConnectorWrapper;
+		if (other != null)
+		{
+			if (other.wrappedConnector.ConnectorGUID == this.wrappedConnector.ConnectorGUID)
+			{
+				return true;	
+			}
+		}
+		return false;
+	}
+	
+	public override int GetHashCode()
+	{
+		return new Guid(this.wrappedConnector.ConnectorGUID).GetHashCode();
+	}
+	#endregion
+
   }
 }
