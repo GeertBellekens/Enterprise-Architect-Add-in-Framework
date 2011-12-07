@@ -30,7 +30,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
+      get 
+      { 
+      	return this.model.getElementWrapperByID( this.wrappedOperation.ParentID);
+      }
       set { throw new NotImplementedException(); }
     }
     
