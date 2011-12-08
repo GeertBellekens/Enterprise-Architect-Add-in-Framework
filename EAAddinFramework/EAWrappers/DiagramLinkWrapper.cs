@@ -20,6 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public DiagramLinkWrapper(Model model,global::EA.DiagramLink diagramlink){
       this.model = model;
       this.wrappedDiagramLink = diagramlink;
+      this.relation = this.model.getRelationByID(this.wrappedDiagramLink.ConnectorID);
       this.diagram = this.getDiagramForDiagramLink(diagramlink);
     }
     
@@ -58,6 +59,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public int yPosition {
       get { return 0; }
       set { throw new NotImplementedException(); }
+    }
+    public void select()
+    {
+    	this.diagram.open();
+    	this.diagram.wrappedDiagram.SelectedConnector = this.relation.wrappedConnector;
     }
   }
 }

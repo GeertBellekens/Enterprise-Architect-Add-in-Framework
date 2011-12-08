@@ -38,6 +38,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       return new DiagramObjectWrapper(this.model as Model, objectToWrap);
     }
+    public UML.Diagrams.DiagramElement createDiagramElement(global::EA.DiagramLink objectToWrap)
+    {
+    	return new DiagramLinkWrapper(this.model as Model,objectToWrap);
+    }
     
     public HashSet<UML.Diagrams.DiagramElement> createDiagramElements
       (global::EA.Collection objectsToWrap)
