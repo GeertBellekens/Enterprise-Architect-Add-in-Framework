@@ -26,8 +26,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public UML.Classes.Kernel.Element selectedElement {
       get {
         Object selectedItem;
-        this.wrappedModel.GetContextItem(out selectedItem);
-        return this.factory.createElement(selectedItem);
+        try
+        {
+            this.wrappedModel.GetContextItem(out selectedItem);
+            return this.factory.createElement(selectedItem);
+        }
+        catch (COMException)
+        {
+            //something went wrong
+            return null;
+        }
+
+        
       }
     	set
     	{
@@ -51,18 +61,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	        {
 	        	Operation operation = (Operation)((Parameter)value).operation;
 	        	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
-	        }
-	        else if (value is Message)
-	        {
-	        	Message message = (Message)value;
-	        	foreach ( Diagram diagram in message.getUsingDiagrams<Diagram>()) 
-	        	{
-	        		DiagramLinkWrapper link = ((Factory)this.factory).createDiagramElement(diagram.getDiagramLinkForRelation(message)) as DiagramLinkWrapper;
-	        		if (link != null)
-	        		{
-	        			link.select();
-	        		}
-	        	} 
 	        }
     	}
     }
