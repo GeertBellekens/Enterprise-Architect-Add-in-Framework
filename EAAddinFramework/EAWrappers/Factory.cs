@@ -22,14 +22,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     public override UML.Diagrams.Diagram createDiagram(object diagramToWrap){
-        //Diagram newDiagram;
-        //switch diagramToWrap.Type
-        //{
-        //    case "Sequence":
-        //        newDiagram = new SequenceDiagram
-        //}
-        //if (diagramToWrap.Type ==
-        return new Diagram(this.model as Model, diagramToWrap as global::EA.Diagram);
+        Diagram newDiagram = null;
+        global::EA.Diagram eaDiagramToWrap = diagramToWrap as global::EA.Diagram;
+        if (eaDiagramToWrap != null)
+        {
+	        switch (eaDiagramToWrap.Type)
+	        {
+	            case "Sequence":
+	                newDiagram = new SequenceDiagram(this.model as Model, eaDiagramToWrap);
+	                break;
+	            default:
+	                newDiagram = new Diagram(this.model as Model, eaDiagramToWrap);
+	            	break;
+	        }
+        }
+        return newDiagram;
     }
     
     

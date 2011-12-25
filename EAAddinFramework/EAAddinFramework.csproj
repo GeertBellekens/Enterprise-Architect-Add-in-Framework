@@ -87,6 +87,7 @@
     <Compile Include="EAWrappers\PrimitiveType.cs" />
     <Compile Include="EAWrappers\Realization.cs" />
     <Compile Include="EAWrappers\RootPackage.cs" />
+    <Compile Include="EAWrappers\SequenceDiagram.cs" />
     <Compile Include="EAWrappers\StateMachine.cs" />
     <Compile Include="EAWrappers\Stereotype.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />

@@ -1356,6 +1356,17 @@
             </summary>
             <returns>hashcode based on the elements guid</returns>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram">
+            <summary>
+            Description of SequenceDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getCalledOperations">
+            <summary>
+            returns all operations called in this sequence diagram
+            </summary>
+            <returns>all operations called in this sequence diagram</returns>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
             <summary>
             Description of StateMachine.
