@@ -47,15 +47,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 		}
 		
-		public TSF.UmlToolingFramework.UML.CommonBehaviors.BasicBehaviors.BehavioralFeature specification {
-			get {
-				throw new NotImplementedException();
-			}
-			set {
-				throw new NotImplementedException();
-			}
-		}
-		
+	
 		public TSF.UmlToolingFramework.UML.CommonBehaviors.BasicBehaviors.BehavioredClassifier context {
 			get {
 				throw new NotImplementedException();

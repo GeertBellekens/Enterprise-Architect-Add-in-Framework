@@ -430,5 +430,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return found;
 	}
+	public TSF.UmlToolingFramework.UML.CommonBehaviors.BasicBehaviors.BehavioralFeature specification 
+	{
+		get 
+		{
+			string sqlQuery = "select OperationID from t_operation where Behaviour = '" + this.wrappedElement.ElementGUID + "'";
+			List<Operation> operations =  this.model.getOperationsByQuery(sqlQuery);
+			if (operations.Count > 0)
+			{
+				return operations[0];
+			}else
+			{
+				return null;
+			}
+		}
+		set 
+		{
+			throw new NotImplementedException();
+		}
+	}
   }
 }
