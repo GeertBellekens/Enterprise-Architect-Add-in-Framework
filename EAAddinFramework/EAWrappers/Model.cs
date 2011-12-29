@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.Linq;
+using System.Windows.Forms;
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -21,7 +22,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Model(global::EA.Repository eaRepository){
       wrappedModel = eaRepository;
     }
-
+    public UserControl addWindow(string title, string fullControlName)
+    {
+    	return this.wrappedModel.AddWindow(title,fullControlName) as UserControl;
+    }
     /// the Element currently selected in EA
     public UML.Classes.Kernel.Element selectedElement {
       get {

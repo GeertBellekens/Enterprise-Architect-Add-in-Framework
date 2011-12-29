@@ -1160,12 +1160,15 @@
             relation
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getRelations">
+            <summary>
             the relations on a diagram in EA are sometimes expressed as 
             DiagramLink but not always.
             We are looking for all relations that have both their ends displayed 
             on the diagram.
             To make this a bit faster the list of id's is retrieved using an sql 
             query
+            </summary>
+            <returns>all reations ont he diagram</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
             <summary>
@@ -1366,6 +1369,12 @@
             returns all operations called in this sequence diagram
             </summary>
             <returns>all operations called in this sequence diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getRelations">
+            <summary>
+            gets all relations that are specific to this sequence diagram.
+            </summary>
+            <returns>all messages and other relations of the diagram</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
             <summary>

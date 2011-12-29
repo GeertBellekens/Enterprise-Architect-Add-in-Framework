@@ -85,13 +85,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
 
+
+    
+    /// <summary>
     /// the relations on a diagram in EA are sometimes expressed as 
     /// DiagramLink but not always.
     /// We are looking for all relations that have both their ends displayed 
     /// on the diagram.
     /// To make this a bit faster the list of id's is retrieved using an sql 
     /// query
-    internal List<ConnectorWrapper> getRelations(){
+    /// </summary>
+    /// <returns>all reations ont he diagram</returns>
+    internal virtual List<ConnectorWrapper> getRelations(){
       string SQLQuery = @"
       SELECT c.Connector_ID
         FROM (((( t_Connector c 
