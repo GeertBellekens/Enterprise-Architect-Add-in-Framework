@@ -976,6 +976,11 @@
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.taggedValues">
+            <summary>
+            default empty implementation
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
             returns the Relationships with the given type T
         </member>
@@ -1282,6 +1287,13 @@
             </summary>
             <param name="GUID">the attribute's GUID</param>
             <returns>the Attribute with the given GUID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByID(System.Int32)">
+            <summary>
+            gets the Attribute with the given ID
+            </summary>
+            <param name="GUID">the attribute's ID</param>
+            <returns>the Attribute with the given ID</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getParameterByGUID(System.String)">
             <summary>

@@ -321,6 +321,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return item; 
 	}
 	
+	public override HashSet<UML.Profiles.TaggedValue> taggedValues
+	{
+		get 
+		{
+			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedOperation.TaggedValues));
+		}
+		set { throw new NotImplementedException();}
+	}
+	
 	#region Equals and GetHashCode implementation
 	public override bool Equals(object obj)
 	{

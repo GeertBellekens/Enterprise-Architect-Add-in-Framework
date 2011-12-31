@@ -143,5 +143,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return null;
 	}
+	public override HashSet<UML.Profiles.TaggedValue> taggedValues
+	{
+		get 
+		{
+			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedParameter.TaggedValues));
+		}
+		set { throw new NotImplementedException();}
+	}
   }
 }

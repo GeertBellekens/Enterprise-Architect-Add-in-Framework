@@ -449,5 +449,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+	public override HashSet<UML.Profiles.TaggedValue> taggedValues 
+	{
+		get 
+		{
+			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedElement.TaggedValues));
+			 
+		}
+		set { throw new NotImplementedException();}
+	}
   }
 }

@@ -61,8 +61,11 @@
     <Compile Include="EAWrappers\Association.cs" />
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
+    <Compile Include="EAWrappers\AttributeTag.cs" />
     <Compile Include="EAWrappers\CallOperationAction.cs" />
     <Compile Include="EAWrappers\Class.cs" />
+    <Compile Include="EAWrappers\ParameterTag.cs" />
+    <Compile Include="EAWrappers\RelationTag.cs" />
     <Compile Include="EAWrappers\ConnectorWrapper.cs" />
     <Compile Include="EAWrappers\Dependency.cs" />
     <Compile Include="EAWrappers\DescriptionComment.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="EAWrappers\DiagramLinkWrapper.cs" />
     <Compile Include="EAWrappers\DiagramObjectWrapper.cs" />
     <Compile Include="EAWrappers\Element.cs" />
+    <Compile Include="EAWrappers\ElementTag.cs" />
     <Compile Include="EAWrappers\ElementWrapper.cs" />
     <Compile Include="EAWrappers\Factory.cs" />
     <Compile Include="EAWrappers\Generalization.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="EAWrappers\Model.cs" />
     <Compile Include="EAWrappers\NoteComment.cs" />
     <Compile Include="EAWrappers\Operation.cs" />
+    <Compile Include="EAWrappers\OperationTag.cs" />
     <Compile Include="EAWrappers\Package.cs" />
     <Compile Include="EAWrappers\Parameter.cs" />
     <Compile Include="EAWrappers\ParameterDirectionKind.cs" />
@@ -91,6 +96,7 @@
     <Compile Include="EAWrappers\SequenceDiagram.cs" />
     <Compile Include="EAWrappers\StateMachine.cs" />
     <Compile Include="EAWrappers\Stereotype.cs" />
+    <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

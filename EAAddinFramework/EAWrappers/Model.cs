@@ -87,7 +87,33 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
 
-    
+    public UML.Classes.Kernel.Element getElementByGUID(string GUIDstring)
+    {
+    	UML.Classes.Kernel.Element foundElement = null;
+    	//first try elementwrapper
+    	foundElement = this.getElementWrapperByGUID(GUIDstring);
+    	//then try Attribute
+    	if (foundElement == null)
+    	{
+    		foundElement = this.getAttributeByGUID(GUIDstring);
+    	}
+    	//then try Operation
+    	if (foundElement == null)
+    	{
+    		foundElement = this.getOperationByGUID(GUIDstring);
+    	}
+    	//then try ConnectorWrapper
+    	if (foundElement == null)
+    	{
+    		foundElement = this.getRelationByGUID(GUIDstring);
+    	}
+    	//then try Parameter
+    	if (foundElement == null)
+    	{
+    		foundElement = this.getParameterByGUID(GUIDstring);
+    	}
+    	return foundElement;
+    }
     /// <summary>
     /// Finds the EA.Element with the given GUID and returns an EAElementwrapper 
     /// wrapping this element.
@@ -143,6 +169,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	
     }
     /// <summary>
+    /// gets the Attribute with the given ID
+    /// </summary>
+    /// <param name="GUID">the attribute's ID</param>
+    /// <returns>the Attribute with the given ID</returns>
+    public Attribute getAttributeByID (int attributID)
+    {
+    	try
+    	{
+    		return this.factory.createElement(this.wrappedModel.GetAttributeByID(attributID)) as Attribute;
+    	}catch (Exception)
+    	{
+    		// attribute not found, return null
+    		return null;
+    	}
+    	
+    }
+    /// <summary>
     /// gets the parameter by its GUID.
     /// This is a tricky one since EA doesn't provide a getParameterByGUID operation
     /// we have to first get the operation, then loop the pamarameters to find the one
@@ -189,6 +232,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     internal ConnectorWrapper getRelationByID(int relationID) {
       return ((Factory)this.factory).createElement
         ( this.wrappedModel.GetConnectorByID(relationID)) as ConnectorWrapper;
+    }
+	
+    internal ConnectorWrapper getRelationByGUID(string relationGUID) {
+      return ((Factory)this.factory).createElement
+        ( this.wrappedModel.GetConnectorByGuid(relationGUID)) as ConnectorWrapper;
     }
     
     internal List<ConnectorWrapper> getRelationsByQuery(string SQLQuery){

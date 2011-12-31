@@ -328,5 +328,52 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
         throw new NotImplementedException();
     }
+  	
+	public override UML.Profiles.TaggedValue createTaggedValue(object objectToWrap)
+	{
+		UML.Profiles.TaggedValue newTaggedValue = null;
+		if (objectToWrap is global::EA.TaggedValue)
+		{
+			newTaggedValue = this.createElementTag((global::EA.TaggedValue) objectToWrap);
+		}
+		else if (objectToWrap is global::EA.AttributeTag)
+		{
+			newTaggedValue = this.createAttributeTag((global::EA.AttributeTag)objectToWrap);
+		}
+		else if (objectToWrap is global::EA.MethodTag)
+		{
+			newTaggedValue = this.createOperationTag((global::EA.MethodTag)objectToWrap);
+		}
+		else if (objectToWrap is global::EA.ConnectorTag)
+		{
+			newTaggedValue = this.createRelationTag((global::EA.ConnectorTag)objectToWrap);
+		}
+		else if (objectToWrap is global::EA.ParamTag)
+		{
+			newTaggedValue = this.createParameterTag((global::EA.ParamTag)objectToWrap);
+		}
+		return newTaggedValue;
+	}
+	
+	public ElementTag createElementTag(global::EA.TaggedValue objectToWrap)
+	{
+		return new ElementTag((Model)this.model,objectToWrap);
+	}
+	public AttributeTag createAttributeTag(global::EA.AttributeTag objectToWrap)
+	{
+		return new AttributeTag((Model)this.model,objectToWrap);
+	}
+	public OperationTag createOperationTag(global::EA.MethodTag objectToWrap)
+	{
+		return new OperationTag((Model)this.model,objectToWrap);
+	}
+	public RelationTag createRelationTag(global::EA.ConnectorTag objectToWrap)
+	{
+		return new RelationTag((Model)this.model,objectToWrap);
+	}
+	public ParameterTag createParameterTag(global::EA.ParamTag objectToWrap)
+	{
+		return new ParameterTag((Model)this.model,objectToWrap);
+	}
   }
 }

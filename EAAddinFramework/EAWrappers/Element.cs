@@ -99,5 +99,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return string.Empty;
 		}
 	}
+  	/// <summary>
+  	/// default empty implementation
+  	/// </summary>
+	public virtual HashSet<UML.Profiles.TaggedValue> taggedValues {
+		get {
+			return new HashSet<UML.Profiles.TaggedValue>();
+		}
+		set {
+			//do nothing
+		}
+	}
   }
 }
