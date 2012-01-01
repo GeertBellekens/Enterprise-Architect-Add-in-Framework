@@ -52,5 +52,16 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 	
 	public abstract UML.Classes.Kernel.Element owner { get;  set; }
 	
+	
+	public void select()
+	{
+		this.owner.select();
+	}
+	
+	public void open()
+	{
+		this.owner.open();
+	}
+	public abstract string ea_guid {get;}
 }
 }

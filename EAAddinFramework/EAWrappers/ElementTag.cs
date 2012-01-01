@@ -47,5 +47,13 @@ public class ElementTag : TaggedValue
 			throw new NotImplementedException();
 		}
 	}
+	
+	public override string ea_guid 
+	{
+		get 
+		{
+			return this.wrappedTaggedValue.PropertyGUID;
+		}
+	}
 }
 }

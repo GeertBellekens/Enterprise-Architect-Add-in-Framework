@@ -442,5 +442,265 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 		}
 	}
+  	
+	public HashSet<UML.Profiles.TaggedValue> getTaggedValuesWithValue(string value)
+	{
+		HashSet<UML.Profiles.TaggedValue> taggedValues = new HashSet<TSF.UmlToolingFramework.UML.Profiles.TaggedValue>();
+		
+		//elements
+		foreach (ElementTag elementTag in this.getElementTagsWithValue(value))
+		{
+			taggedValues.Add(elementTag);
+		}
+		//attribute
+		foreach (AttributeTag attributeTag in this.getAttributeTagsWithValue(value))
+		{
+			taggedValues.Add(attributeTag);
+		}
+		//operations
+		foreach (OperationTag operationTag in this.getOperationTagsWithValue(value))
+		{
+			taggedValues.Add(operationTag);
+		}
+		//parameters
+		foreach (ParameterTag parameterTag in this.getParameterTagsWithValue(value))
+		{
+			taggedValues.Add(parameterTag);
+		}
+		//relations
+		foreach (RelationTag relationTag in this.getRelationTagsWithValue(value))
+		{
+			taggedValues.Add(relationTag);
+		}
+		return taggedValues;
+	}
+	public HashSet<ElementTag> getElementTagsWithValue(string value)
+	{
+		HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
+		string sqlFindGUIDS = @"select ea_guid from t_objectproperties
+								where value = '"+ value + "'";
+		// get the nodes with the name "ea_guid"
+	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes("//ea_guid");
+	    foreach (XmlNode guidNode in tagGUIDNodes) 
+	    {
+	    	ElementTag elementTag =  this.getElementTagByGUID(guidNode.InnerText);
+	    	if (elementTag != null)
+	    	{
+	    		elementTags.Add(elementTag);
+	    	}
+	    }
+	    return elementTags;
+	}
+	public ElementTag getElementTagByGUID(string GUID)
+	{
+		ElementTag elementTag = null;
+		string getElementWrappers = @"select object_id from t_objectproperties
+									where ea_guid = '"+ GUID +"'";
+		XmlDocument xmlElementIDs = this.SQLQuery(getElementWrappers);
+	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//object_id");
+	    if (elementNode != null)
+	    {
+	    	int objectID ;
+	    	if (int.TryParse(elementNode.InnerText,out objectID))
+	    	{
+	    		ElementWrapper owner = this.getElementWrapperByID(objectID);
+	    		if(owner != null)
+	    		{
+		    		foreach (TaggedValue taggedValue in owner.taggedValues) 
+		    		{
+		    			if (taggedValue.ea_guid.Equals(GUID,StringComparison.InvariantCultureIgnoreCase))
+		    			{
+		    				elementTag = taggedValue as ElementTag;
+		    			}
+		    		}
+	    		}
+	    	}
+	    	
+	    }
+	    return elementTag;
+		
+	}
+	public List<AttributeTag> getAttributeTagsWithValue(string value)
+	{
+		List<AttributeTag> attributeTags = new List<AttributeTag>();
+		string sqlFindGUIDS = @"select ea_guid from t_attributetag
+								where value = '"+ value + "'";
+		// get the nodes with the name "ea_guid"
+	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    foreach (XmlNode guidNode in tagGUIDNodes) 
+	    {
+	    	AttributeTag attributeTag =  this.getAttributeTagByGUID(guidNode.InnerText);
+	    	if (attributeTag != null)
+	    	{
+	    		attributeTags.Add(attributeTag);
+	    	}
+	    }
+		return attributeTags;
+	}
+	public AttributeTag getAttributeTagByGUID(string GUID)
+	{
+		AttributeTag attributeTag = null;
+		string getAttributes = @"select elementid from t_attributetag
+									where ea_guid = '"+ GUID +"'";
+		XmlDocument xmlElementIDs = this.SQLQuery(getAttributes);
+	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+	    if (elementNode != null)
+	    {
+	    	int objectID ;
+	    	if (int.TryParse(elementNode.InnerText,out objectID))
+	    	{
+	    		Attribute owner = this.getAttributeByID(objectID);
+	    		if(owner != null)
+	    		{
+		    		foreach (TaggedValue taggedValue in owner.taggedValues) 
+		    		{
+		    			if (taggedValue.ea_guid.Equals(GUID,StringComparison.InvariantCultureIgnoreCase))
+		    			{
+		    				attributeTag = taggedValue as AttributeTag;
+		    			}
+		    		}
+	    		}
+	    	}
+	    }
+	    return attributeTag;
+	}
+	
+	public List<OperationTag> getOperationTagsWithValue(string value)
+	{
+		List<OperationTag> operationTags = new List<OperationTag>();
+		string sqlFindGUIDS = @"select ea_guid from t_operationtag
+								where value = '"+ value + "'";
+		// get the nodes with the name "ea_guid"
+	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    foreach (XmlNode guidNode in tagGUIDNodes) 
+	    {
+	    	OperationTag operationTag =  this.getOperationTagByGUID(guidNode.InnerText);
+	    	if (operationTag != null)
+	    	{
+	    		operationTags.Add(operationTag);
+	    	}
+	    }
+		return operationTags;
+	}
+	public OperationTag getOperationTagByGUID(string GUID)
+	{
+		OperationTag operationTag = null;
+		string getOperations = @"select elementid from t_operationtag
+									where ea_guid = '"+ GUID +"'";
+		XmlDocument xmlElementIDs = this.SQLQuery(getOperations);
+	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+	    if (elementNode != null)
+	    {
+	    	int objectID ;
+	    	if (int.TryParse(elementNode.InnerText,out objectID))
+	    	{
+	    		Operation owner = this.getOperationByID(objectID) as Operation;
+	    		if(owner != null)
+	    		{
+		    		foreach (TaggedValue taggedValue in owner.taggedValues) 
+		    		{
+		    			if (taggedValue.ea_guid.Equals(GUID,StringComparison.InvariantCultureIgnoreCase))
+		    			{
+		    				operationTag = taggedValue as OperationTag;
+		    			}
+		    		}
+	    		}
+	    	}
+	    }
+	    return operationTag;
+	}
+	public List<ParameterTag> getParameterTagsWithValue(string value)
+	{
+		List<ParameterTag> parameterTags = new List<ParameterTag>();
+		string sqlFindGUIDS = @"select propertyid from t_taggedvalue
+								where notes = '"+ value + "'";
+		// get the nodes with the name "ea_guid"
+	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//propertyid");
+	    foreach (XmlNode guidNode in tagGUIDNodes) 
+	    {
+	    	ParameterTag parameterTag =  this.getParameterTagByGUID(guidNode.InnerText);
+	    	if (parameterTag != null)
+	    	{
+	    		parameterTags.Add(parameterTag);
+	    	}
+	    }
+		return parameterTags;
+	}
+	public ParameterTag getParameterTagByGUID(string GUID)
+	{
+		ParameterTag parameterTag = null;
+		string getParameters = @"select elementid from t_taggedvalue
+									where propertyid = '"+ GUID +"'";
+		XmlDocument xmlElementIDs = this.SQLQuery(getParameters);
+	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+	    if (elementNode != null)
+	    {
+	    	
+	    	if (elementNode.InnerText.Length > 0)
+	    	{
+	    		Parameter owner = this.getParameterByGUID(elementNode.InnerText);
+	    		if(owner != null)
+	    		{
+		    		foreach (TaggedValue taggedValue in owner.taggedValues) 
+		    		{
+		    			if (taggedValue.ea_guid.Equals(GUID,StringComparison.InvariantCultureIgnoreCase))
+		    			{
+		    				parameterTag = taggedValue as ParameterTag;
+		    			}
+		    		}
+	    		}
+	    	}
+	    }
+	    return parameterTag;
+	}
+	public List<RelationTag> getRelationTagsWithValue(string value)
+	{
+		List<RelationTag> relationTags = new List<RelationTag>();
+		string sqlFindGUIDS = @"select ea_guid from t_connectortag
+								where value = '"+ value + "'";
+		// get the nodes with the name "ea_guid"
+	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    foreach (XmlNode guidNode in tagGUIDNodes) 
+	    {
+	    	RelationTag relationTag =  this.getRelationTagByGUID(guidNode.InnerText);
+	    	if (relationTag != null)
+	    	{
+	    		relationTags.Add(relationTag);
+	    	}
+	    }
+		return relationTags;
+	}
+	public RelationTag getRelationTagByGUID(string GUID)
+	{
+		RelationTag relationTag = null;
+		string getRelations = @"select elementid from t_connectortag
+									where ea_guid = '"+ GUID +"'";
+		XmlDocument xmlElementIDs = this.SQLQuery(getRelations);
+	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+	    if (elementNode != null)
+	    {
+	    	int objectID ;
+	    	if (int.TryParse(elementNode.InnerText,out objectID))
+	    	{
+	    		ConnectorWrapper owner = this.getRelationByID(objectID);
+	    		if(owner != null)
+	    		{
+		    		foreach (TaggedValue taggedValue in owner.taggedValues) 
+		    		{
+		    			if (taggedValue.ea_guid.Equals(GUID,StringComparison.InvariantCultureIgnoreCase))
+		    			{
+		    				relationTag = taggedValue as RelationTag;
+		    			}
+		    		}
+	    		}
+	    	}
+	    }
+	    return relationTag;
+	}
   }
 }

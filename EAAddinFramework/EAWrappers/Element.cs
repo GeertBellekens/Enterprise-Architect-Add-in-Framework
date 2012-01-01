@@ -110,5 +110,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//do nothing
 		}
 	}
+  	/// <summary>
+  	/// default empty implementation
+  	/// </summary>
+  	/// <returns>empty set</returns>
+	public virtual HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
+	{
+		return new HashSet<UML.Profiles.TaggedValue>();
+	}
   }
 }

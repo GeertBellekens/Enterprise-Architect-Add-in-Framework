@@ -972,6 +972,12 @@
             opens the element. 
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getReferencingTaggedValues">
+            <summary>
+            default empty implementation
+            </summary>
+            <returns>empty set</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.

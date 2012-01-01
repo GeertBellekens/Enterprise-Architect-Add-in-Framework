@@ -47,5 +47,13 @@ public class RelationTag : TaggedValue
 			throw new NotImplementedException();
 		}
 	}
+	
+	public override string ea_guid 
+	{
+		get 
+		{
+			return this.wrappedTaggedValue.TagGUID;
+		}
+	}
 }
 }
