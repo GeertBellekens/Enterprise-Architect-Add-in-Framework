@@ -214,6 +214,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return new Activity(this.model as Model, elementToWrap);
 		case "StateMachine":
 			return new StateMachine(this.model as Model, elementToWrap);
+		case "Package":
+			int packageID;
+			if (int.TryParse(elementToWrap.MiscData[0],out packageID))
+		    {
+				return ((Model)this.model).getElementWrapperByPackageID(packageID);
+		    }
+			else 
+			{
+				throw new Exception("WrappedElement "+ elementToWrap.Name +" is not a package");
+			}
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }

@@ -327,11 +327,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       throw new NotImplementedException();
     }
 
-    internal UML.Classes.Kernel.Element getElementWrapperByPackageID
-      (int packageID)
+    internal ElementWrapper getElementWrapperByPackageID(int packageID)
     {
-      return this.factory.createElement
-        ( this.wrappedModel.GetPackageByID(packageID).Element );
+      return this.factory.createElement(this.wrappedModel.GetPackageByID(packageID)) as ElementWrapper;
     }
 
     //returns a list of diagrams according to the given query.
@@ -478,7 +476,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_objectproperties
-								where value = '"+ value + "'";
+								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes("//ea_guid");
@@ -496,7 +494,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		ElementTag elementTag = null;
 		string getElementWrappers = @"select object_id from t_objectproperties
-									where ea_guid = '"+ GUID +"'";
+									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getElementWrappers);
 	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//object_id");
 	    if (elementNode != null)
@@ -525,7 +523,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<AttributeTag> attributeTags = new List<AttributeTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_attributetag
-								where value = '"+ value + "'";
+								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
@@ -543,7 +541,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		AttributeTag attributeTag = null;
 		string getAttributes = @"select elementid from t_attributetag
-									where ea_guid = '"+ GUID +"'";
+									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getAttributes);
 	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
 	    if (elementNode != null)
@@ -571,7 +569,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<OperationTag> operationTags = new List<OperationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_operationtag
-								where value = '"+ value + "'";
+								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
@@ -589,7 +587,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		OperationTag operationTag = null;
 		string getOperations = @"select elementid from t_operationtag
-									where ea_guid = '"+ GUID +"'";
+									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getOperations);
 	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
 	    if (elementNode != null)
@@ -616,7 +614,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<ParameterTag> parameterTags = new List<ParameterTag>();
 		string sqlFindGUIDS = @"select propertyid from t_taggedvalue
-								where notes = '"+ value + "'";
+								where notes like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//propertyid");
@@ -634,7 +632,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		ParameterTag parameterTag = null;
 		string getParameters = @"select elementid from t_taggedvalue
-									where propertyid = '"+ GUID +"'";
+									where propertyid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getParameters);
 	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
 	    if (elementNode != null)
@@ -661,7 +659,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<RelationTag> relationTags = new List<RelationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_connectortag
-								where value = '"+ value + "'";
+								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
@@ -679,7 +677,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		RelationTag relationTag = null;
 		string getRelations = @"select elementid from t_connectortag
-									where ea_guid = '"+ GUID +"'";
+									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getRelations);
 	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
 	    if (elementNode != null)

@@ -1095,6 +1095,12 @@
             <param name="model">the model containing the element</param>
             <param name="wrappedElement">the EA.Element to be wrapped</param>
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
+            <summary>
+            not fully correct, but we will return the element at the source of the relation
+            TODO: fix this so it uses the actual ownership as prescribed by UML
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
             the stereotypes defined on this Relationship
         </member>

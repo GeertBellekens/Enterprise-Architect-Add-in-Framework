@@ -17,6 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.wrappedPackage = package;
 		}
+
 		
 		public TSF.UmlToolingFramework.UML.Classes.Kernel.PackageableElement ownedMembers {
 			get {

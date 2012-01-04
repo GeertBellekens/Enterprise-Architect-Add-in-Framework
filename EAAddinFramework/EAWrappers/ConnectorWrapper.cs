@@ -17,14 +17,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { throw new NotImplementedException(); }
     }
-    
+
     public override HashSet<UML.Classes.Kernel.Comment> ownedComments {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+    /// <summary>
+    /// not fully correct, but we will return the element at the source of the relation
+    /// TODO: fix this so it uses the actual ownership as prescribed by UML
+    /// </summary>
     public override UML.Classes.Kernel.Element owner {
-      get { throw new NotImplementedException(); }
+      get 
+      {
+    		return this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
+      }
       set { throw new NotImplementedException(); }
     }
     /// the stereotypes defined on this Relationship
