@@ -12,7 +12,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       this.wrappedConnector = connector;
     }
-    
+	public override void open()
+	{
+		this.owner.open();
+	}
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { throw new NotImplementedException(); }

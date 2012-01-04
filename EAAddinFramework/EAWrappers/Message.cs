@@ -26,7 +26,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         		// do nothing
         	}
         }
-
+		public override void open()
+		{
+			Diagram diagram = this.model.getDiagramByID(this.wrappedConnector.DiagramID);
+			if (diagram != null)
+			{
+				diagram.open();
+				//TODO add selection of message in the diagram
+			}
+		}
         public UML.Interactions.BasicInteractions.MessageSort messageSort
         {
             get { throw new NotImplementedException(); }
