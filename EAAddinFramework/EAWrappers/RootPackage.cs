@@ -39,5 +39,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				throw new NotImplementedException();
 			}
 		}
+		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner 
+		{
+			get 
+			{ 
+				return null;
+			}
+			set 
+			{ 
+				//do nothing, rotpackages don't have an owner
+			}
+		}
+		public override HashSet<UML.Profiles.TaggedValue> taggedValues 
+		{
+			//in EA the rootpackage can't have tagged values
+			get 
+			{ 
+				return new HashSet<UML.Profiles.TaggedValue>();
+			}
+			set 
+			{
+				//do nothing
+			}
+		}
+		public override HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
+		{
+			return this.model.getTaggedValuesWithValue(this.wrappedPackage.PackageGUID);
+		}
 	}
 }
