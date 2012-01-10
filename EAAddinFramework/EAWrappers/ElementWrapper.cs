@@ -434,7 +434,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get 
 		{
-			string sqlQuery = "select OperationID from t_operation where Behaviour = '" + this.wrappedElement.ElementGUID + "'";
+			string sqlQuery = "select OperationID from t_operation where Behaviour like '" + this.wrappedElement.ElementGUID + "'";
 			List<Operation> operations =  this.model.getOperationsByQuery(sqlQuery);
 			if (operations.Count > 0)
 			{
