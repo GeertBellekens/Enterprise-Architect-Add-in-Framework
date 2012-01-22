@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.Linq;
 using System.Windows.Forms;
+using EAAddinFramework.EASpecific;
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -700,5 +701,100 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    }
 	    return relationTag;
 	}
+	/// <summary>
+	/// all users defined in this model
+	/// </summary>
+	public List<User> users
+	{
+		get
+		{
+			List<User> userList = new List<User>();
+			string getUsers = "select u.UserLogin, u.FirstName, u.Surname from t_secuser u";
+			XmlDocument users = this.SQLQuery(getUsers);
+			foreach (XmlNode userNode in users.SelectNodes("//Row")) 
+			{
+				string login= string.Empty;
+				string firstName = string.Empty;
+				string lastName = string.Empty;
+				foreach (XmlNode subNode in userNode.ChildNodes) 
+				{
+					switch (subNode.Name.ToLower()) 
+					{
+						case "userlogin":
+							login = subNode.InnerText;
+							break;
+						case "firstname":
+							firstName = subNode.InnerText;
+							break;
+						case "surname":
+							lastName = subNode.InnerText;
+							break;
+					}
+				}	
+				userList.Add(((Factory)this.factory).createUser(login,firstName,lastName));				
+			}
+			return userList;
+		}
+	}
+	/// <summary>
+	/// Contains the currently logged in user.
+	/// Returns null is security not enabled.
+	/// </summary>
+	public User currentUser
+	{
+		get
+		{
+			try
+			{
+				string currentUserLogin = this.wrappedModel.GetCurrentLoginUser(false);
+				return this.users.Find(u => u.login.Equals(currentUserLogin,StringComparison.InvariantCultureIgnoreCase));
+			}catch (System.Runtime.InteropServices.COMException e)
+			{
+				if (e.Message == "Security not enabled")
+				{
+					return null;	
+				}
+				else 
+				{
+					throw e;
+				}
+			}
+			
+		}
+	}
+	public List<WorkingSet> workingSets
+	{
+		get
+		{
+			List<WorkingSet> workingSetList = new List<WorkingSet>();
+			string getWorkingSets = "select d.docid, d.DocName,d.Author from t_document d where d.DocType = 'WorkItem'";
+			XmlDocument workingSets = this.SQLQuery(getWorkingSets);
+			foreach (XmlNode workingSetNode in workingSets.SelectNodes("//Row")) 
+			{
+				string name= string.Empty;
+				string id = string.Empty;
+				string ownerFullName = string.Empty;
+				foreach (XmlNode subNode in workingSetNode.ChildNodes) 
+				{
+					switch (subNode.Name.ToLower()) 
+					{
+						case "docid":
+							id = subNode.InnerText;
+							break;
+						case "docname":
+							name = subNode.InnerText;
+							break;
+						case "author":
+							ownerFullName = subNode.InnerText;
+							break;
+					}
+				}
+				User owner = this.users.Find(u => (u.firstName + " " + u.lastName).Equals(ownerFullName,StringComparison.InvariantCultureIgnoreCase));
+				workingSetList.Add(((Factory)this.factory).createWorkingSet(name,id,owner));				
+			}
+			return workingSetList;
+		}
+	}
+	
   }
 }

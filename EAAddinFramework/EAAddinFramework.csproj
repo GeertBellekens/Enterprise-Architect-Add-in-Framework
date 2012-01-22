@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EASpecific\User.cs" />
+    <Compile Include="EASpecific\WorkingSet.cs" />
     <Compile Include="EAWrappers\Action.cs" />
     <Compile Include="EAWrappers\Activity.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />
@@ -102,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EAWrappers" />
+    <Folder Include="EASpecific" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />

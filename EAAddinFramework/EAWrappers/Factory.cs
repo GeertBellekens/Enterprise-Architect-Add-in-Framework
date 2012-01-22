@@ -385,5 +385,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return new ParameterTag((Model)this.model,objectToWrap);
 	}
+	public EAAddinFramework.EASpecific.User createUser(string login, string firstname, string lastname)
+	{
+		return new EAAddinFramework.EASpecific.User((Model)this.model,login,firstname,lastname);
+	}
+	public EAAddinFramework.EASpecific.WorkingSet createWorkingSet(string name,string ID, EAAddinFramework.EASpecific.User user)
+	{
+		return new EAAddinFramework.EASpecific.WorkingSet((Model)this.model,ID,user,name);
+	}
   }
 }

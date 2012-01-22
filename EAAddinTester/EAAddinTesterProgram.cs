@@ -33,8 +33,10 @@ namespace EAAddinTester
         }
         private static void addAddIns()
         {
-        	addins.Add(new MyAddin.MyAddinClass());
-        	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
+        	//addins.Add(new MyAddin.MyAddinClass());
+        	//addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
+        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
+        	
         }
 		
         internal static void SetMenu(string location, ToolStripMenuItem addinMenu,string menuName)

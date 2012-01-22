@@ -947,6 +947,25 @@
             Set these options in the constructor of the derived add-in class
             </summary>
         </member>
+        <member name="T:EAAddinFramework.EASpecific.User">
+            <summary>
+            Description of User.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.User.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String,System.String,System.String)">
+            <summary>
+            creates a new user based on the given details
+            </summary>
+            <param name="model">the model containing the user</param>
+            <param name="login">the string used to log in into the tool</param>
+            <param name="firstName">the first name of the user</param>
+            <param name="lastName">the last name of the user</param>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.WorkingSet">
+            <summary>
+            Description of WorkingSet.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
             <summary>
             Description of Action.
@@ -1326,6 +1345,17 @@
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.factory">
             returns the correct type of factory for this model
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.users">
+            <summary>
+            all users defined in this model
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.currentUser">
+            <summary>
+            Contains the currently logged in user.
+            Returns null is security not enabled.
+            </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">
             A comment is a textual annotation that can be attached to a set of 
