@@ -966,6 +966,12 @@
             Description of WorkingSet.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.WorkingSet.copyToUser(EAAddinFramework.EASpecific.User)">
+            <summary>
+            copy the workingset tot the given user
+            </summary>
+            <param name="user">the user to copy the working set to</param>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
             <summary>
             Description of Action.
@@ -1355,6 +1361,11 @@
             <summary>
             Contains the currently logged in user.
             Returns null is security not enabled.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.workingSets">
+            <summary>
+            The working sets defined in this model
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">

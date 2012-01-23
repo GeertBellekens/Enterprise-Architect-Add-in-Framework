@@ -708,30 +708,48 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get
 		{
+			
 			List<User> userList = new List<User>();
-			string getUsers = "select u.UserLogin, u.FirstName, u.Surname from t_secuser u";
-			XmlDocument users = this.SQLQuery(getUsers);
-			foreach (XmlNode userNode in users.SelectNodes("//Row")) 
+			if (this.isSecurityEnabled)
 			{
-				string login= string.Empty;
-				string firstName = string.Empty;
-				string lastName = string.Empty;
-				foreach (XmlNode subNode in userNode.ChildNodes) 
+				string getUsers = "select u.UserLogin, u.FirstName, u.Surname from t_secuser u";
+				XmlDocument users = this.SQLQuery(getUsers);
+				foreach (XmlNode userNode in users.SelectNodes("//Row")) 
 				{
-					switch (subNode.Name.ToLower()) 
+					string login= string.Empty;
+					string firstName = string.Empty;
+					string lastName = string.Empty;
+					foreach (XmlNode subNode in userNode.ChildNodes) 
 					{
-						case "userlogin":
-							login = subNode.InnerText;
-							break;
-						case "firstname":
-							firstName = subNode.InnerText;
-							break;
-						case "surname":
-							lastName = subNode.InnerText;
-							break;
-					}
-				}	
-				userList.Add(((Factory)this.factory).createUser(login,firstName,lastName));				
+						switch (subNode.Name.ToLower()) 
+						{
+							case "userlogin":
+								login = subNode.InnerText;
+								break;
+							case "firstname":
+								firstName = subNode.InnerText;
+								break;
+							case "surname":
+								lastName = subNode.InnerText;
+								break;
+						}
+					}	
+					userList.Add(((Factory)this.factory).createUser(login,firstName,lastName));				
+				}
+			}
+			else
+			{
+				//security not enabled. List of all users is the list of all authors mentioned in the t_object table.
+				string getUsers = "select distinct o.author from t_object o";
+				XmlDocument users = this.SQLQuery(getUsers);
+				foreach (XmlNode authorNode in users.SelectNodes("//author")) 
+				{
+					string login= authorNode.InnerText;
+					string firstName = string.Empty;
+					string lastName = string.Empty;
+					//add user	
+					userList.Add(((Factory)this.factory).createUser(login,firstName,lastName));	
+				}
 			}
 			return userList;
 		}
@@ -744,24 +762,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get
 		{
-			try
+			string currentUserLogin = string.Empty;
+			if (this.isSecurityEnabled)
 			{
-				string currentUserLogin = this.wrappedModel.GetCurrentLoginUser(false);
-				return this.users.Find(u => u.login.Equals(currentUserLogin,StringComparison.InvariantCultureIgnoreCase));
-			}catch (System.Runtime.InteropServices.COMException e)
-			{
-				if (e.Message == "Security not enabled")
-				{
-					return null;	
-				}
-				else 
-				{
-					throw e;
-				}
+				currentUserLogin = this.wrappedModel.GetCurrentLoginUser(false);
 			}
-			
+			else
+			{
+				currentUserLogin = Environment.UserName;
+			}
+			return this.users.Find(u => u.login.Equals(currentUserLogin,StringComparison.InvariantCultureIgnoreCase));
 		}
 	}
+	/// <summary>
+	/// The working sets defined in this model
+	/// </summary>
 	public List<WorkingSet> workingSets
 	{
 		get
@@ -789,10 +804,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 							break;
 					}
 				}
-				User owner = this.users.Find(u => (u.firstName + " " + u.lastName).Equals(ownerFullName,StringComparison.InvariantCultureIgnoreCase));
+				User owner = this.users.Find(u => u.fullName.Equals(ownerFullName,StringComparison.InvariantCultureIgnoreCase));
 				workingSetList.Add(((Factory)this.factory).createWorkingSet(name,id,owner));				
 			}
 			return workingSetList;
+		}
+	}
+	public bool isSecurityEnabled
+	{
+		get
+		{
+			try
+			{
+				this.wrappedModel.GetCurrentLoginUser();
+				return true;
+			}
+			catch (System.Runtime.InteropServices.COMException e)
+			{
+				if (e.Message == "Security not enabled")
+				{
+					return false;
+				}
+				else 
+				{
+					throw e;
+				}
+			}
 		}
 	}
 	

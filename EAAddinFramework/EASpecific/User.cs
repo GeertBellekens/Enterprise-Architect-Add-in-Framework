@@ -14,6 +14,20 @@ namespace EAAddinFramework.EASpecific
 		public string login {get;set;}
 		public string firstName {get;set;}
 		public string lastName {get;set;}
+		public string fullName
+		{
+			get
+			{
+				if (this.model.isSecurityEnabled)
+				{
+					return this.firstName + " " + this.lastName;
+				}
+				else
+				{
+					return this.login;
+				}
+			}
+		}
 		
 		/// <summary>
 		/// creates a new user based on the given details
