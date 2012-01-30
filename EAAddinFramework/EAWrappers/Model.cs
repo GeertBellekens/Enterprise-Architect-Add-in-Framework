@@ -356,7 +356,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     internal UML.Classes.Kernel.Operation getOperationByGUID(string guid)
     {
-        return this.factory.createElement(this.wrappedModel.GetMethodByGuid(guid)) as UML.Classes.Kernel.Operation;
+    	Operation operation = this.factory.createElement(this.wrappedModel.GetMethodByGuid(guid)) as Operation;
+    	if (operation == null)
+    	{
+    		List<OperationTag> tags = this.getOperationTagsWithValue(guid);
+    		
+    		foreach ( OperationTag tag in tags)
+    		{
+	    		if (tag != null && tag.name == "ea_guid")
+	    		{
+	    			operation = tag.owner as Operation;
+	    		}
+    		}
+    	}
+    	return operation;
+        
     }
     internal UML.Classes.Kernel.Operation getOperationByID(int operationID)
     {
@@ -782,7 +796,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		get
 		{
 			List<WorkingSet> workingSetList = new List<WorkingSet>();
-			string getWorkingSets = "select d.docid, d.DocName,d.Author from t_document d where d.DocType = 'WorkItem'";
+			string getWorkingSets = "select d.docid, d.DocName,d.Author from t_document d where d.DocType = 'WorkItem' order by d.Author, d.DocName";
 			XmlDocument workingSets = this.SQLQuery(getWorkingSets);
 			foreach (XmlNode workingSetNode in workingSets.SelectNodes("//Row")) 
 			{
@@ -810,6 +824,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return workingSetList;
 		}
 	}
+	/// <summary>
+	/// returns true if security is enabled in this model
+	/// </summary>
 	public bool isSecurityEnabled
 	{
 		get

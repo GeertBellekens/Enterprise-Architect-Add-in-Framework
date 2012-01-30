@@ -1368,6 +1368,11 @@
             The working sets defined in this model
             </summary>
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.isSecurityEnabled">
+            <summary>
+            returns true if security is enabled in this model
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">
             A comment is a textual annotation that can be attached to a set of 
             elements. This class wraps notes that can be made visible on a diagram.
