@@ -966,11 +966,18 @@
             Description of WorkingSet.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.EASpecific.WorkingSet.copyToUser(EAAddinFramework.EASpecific.User)">
+        <member name="M:EAAddinFramework.EASpecific.WorkingSet.copyToUser(EAAddinFramework.EASpecific.User,System.Boolean)">
             <summary>
             copy the workingset tot the given user
             </summary>
             <param name="user">the user to copy the working set to</param>
+            <param name="overwrite">if true then the first workingset found with the same name
+            for the given user will be overwritten</param>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.WorkingSet.delete">
+            <summary>
+            deletes the workingset from the database
+            </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
             <summary>

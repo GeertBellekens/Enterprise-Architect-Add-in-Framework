@@ -172,7 +172,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <summary>
     /// gets the Attribute with the given ID
     /// </summary>
-    /// <param name="GUID">the attribute's ID</param>
+    /// <param name="attributID">the attribute's ID</param>
     /// <returns>the Attribute with the given ID</returns>
     public Attribute getAttributeByID (int attributID)
     {
