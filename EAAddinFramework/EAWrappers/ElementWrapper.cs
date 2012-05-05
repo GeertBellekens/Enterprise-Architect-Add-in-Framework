@@ -197,7 +197,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public UML.Classes.Kernel.Namespace owningNamespace {
-      get { throw new NotImplementedException(); }
+      get {
+    		return this.model.getElementWrapperByPackageID(wrappedElement.PackageID) as Package;
+    	}
       set { throw new NotImplementedException(); }
     }
     

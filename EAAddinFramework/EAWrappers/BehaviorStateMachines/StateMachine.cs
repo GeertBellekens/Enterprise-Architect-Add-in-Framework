@@ -4,12 +4,13 @@ using System.Linq;
 
 using UML=TSF.UmlToolingFramework.UML;
 
-namespace TSF.UmlToolingFramework.Wrappers.EA {
+namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	/// <summary>
 	/// Description of StateMachine.
 	/// </summary>
 	public class StateMachine:ElementWrapper,UML.StateMachines.BehaviorStateMachines.StateMachine
 	{
+				
 		/// <summary>
 		/// default constructor, calls parent constructor
 		/// </summary>
@@ -22,7 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		
 		public HashSet<TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines.Region> regions {
 			get {
-				throw new NotImplementedException();
+				return ((Factory)this.model.factory).createBehaviourStateMachineRegions(this);
 			}
 			set {
 				throw new NotImplementedException();
