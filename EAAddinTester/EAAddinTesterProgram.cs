@@ -25,6 +25,7 @@ namespace EAAddinTester
             eaRepository = getOpenedModel();
             if (eaRepository != null)
             {
+            	initializeAddins();
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 form = new EAAddinTesterForm();
@@ -34,11 +35,18 @@ namespace EAAddinTester
         private static void addAddIns()
         {
         	//addins.Add(new MyAddin.MyAddinClass());
-        	//addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
+        	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
         	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
         	
         }
-		
+        private static void initializeAddins()
+        {
+        	foreach ( EAAddinFramework.EAAddinBase addin in addins) 
+        	{
+        		addin.EA_FileOpen(eaRepository);
+        		addin.EA_OnPostInitialized(eaRepository);
+        	}
+        }
         internal static void SetMenu(string location, ToolStripMenuItem addinMenu,string menuName)
         {
         	// first remove dropdownItems

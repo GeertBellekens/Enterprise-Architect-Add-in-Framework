@@ -15,7 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedElement = wrappedElement;
     }
 
-    public virtual String name {
+    public override string name {
       get { return this.wrappedElement.Name;  }
       set { this.wrappedElement.Name = value; }
     }
@@ -461,5 +461,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return this.model.getTaggedValuesWithValue(this.wrappedElement.ElementGUID);
 	}
+  	
+
   }
 }

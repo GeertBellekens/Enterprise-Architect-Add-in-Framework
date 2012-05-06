@@ -192,5 +192,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return item; 
 	}
+public string fqn 
+	{
+		get 
+		{
+			string nodepath = string.Empty;
+			if (this.owner != null)
+			{
+				nodepath = this.owner.fqn;
+			}
+			if (this.name.Length > 0)
+			{
+				if (nodepath.Length > 0) 
+				{
+					nodepath = nodepath + ".";
+				}
+				nodepath = nodepath + this.name;
+			}			
+			return nodepath;
+		}
+	}
   }
 }

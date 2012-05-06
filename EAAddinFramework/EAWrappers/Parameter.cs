@@ -28,7 +28,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public abstract bool isOrdered { get; set; }
     public abstract bool isUnique { get; set; }
     public abstract int lower { get; set; }
-    public abstract String name { get; set; }
+    
     public abstract String qualifiedName { get; set; }
 
     public List<UML.Classes.Dependencies.Dependency> clientDependencies {

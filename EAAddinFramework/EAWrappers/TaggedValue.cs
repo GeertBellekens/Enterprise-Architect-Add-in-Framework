@@ -63,5 +63,26 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 		this.owner.open();
 	}
 	public abstract string ea_guid {get;}
+		
+	public string fqn 
+	{
+		get 
+		{
+			string nodepath = string.Empty;
+			if (this.owner != null)
+			{
+				nodepath = this.owner.fqn;
+			}
+			if (this.name.Length > 0)
+			{
+				if (nodepath.Length > 0) 
+				{
+					nodepath = nodepath + ".";
+				}
+				nodepath = nodepath + this.name;
+			}			
+			return nodepath;
+		}
+	}
 }
 }

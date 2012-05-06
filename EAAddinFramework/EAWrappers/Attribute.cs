@@ -116,7 +116,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
 
-    public string name {
+    public override string name {
       get { return this.wrappedAttribute.Name;  }
       set { this.wrappedAttribute.Name = value; }
     }

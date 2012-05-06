@@ -92,12 +92,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	
 	public abstract TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath);
 	
-	public string name 
+	public virtual string name 
 	{
 		get 
 		{
 			return string.Empty;
 		}
+		set{}
 	}
   	/// <summary>
   	/// default empty implementation
@@ -117,6 +118,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public virtual HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
 	{
 		return new HashSet<UML.Profiles.TaggedValue>();
+	}
+	
+	public string fqn 
+	{
+		get 
+		{
+			string nodepath = string.Empty;
+			if (this.owner != null)
+			{
+				nodepath = this.owner.fqn;
+			}
+			if (this.name.Length > 0)
+			{
+				if (nodepath.Length > 0) 
+				{
+					nodepath = nodepath + ".";
+				}
+				nodepath = nodepath + this.name;
+			}			
+			return nodepath;
+		}
 	}
   }
 }
