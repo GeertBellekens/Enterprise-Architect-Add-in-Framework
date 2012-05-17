@@ -232,14 +232,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                 @"select c.Connector_ID  from ((t_connector c 
                 inner join t_connectortag ct on ct.ElementID = c.Connector_ID) 
                 inner join t_operation o on ct.VALUE = o.ea_guid) 
-                where c.Connector_Type = 'Sequence' 
+                where c.Connector_Type in ('Sequence','Collaboration')
                 and ct.Property = 'operation_guid' 
                 and ct.VALUE = '" + this.wrappedOperation.MethodGUID + @"'
                 Union 
                 select c.Connector_ID  from ((t_connector c 
                 inner join t_connectortag ct on ct.ElementID = c.Connector_ID) 
                 inner join t_operationTag ot on ct.VALUE = ot.VALUE) 
-                where c.Connector_Type = 'Sequence' 
+                where c.Connector_Type in ('Sequence','Collaboration') 
                 and ct.Property = 'operation_guid' 
                 and ot.ElementID = " + this.wrappedOperation.MethodID;
            // return this.model.getRelationsFromQuery(sqlQuery).Cast<UMLMessage>().ToList();

@@ -81,35 +81,38 @@ namespace EAAddinTester
 
             foreach (string menuItem in menuItems)
             {
-                // if the menuItem starts with a "-" then it has submenu items
-                if (menuItem.StartsWith("-"))
-                {
-                    // remove the "-";
-                    string menuItemName = menuItem;
-                    menuItemName = menuItem.Substring(1);
-                    // add the menu item
-                    addinMenu.DropDownItems.Add(menuItemName);
-                    //get the newly added item
-                    ToolStripMenuItem newMenuItem = (ToolStripMenuItem)addinMenu.DropDownItems[addinMenu.DropDownItems.Count - 1];
-                    //add the eventhandler for its subItems
-                    newMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(form.addInsToolStripMenuItem_DropDownItemClicked);
-                    // add its submenu items
-                    SetMenu(location, newMenuItem, menuItem,addin);
-                }
-                // else it is a leaf menu item
-                else
-                {
-                    // add the menu item
-                    addinMenu.DropDownItems.Add(menuItem);
-                    // get the newly added item
-                    ToolStripMenuItem newMenuItem = (ToolStripMenuItem)addinMenu.DropDownItems[addinMenu.DropDownItems.Count - 1];
-                    //set its state, only leaf items get their state set.
-                    bool enabledValue = false;
-                    bool checkedValue = false;
-                    addin.EA_GetMenuState(eaRepository, location, newMenuItem.OwnerItem.Text, newMenuItem.Text, ref enabledValue, ref checkedValue);
-                    newMenuItem.Enabled = enabledValue;
-                    newMenuItem.Checked = checkedValue;
-                }
+            	if (menuItem != null)
+            	{
+	                // if the menuItem starts with a "-" then it has submenu items
+	                if (menuItem.StartsWith("-"))
+	                {
+	                    // remove the "-";
+	                    string menuItemName = menuItem;
+	                    menuItemName = menuItem.Substring(1);
+	                    // add the menu item
+	                    addinMenu.DropDownItems.Add(menuItemName);
+	                    //get the newly added item
+	                    ToolStripMenuItem newMenuItem = (ToolStripMenuItem)addinMenu.DropDownItems[addinMenu.DropDownItems.Count - 1];
+	                    //add the eventhandler for its subItems
+	                    newMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(form.addInsToolStripMenuItem_DropDownItemClicked);
+	                    // add its submenu items
+	                    SetMenu(location, newMenuItem, menuItem,addin);
+	                }
+	                // else it is a leaf menu item
+	                else
+	                {
+	                    // add the menu item
+	                    addinMenu.DropDownItems.Add(menuItem);
+	                    // get the newly added item
+	                    ToolStripMenuItem newMenuItem = (ToolStripMenuItem)addinMenu.DropDownItems[addinMenu.DropDownItems.Count - 1];
+	                    //set its state, only leaf items get their state set.
+	                    bool enabledValue = false;
+	                    bool checkedValue = false;
+	                    addin.EA_GetMenuState(eaRepository, location, newMenuItem.OwnerItem.Text, newMenuItem.Text, ref enabledValue, ref checkedValue);
+	                    newMenuItem.Enabled = enabledValue;
+	                    newMenuItem.Checked = checkedValue;
+	                }
+            	}
             }
       
         }

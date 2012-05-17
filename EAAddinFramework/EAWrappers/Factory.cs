@@ -20,7 +20,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public static new Factory getInstance(){
       return getInstance(new Model());
     }
-
+	/// <summary>
+	/// creates a diagram based on the given EA.Diagram object
+	/// </summary>
+	/// <param name="diagramToWrap">the EA.Diagram object to wrap</param>
+	/// <returns>a diagram wrapping the given EA.Diagram object</returns>
     public override UML.Diagrams.Diagram createDiagram(object diagramToWrap){
         Diagram newDiagram = null;
         global::EA.Diagram eaDiagramToWrap = diagramToWrap as global::EA.Diagram;
@@ -31,6 +35,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	            case "Sequence":
 	                newDiagram = new SequenceDiagram(this.model as Model, eaDiagramToWrap);
 	                break;
+	               case "Collaboration":
+	            	newDiagram = new CommunicationDiagram(this.model as Model, eaDiagramToWrap);
+	            	break;
 	            default:
 	                newDiagram = new Diagram(this.model as Model, eaDiagramToWrap);
 	            	break;
@@ -151,6 +158,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         case "Dependency":
           return new Dependency(this.model as Model, connector);
         case "Sequence":
+        case "Collaboration":
           return new Message(this.model as Model, connector);
         case "Realization":
         case "Realisation":

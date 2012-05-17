@@ -192,7 +192,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return item; 
 	}
-public string fqn 
+	public string fqn 
 	{
 		get 
 		{
@@ -212,5 +212,27 @@ public string fqn
 			return nodepath;
 		}
 	}
+	/// <summary>
+	/// returns all operations called in this sequence diagram
+	/// </summary>
+	/// <returns>all operations called in this sequence diagram</returns>
+	public List<UML.Classes.Kernel.Operation> getCalledOperations()
+	{
+		List<UML.Classes.Kernel.Operation> calledOperations = new List<UML.Classes.Kernel.Operation>();
+		foreach ( DiagramLinkWrapper linkwrapper in this.diagramLinkWrappers) 
+		{
+			Message message = linkwrapper.relation as Message;
+			if (message != null)
+			{
+				UML.Classes.Kernel.Operation operation = message.calledOperation;
+				if (operation != null)
+				{
+					calledOperations.Add(operation);
+				}
+			}
+		}
+		return calledOperations;
+	}
+
   }
 }

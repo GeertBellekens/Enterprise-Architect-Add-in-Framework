@@ -7,15 +7,15 @@ using UML=TSF.UmlToolingFramework.UML;
 namespace TSF.UmlToolingFramework.Wrappers.EA 
 {
 	/// <summary>
-	/// Description of SequenceDiagram.
+	/// Description of CommunicationDiagram.
 	/// </summary>
-	public class SequenceDiagram:Diagram,UML.Diagrams.SequenceDiagram
+	public class CommunicationDiagram:Diagram,UML.Diagrams.CommunicationDiagram
 	{
-		public SequenceDiagram(Model model, global::EA.Diagram wrappedDiagram ):base(model,wrappedDiagram)
+		public CommunicationDiagram(Model model, global::EA.Diagram wrappedDiagram ):base(model,wrappedDiagram)
 		{
 		}
 		
-				/// <summary>
+		/// <summary>
 		/// gets all relations that are specific to this sequence diagram.
 		/// </summary>
 		/// <returns>all messages and other relations of the diagram</returns>

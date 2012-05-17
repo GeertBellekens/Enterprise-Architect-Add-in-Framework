@@ -1204,6 +1204,11 @@
             Specification of the ordered set of argument values that appear during execution. 
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram">
+            <summary>
+            Description of CommunicationDiagram.
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
             find the diagramlink object (if any) that represents the given 
             relation
@@ -1227,9 +1232,21 @@
             <param name="relativePath">list of names inlcuding the own name</param>
             <returns>the item matching the path</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getCalledOperations">
+            <summary>
+            returns all operations called in this sequence diagram
+            </summary>
+            <returns>all operations called in this sequence diagram</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.
             Currently only diagramObjectWrappers and relations
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram.getRelations">
+            <summary>
+            gets all relations that are specific to this sequence diagram.
+            </summary>
+            <returns>all messages and other relations of the diagram</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper">
             A diagramElement that wraps the EA.DiagramLink class.
@@ -1249,6 +1266,13 @@
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance">
             returns the singleton instance for a new model
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createDiagram(System.Object)">
+            <summary>
+            creates a diagram based on the given EA.Diagram object
+            </summary>
+            <param name="diagramToWrap">the EA.Diagram object to wrap</param>
+            <returns>a diagram wrapping the given EA.Diagram object</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createElement(System.Object)">
             creates a new UML element based on the given object to wrap
@@ -1440,12 +1464,6 @@
             <summary>
             Description of SequenceDiagram.
             </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getCalledOperations">
-            <summary>
-            returns all operations called in this sequence diagram
-            </summary>
-            <returns>all operations called in this sequence diagram</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getRelations">
             <summary>
