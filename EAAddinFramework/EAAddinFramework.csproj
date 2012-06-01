@@ -47,6 +47,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -64,6 +65,12 @@
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
     <Compile Include="EAWrappers\AttributeTag.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\FinalState.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\PseudoState.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\Region.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\State.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\StateMachine.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\Vertex.cs" />
     <Compile Include="EAWrappers\CallOperationAction.cs" />
     <Compile Include="EAWrappers\Class.cs" />
     <Compile Include="EAWrappers\CommunicationDiagram.cs" />
@@ -97,7 +104,6 @@
     <Compile Include="EAWrappers\Realization.cs" />
     <Compile Include="EAWrappers\RootPackage.cs" />
     <Compile Include="EAWrappers\SequenceDiagram.cs" />
-    <Compile Include="EAWrappers\StateMachine.cs" />
     <Compile Include="EAWrappers\Stereotype.cs" />
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
@@ -106,6 +112,7 @@
   <ItemGroup>
     <Folder Include="EAWrappers" />
     <Folder Include="EASpecific" />
+    <Folder Include="EAWrappers\BehaviorStateMachines" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />

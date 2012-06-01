@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Internal;
 using System.Xml;
 using UML = TSF.UmlToolingFramework.UML;
 
@@ -221,7 +222,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		case "Activity":
 			return new Activity(this.model as Model, elementToWrap);
 		case "StateMachine":
-			return new StateMachine(this.model as Model, elementToWrap);
+			return new BehaviorStateMachines.StateMachine(this.model as Model, elementToWrap);
+		case "State":
+			return new BehaviorStateMachines.State(this.model as Model, elementToWrap,null);
+		case "StateNode":
+			string metaType = elementToWrap.MetaType;
+			if(metaType == "Pseudostate" ||
+			   metaType == "Synchronisation") {
+				return new BehaviorStateMachines.PseudoState(this.model as Model, elementToWrap,null);
+			}
+			else if(metaType == "FinalState") {
+				return new BehaviorStateMachines.FinalState(this.model as Model, elementToWrap,null);
+			}
+	        return new ElementWrapper(this.model as Model,elementToWrap);
 		case "Package":
 			int packageID;
 			if (int.TryParse(elementToWrap.MiscData[0],out packageID))
@@ -281,6 +294,101 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
       }
       return newStereotypes;
+    }
+    
+    internal HashSet<TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines.Region> 
+    	createBehaviourStateMachineRegions(ElementWrapper elementWrapper)
+    {
+		HashSet<UML.StateMachines.BehaviorStateMachines.Region> newRegions = 
+			new HashSet<UML.StateMachines.BehaviorStateMachines.Region>();
+    	// Get the owning element
+    	ElementWrapper owningElement = getOwningElement(elementWrapper);
+    	global::EA.Diagram masterDiagram = null;
+    	if(owningElement != null) {
+    		// Get the master state diagram from the owning element if available
+    		masterDiagram = getMasterStateDiagram(owningElement,elementWrapper.wrappedElement);
+    	}
+    	if(masterDiagram == null) {
+    		// Get the master state diagram from the current element if available
+    		masterDiagram = getMasterStateDiagram(elementWrapper,elementWrapper.wrappedElement);
+    	}
+    	
+		if(elementWrapper.wrappedElement.Partitions.Count == 0) {
+    		// Check if the wrapped element contains any sub states
+    		if(elementWrapper.wrappedElement.IsComposite || elementWrapper.wrappedElement.Type == "StateMachine") {
+				// Create an implicit default region
+				UML.StateMachines.BehaviorStateMachines.Region defaultRegion = 
+					new BehaviorStateMachines.Region(this.model as Model,elementWrapper,masterDiagram,null);
+				newRegions.Add(defaultRegion);
+    		}
+		} else {
+			// Create a region for all partitions of the wrapped element
+			short regionPos = 0;
+			foreach(global::EA.Partition partition in elementWrapper.wrappedElement.Partitions)
+			{
+				UML.StateMachines.BehaviorStateMachines.Region newRegion = 
+					new BehaviorStateMachines.Region(this.model as Model,elementWrapper,masterDiagram,partition,regionPos);
+				newRegions.Add(newRegion);
+				++regionPos;
+			}
+		}
+		return newRegions;
+    }
+    
+    internal HashSet<UML.StateMachines.BehaviorStateMachines.Vertex> createVertices
+    	( BehaviorStateMachines.Region region
+    	)
+    {
+    	HashSet<UML.StateMachines.BehaviorStateMachines.Vertex> newVertices = 
+    		new HashSet<UML.StateMachines.BehaviorStateMachines.Vertex>();
+    	global::EA.Element parentElement = region.wrappedElement;
+    	foreach(global::EA.Element childElement in parentElement.Elements) {
+    		UML.StateMachines.BehaviorStateMachines.Vertex newVertex = null;
+    		switch(childElement.Type) {
+    			case "State":
+    			case "StateMachine":
+    			case "StateNode":
+    				newVertex = createEAElementWrapper(childElement) as UML.StateMachines.BehaviorStateMachines.Vertex;
+    				break;
+    		}
+    		if(newVertex != null) {
+    			if(region.isContainedElement(newVertex as ElementWrapper)) {
+    				newVertex.container = region;
+    				newVertices.Add(newVertex);
+    			}
+    		}
+    	}
+    	return newVertices;
+    }
+    
+    internal ElementWrapper getOwningElement(ElementWrapper elementWrapper)
+    {
+    	if(elementWrapper.wrappedElement.ParentID != 0)
+    	{
+    		return elementWrapper.model.getElementWrapperByID(elementWrapper.wrappedElement.ParentID);
+    	}
+    	
+    	return null;
+    }
+    
+    internal global::EA.Diagram getMasterStateDiagram(ElementWrapper elementWrapper,global::EA.Element stateChartElement)
+    {
+    	foreach(global::EA.Diagram diagram in elementWrapper.wrappedElement.Diagrams)
+    	{
+    		// Just return the first state chart diagram found that contains the stateChartElement
+    		if(diagram.Type == "Statechart")
+    		{
+    			foreach(global::EA.DiagramObject diagramObject in diagram.DiagramObjects)
+    			{
+    				if(stateChartElement.ElementID == diagramObject.ElementID)
+    				{
+    					return diagram;
+    				}
+    			}
+    		}
+    	}
+    	
+    	return null;
     }
     
     internal AssociationEnd createAssociationEnd

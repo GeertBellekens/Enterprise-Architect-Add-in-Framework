@@ -1158,6 +1158,203 @@
             If true then the context is the class
             If false then the context is the instance.
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.FinalState">
+            <summary>
+            Description of FinalState.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State">
+            <summary>
+            Description of State.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex">
+            <summary>
+            Description of Vertex.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.outgoings">
+            <summary>
+            Specifies the transitions departing from this vertex. Derived in the following way:
+            context Vertex::outgoing derive:
+            Transition.allInstances() -> select(t | t.source = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.incomings">
+            <summary>
+            Specifies the transitions entering this vertex. Derived in the following way:
+            context Vertex::incoming derive:
+            Transition.allInstances() -> select(t | t.target = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.container">
+            <summary>
+            The region that contains this vertex. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isComposite">
+            <summary>
+            A state with isComposite=true is said to be a composite state. A composite state is a state that contains at least one
+            region. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isOrthogonal">
+            <summary>
+            A state with isOrthogonal=true is said to be an orthogonal composite state. An orthogonal composite state contains
+            two or more regions. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSimple">
+            <summary>
+            A state with isSimple=true is said to be a simple state. A simple state does not have any regions and it does not refer
+            to any submachine state machine. Default value is true.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSubmachineState">
+            <summary>
+            A state with isSubmachineState=true is said to be a submachine state. Such a state refers to a state machine
+            (submachine). Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connections">
+            <summary>
+            The entry and exit connection points used in conjunction with this (submachine) state, i.e., as targets and sources,
+            respectively, in the region with the submachine state. A connection point reference references the corresponding
+            definition of a connection point pseudostate in the statemachine referenced by the submachinestate. {Subsets
+            Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connectionPoints">
+            <summary>
+            The entry and exit pseudostates of a composite state. These can only be entry or exit Pseudostates, and they must have
+            different names. They can only be defined for composite states. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.deferrableTriggers">
+            <summary>
+            A list of triggers that are candidates to be retained by the state machine if they trigger no transitions out of the state (not
+            consumed). A deferred trigger is retained until the state machine reaches a state configuration where it is no longer
+            deferred.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.doActvity">
+            <summary>
+            An optional behavior that is executed while being in the state. The execution starts when this state is entered, and stops
+            either by itself or when the state is exited whichever comes first. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.entry">
+            <summary>
+            An optional behavior that is executed whenever this state is entered regardless of the transition taken to reach the state. If
+            defined, entry actions are always executed to completion prior to any internal behavior or transitions performed within the
+            state. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.exit">
+            <summary>
+            An optional behavior that is executed whenever this state is exited regardless of which transition was taken out of the
+            state. If defined, exit actions are always executed to completion only after all internal activities and transition actions have
+            completed execution. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinedState">
+            <summary>
+            The state of which this state is a redefinition. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.regions">
+            <summary>
+            The regions owned directly by the state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.submachine">
+            <summary>
+            The state machine that is to be inserted in place of the (submachine) state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.stateInvariant">
+            <summary>
+            Specifies conditions that are always true when this state is the current state. In protocol state machines, state invariants are
+            additional conditions to the preconditions of the outgoing transitions, and to the postcondition of the incoming transitions.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState">
+            <summary>
+            Description of PseudoState.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.kind">
+            <summary>
+            Determines the precise type of the Pseudostate. Default value is initial.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.statemachine">
+            <summary>
+            The StateMachine in which this Pseudostate is defined. This only applies to Pseudostates of the kind entryPoint or
+            exitPoint. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.state">
+            <summary>
+            State that owns the Pseudostate. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region">
+            <summary>
+            Description of Region.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.stateMachine">
+            <summary>
+            The StateMachine that owns the Region. If a Region is owned by a StateMachine, then it cannot also be owned by a
+            State. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.state">
+            <summary>
+            The State that owns the Region. If a Region is owned by a State, then it cannot also be owned by a StateMachine.
+            {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.transitions">
+            <summary>
+            The set of transitions owned by the region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.subvertices">
+            <summary>
+            The set of vertices that are owned by this region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.extendedRegion">
+            <summary>
+            The region of which this region is an extension. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine">
+            <summary>
+            Description of StateMachine.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
             <summary>
             CallOperationAction is an action that transmits an operation call request to the target object, where it may cause the
@@ -1470,18 +1667,6 @@
             gets all relations that are specific to this sequence diagram.
             </summary>
             <returns>all messages and other relations of the diagram</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
-            <summary>
-            Description of StateMachine.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            default constructor, calls parent constructor
-            </summary>
-            <param name="model">the model containing the element</param>
-            <param name="wrappedElement">the EA.Element to be wrapped</param>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.
