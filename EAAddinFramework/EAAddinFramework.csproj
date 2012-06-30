@@ -67,6 +67,8 @@
     <Compile Include="EAWrappers\CallOperationAction.cs" />
     <Compile Include="EAWrappers\Class.cs" />
     <Compile Include="EAWrappers\CommunicationDiagram.cs" />
+    <Compile Include="EAWrappers\DataType.cs" />
+    <Compile Include="EAWrappers\Enumeration.cs" />
     <Compile Include="EAWrappers\ParameterTag.cs" />
     <Compile Include="EAWrappers\RelationTag.cs" />
     <Compile Include="EAWrappers\ConnectorWrapper.cs" />

@@ -1248,6 +1248,16 @@
             </summary>
             <returns>all messages and other relations of the diagram</returns>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
+            <summary>
+            Description of DataType.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Enumeration">
+            <summary>
+            Description of Enumeration.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper">
             A diagramElement that wraps the EA.DiagramLink class.
             This is the representation of a Relationship on a diagram.

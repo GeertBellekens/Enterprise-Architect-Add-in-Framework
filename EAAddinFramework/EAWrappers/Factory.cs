@@ -194,7 +194,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       switch (elementToWrap.Type) {
         case "Class":
-          return new Class(this.model as Model, elementToWrap);
+    			//first check if this isn't an enumeration.
+    			// Enumerations are stored as type Class but with the stereotype enumeration
+    			if (elementToWrap.StereotypeEx.Contains("enumeration"))
+			    {
+			    	return new Enumeration(this.model as Model, elementToWrap);
+			    }
+    			else
+    			{
+    				return new Class(this.model as Model, elementToWrap);
+    			}
         case "Interface":
           return new Interface(this.model as Model,elementToWrap);
         case "Note":
@@ -232,6 +241,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			{
 				throw new Exception("WrappedElement "+ elementToWrap.Name +" is not a package");
 			}
+		case "DataType":
+			return new DataType(this.model as Model, elementToWrap);
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }
