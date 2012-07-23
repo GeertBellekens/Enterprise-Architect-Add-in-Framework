@@ -5,7 +5,11 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship {
-    internal global::EA.Connector wrappedConnector { get; set; }
+    internal global::EA.Connector wrappedConnector { get; set; }    
+    public int id
+    {
+    	get{return this.wrappedConnector.ConnectorID;}
+    }
 
     public ConnectorWrapper(Model model, global::EA.Connector connector)
       : base(model)
@@ -261,7 +265,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 	#endregion
 
-  	
+    public void openProperties()
+	{
+		this.model.openProperties(this);
+	}
 
   }
 }

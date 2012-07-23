@@ -1387,6 +1387,17 @@
             generic query operation on the model.
             Returns results in an xml format
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
+            <summary>
+            opens the properties dialog for this item
+            </summary>
+            <param name="item">the item to open the properties dialog for</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.mainEAWindow">
+            <summary>
+            the main EA window to use when opening properties dialogs
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.selectedElement">
             the Element currently selected in EA
         </member>
@@ -1504,6 +1515,11 @@
             translates the EA visibilityString to the UML VisibilityKind.
             If the proper translation cannot be found the defaultVisibility will 
             be returned
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
+            <summary>
+            Wrapper needed to be able to open properties dialog in EA
+            </summary>
         </member>
     </members>
 </doc>

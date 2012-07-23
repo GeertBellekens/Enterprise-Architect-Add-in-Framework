@@ -9,6 +9,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   /// as an Operation from Interfaces
   public class Operation : Element, UML.Classes.Kernel.Operation {
     internal global::EA.Method wrappedOperation {get; set; }
+    public int id
+    {
+    	get{return this.wrappedOperation.MethodID;}
+    }
 
     public Operation(Model model, global::EA.Method wrappedOperation) 
       : base(model) 
@@ -356,5 +360,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
 	#endregion
 	
+  	
+	public void openProperties()
+	{
+		this.model.openProperties(this);
+	}
   }
 }

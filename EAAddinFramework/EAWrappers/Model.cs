@@ -5,12 +5,42 @@ using System.Xml;
 using System.Linq;
 using System.Windows.Forms;
 using EAAddinFramework.EASpecific;
+using System.Diagnostics;
 
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class Model : UML.UMLModel {
+  public class Model : UML.UMLModel 
+  {
     private global::EA.Repository wrappedModel;
+    private IWin32Window _mainEAWindow;
+    /// <summary>
+    /// the main EA window to use when opening properties dialogs
+    /// </summary>
+    public IWin32Window mainEAWindow
+    {
+    	get
+    	{
+    		if (true)
+    			//this._mainEAWindow == null)
+    		{
+	    		List<Process> allProcesses = new List<Process>( Process.GetProcesses());
+		   		Process proc = allProcesses.Find(pr => pr.ProcessName == "EA");
+		     	//if we don't find the process then we set the mainwindow to null
+		   		if (proc == null
+		   		    || proc.MainWindowHandle == null)
+		     	{
+		     		this._mainEAWindow = null;
+		     	}
+		     	else
+		     	{
+		     		//found it. Create new WindowWrapper
+		     		this._mainEAWindow  = new WindowWrapper(proc.MainWindowHandle);
+		     	}
+    		}
+	     	return this._mainEAWindow;
+    	}
+    }
 
     /// Creates a model connecting to the first running instance of EA
     public Model(){
@@ -849,6 +879,54 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 		}
 	}
+	/// <summary>
+	/// opens the properties dialog for this item
+	/// </summary>
+	/// <param name="item">the item to open the properties dialog for</param>
+	public void openProperties(UML.UMLItem item)
+	{
+		//get the type string
+		string typeString = string.Empty;
+		int itemID = 0;
+		if (item is Package) 
+		{
+			typeString = "PKG";
+			itemID = ((Package)item).packageID;
+		}
+		else if (item is ElementWrapper)
+		{
+			typeString = "ELM";
+			itemID = ((ElementWrapper)item).id;
+		}
+		else if (item is Attribute)
+		{
+			typeString = "ATT";
+			itemID = ((Attribute)item).id;
+		}
+		else if (item is Operation)
+		{
+			typeString = "OP";
+			itemID = ((Operation)item).id;
+		}
+		else if (item is Diagram)
+		{
+			typeString = "DGM";
+			itemID = ((Diagram)item).DiagramID;
+		}
+		else if (item is ConnectorWrapper)
+		{
+			typeString = "CON";
+			itemID = ((ConnectorWrapper)item).id;
+		}
+		//open the actual dialog
+		if (this.mainEAWindow != null
+		    && typeString != string.Empty
+		    && itemID != 0)
+	    {
+			string ret = this.wrappedModel.CustomCommand("CFormCommandHelper", "ProcessCommand", "Dlg=" + typeString + ";id=" + itemID.ToString() + ";hwnd=" + this.mainEAWindow.Handle);
+	    }
+	}
+	
 	
   }
 }

@@ -34,7 +34,7 @@ namespace EAAddinTester
         }
         private static void addAddIns()
         {
-        	//addins.Add(new MyAddin.MyAddinClass());
+        	addins.Add(new MyAddin.MyAddinClass());
         	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
         	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
         	

@@ -233,6 +233,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return calledOperations;
 	}
-
+    public void openProperties()
+	{
+		this.model.openProperties(this);
+	}
   }
 }

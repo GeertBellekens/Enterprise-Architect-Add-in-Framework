@@ -12,6 +12,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public class Package:ElementWrapper, UML.Classes.Kernel.Package
 	{
 		internal global::EA.Package wrappedPackage {get;set;}
+		public int packageID
+		{
+			get {return this.wrappedPackage.PackageID;}
+		}
 		
 		public Package(Model model,global::EA.Package package):base(model,package.Element)
 		{

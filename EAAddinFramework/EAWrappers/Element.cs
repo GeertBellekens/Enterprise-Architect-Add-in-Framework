@@ -140,5 +140,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return nodepath;
 		}
 	}
+	public void openProperties()
+	{
+		this.model.openProperties(this);
+	}
   }
 }

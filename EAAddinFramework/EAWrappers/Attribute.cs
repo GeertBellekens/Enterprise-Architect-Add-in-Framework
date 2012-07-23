@@ -6,6 +6,10 @@ using UML=TSF.UmlToolingFramework.UML;
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Attribute : Element, UML.Classes.Kernel.Property {
     internal global::EA.Attribute wrappedAttribute { get; set; }
+    public int id
+    {
+    	get{return this.wrappedAttribute.AttributeID;}
+    }
 
     public Attribute(Model model, global::EA.Attribute wrappedAttribute) 
       : base(model)
@@ -289,6 +293,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return new Guid(this.wrappedAttribute.AttributeGUID).GetHashCode();
 	}
 	#endregion
+	public void openProperties()
+	{
+		this.model.openProperties(this);
+	}
 
   }
 }

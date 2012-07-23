@@ -84,5 +84,9 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			return nodepath;
 		}
 	}
+	public void openProperties()
+	{
+		this.model.openProperties(this.owner);
+	}
 }
 }

@@ -103,6 +103,7 @@
     <Compile Include="EAWrappers\Stereotype.cs" />
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
+    <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

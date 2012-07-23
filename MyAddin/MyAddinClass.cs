@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Linq;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace MyAddin
 {
@@ -9,6 +12,7 @@ namespace MyAddin
         const string menuName = "-&MyAddin";
         const string menuHello = "&Say Hello";
         const string menuGoodbye = "&Say Goodbye";
+        const string menuOpenProperties = "&Open Properties";
         
         // remember if we have to say hello or goodbye
         private bool shouldWeSayHello = true;
@@ -22,7 +26,7 @@ namespace MyAddin
 		public MyAddinClass():base()
 		{
 			this.menuHeader = menuName;
-			this.menuOptions = new string[]{menuHello,menuGoodbye};
+			this.menuOptions = new string[]{menuHello,menuGoodbye,menuOpenProperties};
 		}
 		/// <summary>
         /// EA_Connect events enable Add-Ins to identify their type and to respond to Enterprise Architect start up.
@@ -63,6 +67,9 @@ namespace MyAddin
                     case menuGoodbye:
                         IsEnabled = !shouldWeSayHello;
                         break;
+                    case menuOpenProperties:
+                        IsEnabled = true;
+                        break;
                     // there shouldn't be any other, but just in case disable it.
                     default:
                         IsEnabled = false;
@@ -95,6 +102,9 @@ namespace MyAddin
                 // user has clicked the menuGoodbye menu option
                 case menuGoodbye:
                     this.sayGoodbye();
+	                break;
+	            case menuOpenProperties:
+                    this.testPropertiesDialog(Repository);
                     break;
             }
         }
@@ -148,5 +158,107 @@ namespace MyAddin
             this.shouldWeSayHello = true;
         }
         
-    }
+        public void testPropertiesDialog(EA.Repository repository)
+        {
+        	int diagramID = repository.GetCurrentDiagram().DiagramID;
+        	repository.OpenDiagramPropertyDlg(diagramID);
+        }
+        
+
+        
+	}
+	
+    public class InternalHelpers
+	{
+	   static public IWin32Window GetMainWindow()
+	   {
+	   	List<Process> allProcesses = new List<Process>( Process.GetProcesses());
+	   	Process proc = allProcesses.Find(pr => pr.ProcessName == "EA");
+	     if (proc.MainWindowTitle == "")  //somtimes a wrong handle is returned, in this case also the title is emty
+	       return null;                   //return null in this case
+	     else                             //otherwise return the right handle
+	       return new WindowWrapper(proc.MainWindowHandle);
+	   }
+	
+	
+	   internal class WindowWrapper : System.Windows.Forms.IWin32Window
+	   {
+	     public WindowWrapper(IntPtr handle)
+	     {
+	       _hwnd = handle;
+	     }
+	
+	     public IntPtr Handle
+	     {
+	       get { return _hwnd; }
+	     }
+	
+	     private IntPtr _hwnd;
+	   }
+	}
+    
+     public enum EaType
+ {
+   Package,
+   Element,
+   Attribute,
+   Operation,
+   Diagram
+ }
+
+ public static class EaRepositoryExtensions
+ {	
+ 	static public DialogResult ShowDialogAtMainWindow(this Form form)
+   	{
+     IWin32Window win32Window = InternalHelpers.GetMainWindow();
+     if (win32Window != null)  // null means that the main window handle could not be evaluated
+       return form.ShowDialog(win32Window);
+     else
+       return form.ShowDialog();  //fallback: use it without owner
+   	}
+   public static void OpenEaPropertyDlg(this EA.Repository rep, int id, EaType type)
+   {
+     string dlg;
+     switch (type)
+     {
+       case EaType.Package: dlg = "PKG"; break;
+       case EaType.Element: dlg = "ELM"; break;
+       case EaType.Attribute: dlg = "ATT"; break;
+       case EaType.Operation: dlg = "OP"; break;
+       case EaType.Diagram: dlg = "DGM"; break;
+       default: dlg = String.Empty; break;
+     }
+     IWin32Window mainWindow =  InternalHelpers.GetMainWindow();
+     if (mainWindow != null)
+     {
+     	string ret = rep.CustomCommand("CFormCommandHelper", "ProcessCommand", "Dlg=" + dlg + ";id=" + id + ";hwnd=" + mainWindow.Handle);
+     }
+   }
+
+   public static void OpenPackagePropertyDlg(this EA.Repository rep, int packageId)
+   {
+     rep.OpenEaPropertyDlg(packageId, EaType.Package);
+   }
+
+   public static void OpenElementPropertyDlg(this EA.Repository rep, int elementId)
+   {
+     rep.OpenEaPropertyDlg(elementId, EaType.Element);
+   }
+
+   public static void OpenAttributePropertyDlg(this EA.Repository rep, int attributeId)
+   {
+     rep.OpenEaPropertyDlg(attributeId, EaType.Attribute);
+   }
+
+   public static void OpenOperationPropertyDlg(this EA.Repository rep, int opertaionId)
+   {
+     rep.OpenEaPropertyDlg(opertaionId, EaType.Operation);
+   }
+
+   public static void OpenDiagramPropertyDlg(this EA.Repository rep, int diagramId)
+   {
+     rep.OpenEaPropertyDlg(diagramId, EaType.Diagram);
+   }
+}
+
 }
