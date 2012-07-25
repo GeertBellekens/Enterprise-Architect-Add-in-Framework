@@ -293,10 +293,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return new Guid(this.wrappedAttribute.AttributeGUID).GetHashCode();
 	}
 	#endregion
-	public void openProperties()
-	{
-		this.model.openProperties(this);
-	}
 
   }
 }

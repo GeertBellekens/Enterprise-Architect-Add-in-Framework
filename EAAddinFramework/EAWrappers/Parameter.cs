@@ -60,5 +60,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
+    /// <summary>
+	/// opens the (standard) properties dialog in EA
+	/// For parameters the properties of the owner (operation) will be opened
+	/// </summary>
+	public override void openProperties()
+	{
+		this.owner.openProperties();
+	}
   }
 }

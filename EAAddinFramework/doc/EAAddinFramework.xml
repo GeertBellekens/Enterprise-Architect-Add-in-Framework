@@ -1010,6 +1010,11 @@
             </summary>
             <returns>empty set</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
@@ -1158,6 +1163,12 @@
             If true then the context is the class
             If false then the context is the instance.
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
+            <summary>
+            opens the properties dialog in EA. 
+            For tagged values the properties dialog of the owner will be opened
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
             <summary>
             CallOperationAction is an action that transmits an operation call request to the target object, where it may cause the
@@ -1237,6 +1248,11 @@
             returns all operations called in this sequence diagram
             </summary>
             <returns>all operations called in this sequence diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            </summary>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.
@@ -1465,6 +1481,12 @@
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>
             
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Parameter.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            For parameters the properties of the owner (operation) will be opened
             </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">

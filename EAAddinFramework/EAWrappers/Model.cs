@@ -21,8 +21,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	get
     	{
-    		if (true)
-    			//this._mainEAWindow == null)
+    		if //(true)
+    			(this._mainEAWindow == null)
     		{
 	    		List<Process> allProcesses = new List<Process>( Process.GetProcesses());
 		   		Process proc = allProcesses.Find(pr => pr.ProcessName == "EA");
@@ -913,11 +913,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			typeString = "DGM";
 			itemID = ((Diagram)item).DiagramID;
 		}
-		else if (item is ConnectorWrapper)
-		{
-			typeString = "CON";
-			itemID = ((ConnectorWrapper)item).id;
-		}
+// TODO: figure out how to open the properties dialog for a connector.	
+//		else if (item is ConnectorWrapper)
+//		{
+//			//typeString = "CON";
+//			typeString = "MSG";
+//			itemID = ((ConnectorWrapper)item).id;
+//		}
 		//open the actual dialog
 		if (this.mainEAWindow != null
 		    && typeString != string.Empty

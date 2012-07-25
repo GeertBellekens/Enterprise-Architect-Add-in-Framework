@@ -361,9 +361,5 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	#endregion
 	
   	
-	public void openProperties()
-	{
-		this.model.openProperties(this);
-	}
   }
 }

@@ -140,7 +140,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return nodepath;
 		}
 	}
-	public void openProperties()
+	/// <summary>
+	/// opens the (standard) properties dialog in EA
+	/// </summary>
+	public virtual void openProperties()
 	{
 		this.model.openProperties(this);
 	}

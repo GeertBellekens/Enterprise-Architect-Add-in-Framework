@@ -84,9 +84,13 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			return nodepath;
 		}
 	}
+	/// <summary>
+	/// opens the properties dialog in EA. 
+	/// For tagged values the properties dialog of the owner will be opened
+	/// </summary>
 	public void openProperties()
 	{
-		this.model.openProperties(this.owner);
+		this.owner.openProperties();
 	}
 }
 }
