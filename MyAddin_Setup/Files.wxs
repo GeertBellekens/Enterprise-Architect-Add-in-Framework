@@ -10,7 +10,6 @@
 						<File Id="EAAddinFramework.pdb" Name="EAAddinFramework.pdb" Source="..\MyAddin\bin\Debug\EAAddinFramework.pdb" />
 						<File Id="Interop.EA.dll" Name="Interop.EA.dll" Source="..\MyAddin\bin\Debug\Interop.EA.dll" />
 						<File Id="MyAddin.pdb" Name="MyAddin.pdb" Source="..\MyAddin\bin\Debug\MyAddin.pdb" />
-						<File Id="MyAddin.tlb" Name="MyAddin.tlb" Source="..\MyAddin\bin\Debug\MyAddin.tlb" />
 						<File Id="UMLToolingFramework.pdb" Name="UMLToolingFramework.pdb" Source="..\MyAddin\bin\Debug\UMLToolingFramework.pdb" />
 						<Class Id="{10BC65F1-32C0-3ED4-98A0-17661A8C4455}" Context="InprocServer32" Description="MyAddin.MyAddinClass" ThreadingModel="both" ForeignServer="mscoree.dll">
 		                    <ProgId Id="MyAddin.MyAddinClass" Description="MyAddin.MyAddinClass" />
