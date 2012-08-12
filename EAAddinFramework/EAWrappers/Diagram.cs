@@ -240,5 +240,72 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.model.openProperties(this);
 	}
+  	
+	public void selectItem(UML.UMLItem itemToSelect)
+	{
+		if (itemToSelect is Operation)
+		{
+			bool found = false;
+			//if the item is a relation or an operation then search through the links first
+			foreach (DiagramLinkWrapper diagramLinkWrapper in this.diagramLinkWrappers)
+			{
+				if (itemToSelect is Operation
+				   && diagramLinkWrapper.relation is Message)
+				{
+					Message message = (Message)diagramLinkWrapper.relation;
+					if (itemToSelect.Equals(message.calledOperation))
+					{
+						this.wrappedDiagram.SelectedConnector = message.wrappedConnector;
+						found = true;
+						//done, no need to loop further
+						break;
+					}
+				}
+			}
+			//The operation could also be called in an Action.
+			if (!found)
+			{
+				List<UML.Actions.BasicActions.CallOperationAction> actions = ((Operation)itemToSelect).getDependentCallOperationActions().ToList();
+				List<UML.Diagrams.DiagramElement> diagramObjects = this.diagramObjectWrappers.ToList();
+				
+				foreach (Action  action in actions)
+				{
+					//try to find an diagramObjectwrapper that refrences the action
+					UML.Diagrams.DiagramElement diagramObject = diagramObjects.Find(
+						x => x.element.Equals(action));
+					if (diagramObject != null)
+					{
+						//found it, select the action and break out of for loop
+						this.selectItem(action);
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found)
+			{
+				//can't find a message on this diagram that calls the operation.
+				//then we try it with the operations parent
+				this.selectItem(((Operation)itemToSelect).owner);
+				
+			}
+		}
+		else if (itemToSelect is ConnectorWrapper)
+		{
+			this.wrappedDiagram.SelectedConnector = ((ConnectorWrapper)itemToSelect).wrappedConnector;
+			//check if it worked
+			if (wrappedDiagram.SelectedConnector == null
+			   && itemToSelect is Message)
+			{
+				this.selectItem(((Message)itemToSelect).calledOperation);
+			}
+		}
+		else if (itemToSelect is ElementWrapper)
+		{
+			ElementWrapper elementToSelect = (ElementWrapper)itemToSelect;
+			this.wrappedDiagram.SelectedObjects.AddNew(elementToSelect.wrappedElement.ElementID.ToString(),
+			                                           elementToSelect.wrappedElement.Type);
+		}
+	}
   }
 }
