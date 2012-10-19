@@ -19,7 +19,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return this.wrappedElement.Name;  }
       set { this.wrappedElement.Name = value; }
     }
+    
+    public global::EA.Element WrappedElement {
+    	get { return this.wrappedElement; }
+    }
 
+	public global::EA._CustomProperty getCustomProperty(string propertyName) {
+		foreach(global::EA._CustomProperty property in wrappedElement.CustomProperties) {
+			if(property.Name == propertyName) {
+				return property;
+			}
+		}
+		return null;
+    }
+    
     /// indicates whether this element is abstract.
     /// In the EA API this is stored as a string with the values "0" or "1"
     public bool isAbstract {
@@ -165,7 +178,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         foreach(UML.Classes.Dependencies.Dependency dependency 
                 in this.getRelationships<Dependency>() )
         {
-          if( dependency.client == this ) {
+          if(dependency.client.Equals(this)) {
             returnedDependencies.Add(dependency);
           }
         }
@@ -182,7 +195,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         foreach( UML.Classes.Dependencies.Dependency dependency 
                  in this.getRelationships<Dependency>() )
         {
-          if( dependency.supplier == this ) {
+        	if(dependency.supplier.Equals(this)) {
             returnedDependencies.Add(dependency);
           }
         }

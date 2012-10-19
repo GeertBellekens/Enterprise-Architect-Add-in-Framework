@@ -2,11 +2,21 @@
 using System.Collections.Generic;
 using System.Deployment.Internal;
 using System.Xml;
+using TSF.UmlToolingFramework.UML.CommonBehaviors.Communications;
 using UML = TSF.UmlToolingFramework.UML;
+using UML_SM = TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines;
+using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Factory : UML.UMLFactory {
-    protected Factory(Model model) : base(model) {}
+
+	private Dictionary<UML_SM.StateMachine, HashSet<Trigger>> stateMachineTriggersMap;
+	
+	protected Factory(Model model) 
+		: base(model) 
+	{
+		stateMachineTriggersMap = new Dictionary<UML_SM.StateMachine, HashSet<Trigger>>();
+	}
 
     /// returns the singleton instance for the given model.
     public static Factory getInstance(Model model){
@@ -156,6 +166,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         case "Realization":
         case "Realisation":
           return createEARealization(connector);
+        case "StateFlow":
+          return new BehaviorStateMachines.Transition(this.model as Model,connector);
         default:
           return new ConnectorWrapper(this.model as Model, connector);
       }
@@ -288,7 +300,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return newStereotypes;
     }
     
-    internal HashSet<TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines.Region> 
+    internal HashSet<UML_SM.Region> 
     	createBehaviourStateMachineRegions(ElementWrapper elementWrapper)
     {
 		HashSet<UML.StateMachines.BehaviorStateMachines.Region> newRegions = 
@@ -327,20 +339,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return newRegions;
     }
     
-    internal HashSet<UML.StateMachines.BehaviorStateMachines.Vertex> createVertices
+    internal UML_SM.Region getContainingRegion(ElementWrapper elementWrapper)
+    {
+    	ElementWrapper parentElement = getOwningElement(elementWrapper);
+    	if(parentElement is BehaviorStateMachines.StateMachine) {
+    		BehaviorStateMachines.StateMachine owningStateMachine = 
+    			parentElement as BehaviorStateMachines.StateMachine;
+    		foreach(BehaviorStateMachines.Region region in owningStateMachine.regions) {
+    			if(region.isContainedElement(elementWrapper)) {
+    				return region;
+    			}
+    		}
+    	}
+    	else if(parentElement is BehaviorStateMachines.State) {
+    		BehaviorStateMachines.State owningState = 
+    			parentElement as BehaviorStateMachines.State;
+    		foreach(BehaviorStateMachines.Region region in owningState.regions) {
+    			if(region.isContainedElement(elementWrapper)) {
+    				return region;   	
+			   	}
+			}
+		}
+    	
+    	return null;
+    }
+    
+    internal HashSet<UML_SM.Vertex> createVertices
     	( BehaviorStateMachines.Region region
     	)
     {
-    	HashSet<UML.StateMachines.BehaviorStateMachines.Vertex> newVertices = 
-    		new HashSet<UML.StateMachines.BehaviorStateMachines.Vertex>();
+    	HashSet<UML_SM.Vertex> newVertices = 
+    		new HashSet<UML_SM.Vertex>();
     	global::EA.Element parentElement = region.wrappedElement;
     	foreach(global::EA.Element childElement in parentElement.Elements) {
-    		UML.StateMachines.BehaviorStateMachines.Vertex newVertex = null;
+    		UML_SM.Vertex newVertex = null;
     		switch(childElement.Type) {
     			case "State":
     			case "StateMachine":
     			case "StateNode":
-    				newVertex = createEAElementWrapper(childElement) as UML.StateMachines.BehaviorStateMachines.Vertex;
+    				newVertex = createEAElementWrapper(childElement) as UML_SM.Vertex;
     				break;
     		}
     		if(newVertex != null) {
@@ -351,6 +388,103 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		}
     	}
     	return newVertices;
+    }
+    
+    internal HashSet<UML_SM.Transition> createOutgoingTransitions(BehaviorStateMachines.Vertex vertex)
+    {
+    	HashSet<UML_SM.Transition> outgoingTransitions = new HashSet<UML_SM.Transition>();
+    	foreach(global::EA.Connector connector in vertex.wrappedElement.Connectors) {
+    		if(connector.Type == "StateFlow" && 
+    		   connector.ClientID == vertex.wrappedElement.ElementID) {
+    			UML_SM.Transition transition = createEAConnectorWrapper(connector) as UML_SM.Transition;
+    			if(transition != null) {
+    				outgoingTransitions.Add(transition);
+    			}
+    		}
+    	}
+    	return outgoingTransitions;
+    }
+    
+    internal HashSet<UML_SM.Transition> createIncomingTransitions(BehaviorStateMachines.Vertex vertex)
+    {
+    	HashSet<UML_SM.Transition> incomingTransitions = new HashSet<UML_SM.Transition>();
+    	foreach(global::EA.Connector connector in vertex.wrappedElement.Connectors) {
+    		if(connector.Type == "StateFlow" && 
+    		   connector.SupplierID == vertex.wrappedElement.ElementID) {
+    			UML_SM.Transition transition = createEAConnectorWrapper(connector) as UML_SM.Transition;
+    			if(transition != null) {
+    				incomingTransitions.Add(transition);
+    			}
+    		}
+    	}
+    	return incomingTransitions;
+    }
+    
+    public HashSet<UML.CommonBehaviors.Communications.Trigger> createTransitionTriggers(UTF_EA.BehaviorStateMachines.Transition transition)
+    {
+    	HashSet<UML.CommonBehaviors.Communications.Trigger> triggers = 
+    		new HashSet<TSF.UmlToolingFramework.UML.CommonBehaviors.Communications.Trigger>();
+    
+    	UML_SM.StateMachine stateMachine = getContainingStateMachine(transition.owner);
+    	if(stateMachine != null)
+    	{
+			string[] events = transition.wrappedConnector.TransitionEvent.Split( ", ".ToCharArray());
+			if(events.Length > 0) {
+				if(!stateMachineTriggersMap.ContainsKey(stateMachine)) {
+					stateMachineTriggersMap[stateMachine] = createContainedTriggers(stateMachine as UTF_EA.BehaviorStateMachines.StateMachine);
+				}
+				foreach(string eventName in events) {
+					foreach(UML.CommonBehaviors.Communications.Trigger trigger in stateMachineTriggersMap[stateMachine]) {
+						if(trigger.event_.name == eventName) {
+							triggers.Add(trigger);
+							break;
+						}
+					}
+				}
+			}
+    	}
+				
+    	return triggers;
+    }
+    
+    public HashSet<UML.CommonBehaviors.Communications.Trigger> getContainedTriggers(UML_SM.StateMachine stateMachine)
+    {
+    	if(stateMachine != null) {
+	    	if(!stateMachineTriggersMap.ContainsKey(stateMachine)) {
+	    		stateMachineTriggersMap[stateMachine] = createContainedTriggers(stateMachine as UTF_EA.BehaviorStateMachines.StateMachine);
+	    	}
+	    	return stateMachineTriggersMap[stateMachine];
+    	}
+    	
+    	return null;
+    }
+    
+    internal HashSet<UML.CommonBehaviors.Communications.Trigger> createContainedTriggers(UTF_EA.BehaviorStateMachines.StateMachine stateMachine)
+    {
+    	HashSet<UML.CommonBehaviors.Communications.Trigger> triggers = 
+    		new HashSet<UML.CommonBehaviors.Communications.Trigger>();
+    	if(stateMachine != null) {
+    		foreach(global::EA.Element element in stateMachine.wrappedElement.Elements) {
+    			if(element.MetaType == "Trigger") {
+    				triggers.Add(new UTF_EA.BehaviorStateMachines.Trigger(model as UTF_EA.Model,element));
+    			}
+    		}
+    	}
+    	return triggers;
+    }
+    
+    public UML_SM.StateMachine getContainingStateMachine(UML.UMLItem umlItem)
+    {
+    	if(umlItem != null) {
+	    	if(umlItem.owner is UML_SM.StateMachine) {
+	    		return umlItem.owner as UML_SM.StateMachine;
+	    	}
+    		else {
+	    		return getContainingStateMachine(umlItem.owner);
+	    	}
+    	}
+    	
+    	return null;
     }
     
     internal ElementWrapper getOwningElement(ElementWrapper elementWrapper)
@@ -403,7 +537,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     internal T addElementToEACollection<T>( global::EA.Collection collection,
                                             String name) 
-      where T : class, UML.Classes.Kernel.Element 
+      where T : class, UML.Classes.Kernel.Element
     {
       return this.model.factory.createElement(collection.AddNew
         ( name, this.translateTypeName(typeof(T).Name) )) as T;

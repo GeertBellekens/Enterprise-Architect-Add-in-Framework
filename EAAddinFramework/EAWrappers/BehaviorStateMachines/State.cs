@@ -32,7 +32,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public bool isComposite    
 		{ 
 			get {
-				return this.regions.Count >= 1;
+				if(regions.Count > 0) {
+					int containedSubVertices = 0;
+					foreach(UML.StateMachines.BehaviorStateMachines.Region region in regions) {
+						containedSubVertices += region.subvertices.Count;
+					}
+					return containedSubVertices > 0;
+				}
+				global::EA._CustomProperty prop = getCustomProperty("isComposite");
+				if(prop != null) {
+					return prop.Value == "-1";
+				}
+				return false;
 			}
 			set {
 				throw new NotImplementedException();
@@ -46,7 +57,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public bool isOrthogonal    
 		{ 
 			get {
-				return this.regions.Count > 1;
+				if(regions.Count > 1) {
+					return true;
+				}
+				global::EA._CustomProperty prop = getCustomProperty("isOrthogonal");
+				if(prop != null) {
+					return prop.Value == "-1";
+				}
+				return false;
 			}
 			set {
 				throw new NotImplementedException();
@@ -60,7 +78,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public bool isSimple    
 		{ 
 			get {
-				return this.regions.Count == 0;
+				if(regions.Count > 0) {
+					int containedSubVertices = 0;
+					foreach(UML.StateMachines.BehaviorStateMachines.Region region in regions) {
+						containedSubVertices += region.subvertices.Count;
+					}
+					return containedSubVertices == 0;
+				}
+//				global::EA._CustomProperty prop = getCustomProperty("isSimple");
+//				if(prop != null) {
+//					return prop.Value == "-1";
+//				}
+				return true;
 			}
 			set {
 				throw new NotImplementedException();
@@ -74,7 +103,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public bool isSubmachineState  
 		{ 
 			get {
-				throw new NotImplementedException();
+				global::EA._CustomProperty prop = getCustomProperty("isSubmachineState");
+				if(prop != null) {
+					return prop.Value == "-1";
+				}
+				return false;
 			}
 			set {
 				throw new NotImplementedException();

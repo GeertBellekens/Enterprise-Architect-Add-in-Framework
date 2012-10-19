@@ -16,6 +16,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedOperation = wrappedOperation;
     }
     
+    public global::EA.Method WrappedOperation {
+    	get {
+    		return wrappedOperation;
+    	}
+    }
+    
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get {
         return new HashSet<UML.Classes.Kernel.Element>

@@ -11,14 +11,17 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <DocumentationFile>doc\EAAddinFramework.xml</DocumentationFile>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
-    <RegisterForComInterop>False</RegisterForComInterop>
+    <RegisterForComInterop>True</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
     <FileAlignment>4096</FileAlignment>
@@ -65,11 +68,14 @@
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
     <Compile Include="EAWrappers\AttributeTag.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\Event.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\FinalState.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\PseudoState.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\Region.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\State.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\StateMachine.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\Transition.cs" />
+    <Compile Include="EAWrappers\BehaviorStateMachines\Trigger.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\Vertex.cs" />
     <Compile Include="EAWrappers\CallOperationAction.cs" />
     <Compile Include="EAWrappers\Class.cs" />
@@ -107,11 +113,13 @@
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\TransformationILWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EAWrappers" />
     <Folder Include="EASpecific" />
     <Folder Include="EAWrappers\BehaviorStateMachines" />
+    <Folder Include="Utilities" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />

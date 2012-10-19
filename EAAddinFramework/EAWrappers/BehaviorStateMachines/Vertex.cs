@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using UML = TSF.UmlToolingFramework.UML;
+using UML_SM = TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	/// <summary>
@@ -19,8 +20,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	public class Vertex
 	: ElementWrapper, UML.StateMachines.BehaviorStateMachines.Vertex
 	{
-		private UML.StateMachines.BehaviorStateMachines.Region _container;
+		private UML_SM.Region _container = null;
 		
+		public Vertex(Model model, global::EA.Element wrappedElement)
+      	: base(model,wrappedElement)
+		{
+		}
+
 		public Vertex(Model model, global::EA.Element wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
       	: base(model,wrappedElement)
 		{
@@ -31,10 +37,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		/// context Vertex::outgoing derive:
 		/// Transition.allInstances() -> select(t | t.source = self)
 		/// </summary>
-		public HashSet<UML.StateMachines.BehaviorStateMachines.Transition> outgoings  
+		public HashSet<UML_SM.Transition> outgoings  
 		{ 
 			get {
-				throw new NotImplementedException();
+				return ((Factory)this.model.factory).createOutgoingTransitions(this);
 			}
 			set {
 				throw new NotImplementedException();
@@ -46,10 +52,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		/// context Vertex::incoming derive:
 		/// Transition.allInstances() -> select(t | t.target = self)
 		/// </summary>
-		public UML.StateMachines.BehaviorStateMachines.Transition incomings  
+		public HashSet<UML_SM.Transition> incomings  
 		{ 
 			get {
-				throw new NotImplementedException();
+				return ((Factory)this.model.factory).createIncomingTransitions(this);
 			}
 			set {
 				throw new NotImplementedException();
@@ -62,6 +68,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public UML.StateMachines.BehaviorStateMachines.Region container  
 		{ 
 			get {
+				if(_container == null) {
+					_container = ((Factory)this.model.factory).getContainingRegion(this);
+				}
 				return _container;
 			}
 			set {
