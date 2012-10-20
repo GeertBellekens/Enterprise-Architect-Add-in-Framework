@@ -4,10 +4,13 @@ using System.Linq;
 
 using UML=TSF.UmlToolingFramework.UML;
 
-namespace TSF.UmlToolingFramework.Wrappers.EA {
+namespace TSF.UmlToolingFramework.Wrappers.EA 
+{
+	
   public class ElementWrapper : Element, UML.Classes.Kernel.NamedElement 
   {
     internal global::EA.Element wrappedElement {get; set; }
+    private UML.Classes.Kernel.Element _owner;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -86,13 +89,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { 
     		// if the parentID is filled in then this element is owned by
     		// another element, otherwise it is owned by a package
-    		if (this.wrappedElement.ParentID > 0)
+    		if (this._owner == null)
     		{
-    			return this.model.getElementWrapperByID(this.wrappedElement.ParentID);
-    		}else
-    		{
-    			return this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+	    		if (this.wrappedElement.ParentID > 0)
+	    		{
+	    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
+	    		}else
+	    		{
+	    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+	    		}
     		}
+    		return this._owner;
     	}
       set { throw new NotImplementedException(); }
     }

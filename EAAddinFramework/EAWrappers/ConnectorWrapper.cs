@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 using UML=TSF.UmlToolingFramework.UML;
 
-namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship {
+namespace TSF.UmlToolingFramework.Wrappers.EA 
+{
+  public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship 
+  {
     internal global::EA.Connector wrappedConnector { get; set; }    
+    private UML.Classes.Kernel.Element _owner;
     public int id
     {
     	get{return this.wrappedConnector.ConnectorID;}
@@ -36,7 +39,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-    		return this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
+      	if (this._owner == null)
+      	{
+      		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
+      	}
+      	return this._owner;
       }
       set { throw new NotImplementedException(); }
     }
