@@ -19,6 +19,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
       this.wrappedConnector = connector;
     }
+    public global::EA.Connector WrappedConnector {
+    	get { return this.wrappedConnector; }
+    }
 	public override void open()
 	{
 		this.owner.open();

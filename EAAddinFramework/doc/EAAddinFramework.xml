@@ -1163,10 +1163,272 @@
             If true then the context is the class
             If false then the context is the instance.
         </member>
+<<<<<<< HEAD
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
             <summary>
             opens the properties dialog in EA. 
             For tagged values the properties dialog of the owner will be opened
+=======
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Event">
+            <summary>
+            Description of Event.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.FinalState">
+            <summary>
+            Description of FinalState.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State">
+            <summary>
+            Description of State.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex">
+            <summary>
+            Description of Vertex.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.outgoings">
+            <summary>
+            Specifies the transitions departing from this vertex. Derived in the following way:
+            context Vertex::outgoing derive:
+            Transition.allInstances() -> select(t | t.source = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.incomings">
+            <summary>
+            Specifies the transitions entering this vertex. Derived in the following way:
+            context Vertex::incoming derive:
+            Transition.allInstances() -> select(t | t.target = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.container">
+            <summary>
+            The region that contains this vertex. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isComposite">
+            <summary>
+            A state with isComposite=true is said to be a composite state. A composite state is a state that contains at least one
+            region. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isOrthogonal">
+            <summary>
+            A state with isOrthogonal=true is said to be an orthogonal composite state. An orthogonal composite state contains
+            two or more regions. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSimple">
+            <summary>
+            A state with isSimple=true is said to be a simple state. A simple state does not have any regions and it does not refer
+            to any submachine state machine. Default value is true.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSubmachineState">
+            <summary>
+            A state with isSubmachineState=true is said to be a submachine state. Such a state refers to a state machine
+            (submachine). Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connections">
+            <summary>
+            The entry and exit connection points used in conjunction with this (submachine) state, i.e., as targets and sources,
+            respectively, in the region with the submachine state. A connection point reference references the corresponding
+            definition of a connection point pseudostate in the statemachine referenced by the submachinestate. {Subsets
+            Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connectionPoints">
+            <summary>
+            The entry and exit pseudostates of a composite state. These can only be entry or exit Pseudostates, and they must have
+            different names. They can only be defined for composite states. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.deferrableTriggers">
+            <summary>
+            A list of triggers that are candidates to be retained by the state machine if they trigger no transitions out of the state (not
+            consumed). A deferred trigger is retained until the state machine reaches a state configuration where it is no longer
+            deferred.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.doActvity">
+            <summary>
+            An optional behavior that is executed while being in the state. The execution starts when this state is entered, and stops
+            either by itself or when the state is exited whichever comes first. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.entry">
+            <summary>
+            An optional behavior that is executed whenever this state is entered regardless of the transition taken to reach the state. If
+            defined, entry actions are always executed to completion prior to any internal behavior or transitions performed within the
+            state. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.exit">
+            <summary>
+            An optional behavior that is executed whenever this state is exited regardless of which transition was taken out of the
+            state. If defined, exit actions are always executed to completion only after all internal activities and transition actions have
+            completed execution. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinedState">
+            <summary>
+            The state of which this state is a redefinition. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.regions">
+            <summary>
+            The regions owned directly by the state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.submachine">
+            <summary>
+            The state machine that is to be inserted in place of the (submachine) state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.stateInvariant">
+            <summary>
+            Specifies conditions that are always true when this state is the current state. In protocol state machines, state invariants are
+            additional conditions to the preconditions of the outgoing transitions, and to the postcondition of the incoming transitions.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState">
+            <summary>
+            Description of PseudoState.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.kind">
+            <summary>
+            Determines the precise type of the Pseudostate. Default value is initial.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.statemachine">
+            <summary>
+            The StateMachine in which this Pseudostate is defined. This only applies to Pseudostates of the kind entryPoint or
+            exitPoint. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.state">
+            <summary>
+            State that owns the Pseudostate. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region">
+            <summary>
+            Description of Region.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.stateMachine">
+            <summary>
+            The StateMachine that owns the Region. If a Region is owned by a StateMachine, then it cannot also be owned by a
+            State. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.state">
+            <summary>
+            The State that owns the Region. If a Region is owned by a State, then it cannot also be owned by a StateMachine.
+            {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.transitions">
+            <summary>
+            The set of transitions owned by the region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.subvertices">
+            <summary>
+            The set of vertices that are owned by this region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.extendedRegion">
+            <summary>
+            The region of which this region is an extension. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine">
+            <summary>
+            Description of StateMachine.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition">
+            <summary>
+            Description of Transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.kind">
+            <summary>
+            See definition of TransitionKind. Default value is external.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.triggers">
+            <summary>
+            Specifies the triggers that may fire the transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.guard">
+            <summary>
+            A guard is a constraint that provides a fine-grained control over the firing of the transition. The guard is evaluated
+            when an event occurrence is dispatched by the state machine. If the guard is true at that time, the transition may be
+            enabled; otherwise, it is disabled. Guards should be pure expressions without side effects. Guard expressions with
+            side effects are ill-formed. {Subsets Namespace::ownedRule}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.effect">
+            <summary>
+            Specifies an optional behavior to be performed when the transition fires.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.source">
+            <summary>
+            Designates the originating vertex (state or pseudostate) of the transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.target">
+            <summary>
+            Designates the target vertex that is reached when the transition is taken.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinedTransition">
+            <summary>
+            The transition of which this is a replacement. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.container">
+            <summary>
+            Designates the region that owns this transition. (Subsets Namespace.namespace)
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Trigger">
+            <summary>
+            Description of Transition.
+>>>>>>> remotes/makulik/master
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
@@ -1514,18 +1776,6 @@
             </summary>
             <returns>all messages and other relations of the diagram</returns>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachine">
-            <summary>
-            Description of StateMachine.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            default constructor, calls parent constructor
-            </summary>
-            <param name="model">the model containing the element</param>
-            <param name="wrappedElement">the EA.Element to be wrapped</param>
-        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.
             If not then the owning namespace of the owner is returned
@@ -1538,10 +1788,424 @@
             If the proper translation cannot be found the defaultVisibility will 
             be returned
         </member>
+<<<<<<< HEAD
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
             <summary>
             Wrapper needed to be able to open properties dialog in EA
             </summary>
         </member>
+=======
+        <member name="T:EAAddinFramework.Utilities.ConnectorType">
+            <summary>
+            The connector types available for Enterprise Architect transformation IL.
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Aggregation">
+            <summary>
+            Aggregation
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Assembly">
+            <summary>
+            Assembly
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Association">
+            <summary>
+            Association
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Collaboration">
+            <summary>
+            Collaboration
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.ControlFlow">
+            <summary>
+            ControlFlow
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Connector">
+            <summary>
+            Connector
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Delegate">
+            <summary>
+            Delegate
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Dependency">
+            <summary>
+            Dependency
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Deployment">
+            <summary>
+            Deployment
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.ForeignKey">
+            <summary>
+            ForeignKey
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Generalization">
+            <summary>
+            Generalization
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.InformationFlow">
+            <summary>
+            InformationFlow
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Instantiation">
+            <summary>
+            Instantiation
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Interface">
+            <summary>
+            Interface
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.InterruptFlow">
+            <summary>
+            InterruptFlow
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Manifest">
+            <summary>
+            Manifest
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Nesting">
+            <summary>
+            Nesting
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.NoteLink">
+            <summary>
+            NoteLink
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.ObjectFlow">
+            <summary>
+            ObjectFlow
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Package">
+            <summary>
+            Package
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Realization">
+            <summary>
+            Realization
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Sequence">
+            <summary>
+            Sequence
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Transition">
+            <summary>
+            Transition
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.UseCase">
+            <summary>
+            UseCase
+            </summary>
+        </member>
+        <member name="F:EAAddinFramework.Utilities.ConnectorType.Uses">
+            <summary>
+            Uses
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Utilities.TransformationILWriter">
+            <summary>
+            The TransformationILWriter to write common EA transformation intermediate language elements to any underlying 
+            System.IO.TextWriter. In fact it implements kind of a little DSL for Enterprise Architects transformation language.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.#ctor(System.IO.TextWriter,System.Int32)">
+            <summary>
+            Creates a new TransformationILWTextWriter instance.
+            </summary>
+            <param name="writer">The System.IO.TextWriter to use for output.</param>
+            <param name="initialIndent">The initial indent level.</param>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.Indent(System.Int32)">
+            <summary>
+            Increases the current indent level.
+            </summary>
+            <param name="increment">The number of indent levels to insert.</param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILInterface">
+            <summary>
+            Opens an IL 'Interface' declaration at the current indent level and increases the indent level.
+            <code>
+            Interface
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILClass">
+            <summary>
+            Opens an IL 'Class' declaration at the current indent level and increases the indent level.
+            <code>
+            Class
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILPackage">
+            <summary>
+            Opens an IL 'Package' declaration at the current indent level and increases the indent level.
+            <code>
+            Package
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILXRef">
+            <summary>
+            Opens an IL 'XRef' declaration at the current indent level and increases the indent level.
+            <code>
+            XRef
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILConnector(EAAddinFramework.Utilities.ConnectorType)">
+            <summary>
+            Opens an IL connector of type connectorType declaration at the current indent level and increases the indent level.
+            <code>
+            [connectorType]
+            {
+            </code>
+            </summary>
+            <param name="connectorType">The IL connector type to declare</param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILConnectorRaw(System.String)">
+            <summary>
+            Opens an IL connector of type connectorType declaration at the current indent level and increases the indent level.
+            <code>
+            [connectorType]
+            {
+            </code>
+            </summary>
+            <param name="connectorType">The IL connector type to declare</param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILOperation">
+            <summary>
+            Opens an IL 'Operation' declaration at the current indent level and increases the indent level.
+            <code>
+            Operation
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILParameter">
+            <summary>
+            Opens an IL 'Parameter' declaration at the current indent level and increases the indent level.
+            <code>
+            Parameter
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.OpenILAttribute">
+            <summary>
+            Opens an IL 'Attribute' declaration at the current indent level and increases the indent level.
+            <code>
+            Attribute
+            {
+            </code>
+            </summary>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.CloseIL">
+            <summary>
+            Decreases the indent level and closes the actual IL declaration scope.
+            </summary>
+            <code>
+            }
+            </code>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILTag(System.String,System.String)">
+            <summary>
+            Writes an IL tagged value declaration at the current indent level.
+            <code>
+            Tag
+            {
+                name = "[tagName]"
+                value = "[tagValue]"
+            }
+            </code>
+            </summary>
+            <param name="tagName">The tagged value name.</param>
+            <param name="tagValue">The tagged values value.</param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteStdPackageProperties(TSF.UmlToolingFramework.UML.Classes.Kernel.Package)">
+            <summary>
+            Writes the IL declarations for a packages standard properties.
+            </summary>
+            <param name="package">The UML model package instance that declares the properties to generate.</param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteStdConnectorProperties(TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines.Transition)">
+            <summary>
+            Writes the IL declarations for a UML model transitions standard properties.
+            </summary>
+            <param name="relationship"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILConnectorSource(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper,System.Collections.Specialized.StringDictionary)">
+            <summary>
+            Writes a connector source at the current indent level.
+            </summary>
+            <param name="connectorWrapper"></param>
+            <param name="addProperties"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILConnectorSource(System.String,TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.Collections.Specialized.StringDictionary)">
+            <summary>
+            Writes a relationships connector source from using an UML model element.
+            </summary>
+            <param name="type"></param>
+            <param name="sourceRef"></param>
+            <param name="addProperties"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILConnectorTarget(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper,System.Collections.Specialized.StringDictionary)">
+            <summary>
+            Writes a transitions connector source at the current indent level.
+            </summary>
+            <param name="connectorWrapper"></param>
+            <param name="addProperties"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILConnectorTarget(System.String,TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.Collections.Specialized.StringDictionary)">
+            <summary>
+            Writes a relationships connector target from using an UML model element.
+            </summary>
+            <param name="type"></param>
+            <param name="targetRef"></param>
+            <param name="addProperties"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILProperty(System.String,System.String)">
+            <summary>
+            Writes an IL property declaration at the current indentation level.
+            </summary>
+            <code>
+            [propertyName] = "[propertyValue]"
+            </code>
+            <param name="propertyName"></param>
+            <param name="propertyValue"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILStereotype(System.String)">
+            <summary>
+            Writes an IL 'Stereotype' declaration at the current indentation level.
+            </summary>
+            <code>
+            Stereotype = "[propertyValue]"
+            </code>
+            <param name="stereotype"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILComment(System.String)">
+            <summary>
+            Writes an IL comment.
+            </summary>
+            <param name="comment"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+            <remarks>
+            The Enterprise Architect transformation IL doesn't seem to support comments that will
+            be ignored on transformations. So this method does actually nothing.
+            </remarks>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILComment(System.String,System.Object[])">
+            <summary>
+            Writes an IL comment from a fomat specification.
+            </summary>
+            <param name="comment"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+            <remarks>
+            The Enterprise Architect transformation IL doesn't seem to support comments that will
+            be ignored on transformations. So this method does actually nothing.
+            </remarks>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILError(System.String)">
+            <summary>
+            Writes an error message to the current transformation IL output. This will stop the transformation at this point
+            and can be inspected in a saved transformation IL file.
+            </summary>
+            <param name="error"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.WriteILError(System.String,System.Object[])">
+            <summary>
+            Writes a formatted error message to the current transformation IL output. This will stop the transformation at this point
+            and can be inspected in a saved transformation IL file.
+            </summary>
+            <param name="error"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateXRef(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            Writes an IL 'XRef' declaration for element at the current indentation level.
+            </summary>
+            <param name="name"></param>
+            <param name="elementWrapper"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateXRef(System.String,TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            Writes an IL 'XRef' declaration for element at the current indentation level.
+            </summary>
+            <param name="name"></param>
+            <param name="elementWrapper"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateXRef(System.String,System.String)">
+            <summary>
+            Writes an IL 'XRef' declaration for refName and sourceGuid at the current indentation level.
+            </summary>
+            <param name="refName"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateXRef(System.String,TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
+            <summary>
+            Writes an IL 'XRef' declaration for connectorWrapper at the current indentation level.
+            </summary>
+            <param name="name"></param>
+            <param name="connectorWrapper"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateClassProperties(TSF.UmlToolingFramework.UML.UMLItem)">
+            <summary>
+            Writes the standard IL 'Class' properties at the current indentation level.
+            </summary>
+            <param name="umlItem"></param>
+            <returns>The TransformationILWriter instance for use in concatenated output.</returns>
+        </member>
+>>>>>>> remotes/makulik/master
     </members>
 </doc>
