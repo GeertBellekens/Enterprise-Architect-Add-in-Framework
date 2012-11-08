@@ -42,10 +42,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-      	if (this._owner == null)
-      	{
+// removed cachign to try and solve multithreading issue.      	
+//      	if (this._owner == null)
+//      	{
       		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
-      	}
+//      	}
       	return this._owner;
       }
       set { throw new NotImplementedException(); }

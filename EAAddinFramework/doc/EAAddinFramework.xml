@@ -1163,12 +1163,12 @@
             If true then the context is the class
             If false then the context is the instance.
         </member>
-<<<<<<< HEAD
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
             <summary>
             opens the properties dialog in EA. 
             For tagged values the properties dialog of the owner will be opened
-=======
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Event">
             <summary>
             Description of Event.
@@ -1428,7 +1428,6 @@
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Trigger">
             <summary>
             Description of Transition.
->>>>>>> remotes/makulik/master
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
@@ -1788,13 +1787,11 @@
             If the proper translation cannot be found the defaultVisibility will 
             be returned
         </member>
-<<<<<<< HEAD
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
             <summary>
             Wrapper needed to be able to open properties dialog in EA
             </summary>
         </member>
-=======
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             The connector types available for Enterprise Architect transformation IL.
@@ -2206,6 +2203,5 @@
             <param name="umlItem"></param>
             <returns>The TransformationILWriter instance for use in concatenated output.</returns>
         </member>
->>>>>>> remotes/makulik/master
     </members>
 </doc>

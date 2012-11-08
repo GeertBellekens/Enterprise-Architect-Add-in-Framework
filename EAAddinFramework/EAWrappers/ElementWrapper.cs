@@ -102,8 +102,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { 
     		// if the parentID is filled in then this element is owned by
     		// another element, otherwise it is owned by a package
-    		if (this._owner == null)
-    		{
+// removed caching to test if that solves the multithreading issue
+//    		if (this._owner == null)
+//    		{
 	    		if (this.wrappedElement.ParentID > 0)
 	    		{
 	    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
@@ -111,7 +112,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    		{
 	    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
 	    		}
-    		}
+//    		}
     		return this._owner;
     	}
       set { throw new NotImplementedException(); }
