@@ -1792,6 +1792,12 @@
             Wrapper needed to be able to open properties dialog in EA
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">
+            <summary>
+            Description of AbortableBackgroundWorker.
+            borrowed from http://stackoverflow.com/questions/800767/how-to-kill-background-worker-completely 
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             The connector types available for Enterprise Architect transformation IL.
