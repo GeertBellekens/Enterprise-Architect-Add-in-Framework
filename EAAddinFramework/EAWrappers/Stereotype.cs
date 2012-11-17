@@ -7,12 +7,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Stereotype : Element, UML.Profiles.Stereotype {
     private Element _owner;
     private String _name;
+    private Diagram _ownerDiagram;
 
     public Stereotype(Model model, Element owner, String stereotype)
       : base(model) 
     {
       this.name = stereotype;
       this.owner = owner;
+    }
+    public Stereotype(Model model, Diagram ownerDiagram, String stereotype):this(model,null as Element,stereotype)
+    {
+    	this._ownerDiagram = ownerDiagram;
     }
     public String name {
       get { return this._name;  }

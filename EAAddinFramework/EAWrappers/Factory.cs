@@ -298,7 +298,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       return new Stereotype(this.model as Model, owner as Element, name);
     }
-
+    /// returns a new stereotype based on the given name and attached to the 
+    /// given diagram
+    public UML.Profiles.Stereotype createStereotype
+      (UML.Diagrams.Diagram owner, String name)
+    {
+      return new Stereotype(this.model as Model, owner as Element, name);
+    }
     /// creates a set of stereotypes based on the comma seperated names string
     /// and attaches it to the given element
     public HashSet<UML.Profiles.Stereotype> createStereotypes
@@ -318,6 +324,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return newStereotypes;
     }
+    
+    /// creates a set of stereotypes based on the comma separated names string
+    /// and attaches it to the given Diagram
+    public HashSet<UML.Profiles.Stereotype> createStereotypes
+      (UML.Diagrams.Diagram owner, String names)
+    {
+      HashSet<UML.Profiles.Stereotype> newStereotypes = 
+        new HashSet<UML.Profiles.Stereotype>();
+      String[] stereotypeNames = names.Split(',');
+      foreach( String name in stereotypeNames ) {
+        if( name != String.Empty ) {
+          UML.Profiles.Stereotype stereotype = 
+            this.createStereotype(owner, name);
+          if( stereotype != null ) {
+            newStereotypes.Add(stereotype);
+          }
+        }
+      }
+      return newStereotypes;
+    }
+    
     
     internal HashSet<UML_SM.Region> 
     	createBehaviourStateMachineRegions(ElementWrapper elementWrapper)

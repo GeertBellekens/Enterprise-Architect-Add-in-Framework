@@ -92,5 +92,14 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 	{
 		this.owner.openProperties();
 	}
+	
+	public HashSet<UML.Profiles.Stereotype> stereotypes {
+		get 
+		{
+			//tagged values never have stereotypes in EA
+			// return an empty collection
+			return new HashSet<UML.Profiles.Stereotype>();
+		}
+	}
 }
 }

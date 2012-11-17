@@ -1589,9 +1589,17 @@
             returns a new stereotype based on the given name and attached to the 
             given element
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotype(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
+            returns a new stereotype based on the given name and attached to the 
+            given diagram
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
             creates a set of stereotypes based on the comma seperated names string
             and attaches it to the given element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
+            creates a set of stereotypes based on the comma separated names string
+            and attaches it to the given Diagram
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createNewElement``1(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
             create a new element as owned element of the given owner

@@ -307,5 +307,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			                                           elementToSelect.wrappedElement.Type);
 		}
 	}
+  	
+	public HashSet<TSF.UmlToolingFramework.UML.Profiles.Stereotype> stereotypes {
+		get 
+		{
+			 return ((Factory)this.model.factory).createStereotypes(this, this.wrappedDiagram.Stereotype );
+		}
+	}
   }
 }
