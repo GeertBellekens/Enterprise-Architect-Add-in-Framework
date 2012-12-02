@@ -118,6 +118,7 @@
     <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
+    <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
   </ItemGroup>
   <ItemGroup>

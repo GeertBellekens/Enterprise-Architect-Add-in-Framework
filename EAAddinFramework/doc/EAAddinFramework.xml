@@ -1806,6 +1806,30 @@
             borrowed from http://stackoverflow.com/questions/800767/how-to-kill-background-worker-completely 
             </summary>
         </member>
+        <member name="M:EAAddinFramework.Utilities.Logger.setLogFileName(System.String)">
+            <summary>
+            set the log file name
+            </summary>
+            <param name="fileName">the name of the log file</param>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.Logger.log(System.String)">
+            <summary>
+            log a message
+            </summary>
+            <param name="logmessage">the message to be logged</param>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.Logger.logError(System.String)">
+            <summary>
+            log an error
+            </summary>
+            <param name="logmessage">the error message</param>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.Logger.logWarning(System.String)">
+            <summary>
+            log a warning
+            </summary>
+            <param name="logmessage">the warning message</param>
+        </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             The connector types available for Enterprise Architect transformation IL.
