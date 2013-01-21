@@ -821,6 +821,74 @@ namespace EAAddinFramework
                 
         #endregion EA Model Validation Broadcasts
         
+        #region EA Tagged Value Broadcasts
+        /// <summary>
+        /// EA_OnAttributeTagEdit is called when the user clicks the ellipsis ( ... ) button 
+        /// for a Tagged Value of type AddinBroadcast on an attribute.
+        /// The Add-In displays fields to show and change the value and notes; this function 
+        /// provides the initial values for the Tagged Value notes and value, and takes on any 
+        /// changes on exit of the function.
+        /// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open 
+        /// Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+        /// <param name="AttributeID">The ID of the attribute that this Tagged Value is on</param>
+        /// <param name="TagName">The name of the Tagged Value to edit.</param>
+        /// <param name="TagValue">The current value of the tag; if the value is updated, 
+        /// the new value is stored in the repository on exit of the function.</param>
+        /// <param name="TagNotes">The current value of the Tagged Value notes; if the value 
+        /// is updated, the new value is stored in the repository on exit of the function.</param>
+        public virtual void EA_OnAttributeTagEdit(EA.Repository Repository, long AttributeID, ref string TagName, ref string TagValue, ref string TagNotes) {}
+		
+        /// <summary>
+        /// EA_OnConnectorTagEdit is called when the user clicks the ellipsis ( ... ) button 
+        /// for a Tagged Value of type AddinBroadcast on a connector.The Add-In displays fields
+		/// to show and change the value and notes; this function provides the initial values 
+		/// for the Tagged Value notes and value, and takes on any changes on exit of the function
+        /// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open 
+        /// Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+        /// <param name="ConnectorID">The ID of the connector that this Tagged Value is on.</param>
+        /// <param name="TagName">The name of the Tagged Value to edit.</param>
+        /// <param name="TagValue">The current value of the tag; if the value is updated, 
+        /// the new value is stored in the repository on exit of the function.</param>
+        /// <param name="TagNotes">The current value of the Tagged Value notes; if the value 
+        public virtual void EA_OnConnectorTagEdit(EA.Repository Repository, long ConnectorID, ref string TagName, ref string TagValue, ref string TagNotes) {}
+
+        /// <summary>
+        /// EA_OnElementTagEdit is called when the user clicks the ellipsis ( ... ) button 
+        /// for a Tagged Value of type AddinBroadcast on a element.The Add-In displays fields
+		/// to show and change the value and notes; this function provides the initial values 
+		/// for the Tagged Value notes and value, and takes on any changes on exit of the function
+        /// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open 
+        /// Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+        /// <param name="ObjectID">The ID of the object (element) that this Tagged Value is on.</param>
+        /// <param name="TagName">The name of the Tagged Value to edit.</param>
+        /// <param name="TagValue">The current value of the tag; if the value is updated, 
+        /// the new value is stored in the repository on exit of the function.</param>
+        /// <param name="TagNotes">The current value of the Tagged Value notes; if the value 
+        public virtual void EA_OnElementTagEdit(EA.Repository Repository, long ObjectID, ref string TagName, ref string TagValue, ref string TagNotes) {}
+
+        /// <summary>
+        /// EA_OnMethodTagEdit is called when the user clicks the ellipsis ( ... ) button 
+        /// for a Tagged Value of type AddinBroadcast on a method.The Add-In displays fields
+		/// to show and change the value and notes; this function provides the initial values 
+		/// for the Tagged Value notes and value, and takes on any changes on exit of the function
+        /// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open 
+        /// Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+        /// <param name="MethodID">The ID of the method that this Tagged Value is on.</param>
+        /// <param name="TagName">The name of the Tagged Value to edit.</param>
+        /// <param name="TagValue">The current value of the tag; if the value is updated, 
+        /// the new value is stored in the repository on exit of the function.</param>
+        /// <param name="TagNotes">The current value of the Tagged Value notes; if the value 
+        public virtual void EA_OnMethodTagEdit(EA.Repository Repository, long MethodID, ref string TagName, ref string TagValue, ref string TagNotes) {}
+        #endregion
+        
         /// <summary>
         /// EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
         /// This event occurs when a user executes the Add a New Model Using Wizard command to add a model that has been defined by an MDG Technology. See the Incorporate Model Templates topic for details of how to define such model templates.

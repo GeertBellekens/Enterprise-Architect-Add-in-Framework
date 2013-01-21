@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using UML = TSF.UmlToolingFramework.UML;
+using UML_SM = TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	/// <summary>
@@ -38,6 +39,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 						containedSubVertices += region.subvertices.Count;
 					}
 					return containedSubVertices > 0;
+				}
+				else if(ownedElements.Count > 0) {
+					int ownedStates = 0;
+					foreach(UML.Classes.Kernel.Element element in ownedElements) {
+						if(element is State) {
+							++ownedStates;
+						}
+					}
+					return ownedStates > 0;				
 				}
 				global::EA._CustomProperty prop = getCustomProperty("isComposite");
 				if(prop != null) {
@@ -85,10 +95,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 					}
 					return containedSubVertices == 0;
 				}
-//				global::EA._CustomProperty prop = getCustomProperty("isSimple");
-//				if(prop != null) {
-//					return prop.Value == "-1";
-//				}
+				if(ownedElements.Count > 0) {
+					foreach(UML.Classes.Kernel.Element ownedElement in ownedElements) {
+						if(ownedElement is UML_SM.State) {
+							return false;
+						}
+					}
+					
+				}
 				return true;
 			}
 			set {

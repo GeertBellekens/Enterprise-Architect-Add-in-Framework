@@ -722,6 +722,27 @@
             <param name="MethodGUID">The GUID of the method that owns the given parameter. Use the Repository.GetMethodByGuid method to retrieve the method object.</param> 
             <param name="ObjectID">The ID of the object that owns the given parameter. Use the Repository.GetObjectByID parameter to retrieve the object.</param>
         </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_OnAttributeTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)">
+            <summary>
+            EA_OnAttributeTagEdit is called when the user clicks the ellipsis ( ... ) button 
+            for a Tagged Value of type AddinBroadcast on an attribute.
+            The Add-In displays fields to show and change the value and notes; this function 
+            provides the initial values for the Tagged Value notes and value, and takes on any 
+            changes on exit of the function.
+            </summary>
+            <param name="Repository">An EA.Repository object representing the currently open 
+            Enterprise Architect model.
+            Poll its members to retrieve model data and user interface status information.</param>
+            <param name="AttributeID">The ID of the attribute that this Tagged Value is on</param>
+            <param name="TagName">The name of the Tagged Value to edit.</param>
+            <param name="TagValue">The current value of the tag; if the value is updated, 
+            the new value is stored in the repository on exit of the function.</param>
+            <param name="TagNotes">The current value of the Tagged Value notes; if the value 
+            is updated, the new value is stored in the repository on exit of the function.</param>
+        </member>
+        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
+        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
+        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnRetrieveModelTemplate(EA.Repository,System.String)">
             <summary>
             EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
@@ -1725,6 +1746,11 @@
             translates the EA visibilityString to the UML VisibilityKind.
             If the proper translation cannot be found the defaultVisibility will 
             be returned
+        </member>
+        <member name="T:EAAddinFramework.Utilities.EventPropertiesHelper">
+            <summary>
+            Description of EventPropertiesHelper.
+            </summary>
         </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>

@@ -13,6 +13,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedAttribute = wrappedAttribute;
     }
 
+    public global::EA.Attribute WrappedAttribute
+    {
+    	get { return wrappedAttribute; }
+    }
+    
     public bool isDerived {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
