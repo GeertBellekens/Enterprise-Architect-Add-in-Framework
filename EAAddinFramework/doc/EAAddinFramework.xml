@@ -740,9 +740,9 @@
             <param name="TagNotes">The current value of the Tagged Value notes; if the value 
             is updated, the new value is stored in the repository on exit of the function.</param>
         </member>
-        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
-        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
-        <!-- Ungültiger XML-Kommentar wurde für den Member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" ignoriert -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnRetrieveModelTemplate(EA.Repository,System.String)">
             <summary>
             EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
@@ -1693,6 +1693,13 @@
             generic query operation on the model.
             Returns results in an xml format
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
+            <summary>
+            finds the item with the given guid
+            </summary>
+            <param name="guidString">the string with the guid</param>
+            <returns>the item that is identified by the given GUID</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
             <summary>
             opens the properties dialog for this item
@@ -1816,7 +1823,6 @@
             If the proper translation cannot be found the defaultVisibility will 
             be returned
         </member>
-<<<<<<< HEAD
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
             <summary>
             Wrapper needed to be able to open properties dialog in EA
@@ -1852,13 +1858,6 @@
             </summary>
             <param name="logmessage">the warning message</param>
         </member>
-=======
-        <member name="T:EAAddinFramework.Utilities.EventPropertiesHelper">
-            <summary>
-            Description of EventPropertiesHelper.
-            </summary>
-        </member>
->>>>>>> Fixed some minor stuff in EAWrappers. Added AddIn default TaggedValue boadcast handlers. Added EventPropertiesHelper class.
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             The connector types available for Enterprise Architect transformation IL.
