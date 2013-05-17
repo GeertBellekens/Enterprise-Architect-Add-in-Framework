@@ -740,9 +740,15 @@
             <param name="TagNotes">The current value of the Tagged Value notes; if the value 
             is updated, the new value is stored in the repository on exit of the function.</param>
         </member>
+<<<<<<< HEAD
         <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
         <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
         <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
+=======
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+>>>>>>> fed55a3dea5dd0d5a441de6073cbbc8e8189ae86
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnRetrieveModelTemplate(EA.Repository,System.String)">
             <summary>
             EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
@@ -1693,6 +1699,7 @@
             generic query operation on the model.
             Returns results in an xml format
         </member>
+<<<<<<< HEAD
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQL(System.String)">
             <summary>
             sets the correct wildcards depending on the database type.
@@ -1700,6 +1707,14 @@
             </summary>
             <param name="sqlQuery">the original query</param>
             <returns>the fixed query</returns>
+=======
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
+            <summary>
+            finds the item with the given guid
+            </summary>
+            <param name="guidString">the string with the guid</param>
+            <returns>the item that is identified by the given GUID</returns>
+>>>>>>> fed55a3dea5dd0d5a441de6073cbbc8e8189ae86
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
             <summary>

@@ -259,6 +259,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return ((Factory)this.factory).createDiagram
         ( this.wrappedModel.GetDiagramByID(diagramID) ) as Diagram;
     }
+    
+    internal Diagram getDiagramByGUID(string diagramGUID){
+      return ((Factory)this.factory).createDiagram
+        ( this.wrappedModel.GetDiagramByGuid(diagramGUID) ) as Diagram;
+    }
 
     internal ConnectorWrapper getRelationByID(int relationID) {
       return ((Factory)this.factory).createElement
@@ -429,6 +434,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.wrappedModel.ShowInProjectView(diagram.wrappedDiagram);
 	}
+	/// <summary>
+	/// finds the item with the given guid
+	/// </summary>
+	/// <param name="guidString">the string with the guid</param>
+	/// <returns>the item that is identified by the given GUID</returns>
+  	public UML.UMLItem getItemFromGUID(string guidString)
+  	{
+  		UML.UMLItem foundItem = null;
+  		foundItem = this.getElementByGUID(guidString);
+  		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
+  		if (foundItem == null) foundItem = this.getAttributeByGUID(guidString);
+  		if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
+  		if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
+  		return foundItem;
+  	}
   	
 	public UML.UMLItem getItemFromFQN(string FQN)
 	{
