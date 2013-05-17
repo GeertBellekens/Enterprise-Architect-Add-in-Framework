@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -26,7 +27,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		get 
 		{
 			//TODO
-			return this.model.getRelationsByQuery("select * from t_connector where 1 = 2");
+			return this.model.getRelationsByQuery("select * from t_connector where 1 = 2").Cast<UML.Classes.Kernel.Relationship>().ToList();
     	}
 		set { throw new NotImplementedException(); }
 	}

@@ -357,8 +357,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns>the fixed query</returns>
     private string formatSQL(string sqlQuery)
     {
+    	//TODO
     	string connectionString = this.wrappedModel.ConnectionString;
-    	
+    	return sqlQuery;
     }
 
     public void saveElement(UML.Classes.Kernel.Element element){
