@@ -22,6 +22,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	get { return wrappedAttribute; }
     }
     
+	public override List<UML.Classes.Kernel.Relationship> relationships {
+		get 
+		{
+			//TODO
+			return this.model.getRelationsByQuery("select * from t_connector where 1 = 2");
+    	}
+		set { throw new NotImplementedException(); }
+	}
     public bool isDerived {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }

@@ -349,6 +349,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
       return results;
     }
+    /// <summary>
+    /// sets the correct wildcards depending on the database type.
+    /// for now only changes '%' into '*' if on ms access
+    /// </summary>
+    /// <param name="sqlQuery">the original query</param>
+    /// <returns>the fixed query</returns>
+    private string formatSQL(string sqlQuery)
+    {
+    	string connectionString = this.wrappedModel.ConnectionString;
+    	
+    }
 
     public void saveElement(UML.Classes.Kernel.Element element){
       ((Element)element).save();
