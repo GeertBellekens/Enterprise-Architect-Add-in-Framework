@@ -441,6 +441,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// <returns>the item that is identified by the given GUID</returns>
   	public UML.UMLItem getItemFromGUID(string guidString)
   	{
+  		try
+  		{
   		UML.UMLItem foundItem = null;
   		foundItem = this.getElementByGUID(guidString);
   		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
@@ -448,6 +450,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   		if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
   		if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
   		return foundItem;
+  		}
+  		catch (System.Runtime.InteropServices.COMException e)
+  		{
+  			if (e.Message.Contains("Can't find matching ID"))
+  			{
+  				return null;
+  			}
+  			else
+  			{
+  				throw e;
+  			}
+  		}
   	}
   	
 	public UML.UMLItem getItemFromFQN(string FQN)
