@@ -217,6 +217,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     			{
     				return new Class(this.model as Model, elementToWrap);
     			}
+    	case "Enumeration":
+			// since version 10 there are also "real" enumerations Both are still supported
+			return new Enumeration(this.model as Model, elementToWrap);
         case "Interface":
           return new Interface(this.model as Model,elementToWrap);
         case "Note":
