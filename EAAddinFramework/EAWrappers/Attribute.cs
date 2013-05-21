@@ -26,8 +26,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override List<UML.Classes.Kernel.Relationship> relationships {
 		get 
 		{
-			//TODO
-			return this.model.getRelationsByQuery("select * from t_connector where 1 = 2").Cast<UML.Classes.Kernel.Relationship>().ToList();
+			string selectRelationsSQL = @"select c.Connector_ID from t_connector c
+,t_attribute a where a.ea_guid = '"+this.wrappedAttribute.AttributeGUID +@"' 
+and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
++@" and ((c.Start_Object_ID = a.Object_ID and c.End_Object_ID <> a.Object_ID)
+    or (c.Start_Object_ID <> a.Object_ID and c.End_Object_ID = a.Object_ID))";
+			return this.model.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
     	}
 		set { throw new NotImplementedException(); }
 	}

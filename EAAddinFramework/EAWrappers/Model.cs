@@ -14,6 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   {
     private global::EA.Repository wrappedModel;
     private IWin32Window _mainEAWindow;
+    private bool? msAccessSyntax;
     /// <summary>
     /// the main EA window to use when opening properties dialogs
     /// </summary>
@@ -349,24 +350,120 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     /// generic query operation on the model.
     /// Returns results in an xml format
-    public XmlDocument SQLQuery(string sqlQuery){
-      XmlDocument results = new XmlDocument();
-      results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
-      return results;
+    public XmlDocument SQLQuery(string sqlQuery)
+    {
+    	sqlQuery = this.formatSQL(sqlQuery);
+    	XmlDocument results = new XmlDocument();
+      	results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
+      	return results;
     }
+    
     /// <summary>
     /// sets the correct wildcards depending on the database type.
-    /// for now only changes '%' into '*' if on ms access
+    /// changes '%' into '*' if on ms access
+    /// and _ into ? on msAccess
     /// </summary>
     /// <param name="sqlQuery">the original query</param>
     /// <returns>the fixed query</returns>
     private string formatSQL(string sqlQuery)
     {
-    	//TODO
-    	string connectionString = this.wrappedModel.ConnectionString;
+    	if (!this.msAccessSyntax.HasValue)
+    	{
+    		this.msAccessSyntax = this.isMSAccessSyntax();
+    	}
+    	sqlQuery = replaceWildCards(sqlQuery,this.msAccessSyntax.Value);
     	return sqlQuery;
     }
-
+    /// <summary>
+    /// replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
+    /// </summary>
+    /// <param name="sqlQuery">the sql string to edit</param>
+    /// <param name="msAccess">indicates if MSAccess syntax has to be used</param>
+    /// <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
+    private string replaceWildCards(string sqlQuery, bool msAccess)
+    {
+    	int beginLike = sqlQuery.IndexOf("like",StringComparison.InvariantCultureIgnoreCase);
+    	if (beginLike > 1 )
+    	{
+    		int beginString = sqlQuery.IndexOf("'",beginLike + "like".Length);
+    		if (beginString > 0)
+    		{
+    			int endString = sqlQuery.IndexOf("'",beginString +1);
+    			if (endString > beginString)
+    			{
+    				string originalLikeString = sqlQuery.Substring(beginString +1,endString - beginString );
+    				string likeString = originalLikeString;
+    				if (msAccess)
+    				{
+    					likeString = likeString.Replace('%','*');
+    					likeString = likeString.Replace('_','?');
+						likeString = likeString.Replace('^','!');
+    				}
+    				else
+    				{
+    					likeString = likeString.Replace('*','%');
+    					likeString = likeString.Replace('?','_');
+    					likeString = likeString.Replace('#','_');
+						likeString = likeString.Replace('^','!');
+    				}
+    				string next = string.Empty;
+    				if (endString < sqlQuery.Length)
+    				{
+    					next = replaceWildCards(sqlQuery.Substring(endString +1),msAccess);
+    				}
+    				sqlQuery = sqlQuery.Substring(0,beginString+1) + likeString + next;
+    				    				
+    			}
+    		}
+    	}
+    	return sqlQuery;
+    }
+    /// <summary>
+    /// Checks if the database needs MSAccess syntax for its SQL
+    /// For a connection string, the DBMS repository type is identified by "DBType=n;" where n is a number corresponding to the DBMS type, as follows:
+    /// 0 - MYSQL
+    /// 1 - SQLSVR
+    /// 2 - ADOJET -> ? and * 
+    /// 3 - ORACLE
+    /// 4 - POSTGRES
+    /// 5 - ASA
+    /// 7 - OPENEDGE
+    /// 8 - ACCESS2007
+    /// </summary>
+    /// <returns></returns>
+    public bool isMSAccessSyntax()
+    {
+    	string connectionString = this.wrappedModel.ConnectionString;
+    	bool MSaccess = false;
+    	//if it is a .eap file we check the size of it. if less then 1 MB then it is a shortcut file and we have to open it as a text file to find the actual connection string
+    	if (connectionString.ToLower().EndsWith(".eap"))
+    	{
+    		System.IO.FileInfo fileInfo = new System.IO.FileInfo(connectionString);
+    		if (fileInfo.Length > 1000)
+    		{
+    			//local .eap file, ms access syntax
+    			MSaccess= true;
+    		}
+    		else
+    		{
+    			//open the file as a text file to find the connectionstring.
+	            System.IO.FileStream fileStream = new System.IO.FileStream(connectionString, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite); 
+	            System.IO.StreamReader reader = new System.IO.StreamReader(fileStream);
+	            //replace connectionstring with the file contents
+	            connectionString = reader.ReadToEnd();
+	            reader.Close(); 
+    		}
+    	}
+    	if (!connectionString.ToLower().EndsWith(".eap"))
+    	{
+    		if (connectionString.Contains("DBType=2"))
+    		{
+    			MSaccess = true;
+    		}
+    	}
+    	return MSaccess;
+    }
+    
     public void saveElement(UML.Classes.Kernel.Element element){
       ((Element)element).save();
     }

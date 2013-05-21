@@ -168,14 +168,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// returns the Relationships with the given type T
     public override List<T> getRelationships<T>() {
       List<UML.Classes.Kernel.Relationship> allRelationships = 
-        this.model.factory.createElements(this.wrappedElement.Connectors)
-        .Cast<UML.Classes.Kernel.Relationship>().ToList();
+      	this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
       List<T> returnedRelationships = new List<T>();
-      foreach (UML.Classes.Kernel.Relationship relationship 
-               in allRelationships) 
+      // we still need to filter out those relationships that are there because of linked features
+      foreach (UML.Classes.Kernel.Relationship relationship in allRelationships) 
       {
-        if (relationship is T) {
-          returnedRelationships.Add((T)relationship);
+        if (relationship is T) 
+        {
+        	foreach (UML.Classes.Kernel.Element relatedElement in relationship.relatedElements) 
+        	{
+        		if (this.Equals(relatedElement))
+        		{
+        			returnedRelationships.Add((T)relationship);
+        		}
+        	}
         }
       }
       return returnedRelationships;

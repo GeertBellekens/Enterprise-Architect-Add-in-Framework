@@ -1166,6 +1166,7 @@
             returns the related elements.
             In EA the Connectoris a binary relationship. So only two Elements will 
             ever be returned.
+            If there is a linked feature then the linked feature will be returned instead of the EA.Element.
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
             Each end represents participation of instances of the classifier 
@@ -1696,10 +1697,34 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQL(System.String)">
             <summary>
             sets the correct wildcards depending on the database type.
-            for now only changes '%' into '*' if on ms access
+            changes '%' into '*' if on ms access
+            and _ into ? on msAccess
             </summary>
             <param name="sqlQuery">the original query</param>
             <returns>the fixed query</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceWildCards(System.String,System.Boolean)">
+            <summary>
+            replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
+            </summary>
+            <param name="sqlQuery">the sql string to edit</param>
+            <param name="msAccess">indicates if MSAccess syntax has to be used</param>
+            <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.isMSAccessSyntax">
+            <summary>
+            Checks if the database needs MSAccess syntax for its SQL
+            For a connection string, the DBMS repository type is identified by "DBType=n;" where n is a number corresponding to the DBMS type, as follows:
+            0 - MYSQL
+            1 - SQLSVR
+            2 - ADOJET -> ? and * 
+            3 - ORACLE
+            4 - POSTGRES
+            5 - ASA
+            7 - OPENEDGE
+            8 - ACCESS2007
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
             <summary>

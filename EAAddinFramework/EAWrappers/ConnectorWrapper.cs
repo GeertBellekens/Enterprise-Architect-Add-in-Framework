@@ -62,19 +62,59 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// returns the related elements.
     /// In EA the Connectoris a binary relationship. So only two Elements will 
     /// ever be returned.
+    /// If there is a linked feature then the linked feature will be returned instead of the EA.Element.
     public List<UML.Classes.Kernel.Element> relatedElements {
-      get {
-        List<UML.Classes.Kernel.Element> returnedElements = 
-          new List<UML.Classes.Kernel.Element>();
-        returnedElements.Add(this.model.getElementWrapperByID
-          (this.wrappedConnector.ClientID));
-        returnedElements.Add(this.model.getElementWrapperByID
-          (this.wrappedConnector.SupplierID));
+      get 
+      {
+        List<UML.Classes.Kernel.Element> returnedElements =  new List<UML.Classes.Kernel.Element>();
+        
+        //add client element
+        //check first if there is a linked feature
+        UML.Classes.Kernel.Element linkedClientFeature = this.getLinkedFeature(true) as UML.Classes.Kernel.Element;
+        if (linkedClientFeature != null)
+        {
+        	returnedElements.Add(linkedClientFeature);
+        }
+        else
+        {
+        	returnedElements.Add(this.model.getElementWrapperByID(this.wrappedConnector.ClientID));
+        }
+        //add supplier element
+        //check first if there is a linked feature
+        UML.Classes.Kernel.Element linkedSupplierFeature = this.getLinkedFeature(false) as UML.Classes.Kernel.Element;
+                if (linkedSupplierFeature != null)
+        {
+        	returnedElements.Add(linkedSupplierFeature);
+        }
+        else
+        {
+        	returnedElements.Add(this.model.getElementWrapperByID(this.wrappedConnector.SupplierID));
+        }
         return returnedElements;
       }
       set { throw new NotImplementedException(); }
     }
-    
+    private UML.UMLItem getLinkedFeature(bool start)
+    {
+    	string styleEx = this.wrappedConnector.StyleEx;
+    	string key;
+    	UML.UMLItem linkedFeature = null;
+    	
+   		if (start)
+   		{
+    		key = "LFSP=";
+   		}else
+   		{
+   			key = "LFEP=";
+   		}
+   		int guidStart = styleEx.IndexOf(key) + key.Length ;
+   		if (guidStart >= key.Length)
+    	{
+    		string featureGUID = styleEx.Substring(guidStart,this.WrappedConnector.ConnectorGUID.Length);
+    		linkedFeature = this.model.getItemFromGUID(featureGUID);
+    	}
+    	return linkedFeature;
+    }
     public UML.Classes.Kernel.Element target {
       get {
         return this.model.getElementWrapperByID

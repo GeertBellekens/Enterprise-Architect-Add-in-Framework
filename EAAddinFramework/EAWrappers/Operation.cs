@@ -232,7 +232,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { this.wrappedOperation.Abstract = value; }
     }
 
-
+	public override List<TSF.UmlToolingFramework.UML.Classes.Kernel.Relationship> relationships 
+	{
+		get 
+		{ 
+			string selectRelationsSQL = @"select c.Connector_ID from t_connector c
+,t_operation o where o.ea_guid = '"+this.wrappedOperation.MethodGUID +@"' 
+and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
++@" and ((c.Start_Object_ID = o.Object_ID and c.End_Object_ID <> o.Object_ID)
+    or (c.Start_Object_ID <> o.Object_ID and c.End_Object_ID = o.Object_ID))";
+			return this.model.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
+		}
+		set { base.relationships = value; }
+	}
     public HashSet<UML.Interactions.BasicInteractions.Message> getCallingMessages()
     {
           //this one we will try to find with a cunning sql query directly
