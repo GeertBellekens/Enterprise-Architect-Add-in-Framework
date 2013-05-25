@@ -258,21 +258,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public T addOwnedElement<T>(String name) 
       where T : class, UML.Classes.Kernel.Element 
     {
+    	return this.addOwnedElement<T>(name, typeof(T).Name);
+    }
+    /// creates a new element of the given type as an owned element of this 
+    /// element
+    public T addOwnedElement<T>(String name, string EAType) 
+      where T : class, UML.Classes.Kernel.Element 
+    {	
       System.Type type = typeof(T);
       T newElement;
 
       if(((Factory)this.model.factory).isEAAtttribute(type)) {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Attributes, name );
+          ( this.wrappedElement.Attributes, name, EAType  );
       } else if(((Factory)this.model.factory).isEAOperation(type)) {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Methods, name );
+          ( this.wrappedElement.Methods, name, EAType  );
       } else if (((Factory)this.model.factory).isEAConnector(type)) {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Connectors, name );
+          ( this.wrappedElement.Connectors, name, EAType  );
       } else {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Elements, name );
+          ( this.wrappedElement.Elements, name, EAType );
       }
       return newElement;
     }

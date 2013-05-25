@@ -1036,6 +1036,16 @@
             opens the (standard) properties dialog in EA
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addToCurrentDiagram">
+            <summary>
+            adds this element to the currently opened diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.selectInCurrentDiagram">
+            <summary>
+            selects this element in the current diagram
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
@@ -1056,6 +1066,10 @@
             return the hashcode based on the elements guid
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String)">
+            creates a new element of the given type as an owned element of this 
+            element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String,System.String)">
             creates a new element of the given type as an owned element of this 
             element
         </member>
@@ -1153,6 +1167,11 @@
             <param name="model">the model containing the element</param>
             <param name="wrappedElement">the EA.Element to be wrapped</param>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
+            <summary>
+            adding both the start and the end element to the diagram will automatically add the connector to the diagram
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
             <summary>
             not fully correct, but we will return the element at the source of the relation
@@ -1189,6 +1208,16 @@
             <summary>
             opens the properties dialog in EA. 
             For tagged values the properties dialog of the owner will be opened
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.addToCurrentDiagram">
+            <summary>
+            add the owner of the tagged value to the current diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.selectInCurrentDiagram">
+            <summary>
+            select the owner of this tagged value in the current diagram
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Event">
@@ -1537,6 +1566,30 @@
             opens the (standard) properties dialog in EA
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds an element to the diagram
+            </summary>
+            <param name="element">the element to add</param>
+            <returns>the new diagramElement</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.reFresh">
+            <summary>
+            reloads the diagram. Looses any unsaved changes.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
+            <summary>
+            add the given diagram to this diagram
+            </summary>
+            <param name="diagram">the diagram to add</param>
+            <returns>the diagramElement representing the diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.selectInCurrentDiagram">
+            <summary>
+            select this diagram in the current diagram
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.
             Currently only diagramObjectWrappers and relations
@@ -1641,6 +1694,11 @@
             <param name="model">the model containing the element</param>
             <param name="wrappedElement">the EA.Element to be wrapped</param>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Message.addToCurrentDiagram">
+            <summary>
+            does nothing
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor">
             Creates a model connecting to the first running instance of EA
         </member>
@@ -1725,6 +1783,12 @@
             8 - ACCESS2007
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.saveOpenedDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
+            <summary>
+            saves unsaved changes to an opened diagram
+            </summary>
+            <param name="diagram">the diagram that is currently opened</param>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
             <summary>

@@ -314,5 +314,87 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			 return ((Factory)this.model.factory).createStereotypes(this, this.wrappedDiagram.Stereotype );
 		}
 	}
+  	
+        /// <summary>
+        /// adds an element to the diagram
+        /// </summary>
+        /// <param name="element">the element to add</param>
+        /// <returns>the new diagramElement</returns>
+		public UML.Diagrams.DiagramElement addToDiagram(UML.Classes.Kernel.Element element)
+		{
+			UML.Diagrams.DiagramElement diagramElement = null;
+			//first check whether this element is not already added to this diagram
+			diagramElement = this.diagramObjectWrappers.FirstOrDefault(x=> x.element.Equals(element));
+			if (diagramElement == null)
+			{
+				if (element is EA.ElementWrapper)
+				{
+					//first save the diagram to make sure we don't loos any unsaved changes
+					this.model.saveOpenedDiagram(this);
+					global::EA.DiagramObject newDiagramObject = this.wrappedDiagram.DiagramObjects.AddNew("","") as global::EA.DiagramObject;
+					diagramElement = ((Factory)this.model.factory).createDiagramElement(newDiagramObject) ;
+					diagramElement.element = element;
+					//save the element diagramObject
+					((DiagramObjectWrapper)diagramElement).save();
+					// now refresh to make sure we see the new element on the diagram
+					this.reFresh();
+				}
+
+				else if (!(element.owner is UML.Classes.Kernel.Package))
+				{
+					diagramElement = this.addToDiagram(element.owner);
+				}
+			}
+			return diagramElement;
+		}
+		/// <summary>
+		/// reloads the diagram. Looses any unsaved changes.
+		/// </summary>
+		public void reFresh()
+		{
+			this.model.refreshDiagram(this);
+		}
+		/// <summary>
+		/// add the given diagram to this diagram
+		/// </summary>
+		/// <param name="diagram">the diagram to add</param>
+		/// <returns>the diagramElement representing the diagram</returns>
+		public UML.Diagrams.DiagramElement addToDiagram(UML.Diagrams.Diagram diagram)
+		{	
+			if (this.owner is ElementWrapper)
+			{
+				ElementWrapper elementDiagram = ((ElementWrapper)this.owner).addOwnedElement<ElementWrapper>(diagram.name,"UMLDiagram");
+				elementDiagram.save();
+				//to make the elementDiagram actuall link to the diagram we need to set PDATA1 to the diagramID
+				// and NType = 0 for Frame or 1 for Reference
+				this.model.executeSQL("update t_object set Ntype = 0, PDATA1 = "+ ((Diagram)diagram).DiagramID.ToString() +" where ea_guid = '" + elementDiagram.WrappedElement.ElementGUID + "'");
+				return this.addToDiagram(elementDiagram);
+			}
+			else return null;
+		}
+		public void addToCurrentDiagram()
+		{
+			//to add this to a diagram we first need to make a new element of type UMLDiagram
+			//then we have to add that element tot he diagram.
+			this.model.currentDiagram.addToDiagram(this);			
+		}
+	  	/// <summary>
+	  	/// select this diagram in the current diagram
+	  	/// </summary>
+		public void selectInCurrentDiagram()
+		{
+			//TODO implement
+			// get the diagramObject for an element with type "UMLDiagram" and where PDATA1 contain this diagramID
+			string SQLSelect = @"select o.Object_ID from (t_object o
+			inner join t_diagramobjects do on o.Object_ID = do.Object_ID)
+			where o.[Object_Type] = 'UMLDiagram'
+			and do.[Diagram_ID] = " + ((Diagram)this.model.currentDiagram).DiagramID.ToString() +@" 
+			and o.PDATA1 = '" + this.DiagramID.ToString() +"'";
+			ElementWrapper elementDiagram = this.model.getElementWrappersByQuery(SQLSelect).FirstOrDefault();
+			if (elementDiagram != null)
+			{
+				elementDiagram.selectInCurrentDiagram();
+			}
+		}
   }
 }

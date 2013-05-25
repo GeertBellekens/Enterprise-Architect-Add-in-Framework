@@ -30,12 +30,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { this.wrappedDiagramObject.top = value * -1; }
     }
     
-    public UML.Classes.Kernel.Element element {
+    public UML.Classes.Kernel.Element element 
+    {
       get {
          return this.model.getElementWrapperByID
           ( this.wrappedDiagramObject.ElementID );
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+      	ElementWrapper elementWrapper = value as ElementWrapper;
+      	//TODO add support for other type of elements
+      	if (elementWrapper != null)
+      	{
+      		this.wrappedDiagramObject.ElementID = elementWrapper.WrappedElement.ElementID;
+      	}
+      }
+    }
+    public void save()
+    {
+    	this.wrappedDiagramObject.Update();
     }
   }
 }

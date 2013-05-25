@@ -118,6 +118,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
     
+    public void refreshDiagram(Diagram diagram)
+    {
+    	this.wrappedModel.ReloadDiagram(diagram.DiagramID);
+    }
 
     public UML.Classes.Kernel.Element getElementByGUID(string GUIDstring)
     {
@@ -462,6 +466,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		}
     	}
     	return MSaccess;
+    }
+    /// <summary>
+    /// saves unsaved changes to an opened diagram
+    /// </summary>
+    /// <param name="diagram">the diagram that is currently opened</param>
+    public void saveOpenedDiagram(UML.Diagrams.Diagram diagram)
+    {
+    	this.wrappedModel.SaveDiagram(((Diagram)diagram).DiagramID);
+    }
+    public void adviseChange(UML.Classes.Kernel.Element element)
+    {
+    	if (element is ElementWrapper)
+    	{
+    		this.wrappedModel.AdviseElementChange(((ElementWrapper)element).id);
+    	}
+    	else if (element is ConnectorWrapper)
+    	{
+    		this.wrappedModel.AdviseConnectorChange(((ConnectorWrapper)element).id);
+    	}
     }
     
     public void saveElement(UML.Classes.Kernel.Element element){

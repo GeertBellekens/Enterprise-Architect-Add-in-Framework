@@ -123,5 +123,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
             return diagrams;
         }
+        /// <summary>
+        /// does nothing
+        /// </summary>
+		public override void addToCurrentDiagram()
+		{
+			//do nothing. An existing message cannot be added to a diagram in EA
+			//because in EA messages are bound to a diagram.
+		}
     }
  }

@@ -147,5 +147,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.model.openProperties(this);
 	}
+  	/// <summary>
+  	/// adds this element to the currently opened diagram
+  	/// </summary>
+	public virtual void addToCurrentDiagram()
+	{
+		this.model.currentDiagram.addToDiagram(this);
+	}
+  	/// <summary>
+  	/// selects this element in the current diagram
+  	/// </summary>
+	public void selectInCurrentDiagram()
+	{
+		this.model.currentDiagram.selectItem(this);
+	}
   }
 }

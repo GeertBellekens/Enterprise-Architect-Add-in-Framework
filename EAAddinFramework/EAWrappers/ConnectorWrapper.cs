@@ -315,7 +315,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		return new Guid(this.wrappedConnector.ConnectorGUID).GetHashCode();
 	}
 	#endregion
-
+	/// <summary>
+	/// adding both the start and the end element to the diagram will automatically add the connector to the diagram
+	/// </summary>
+	public override void addToCurrentDiagram()
+	{
+		foreach (UML.Classes.Kernel.Element element in this.relatedElements) 
+		{
+			element.addToCurrentDiagram();
+		}
+	}
 
   }
 }

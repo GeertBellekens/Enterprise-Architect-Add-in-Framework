@@ -583,13 +583,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return default(T);
       }
     }
-
+	
+    internal T addElementToEACollection<T>( global::EA.Collection collection,
+                                            string name,string EAType) 
+      where T : class, UML.Classes.Kernel.Element
+    {
+      return this.model.factory.createElement(collection.AddNew( name, this.translateTypeName(EAType))) as T;
+    }
+    
     internal T addElementToEACollection<T>( global::EA.Collection collection,
                                             String name) 
       where T : class, UML.Classes.Kernel.Element
     {
-      return this.model.factory.createElement(collection.AddNew
-        ( name, this.translateTypeName(typeof(T).Name) )) as T;
+      return this.addElementToEACollection<T> (collection, name, this.translateTypeName(typeof(T).Name));
     }
 
     /// translates the UML type name to the EA equivalent
@@ -622,7 +628,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override UML.Diagrams.DiagramElement createNewDiagramElement
       ( UML.Diagrams.Diagram owner, UML.Classes.Kernel.Element element)
     {
-      throw new NotImplementedException();
+    	return owner.addToDiagram(element);
     }
 
     public override T createNewDiagram<T>(UML.Classes.Kernel.Element owner, string name)

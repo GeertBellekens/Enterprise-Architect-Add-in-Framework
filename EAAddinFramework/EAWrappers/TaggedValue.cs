@@ -101,5 +101,19 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			return new HashSet<UML.Profiles.Stereotype>();
 		}
 	}
+	/// <summary>
+	/// add the owner of the tagged value to the current diagram
+	/// </summary>
+	public void addToCurrentDiagram()
+	{
+		this.owner.addToCurrentDiagram();
+	}
+	/// <summary>
+	/// select the owner of this tagged value in the current diagram
+	/// </summary>
+	public void selectInCurrentDiagram()
+	{
+		this.owner.selectInCurrentDiagram();
+	}
 }
 }
