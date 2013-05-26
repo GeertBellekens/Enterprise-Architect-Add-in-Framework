@@ -187,6 +187,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return elements;
     }
+    public List<UML.UMLItem> getQuickSearchResults(string searchText,int maxResults)
+    {
+ 		string SQLSelect = @"select  top "+maxResults + @" Object_ID from t_object o 
+							where  o.name like '" +searchText +@"%'
+							order by name, object_id";
+ 		return this.getElementWrappersByQuery(SQLSelect).Cast<UML.UMLItem>().ToList();
+    }
     /// <summary>
     /// gets the Attribute with the given GUID
     /// </summary>
