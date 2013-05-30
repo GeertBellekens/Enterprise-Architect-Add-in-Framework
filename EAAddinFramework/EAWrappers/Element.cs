@@ -161,5 +161,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.model.currentDiagram.selectItem(this);
 	}
+	/// <summary>
+	/// returns the name as ToString
+	/// </summary>
+	/// <returns>the name as ToString</returns>
+	public override string ToString()
+	{
+		return this.name;
+	}
+
   }
 }

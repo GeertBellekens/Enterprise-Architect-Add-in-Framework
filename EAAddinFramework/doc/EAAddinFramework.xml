@@ -1046,6 +1046,12 @@
             selects this element in the current diagram
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.ToString">
+            <summary>
+            returns the name as ToString
+            </summary>
+            <returns>the name as ToString</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
@@ -1589,6 +1595,12 @@
             <summary>
             select this diagram in the current diagram
             </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.ToString">
+            <summary>
+            returns the name as ToString
+            </summary>
+            <returns>the name as ToString</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.

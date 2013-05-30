@@ -396,5 +396,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				elementDiagram.selectInCurrentDiagram();
 			}
 		}
+		/// <summary>
+		/// returns the name as ToString
+		/// </summary>
+		/// <returns>the name as ToString</returns>
+		public override string ToString()
+		{
+			return this.name;
+		}
+
   }
 }
