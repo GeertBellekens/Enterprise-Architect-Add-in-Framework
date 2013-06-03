@@ -1736,6 +1736,18 @@
             <param name="sqlQuery">query returning the Object_ID's</param>
             <returns>elementwrappers returned by the query</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getQuickSearchResults(System.String,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            returns the first [maxresults] items who's name starts with the given searchText
+            </summary>
+            <param name="searchText">the first part of the name to match</param>
+            <param name="maxResults">the number of results required</param>
+            <param name="elements">indicates whether elements should be selected</param>
+            <param name="operations">indicates whether operations should be selected</param>
+            <param name="attributes">indicates whether attributes should be selected</param>
+            <param name="diagrams">indicates whether diagrams should be selected</param>
+            <returns></returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByGUID(System.String)">
             <summary>
             gets the Attribute with the given GUID
