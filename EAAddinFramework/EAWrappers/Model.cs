@@ -189,10 +189,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     public List<UML.UMLItem> getQuickSearchResults(string searchText,int maxResults)
     {
- 		string SQLSelect = @"select  top "+maxResults + @" Object_ID from t_object o 
+    	List<UML.UMLItem> results = new List<UML.UMLItem>();
+    	// get elements
+ 		string SQLSelectElements = @"select  top "+maxResults + @" o.Object_ID from t_object o 
 							where  o.name like '" +searchText +@"%'
-							order by name, object_id";
- 		return this.getElementWrappersByQuery(SQLSelect).Cast<UML.UMLItem>().ToList();
+							order by o.name, o.object_id";
+ 		results.AddRange(this.getElementWrappersByQuery(SQLSelectElements).Cast<UML.UMLItem>().ToList());
+ 		// get operations
+ 		string SQLSelectOperations = @"select  top "+maxResults + @" o.OperationID from t_operation o 
+							where  o.name like '" +searchText +@"%'
+							order by o.name, o.OperationID";
+ 		results.AddRange(this.getOperationsByQuery(SQLSelectOperations).Cast<UML.UMLItem>().ToList());
+ 		// get attributes
+	 	string SQLSelectAttributes = @"select  top "+maxResults + @" a.ea_guid from t_Attribute a 
+						where  a.name like '" +searchText +@"%'
+						order by a.name, a.ea_guid";
+ 		results.AddRange(this.getAttributesByQuery(SQLSelectAttributes).Cast<UML.UMLItem>().ToList());
+ 		// get diagrams
+ 		string SQLSelectDiagrams = @"select  top "+maxResults + @" d.Diagram_ID from t_Diagram d 
+						where  d.name like '" +searchText +@"%'
+						order by d.name, d.Diagram_ID";
+ 		results.AddRange(this.getDiagramsByQuery(SQLSelectDiagrams).Cast<UML.UMLItem>().ToList());
+ 		
+ 		//sort alphabetically by name
+ 		results = results.OrderBy(x => x.name).ToList();
+ 		
+ 		//we need only the first maxresults
+ 		if (results.Count > maxResults)
+ 		{
+ 			results = results.GetRange(0,maxResults);
+ 		}
+ 		return results;
     }
     /// <summary>
     /// gets the Attribute with the given GUID
