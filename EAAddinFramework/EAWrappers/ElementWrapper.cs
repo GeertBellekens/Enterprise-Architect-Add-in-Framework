@@ -23,6 +23,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       set { this.wrappedElement.Name = value; }
     }
     
+    public string subType
+    {
+    	get 
+    	{
+    		string wrappedType = this.wrappedElement.Type;
+    		//PackagingComponents have Package as Type and 20 as subtype
+    		if (wrappedType == "Package" && wrappedElement.Subtype == 20)
+    		{
+    			wrappedType = "PackagingComponent";
+    		}
+    		else if (wrappedType == "StateNode")
+    		{
+    			switch (wrappedElement.Subtype) 
+    			{
+    				case 100:
+    					wrappedType = "ActivityInitial";
+    					break;
+    				case 101:
+    					wrappedType = "ActivityFinal";
+    					break;
+    				case 102:
+    					wrappedType = "FlowFinal";
+    					break;
+    				case 6:
+    					wrappedType = "SynchronisationNode";
+    					break;
+    			}
+    		}
+    		return wrappedType;
+    	}
+    	set {this.wrappedElement.Type = value;}
+    }
+    
     public global::EA.Element WrappedElement {
     	get { return this.wrappedElement; }
     }
