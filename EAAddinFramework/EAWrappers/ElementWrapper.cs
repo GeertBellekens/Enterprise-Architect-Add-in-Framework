@@ -49,6 +49,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     				case 6:
     					wrappedType = "SynchronisationNode";
     					break;
+    				case 3: 
+    					wrappedType = "StateInitial";
+    					break;
+    				case 4: 
+    					wrappedType = "StateFinal";
+    					break;
+    				case 5:
+    					wrappedType = "StateHistory";
+    					break;
+    				case 11:
+    					wrappedType = "StateChoice";
+    					break;
+    				case 10:
+    					wrappedType = "StateJunction";
+    					break;
+    				case 13:
+    					wrappedType = "StateEntryPoint";
+    					break;
+    				case 14:
+    					wrappedType = "StateExitPoint";
+    					break;
+    				case 12:
+    					wrappedType = "StateTerminate";
+    					break;
     			}
     		}
     		return wrappedType;
