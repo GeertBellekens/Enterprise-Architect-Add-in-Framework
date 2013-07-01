@@ -75,6 +75,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     					break;
     			}
     		}
+    		else if (wrappedType == "Text")
+    		{
+    			switch (wrappedElement.Subtype) 
+    			{
+    				case 76:
+    					wrappedType = "Legend";
+    					break;
+    				case 18:
+    					wrappedType = "DiagramNotes";
+    					break;
+    				case 19:
+    					wrappedType = "Hyperlink";
+    					break;
+    			}
+    		}
     		return wrappedType;
     	}
     	set {this.wrappedElement.Type = value;}
