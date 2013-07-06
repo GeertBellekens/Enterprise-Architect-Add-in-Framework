@@ -1173,6 +1173,79 @@
             <param name="model">the model containing the element</param>
             <param name="wrappedElement">the EA.Element to be wrapped</param>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ActivityDiagram">
+            <summary>
+            Description of ActivityDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
+            find the diagramlink object (if any) that represents the given 
+            relation
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getRelations">
+            <summary>
+            the relations on a diagram in EA are sometimes expressed as 
+            DiagramLink but not always.
+            We are looking for all relations that have both their ends displayed 
+            on the diagram.
+            To make this a bit faster the list of id's is retrieved using an sql 
+            query
+            </summary>
+            <returns>all reations ont he diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
+            <summary>
+            searches downward for the item with the given relative path
+            This relative path includes the own name
+            </summary>
+            <param name="relativePath">list of names inlcuding the own name</param>
+            <returns>the item matching the path</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getCalledOperations">
+            <summary>
+            returns all operations called in this sequence diagram
+            </summary>
+            <returns>all operations called in this sequence diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds an element to the diagram
+            </summary>
+            <param name="element">the element to add</param>
+            <returns>the new diagramElement</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.reFresh">
+            <summary>
+            reloads the diagram. Looses any unsaved changes.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
+            <summary>
+            add the given diagram to this diagram
+            </summary>
+            <param name="diagram">the diagram to add</param>
+            <returns>the diagramElement representing the diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.selectInCurrentDiagram">
+            <summary>
+            select this diagram in the current diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.ToString">
+            <summary>
+            returns the name as ToString
+            </summary>
+            <returns>the name as ToString</returns>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
+            all elements shown on this diagram.
+            Currently only diagramObjectWrappers and relations
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
             <summary>
             adding both the start and the end element to the diagram will automatically add the connector to the diagram
@@ -1533,78 +1606,15 @@
             Specification of the ordered set of argument values that appear during execution. 
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ClassDiagram">
+            <summary>
+            Description of ClassDiagram.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram">
             <summary>
             Description of CommunicationDiagram.
             </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
-            find the diagramlink object (if any) that represents the given 
-            relation
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getRelations">
-            <summary>
-            the relations on a diagram in EA are sometimes expressed as 
-            DiagramLink but not always.
-            We are looking for all relations that have both their ends displayed 
-            on the diagram.
-            To make this a bit faster the list of id's is retrieved using an sql 
-            query
-            </summary>
-            <returns>all reations ont he diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
-            <summary>
-            searches downward for the item with the given relative path
-            This relative path includes the own name
-            </summary>
-            <param name="relativePath">list of names inlcuding the own name</param>
-            <returns>the item matching the path</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getCalledOperations">
-            <summary>
-            returns all operations called in this sequence diagram
-            </summary>
-            <returns>all operations called in this sequence diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.openProperties">
-            <summary>
-            opens the (standard) properties dialog in EA
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            adds an element to the diagram
-            </summary>
-            <param name="element">the element to add</param>
-            <returns>the new diagramElement</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.reFresh">
-            <summary>
-            reloads the diagram. Looses any unsaved changes.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
-            <summary>
-            add the given diagram to this diagram
-            </summary>
-            <param name="diagram">the diagram to add</param>
-            <returns>the diagramElement representing the diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.selectInCurrentDiagram">
-            <summary>
-            select this diagram in the current diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.ToString">
-            <summary>
-            returns the name as ToString
-            </summary>
-            <returns>the name as ToString</returns>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
-            all elements shown on this diagram.
-            Currently only diagramObjectWrappers and relations
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram.getRelations">
             <summary>
@@ -1612,14 +1622,49 @@
             </summary>
             <returns>all messages and other relations of the diagram</returns>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ComponentDiagram">
+            <summary>
+            Description of ComponentDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CompositeStructureDiagram">
+            <summary>
+            Description of CompositeStructureDiagram.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
             <summary>
             Description of DataType.
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DeploymentDiagram">
+            <summary>
+            Description of DeploymentDiagram.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Enumeration">
             <summary>
             Description of Enumeration.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.InteractionOverviewDiagram">
+            <summary>
+            Description of InteractionOverviewDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ObjectDiagram">
+            <summary>
+            Description of ObjectDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.PackageDiagram">
+            <summary>
+            Description of PackageDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ProfileDiagram">
+            <summary>
+            Description of ProfileDiagram.
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper">
@@ -1932,9 +1977,24 @@
             </summary>
             <returns>all messages and other relations of the diagram</returns>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachineDiagram">
+            <summary>
+            Description of StateMachineDiagram.
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
             if the owning element is a namespace then this is returned.
             If not then the owning namespace of the owner is returned
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.TimingDiagram">
+            <summary>
+            Description of TimingDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UseCaseDiagram">
+            <summary>
+            Description of UseCaseDiagram.
+            </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.VisibilityKind.getEAVisibility(TSF.UmlToolingFramework.UML.Classes.Kernel.VisibilityKind)">
             translates the UML VisibilityKind to the string used in EA

@@ -46,9 +46,43 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	            case "Sequence":
 	                newDiagram = new SequenceDiagram(this.model as Model, eaDiagramToWrap);
 	                break;
-	               case "Collaboration":
+	            case "Collaboration":
 	            	newDiagram = new CommunicationDiagram(this.model as Model, eaDiagramToWrap);
 	            	break;
+	            case "Activity":
+	            	newDiagram = new ActivityDiagram(this.model as Model, eaDiagramToWrap);
+					break;
+				case "Logical":
+	            	newDiagram = new ClassDiagram(this.model as Model, eaDiagramToWrap);
+					break;
+				case "Component":
+	            	newDiagram = new ComponentDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "CompositeStructure":
+	            	newDiagram = new CompositeStructureDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Deployment":
+	            	newDiagram = new DeploymentDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "InteractionOverview":
+	            	newDiagram = new InteractionOverviewDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Object":
+	            	newDiagram = new ObjectDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Package":
+	            	newDiagram = new PackageDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Statechart":
+	            	newDiagram = new StateMachineDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Timing":
+	            	newDiagram = new TimingDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				case "Use Case":
+	            	newDiagram = new UseCaseDiagram(this.model as Model, eaDiagramToWrap);
+					break;	
+				// TODO add creation of profile diagram					
 	            default:
 	                newDiagram = new Diagram(this.model as Model, eaDiagramToWrap);
 	            	break;
