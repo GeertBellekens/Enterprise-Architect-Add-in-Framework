@@ -120,7 +120,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return new HashSet<UML.Profiles.TaggedValue>();
 	}
 	
-	public string fqn 
+	public virtual string fqn 
 	{
 		get 
 		{
