@@ -88,6 +88,10 @@
       <Project>{52A75EE4-43A3-4B91-BA88-C567C4ECEA0A}</Project>
       <Name>EAWorksetSharing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\UML-Tooling-Framework\UMLToolingFramework\UMLToolingFramework.csproj">
+      <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
+      <Name>UMLToolingFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EAAddinFramework\EAAddinFramework.csproj">
       <Project>{4161DD26-375F-4744-BA96-B70366E19A78}</Project>
       <Name>EAAddinFramework</Name>

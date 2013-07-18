@@ -38,5 +38,10 @@ namespace EAAddinTester
         {
             EAAddinTesterProgram.clickMenu(this.location,e.ClickedItem.OwnerItem.Text,e.ClickedItem.Text);
         }
+        
+        void MyTestButtonClick(object sender, EventArgs e)
+        {
+        	EAAddinTesterProgram.myTest();
+        }
     }
 }

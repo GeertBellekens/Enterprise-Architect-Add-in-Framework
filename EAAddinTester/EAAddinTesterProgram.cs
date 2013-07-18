@@ -4,6 +4,9 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
+
+
 namespace EAAddinTester
 {
     static class EAAddinTesterProgram
@@ -127,6 +130,14 @@ namespace EAAddinTester
             foreach (EAAddinFramework.EAAddinBase addin in addins) {
             	addin.EA_MenuClick(eaRepository, location, menuName, itemName);	
             } 
+        }
+        /// <summary>
+        /// generic test method. To be filled in with whatever needs to be tested.
+        /// </summary>
+        internal static void myTest()
+        {
+        	EAWrappers.Model model = new EAWrappers.Model();
+        	string fqn = model.selectedItem.fqn;
         }
         /// <summary>
         /// Gets the Repository object from the currently running instance of EA.

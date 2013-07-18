@@ -1941,6 +1941,15 @@
             Description of Package.
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.getFQN(System.String,System.Int32)">
+            <summary>
+            gets the FQN without the need of instantiating all the owners up to the root element.
+            From a package we are sure that only packages are the owners so its safe to check only t_package.
+            </summary>
+            <param name="fqnString">the fqn string so far</param>
+            <param name="parentID">the id of the package</param>
+            <returns>the fqn of the package</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>
             
