@@ -152,7 +152,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// </summary>
 	public virtual void addToCurrentDiagram()
 	{
-		this.model.currentDiagram.addToDiagram(this);
+		UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
+		if (currentDiagram != null)
+		{
+			currentDiagram.addToDiagram(this);
+		}
 	}
   	/// <summary>
   	/// selects this element in the current diagram
