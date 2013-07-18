@@ -163,7 +163,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// </summary>
 	public void selectInCurrentDiagram()
 	{
-		this.model.currentDiagram.selectItem(this);
+		UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
+		if (currentDiagram != null)
+		{
+			currentDiagram.selectItem(this);
+		}
 	}
 	/// <summary>
 	/// returns the name as ToString
