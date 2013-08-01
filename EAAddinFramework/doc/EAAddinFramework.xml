@@ -2048,6 +2048,11 @@
             </summary>
             <param name="logmessage">the warning message</param>
         </member>
+        <member name="P:EAAddinFramework.Utilities.Logger.logFileName">
+            <summary>
+            the logfile full pathname
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             The connector types available for Enterprise Architect transformation IL.

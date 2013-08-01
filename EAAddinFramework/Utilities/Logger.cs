@@ -7,14 +7,28 @@ namespace EAAddinFramework.Utilities
 {
     public static class Logger
     {
-        private static string logFileName = System.IO.Path.GetTempPath() + @"\EAAddinFramework.log";
+        private static string _logFileName = System.IO.Path.GetTempPath() + @"\EAAddinFramework.log";
+        /// <summary>
+        /// the logfile full pathname
+        /// </summary>
+        public static string logFileName
+        {
+        	get
+        	{
+        		return _logFileName;	
+        	}
+        	set 
+        	{
+        		_logFileName = value;
+        	}
+        }
         /// <summary>
         /// set the log file name
         /// </summary>
         /// <param name="fileName">the name of the log file</param>
         public static void setLogFileName(string fileName)
         {
-            logFileName = fileName;
+            _logFileName = fileName;
         }
         /// <summary>
         /// log a message
@@ -22,7 +36,7 @@ namespace EAAddinFramework.Utilities
         /// <param name="logmessage">the message to be logged</param>
         public static void log(string logmessage)
         { 
-            System.IO.StreamWriter logfile = new System.IO.StreamWriter(logFileName,true);
+            System.IO.StreamWriter logfile = new System.IO.StreamWriter(_logFileName,true);
             logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " " + logmessage);
             logfile.Close();
         }
