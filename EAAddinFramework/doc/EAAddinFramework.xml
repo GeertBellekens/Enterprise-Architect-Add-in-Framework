@@ -1062,7 +1062,10 @@
             </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
+            <summary>
             returns the Relationships with the given type T
+            </summary>
+            <returns>the relations of type T</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.Equals(System.Object)">
             two elementwrappers represent the same object 
@@ -1974,6 +1977,12 @@
             return the hashcode based on the elements guid
             </summary>
             <returns>hashcode based on the elements guid</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.getRelationships``1">
+            <summary>
+            Rootpackages don't have relationships
+            </summary>
+            <returns>an empty list</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram">
             <summary>

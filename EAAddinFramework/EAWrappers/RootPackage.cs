@@ -66,5 +66,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			return this.model.getTaggedValuesWithValue(this.wrappedPackage.PackageGUID);
 		}
+		/// <summary>
+		/// Rootpackages don't have relationships
+		/// </summary>
+		/// <returns>an empty list</returns>
+		public override List<T> getRelationships<T>()
+		{
+			return new List<T>();
+		}
 	}
 }

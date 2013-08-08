@@ -237,8 +237,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       set { throw new NotImplementedException(); }
     }
 
+    /// <summary>
     /// returns the Relationships with the given type T
-    public override List<T> getRelationships<T>() {
+    /// </summary>
+    /// <returns>the relations of type T</returns>
+    public override List<T> getRelationships<T>() 
+    {
       List<UML.Classes.Kernel.Relationship> allRelationships = 
       	this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
       List<T> returnedRelationships = new List<T>();
