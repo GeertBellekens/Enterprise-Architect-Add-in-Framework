@@ -265,14 +265,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			XmlDocument descriptionXml = ((Model)this.model).SQLQuery(@"SELECT x.Description FROM t_object o
 										inner join t_xref x on x.Client = o.ea_guid
 										where o.Object_ID = " + elementToWrap.ElementID.ToString());
-			XmlNode descriptionNode = descriptionXml.SelectSingleNode("//Description");
-			if (descriptionNode != null)
+			 XmlNodeList descriptionNodes = descriptionXml.SelectNodes("//Description");
+			foreach (XmlNode descriptionNode in descriptionNodes) 
 			{
 				if (descriptionNode.InnerText.Contains("CallOperation"))
-				    {
-						return new CallOperationAction(this.model as Model, elementToWrap);
-				    }
-			}
+			    {
+					return new CallOperationAction(this.model as Model, elementToWrap);
+			    }
+			} 
+			
 			// simple Action
 			return new Action (this.model as Model, elementToWrap);
 		case "Interaction":

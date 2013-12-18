@@ -286,7 +286,15 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
     		@"SELECT a.Object_ID FROM t_operation op 
 			inner join t_object a on op.ea_guid = a.Classifier_guid
 			where op.OperationID = " +this.wrappedOperation.MethodID;
-    	return new HashSet<UML.Actions.BasicActions.CallOperationAction>(this.model.getElementWrappersByQuery(sqlCallOperationActions).Cast<UML.Actions.BasicActions.CallOperationAction>());
+    	HashSet<UML.Actions.BasicActions.CallOperationAction> callOperationActions = new HashSet<UML.Actions.BasicActions.CallOperationAction>();
+    	foreach (ElementWrapper callOperationAction in this.model.getElementWrappersByQuery(sqlCallOperationActions)) 
+    	{
+    		if (callOperationAction is UML.Actions.BasicActions.CallOperationAction)
+    		{
+    			callOperationActions.Add((UML.Actions.BasicActions.CallOperationAction)callOperationAction);
+    		}
+    	}
+    	return callOperationActions;
     }
     /// <summary>
     /// returns all diagrams that somehow use this operation
