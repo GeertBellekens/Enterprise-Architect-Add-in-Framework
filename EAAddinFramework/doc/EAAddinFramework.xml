@@ -1640,6 +1640,19 @@
             Description of DataType.
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RepositoryType">
+            <summary>
+            List of databses supported as backend for an EA repository
+            0 - MYSQL
+            1 - SQLSVR
+            2 - ADOJET
+            3 - ORACLE
+            4 - POSTGRES
+            5 - ASA
+            7 - OPENEDGE
+            8 - ACCESS2007
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DeploymentDiagram">
             <summary>
             Description of DeploymentDiagram.
@@ -1833,26 +1846,17 @@
             <param name="sqlQuery">the original query</param>
             <returns>the fixed query</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceWildCards(System.String,System.Boolean)">
+        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatTop(System.String)" -->
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceWildCards(System.String)">
             <summary>
             replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
             </summary>
             <param name="sqlQuery">the sql string to edit</param>
-            <param name="msAccess">indicates if MSAccess syntax has to be used</param>
             <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.isMSAccessSyntax">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getRepositoryType">
             <summary>
-            Checks if the database needs MSAccess syntax for its SQL
-            For a connection string, the DBMS repository type is identified by "DBType=n;" where n is a number corresponding to the DBMS type, as follows:
-            0 - MYSQL
-            1 - SQLSVR
-            2 - ADOJET -> ? and * 
-            3 - ORACLE
-            4 - POSTGRES
-            5 - ASA
-            7 - OPENEDGE
-            8 - ACCESS2007
+            Gets the Repository type for this model
             </summary>
             <returns></returns>
         </member>
@@ -1874,6 +1878,12 @@
             opens the properties dialog for this item
             </summary>
             <param name="item">the item to open the properties dialog for</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.repositoryType">
+            <summary>
+            returns the type of repository backend.
+            This is mostly needed to adjust to sql to the specific sql dialect
+            </summary>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.mainEAWindow">
             <summary>

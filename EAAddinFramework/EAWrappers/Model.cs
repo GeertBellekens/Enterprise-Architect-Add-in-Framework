@@ -14,7 +14,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   {
     private global::EA.Repository wrappedModel;
     private IWin32Window _mainEAWindow;
-    private bool? msAccessSyntax;
+    private RepositoryType? _repositoryType;
+    /// <summary>
+    /// returns the type of repository backend.
+    /// This is mostly needed to adjust to sql to the specific sql dialect
+    /// </summary>
+    public RepositoryType repositoryType
+    {
+    	get
+    	{
+    		if ( ! this._repositoryType.HasValue)
+    		{
+    			this._repositoryType = getRepositoryType();
+    		}
+    		return _repositoryType.Value;
+    	}
+    }
     /// <summary>
     /// the main EA window to use when opening properties dialogs
     /// </summary>
@@ -203,7 +218,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	if (elements)
 	    {
 	    	// get elements
-	 		string SQLSelectElements = @"select  top "+maxResults + @" o.Object_ID from t_object o 
+	 		string SQLSelectElements = @"select top "+maxResults + @" o.Object_ID from t_object o 
 								where  o.name like '" +searchText +@"%'
 								order by o.name, o.object_id";
 	 		results.AddRange(this.getElementWrappersByQuery(SQLSelectElements).Cast<UML.UMLItem>().ToList());
@@ -211,7 +226,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	if (operations)
     	{
 	 		// get operations
-	 		string SQLSelectOperations = @"select  top "+maxResults + @" o.OperationID from t_operation o 
+	 		string SQLSelectOperations = @"select top "+maxResults + @" o.OperationID from t_operation o 
 								where  o.name like '" +searchText +@"%'
 								order by o.name, o.OperationID";
 	 		results.AddRange(this.getOperationsByQuery(SQLSelectOperations).Cast<UML.UMLItem>().ToList());
@@ -219,7 +234,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	if (attributes)
     	{
 	 		// get attributes
-		 	string SQLSelectAttributes = @"select  top "+maxResults + @" a.ea_guid from t_Attribute a 
+		 	string SQLSelectAttributes = @"select top "+maxResults + @" a.ea_guid from t_Attribute a 
 							where  a.name like '" +searchText +@"%'
 							order by a.name, a.ea_guid";
 	 		results.AddRange(this.getAttributesByQuery(SQLSelectAttributes).Cast<UML.UMLItem>().ToList());
@@ -227,7 +242,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	if (diagrams)
     	{
 	 		// get diagrams
-	 		string SQLSelectDiagrams = @"select  top "+maxResults + @" d.Diagram_ID from t_Diagram d 
+	 		string SQLSelectDiagrams = @"select top "+maxResults + @" d.Diagram_ID from t_Diagram d 
 							where  d.name like '" +searchText +@"%'
 							order by d.name, d.Diagram_ID";
 	 		results.AddRange(this.getDiagramsByQuery(SQLSelectDiagrams).Cast<UML.UMLItem>().ToList());
@@ -427,21 +442,77 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns>the fixed query</returns>
     private string formatSQL(string sqlQuery)
     {
-    	if (!this.msAccessSyntax.HasValue)
-    	{
-    		this.msAccessSyntax = this.isMSAccessSyntax();
-    	}
-    	sqlQuery = replaceWildCards(sqlQuery,this.msAccessSyntax.Value);
+    	sqlQuery = replaceWildCards(sqlQuery);
+    	sqlQuery = formatTop(sqlQuery);
     	return sqlQuery;
+    }
+    /// <summary>
+    /// limiting the number of results in an sql query it different on different platforms.
+    /// 
+    /// "SELECT TOP N" is used on
+    /// SQLSVR
+    /// ADOJET
+    /// ASA
+    /// OPENEDGE
+    /// ACCESS2007
+    /// 
+    /// "WHERE rowcount <= N" is used on
+    /// ORACLE
+    /// 
+    /// "LIMIT N" is used on
+    /// MYSQL
+    /// POSTGRES
+    /// 
+    /// This operation will replace the SELECT TOP N by the appropriate sql syntax depending on the repositorytype
+    /// </summary>
+    /// <param name="sqlQuery">the sql query to format</param>
+    /// <returns>the formatted sql query </returns>
+    private string formatTop(string sqlQuery)
+    {
+    	string formattedQuery = sqlQuery;
+    	string selectTop = "select top ";
+    	int begintop = sqlQuery.ToLower().IndexOf(selectTop);
+    	if (begintop >= 0)
+    	{
+    		int beginN = begintop + selectTop.Length;
+    		int endN = sqlQuery.ToLower().IndexOf(" ",beginN) +1;
+    		if (endN > beginN)
+    		{
+	    		string N = sqlQuery.ToLower().Substring(beginN, endN - beginN);
+	    		string selectTopN = sqlQuery.Substring(begintop, endN);
+	    		switch ( this.repositoryType) 
+	    		{
+	    			case RepositoryType.ORACLE :
+	    				// remove "top N" clause
+	    				formattedQuery = formattedQuery.Replace(selectTopN, "select ");
+	    				// find where clause
+	    				string whereString = "where ";
+	    				int beginWhere = formattedQuery.ToLower().IndexOf(whereString);
+	    				string rowcountCondition = "rowcount <= " + N + " and ";
+	    				// add the rowcount condition
+	    				formattedQuery = formattedQuery.Insert(beginWhere + whereString.Length,rowcountCondition);
+	    				break;
+	    			case RepositoryType.MYSQL :
+	    			case RepositoryType.POSTGRES :
+	    				// remove "top N" clause
+	    				formattedQuery = formattedQuery.Replace(selectTopN, "select ");
+	    				string limitString = " limit " + N ;
+	    				// add limit clause
+	    				formattedQuery = formattedQuery + limitString;
+	    				break;
+	    		}
+    		}
+    	}
+    	return formattedQuery;
     }
     /// <summary>
     /// replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
     /// </summary>
     /// <param name="sqlQuery">the sql string to edit</param>
-    /// <param name="msAccess">indicates if MSAccess syntax has to be used</param>
     /// <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
-    private string replaceWildCards(string sqlQuery, bool msAccess)
+    private string replaceWildCards(string sqlQuery)
     {
+    	bool msAccess = this.repositoryType == RepositoryType.ADOJET;
     	int beginLike = sqlQuery.IndexOf("like",StringComparison.InvariantCultureIgnoreCase);
     	if (beginLike > 1 )
     	{
@@ -469,7 +540,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     				string next = string.Empty;
     				if (endString < sqlQuery.Length)
     				{
-    					next = replaceWildCards(sqlQuery.Substring(endString +1),msAccess);
+    					next = replaceWildCards(sqlQuery.Substring(endString +1));
     				}
     				sqlQuery = sqlQuery.Substring(0,beginString+1) + likeString + next;
     				    				
@@ -479,22 +550,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return sqlQuery;
     }
     /// <summary>
-    /// Checks if the database needs MSAccess syntax for its SQL
-    /// For a connection string, the DBMS repository type is identified by "DBType=n;" where n is a number corresponding to the DBMS type, as follows:
-    /// 0 - MYSQL
-    /// 1 - SQLSVR
-    /// 2 - ADOJET -> ? and * 
-    /// 3 - ORACLE
-    /// 4 - POSTGRES
-    /// 5 - ASA
-    /// 7 - OPENEDGE
-    /// 8 - ACCESS2007
+    /// Gets the Repository type for this model
     /// </summary>
     /// <returns></returns>
-    public bool isMSAccessSyntax()
+    private RepositoryType getRepositoryType()
     {
     	string connectionString = this.wrappedModel.ConnectionString;
-    	bool MSaccess = false;
+    	RepositoryType repoType = RepositoryType.ADOJET; //default to .eap file
     	//if it is a .eap file we check the size of it. if less then 1 MB then it is a shortcut file and we have to open it as a text file to find the actual connection string
     	if (connectionString.ToLower().EndsWith(".eap"))
     	{
@@ -502,7 +564,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		if (fileInfo.Length > 1000)
     		{
     			//local .eap file, ms access syntax
-    			MSaccess= true;
+    			repoType = RepositoryType.ADOJET;
     		}
     		else
     		{
@@ -516,12 +578,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	}
     	if (!connectionString.ToLower().EndsWith(".eap"))
     	{
-    		if (connectionString.Contains("DBType=2"))
+    		string dbTypeString = "DBType=";
+    		int dbIndex = connectionString.IndexOf(dbTypeString) + dbTypeString.Length;
+    		if (dbIndex > dbTypeString.Length)
     		{
-    			MSaccess = true;
+    			int dbNumber;
+    			string dbNumberString = connectionString.Substring(dbIndex,1);
+    			if (int.TryParse(dbNumberString,out dbNumber))
+    			{
+    				repoType = (RepositoryType) dbNumber;
+    			}
     		}
     	}
-    	return MSaccess;
+    	return repoType;
     }
     /// <summary>
     /// saves unsaved changes to an opened diagram
