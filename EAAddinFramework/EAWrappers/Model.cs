@@ -219,32 +219,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    {
 	    	// get elements
 	 		string SQLSelectElements = @"select top "+maxResults + @" o.Object_ID from t_object o 
-								where  o.name like '" +searchText +@"%'
-								order by o.name, o.object_id";
+								where lcase(o.Name) like lcase('" +searchText +@"%')
+								order by o.Name, o.Object_ID";
 	 		results.AddRange(this.getElementWrappersByQuery(SQLSelectElements).Cast<UML.UMLItem>().ToList());
     	}
     	if (operations)
     	{
 	 		// get operations
 	 		string SQLSelectOperations = @"select top "+maxResults + @" o.OperationID from t_operation o 
-								where  o.name like '" +searchText +@"%'
-								order by o.name, o.OperationID";
+								where lcase(o.Name) like lcase('" +searchText +@"%')
+								order by o.Name, o.OperationID";
 	 		results.AddRange(this.getOperationsByQuery(SQLSelectOperations).Cast<UML.UMLItem>().ToList());
     	}
     	if (attributes)
     	{
 	 		// get attributes
-		 	string SQLSelectAttributes = @"select top "+maxResults + @" a.ea_guid from t_Attribute a 
-							where  a.name like '" +searchText +@"%'
-							order by a.name, a.ea_guid";
+		 	string SQLSelectAttributes = @"select top "+maxResults + @" a.ea_guid from t_attribute a 
+							where lcase(a.Name) like lcase('" +searchText +@"%')
+							order by a.Name, a.ea_guid";
 	 		results.AddRange(this.getAttributesByQuery(SQLSelectAttributes).Cast<UML.UMLItem>().ToList());
     	}
     	if (diagrams)
     	{
 	 		// get diagrams
-	 		string SQLSelectDiagrams = @"select top "+maxResults + @" d.Diagram_ID from t_Diagram d 
-							where  d.name like '" +searchText +@"%'
-							order by d.name, d.Diagram_ID";
+	 		string SQLSelectDiagrams = @"select top "+maxResults + @" d.Diagram_ID from t_diagram d 
+							where  lcase(d.Name) like lcase('" +searchText +@"%')
+							order by d.Name, d.Diagram_ID";
 	 		results.AddRange(this.getDiagramsByQuery(SQLSelectDiagrams).Cast<UML.UMLItem>().ToList());
     	}
  		
@@ -442,10 +442,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns>the fixed query</returns>
     private string formatSQL(string sqlQuery)
     {
-    	sqlQuery = replaceWildCards(sqlQuery);
-    	sqlQuery = formatTop(sqlQuery);
+    	sqlQuery = replaceSQLWildCards(sqlQuery);
+    	sqlQuery = formatSQLTop(sqlQuery);
+    	sqlQuery = formatSQLFunctions(sqlQuery);
     	return sqlQuery;
     }
+    
+    /// <summary>
+    /// Operation to translate SQL functions in there equivalents in different sql syntaxes
+    /// supported functions:
+    /// 
+    /// - lcase -> lower in T-SQL (SQLSVR and ASA)
+    /// </summary>
+    /// <param name="sqlQuery">the query to format</param>
+    /// <returns>a query with traslated functions</returns>
+    private string formatSQLFunctions(string sqlQuery)
+    {
+    	string formattedSQL = sqlQuery;
+    	//lcase -> lower in T-SQL (SQLSVR and ASA)
+    	if (this.repositoryType == RepositoryType.SQLSVR || 
+    	    this.repositoryType == RepositoryType.ASA)
+    	{
+    		formattedSQL = formattedSQL.Replace("lcase(","lower(");
+    	}
+    	return formattedSQL;
+    }
+    
     /// <summary>
     /// limiting the number of results in an sql query it different on different platforms.
     /// 
@@ -467,7 +489,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
     /// <param name="sqlQuery">the sql query to format</param>
     /// <returns>the formatted sql query </returns>
-    private string formatTop(string sqlQuery)
+    private string formatSQLTop(string sqlQuery)
     {
     	string formattedQuery = sqlQuery;
     	string selectTop = "select top ";
@@ -488,7 +510,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    				// find where clause
 	    				string whereString = "where ";
 	    				int beginWhere = formattedQuery.ToLower().IndexOf(whereString);
-	    				string rowcountCondition = "rowcount <= " + N + " and ";
+	    				string rowcountCondition = "rownum <= " + N + " and ";
 	    				// add the rowcount condition
 	    				formattedQuery = formattedQuery.Insert(beginWhere + whereString.Length,rowcountCondition);
 	    				break;
@@ -510,7 +532,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
     /// <param name="sqlQuery">the sql string to edit</param>
     /// <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
-    private string replaceWildCards(string sqlQuery)
+    private string replaceSQLWildCards(string sqlQuery)
     {
     	bool msAccess = this.repositoryType == RepositoryType.ADOJET;
     	int beginLike = sqlQuery.IndexOf("like",StringComparison.InvariantCultureIgnoreCase);
@@ -540,7 +562,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     				string next = string.Empty;
     				if (endString < sqlQuery.Length)
     				{
-    					next = replaceWildCards(sqlQuery.Substring(endString +1));
+    					next = replaceSQLWildCards(sqlQuery.Substring(endString +1));
     				}
     				sqlQuery = sqlQuery.Substring(0,beginString+1) + likeString + next;
     				    				

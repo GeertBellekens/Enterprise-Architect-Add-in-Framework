@@ -1846,8 +1846,18 @@
             <param name="sqlQuery">the original query</param>
             <returns>the fixed query</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatTop(System.String)" -->
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceWildCards(System.String)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLFunctions(System.String)">
+            <summary>
+            Operation to translate SQL functions in there equivalents in different sql syntaxes
+            supported functions:
+            
+            - lcase -> lower in T-SQL (SQLSVR and ASA)
+            </summary>
+            <param name="sqlQuery">the query to format</param>
+            <returns>a query with traslated functions</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
             <summary>
             replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
             </summary>
