@@ -189,7 +189,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       // get the nodes with the name "ObjectID"
       XmlDocument xmlObjectIDs = this.SQLQuery(sqlQuery);
-      XmlNodeList objectIDNodes = xmlObjectIDs.SelectNodes("//Object_ID");
+      XmlNodeList objectIDNodes = xmlObjectIDs.SelectNodes(formatXPath("//Object_ID"));
       List<ElementWrapper> elements = new List<ElementWrapper>();
       
       foreach( XmlNode objectIDNode in objectIDNodes ) 
@@ -355,7 +355,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       // get the nodes with the name "Connector_ID"
       XmlDocument xmlrelationIDs = this.SQLQuery(SQLQuery);
       XmlNodeList relationIDNodes = 
-        xmlrelationIDs.SelectNodes("//Connector_ID");
+      	xmlrelationIDs.SelectNodes(formatXPath("//Connector_ID"));
       List<ConnectorWrapper> relations = new List<ConnectorWrapper>();
       foreach( XmlNode relationIDNode in relationIDNodes ) {
         int relationID;
@@ -370,7 +370,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       internal List<Attribute> getAttributesByQuery(string SQLQuery){
       // get the nodes with the name "ea_guid"
       XmlDocument xmlAttributeIDs = this.SQLQuery(SQLQuery);
-      XmlNodeList attributeIDNodes = xmlAttributeIDs.SelectNodes("//ea_guid");
+      XmlNodeList attributeIDNodes = xmlAttributeIDs.SelectNodes(formatXPath("//ea_guid"));
       List<Attribute> attributes = new List<Attribute>();
       
       foreach( XmlNode attributeIDNode in attributeIDNodes ) 
@@ -387,7 +387,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       // get the nodes with the name "ea_guid"
       XmlDocument xmlParameterIDs = this.SQLQuery(SQLQuery);
-      XmlNodeList parameterIDNodes = xmlParameterIDs.SelectNodes("//ea_guid");
+      XmlNodeList parameterIDNodes = xmlParameterIDs.SelectNodes(formatXPath("//ea_guid"));
       List<Parameter> parameters = new List<Parameter>();
       
       foreach( XmlNode parameterIDNode in parameterIDNodes ) 
@@ -404,7 +404,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       // get the nodes with the name "OperationID"
       XmlDocument xmlOperationIDs = this.SQLQuery(SQLQuery);
-      XmlNodeList operationIDNodes = xmlOperationIDs.SelectNodes("//OperationID");
+      XmlNodeList operationIDNodes = xmlOperationIDs.SelectNodes(formatXPath("//OperationID"));
       List<Operation> operations = new List<Operation>();
       
       foreach( XmlNode operationIDNode in operationIDNodes ) 
@@ -422,7 +422,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return operations;
     }
-
+    /// <summary>
+    /// formats an xpath accordign to the type of database.
+    /// For Oracle is should be ALL CAPS
+    /// </summary>
+    /// <param name="xpath">the xpath to format</param>
+    /// <returns>the formatted xpath</returns>
+    public string formatXPath(string xpath)
+    {
+    	switch (this.repositoryType) {
+    		
+    		case RepositoryType.ORACLE:
+    			return xpath.ToUpper();
+    		
+    		default:
+    			return xpath;
+    	}
+    }
     /// generic query operation on the model.
     /// Returns results in an xml format
     public XmlDocument SQLQuery(string sqlQuery)
@@ -461,7 +477,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	string formattedSQL = sqlQuery;
     	//lcase -> lower in T-SQL (SQLSVR and ASA)
     	if (this.repositoryType == RepositoryType.SQLSVR || 
-    	    this.repositoryType == RepositoryType.ASA)
+    	    this.repositoryType == RepositoryType.ASA ||
+    	   this.repositoryType == RepositoryType.ORACLE)
     	{
     		formattedSQL = formattedSQL.Replace("lcase(","lower(");
     	}
@@ -469,7 +486,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     /// <summary>
-    /// limiting the number of results in an sql query it different on different platforms.
+    /// limiting the number of results in an sql query is different on different platforms.
     /// 
     /// "SELECT TOP N" is used on
     /// SQLSVR
@@ -654,7 +671,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         // get the nodes with the name "Diagram_ID"
         XmlDocument xmlDiagramIDs = this.SQLQuery(sqlGetDiagrams);
         XmlNodeList diagramIDNodes =
-          xmlDiagramIDs.SelectNodes("//Diagram_ID");
+        	xmlDiagramIDs.SelectNodes(formatXPath("//Diagram_ID"));
         List<Diagram> diagrams = new List<Diagram>();
         foreach (XmlNode diagramIDNode in diagramIDNodes)
         {
@@ -837,7 +854,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes("//ea_guid");
+	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
 	    foreach (XmlNode guidNode in tagGUIDNodes) 
 	    {
 	    	ElementTag elementTag =  this.getElementTagByGUID(guidNode.InnerText);
@@ -854,7 +871,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		string getElementWrappers = @"select object_id from t_objectproperties
 									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getElementWrappers);
-	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//object_id");
+		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//object_id"));
 	    if (elementNode != null)
 	    {
 	    	int objectID ;
@@ -884,7 +901,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
 	    foreach (XmlNode guidNode in tagGUIDNodes) 
 	    {
 	    	AttributeTag attributeTag =  this.getAttributeTagByGUID(guidNode.InnerText);
@@ -901,7 +918,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		string getAttributes = @"select elementid from t_attributetag
 									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getAttributes);
-	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//elementid"));
 	    if (elementNode != null)
 	    {
 	    	int objectID ;
@@ -930,7 +947,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
 	    foreach (XmlNode guidNode in tagGUIDNodes) 
 	    {
 	    	OperationTag operationTag =  this.getOperationTagByGUID(guidNode.InnerText);
@@ -947,7 +964,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		string getOperations = @"select elementid from t_operationtag
 									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getOperations);
-	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//elementid"));
 	    if (elementNode != null)
 	    {
 	    	int objectID ;
@@ -975,7 +992,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 								where notes like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//propertyid");
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//propertyid"));
 	    foreach (XmlNode guidNode in tagGUIDNodes) 
 	    {
 	    	ParameterTag parameterTag =  this.getParameterTagByGUID(guidNode.InnerText);
@@ -992,7 +1009,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		string getParameters = @"select elementid from t_taggedvalue
 									where propertyid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getParameters);
-	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//elementid"));
 	    if (elementNode != null)
 	    {
 	    	
@@ -1020,7 +1037,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 								where value like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes("//ea_guid");
+	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
 	    foreach (XmlNode guidNode in tagGUIDNodes) 
 	    {
 	    	RelationTag relationTag =  this.getRelationTagByGUID(guidNode.InnerText);
@@ -1037,7 +1054,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		string getRelations = @"select elementid from t_connectortag
 									where ea_guid like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getRelations);
-	    XmlNode elementNode = xmlElementIDs.SelectSingleNode("//elementid");
+		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//elementid"));
 	    if (elementNode != null)
 	    {
 	    	int objectID ;
@@ -1071,7 +1088,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			{
 				string getUsers = "select u.UserLogin, u.FirstName, u.Surname from t_secuser u";
 				XmlDocument users = this.SQLQuery(getUsers);
-				foreach (XmlNode userNode in users.SelectNodes("//Row")) 
+				foreach (XmlNode userNode in users.SelectNodes("//Row"))
 				{
 					string login= string.Empty;
 					string firstName = string.Empty;
@@ -1099,7 +1116,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				//security not enabled. List of all users is the list of all authors mentioned in the t_object table.
 				string getUsers = "select distinct o.author from t_object o";
 				XmlDocument users = this.SQLQuery(getUsers);
-				foreach (XmlNode authorNode in users.SelectNodes("//author")) 
+				foreach (XmlNode authorNode in users.SelectNodes(formatXPath("//author")))
 				{
 					string login= authorNode.InnerText;
 					string firstName = string.Empty;

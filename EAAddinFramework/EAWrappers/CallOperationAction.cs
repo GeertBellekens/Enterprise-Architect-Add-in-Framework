@@ -36,7 +36,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         		// first get the operations guid which is stored in the Classifier_guid column
         		XmlDocument operationGUIDxml = this.model.SQLQuery(@"select o.Classifier_guid from t_object o
 									where o.Object_ID = " + this.id.ToString());
-        	    XmlNode operationGUIDNode = operationGUIDxml.SelectSingleNode("//Classifier_guid");
+        		XmlNode operationGUIDNode = operationGUIDxml.SelectSingleNode(this.model.formatXPath("//Classifier_guid"));
         	    return this.model.getOperationByGUID(operationGUIDNode.InnerText);
         	}
         	set{

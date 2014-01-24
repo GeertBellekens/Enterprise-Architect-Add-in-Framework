@@ -1833,6 +1833,14 @@
             <param name="GUID">the parameter's GUID</param>
             <returns>the Parameter with the given GUID</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatXPath(System.String)">
+            <summary>
+            formats an xpath accordign to the type of database.
+            For Oracle is should be ALL CAPS
+            </summary>
+            <param name="xpath">the xpath to format</param>
+            <returns>the formatted xpath</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
             generic query operation on the model.
             Returns results in an xml format

@@ -123,8 +123,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			string newFQN = fqnString;
 			XmlDocument result = this.model.SQLQuery("select p.Parent_ID, p.Name from t_package p where p.Package_ID = " + packageID.ToString());
-			XmlNode parentIDNode = result.SelectSingleNode("//Parent_ID");
-			XmlNode nameNode = result.SelectSingleNode("//Name");
+			XmlNode parentIDNode = result.SelectSingleNode(this.model.formatXPath("//Parent_ID"));
+			XmlNode nameNode = result.SelectSingleNode(this.model.formatXPath("//Name"));
 			if (nameNode != null)
 			{
 				//add the "." if necesarry
