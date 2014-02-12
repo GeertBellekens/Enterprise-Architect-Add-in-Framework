@@ -13,6 +13,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// 5 - ASA
 	/// 7 - OPENEDGE
 	/// 8 - ACCESS2007
+	/// 9 - FireBird
 	/// </summary>
 	public enum RepositoryType
 	{
@@ -24,5 +25,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		ASA,
 		OPENEDGE,
 		ACCESS2007,
+		FIREBIRD
 	}
 }

@@ -214,7 +214,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns></returns>
     public List<UML.UMLItem> getQuickSearchResults(string searchText,int maxResults,bool elements, bool operations, bool attributes, bool diagrams)
     {
-    	List<UML.UMLItem> results = new List<UML.UMLItem>();
+    List<UML.UMLItem> results = new List<UML.UMLItem>();
     	if (elements)
 	    {
 	    	// get elements
@@ -424,7 +424,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     /// <summary>
     /// formats an xpath accordign to the type of database.
-    /// For Oracle is should be ALL CAPS
+    /// For Oracle and Firebird it should be ALL CAPS
     /// </summary>
     /// <param name="xpath">the xpath to format</param>
     /// <returns>the formatted xpath</returns>
@@ -433,6 +433,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	switch (this.repositoryType) {
     		
     		case RepositoryType.ORACLE:
+    		case RepositoryType.FIREBIRD:
     			return xpath.ToUpper();
     		
     		default:
@@ -475,10 +476,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private string formatSQLFunctions(string sqlQuery)
     {
     	string formattedSQL = sqlQuery;
-    	//lcase -> lower in T-SQL (SQLSVR and ASA)
+    	//lcase -> lower in T-SQL (SQLSVR and ASA and Oracle and FireBird)
     	if (this.repositoryType == RepositoryType.SQLSVR || 
     	    this.repositoryType == RepositoryType.ASA ||
-    	   this.repositoryType == RepositoryType.ORACLE)
+    	   	this.repositoryType == RepositoryType.ORACLE ||
+    	   	this.repositoryType == RepositoryType.FIREBIRD)
     	{
     		formattedSQL = formattedSQL.Replace("lcase(","lower(");
     	}
@@ -539,6 +541,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    				// add limit clause
 	    				formattedQuery = formattedQuery + limitString;
 	    				break;
+	    			case RepositoryType.FIREBIRD:
+	    				// in firebird top becomes first
+	    				formattedQuery = formattedQuery.Replace(selectTopN,selectTopN.Replace("top","first"));
+	    				break;
 	    		}
     		}
     	}
@@ -596,38 +602,47 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	string connectionString = this.wrappedModel.ConnectionString;
     	RepositoryType repoType = RepositoryType.ADOJET; //default to .eap file
-    	//if it is a .eap file we check the size of it. if less then 1 MB then it is a shortcut file and we have to open it as a text file to find the actual connection string
-    	if (connectionString.ToLower().EndsWith(".eap"))
+    
+    	// if it is a .feap file then it surely is a firebird db
+    	if (connectionString.ToLower().EndsWith(".feap"))
     	{
-    		System.IO.FileInfo fileInfo = new System.IO.FileInfo(connectionString);
-    		if (fileInfo.Length > 1000)
-    		{
-    			//local .eap file, ms access syntax
-    			repoType = RepositoryType.ADOJET;
-    		}
-    		else
-    		{
-    			//open the file as a text file to find the connectionstring.
-	            System.IO.FileStream fileStream = new System.IO.FileStream(connectionString, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite); 
-	            System.IO.StreamReader reader = new System.IO.StreamReader(fileStream);
-	            //replace connectionstring with the file contents
-	            connectionString = reader.ReadToEnd();
-	            reader.Close(); 
-    		}
+    		repoType = RepositoryType.FIREBIRD;
     	}
-    	if (!connectionString.ToLower().EndsWith(".eap"))
+    	else 
     	{
-    		string dbTypeString = "DBType=";
-    		int dbIndex = connectionString.IndexOf(dbTypeString) + dbTypeString.Length;
-    		if (dbIndex > dbTypeString.Length)
-    		{
-    			int dbNumber;
-    			string dbNumberString = connectionString.Substring(dbIndex,1);
-    			if (int.TryParse(dbNumberString,out dbNumber))
-    			{
-    				repoType = (RepositoryType) dbNumber;
-    			}
-    		}
+    		//if it is a .eap file we check the size of it. if less then 1 MB then it is a shortcut file and we have to open it as a text file to find the actual connection string
+	    	if (connectionString.ToLower().EndsWith(".eap"))
+	    	{
+	    		System.IO.FileInfo fileInfo = new System.IO.FileInfo(connectionString);
+	    		if (fileInfo.Length > 1000)
+	    		{
+	    			//local .eap file, ms access syntax
+	    			repoType = RepositoryType.ADOJET;
+	    		}
+	    		else
+	    		{
+	    			//open the file as a text file to find the connectionstring.
+		            System.IO.FileStream fileStream = new System.IO.FileStream(connectionString, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite); 
+		            System.IO.StreamReader reader = new System.IO.StreamReader(fileStream);
+		            //replace connectionstring with the file contents
+		            connectionString = reader.ReadToEnd();
+		            reader.Close(); 
+	    		}
+	    	} 
+	    	if (!connectionString.ToLower().EndsWith(".eap"))
+	    	{
+	    		string dbTypeString = "DBType=";
+	    		int dbIndex = connectionString.IndexOf(dbTypeString) + dbTypeString.Length;
+	    		if (dbIndex > dbTypeString.Length)
+	    		{
+	    			int dbNumber;
+	    			string dbNumberString = connectionString.Substring(dbIndex,1);
+	    			if (int.TryParse(dbNumberString,out dbNumber))
+	    			{
+	    				repoType = (RepositoryType) dbNumber;
+	    			}
+	    		}
+	    	}
     	}
     	return repoType;
     }
@@ -851,7 +866,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_objectproperties
-								where value like '"+ value + "'";
+								where [value] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -898,7 +913,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<AttributeTag> attributeTags = new List<AttributeTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_attributetag
-								where value like '"+ value + "'";
+								where [value] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -944,7 +959,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<OperationTag> operationTags = new List<OperationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_operationtag
-								where value like '"+ value + "'";
+								where [value] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1034,7 +1049,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		List<RelationTag> relationTags = new List<RelationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_connectortag
-								where value like '"+ value + "'";
+								where [value] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1052,7 +1067,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		RelationTag relationTag = null;
 		string getRelations = @"select elementid from t_connectortag
-									where ea_guid like '"+ GUID +"'";
+									where [ea_guid] like '"+ GUID +"'";
 		XmlDocument xmlElementIDs = this.SQLQuery(getRelations);
 		XmlNode elementNode = xmlElementIDs.SelectSingleNode(formatXPath("//elementid"));
 	    if (elementNode != null)
