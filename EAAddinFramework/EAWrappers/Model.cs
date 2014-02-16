@@ -865,8 +865,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public HashSet<ElementTag> getElementTagsWithValue(string value)
 	{
 		HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
-		string sqlFindGUIDS = @"select ea_guid from t_objectproperties
-								where [value] like '"+ value + "'";
+		string sqlFindGUIDS = @"select ea_guid from t_objectproperties ot
+								where ot.[Value] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -912,8 +912,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public List<AttributeTag> getAttributeTagsWithValue(string value)
 	{
 		List<AttributeTag> attributeTags = new List<AttributeTag>();
-		string sqlFindGUIDS = @"select ea_guid from t_attributetag
-								where [value] like '"+ value + "'";
+		string sqlFindGUIDS = @"select ea_guid from t_attributetag att
+								where att.[VALUE] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -958,8 +958,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public List<OperationTag> getOperationTagsWithValue(string value)
 	{
 		List<OperationTag> operationTags = new List<OperationTag>();
-		string sqlFindGUIDS = @"select ea_guid from t_operationtag
-								where [value] like '"+ value + "'";
+		string sqlFindGUIDS = @"select ea_guid from t_operationtag opt
+								where opt.[VALUE] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1048,8 +1048,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public List<RelationTag> getRelationTagsWithValue(string value)
 	{
 		List<RelationTag> relationTags = new List<RelationTag>();
-		string sqlFindGUIDS = @"select ea_guid from t_connectortag
-								where [value] like '"+ value + "'";
+		string sqlFindGUIDS = @"select ea_guid from t_connectortag ct
+								where ct.[VALUE] like '"+ value + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
