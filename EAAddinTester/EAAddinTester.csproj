@@ -80,6 +80,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EAScriptAddin\EAScriptAddin.csproj">
+      <Project>{36C02EF9-C18F-4B64-AB69-80F5906DDBCE}</Project>
+      <Name>EAScriptAddin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\BalsamiqConnector\BalsamiqConnector.csproj">
       <Project>{31C912A3-A16F-4D18-AB74-B985309B545C}</Project>
       <Name>BalsamiqConnector</Name>

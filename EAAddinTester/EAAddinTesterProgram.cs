@@ -40,7 +40,8 @@ namespace EAAddinTester
 //        	addins.Add(new MyAddin.MyAddinClass());
 //        	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
 //        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
-        	addins.Add(new BalsamiqConnector.BalsamiqConnectorAddin());
+//        	addins.Add(new BalsamiqConnector.BalsamiqConnectorAddin());
+			addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
         	
         }
         private static void initializeAddins()

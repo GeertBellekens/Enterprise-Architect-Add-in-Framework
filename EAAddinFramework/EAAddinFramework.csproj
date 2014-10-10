@@ -59,6 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EASpecific\Script.cs" />
+    <Compile Include="EASpecific\ScriptFunction.cs" />
     <Compile Include="EASpecific\User.cs" />
     <Compile Include="EASpecific\WorkingSet.cs" />
     <Compile Include="EAWrappers\Action.cs" />
@@ -148,6 +150,16 @@
       <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
       <Name>UMLToolingFramework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MSScriptControl">
+      <Guid>{0E59F1D2-1FBE-11D0-8FF2-00A0D10038BC}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

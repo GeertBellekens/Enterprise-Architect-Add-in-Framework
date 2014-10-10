@@ -740,9 +740,9 @@
             <param name="TagNotes">The current value of the Tagged Value notes; if the value 
             is updated, the new value is stored in the repository on exit of the function.</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnRetrieveModelTemplate(EA.Repository,System.String)">
             <summary>
             EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
@@ -966,6 +966,16 @@
             <summary>
             the different options of the menu.
             Set these options in the constructor of the derived add-in class
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.Script">
+            <summary>
+            Description of Script.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
+            <summary>
+            Description of ScriptFunction.
             </summary>
         </member>
         <member name="T:EAAddinFramework.EASpecific.User">
@@ -1865,7 +1875,7 @@
             <param name="sqlQuery">the query to format</param>
             <returns>a query with traslated functions</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String) -->
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
             <summary>
             replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
