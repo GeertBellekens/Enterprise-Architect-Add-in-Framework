@@ -16,15 +16,22 @@ namespace EAAddinFramework.EASpecific
 	/// </summary>
 	public class ScriptFunction
 	{
+		private Script owner {get;set;}
+		public string name {get;set;}
 		
-		public ScriptFunction()
+		public ScriptFunction(Script owner, string name)
 		{
-			
+			this.owner = owner;
+			this.name = name;
 		}
-		public object execute()
+		/// <summary>
+		/// execute this function
+		/// </summary>
+		/// <param name="parameters">the parameters needed by this function</param>
+		/// <returns>whatever gets returned by the the actual script function</returns>
+		public object execute(object[] parameters)
 		{
-			//TODO actually execute this portion
-			throw new NotImplementedException();
+			return this.owner.executeFunction(this.name, parameters);
 		}
 	}
 }

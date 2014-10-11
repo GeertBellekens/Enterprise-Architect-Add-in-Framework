@@ -740,9 +740,9 @@
             <param name="TagNotes">The current value of the Tagged Value notes; if the value 
             is updated, the new value is stored in the repository on exit of the function.</param>
         </member>
-        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
-        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
-        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
+        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
+        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnRetrieveModelTemplate(EA.Repository,System.String)">
             <summary>
             EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
@@ -973,10 +973,40 @@
             Description of Script.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.getAllScripts(TSF.UmlToolingFramework.Wrappers.EA.Model)">
+            <summary>
+            gets all scripts defined in the model
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.getScriptLanguage(System.String)">
+            <summary>
+            gets the language from the content of the notes.
+            The langage can be found after "Language="
+            </summary>
+            <param name="notesContent">the contents of the notes node</param>
+            <returns>the language string</returns>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.executeFunction(System.String,System.Object[])">
+            <summary>
+            executes the function with the given name
+            </summary>
+            <param name="functionName">name of the function to execute</param>
+            <param name="parameters">the parameters needed by this function</param>
+            <returns>whathever (if anything) the function returns</returns>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
             <summary>
             Description of ScriptFunction.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.ScriptFunction.execute(System.Object[])">
+            <summary>
+            execute this function
+            </summary>
+            <param name="parameters">the parameters needed by this function</param>
+            <returns>whatever gets returned by the the actual script function</returns>
         </member>
         <member name="T:EAAddinFramework.EASpecific.User">
             <summary>
@@ -1875,7 +1905,7 @@
             <param name="sqlQuery">the query to format</param>
             <returns>a query with traslated functions</returns>
         </member>
-        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String) -->
+        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
             <summary>
             replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax

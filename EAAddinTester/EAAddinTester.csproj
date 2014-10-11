@@ -80,10 +80,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EAScriptAddin\EAScriptAddin.csproj">
-      <Project>{36C02EF9-C18F-4B64-AB69-80F5906DDBCE}</Project>
-      <Name>EAScriptAddin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\BalsamiqConnector\BalsamiqConnector.csproj">
       <Project>{31C912A3-A16F-4D18-AB74-B985309B545C}</Project>
       <Name>BalsamiqConnector</Name>
@@ -91,6 +87,10 @@
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EANavigator\EANavigator.csproj">
       <Project>{2BFBE8B8-528D-4844-BE0D-ECC68FE1CD1D}</Project>
       <Name>EANavigator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EAScriptAddin\EAScriptAddin.csproj">
+      <Project>{36C02EF9-C18F-4B64-AB69-80F5906DDBCE}</Project>
+      <Name>EAScriptAddin</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EAWorksetSharing\EAWorksetSharing.csproj">
       <Project>{52A75EE4-43A3-4B91-BA88-C567C4ECEA0A}</Project>

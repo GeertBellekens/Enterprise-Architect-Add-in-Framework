@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 
 using MSScriptControl;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
@@ -21,20 +22,98 @@ namespace EAAddinFramework.EASpecific
 	/// </summary>
 	public class Script
 	{
+		static string scriptLanguageIndicator = "Language=\"";
 		private string _code;
+		public string errorMessage {get;set;}
 		private ScriptControl scriptController;
 		public List<ScriptFunction> functions {get;set;}
-		public Script(string code)
+		public Script(string code, string language)
 		{
+			this.functions = new List<ScriptFunction>();
 			this._code = code;
 			this.scriptController = new ScriptControl();
-			this.scriptController.Language = "VBScript";
-			this.scriptController.AddCode(code);
+			this.scriptController.Language = language;
+			//Add the actual code. This must be done in a try/catch because a syntax error in the script will result in an exception from AddCode
+			try
+			{
+				//add the actual code
+				this.scriptController.AddCode(code);
+				//set the functions
+				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
+				{
+					functions.Add(new ScriptFunction(this, procedure.Name));
+				}
+			}
+			catch (Exception e)
+			{
+				//the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
+				this.errorMessage = e.Message;
+			}
+			
 		}
+		/// <summary>
+		/// gets all scripts defined in the model
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		public static List<Script> getAllScripts(EAWrappers.Model model)
 		{
+			List<Script> allScripts = new List<Script>();
 			 XmlDocument xmlScripts = model.SQLQuery("select * from t_script");
-			 throw new NotImplementedException();
+			 XmlNodeList scriptNodes = xmlScripts.SelectNodes(model.formatXPath("//Row"));
+              foreach (XmlNode scriptNode in scriptNodes)
+              {
+              	//TODO get the <notes> node. If it countaints "Group Type=" then it is a group. Else we need to find "Language=" 
+              	XmlNode notesNode = scriptNode.SelectSingleNode(model.formatXPath("Notes"));
+              	if (notesNode.InnerText.Contains(scriptLanguageIndicator))
+          	    {
+          	    	//we have an actual script.
+					//now figure out the language
+					string language = getScriptLanguage(notesNode.InnerText);
+					//then get teh code
+					XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));	
+					if (codeNode != null && language != string.Empty)
+					{
+						//and create the script if both code and language are found
+						allScripts.Add(new Script(codeNode.InnerText, language));
+					}
+          	    }
+          	
+              }
+			 return allScripts;
 		}
+		/// <summary>
+		/// gets the language from the content of the notes.
+		/// The langage can be found after "Language="
+		/// </summary>
+		/// <param name="notesContent">the contents of the notes node</param>
+		/// <returns>the language string</returns>
+		private static string getScriptLanguage(string notesContent)
+		{
+			string language = string.Empty;
+			if (notesContent.Contains(scriptLanguageIndicator))
+		    {
+		    	int startLanguage = notesContent.IndexOf(scriptLanguageIndicator) + scriptLanguageIndicator.Length;
+		    	int endLanguage = notesContent.IndexOf("\"",startLanguage);
+		    	if (endLanguage > startLanguage)
+		    	{
+		    		language = notesContent.Substring(startLanguage, endLanguage - startLanguage);
+		    	}
+		    	
+		    }
+			return language;
+			
+		}
+		/// <summary>
+		/// executes the function with the given name
+		/// </summary>
+		/// <param name="functionName">name of the function to execute</param>
+		/// <param name="parameters">the parameters needed by this function</param>
+		/// <returns>whathever (if anything) the function returns</returns>
+		internal object executeFunction(string functionName, object[] parameters)
+		{
+			return this.scriptController.Run(functionName,parameters);
+		}
+		
 	}
 }
