@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections;
+using MSScriptControl;
 
 namespace EAAddinFramework.EASpecific
 {
@@ -17,12 +18,25 @@ namespace EAAddinFramework.EASpecific
 	public class ScriptFunction
 	{
 		private Script owner {get;set;}
-		public string name {get;set;}
+		public string name 
+		{get
+			{
+				return this.procedure.Name;
+			}
+		}
+		public int numberOfParameters
+		{
+			get
+			{
+				return this.procedure.NumArgs;
+			}
+		}
+		private Procedure procedure {get;set;}
 		
-		public ScriptFunction(Script owner, string name)
+		public ScriptFunction(Script owner, Procedure procedure)
 		{
 			this.owner = owner;
-			this.name = name;
+			this.procedure = procedure;
 		}
 		/// <summary>
 		/// execute this function
@@ -31,7 +45,18 @@ namespace EAAddinFramework.EASpecific
 		/// <returns>whatever gets returned by the the actual script function</returns>
 		public object execute(object[] parameters)
 		{
-			return this.owner.executeFunction(this.name, parameters);
+			if (this.procedure.NumArgs == parameters.Length)
+			{
+				return this.owner.executeFunction(this.name, parameters);
+			}
+			else if (this.procedure.NumArgs == 0)
+			{
+				return this.owner.executeFunction(this.name);
+			}
+			else
+			{
+				throw new ArgumentException ("wrong number of arguments. Script has "+this.procedure.NumArgs+" argument where the call has " + parameters.Length + " parameters");
+			}
 		}
 	}
 }

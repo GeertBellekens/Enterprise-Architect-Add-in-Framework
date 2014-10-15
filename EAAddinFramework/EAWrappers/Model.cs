@@ -1273,6 +1273,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			string ret = this.wrappedModel.CustomCommand("CFormCommandHelper", "ProcessCommand", "Dlg=" + typeString + ";id=" + itemID.ToString() + ";hwnd=" + this.mainEAWindow.Handle);
 	    }
 	}
+	/// <summary>
+	/// returns the repository object
+	/// </summary>
+	/// <returns>the wrapped repository object</returns>
+	internal global::EA.Repository getWrappedModel()
+	{
+		return this.wrappedModel;
+	}
 	
 	
   }

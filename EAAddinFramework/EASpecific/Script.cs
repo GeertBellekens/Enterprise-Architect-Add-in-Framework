@@ -27,12 +27,13 @@ namespace EAAddinFramework.EASpecific
 		public string errorMessage {get;set;}
 		private ScriptControl scriptController;
 		public List<ScriptFunction> functions {get;set;}
-		public Script(string code, string language)
+		public Script(string code, string language,EAWrappers.Model model)
 		{
 			this.functions = new List<ScriptFunction>();
 			this._code = code;
 			this.scriptController = new ScriptControl();
 			this.scriptController.Language = language;
+			this.scriptController.AddObject("Repository", model.getWrappedModel());
 			//Add the actual code. This must be done in a try/catch because a syntax error in the script will result in an exception from AddCode
 			try
 			{
@@ -41,7 +42,7 @@ namespace EAAddinFramework.EASpecific
 				//set the functions
 				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
 				{
-					functions.Add(new ScriptFunction(this, procedure.Name));
+					functions.Add(new ScriptFunction(this, procedure));
 				}
 			}
 			catch (Exception e)
@@ -75,7 +76,7 @@ namespace EAAddinFramework.EASpecific
 					if (codeNode != null && language != string.Empty)
 					{
 						//and create the script if both code and language are found
-						allScripts.Add(new Script(codeNode.InnerText, language));
+						allScripts.Add(new Script(codeNode.InnerText, language,model));
 					}
           	    }
           	
@@ -114,6 +115,16 @@ namespace EAAddinFramework.EASpecific
 		{
 			return this.scriptController.Run(functionName,parameters);
 		}
+		/// <summary>
+		/// executes the function with the given name
+		/// </summary>
+		/// <param name="functionName">name of the function to execute</param>
+		/// <returns>whathever (if anything) the function returns</returns>
+		internal object executeFunction(string functionName)
+		{
+			return this.scriptController.Run(functionName, new object[0]);
+		}
+		
 		
 	}
 }

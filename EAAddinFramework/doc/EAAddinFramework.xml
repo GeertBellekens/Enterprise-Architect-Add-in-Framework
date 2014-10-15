@@ -996,6 +996,13 @@
             <param name="parameters">the parameters needed by this function</param>
             <returns>whathever (if anything) the function returns</returns>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.executeFunction(System.String)">
+            <summary>
+            executes the function with the given name
+            </summary>
+            <param name="functionName">name of the function to execute</param>
+            <returns>whathever (if anything) the function returns</returns>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
             <summary>
             Description of ScriptFunction.
@@ -1937,6 +1944,12 @@
             opens the properties dialog for this item
             </summary>
             <param name="item">the item to open the properties dialog for</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getWrappedModel">
+            <summary>
+            returns the repository object
+            </summary>
+            <returns>the wrapped repository object</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.repositoryType">
             <summary>
