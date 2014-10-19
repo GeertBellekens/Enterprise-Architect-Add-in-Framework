@@ -245,325 +245,14 @@ namespace EAAddinFramework
         /// Poll its members to retrieve model data and user interface status information.</param>
         /// <param name="DiagramID">Contains the Diagram ID of the diagram that was opened.</param>
         public virtual void EA_OnPostOpenDiagram(EA.Repository Repository ,int DiagramID){}
-		
-		#region EA Pre-Deletion Events
-		
-		/// <summary>
-		/// EA_OnPreDeleteElement notifies Add-Ins that an element is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the element.
-		/// This event occurs when a user deletes an element from the Project Browser or on a diagram. 
-		/// The notification is provided immediately before the element is deleted, so that the Add-In can disable deletion of the element.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the element to be deleted:
-		/// - ElementID: A long value corresponding to Element.ElementID.</param>	
-		/// <returns>Return True to enable deletion of the element from the model. Return False to disable deletion of the element.</returns>
-		public virtual bool EA_OnPreDeleteElement(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeleteAttribute notifies Add-Ins that an attribute is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the attribute.
-		/// This event occurs when a user deletes an attribute from the Project Browser or on a diagram. 
-		/// The notification is provided immediately before the attribute is deleted, so that the Add-In can disable deletion of the attribute.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the Attribute to be deleted:
-		/// - AttributeID: A long value corresponding to Attribute.AttributeID.</param>	
-		/// <returns>Return True to enable deletion of the attribute from the model. Return False to disable deletion of the attribute.</returns>
-		public virtual bool EA_OnPreDeleteAttribute(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeleteMethod notifies Add-Ins that an method is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the method.
-		/// This event occurs when a user deletes an method from the Project Browser or on a diagram. 
-		/// The notification is provided immediately before the method is deleted, so that the Add-In can disable deletion of the method.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the Method to be deleted:
-		/// - MethodID: A long value corresponding to Method.MethodID.</param>	
-		/// <returns>Return True to enable deletion of the method from the model. Return False to disable deletion of the method.</returns>
-		public virtual bool EA_OnPreDeleteMethod(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeleteConnector notifies Add-Ins that an connector is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the connector.
-		/// This event occurs when a user attempts to permanently delete a connector on a diagram.
-		/// The notification is provided immediately before the connector is deleted, so that the Add-In can disable deletion of the connector.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the connector to be deleted:
-		/// - ConnectorID: A long value corresponding to Connector.ConnectorID.</param>	
-		/// <returns>Return True to enable deletion of the connector from the model. Return False to disable deletion of the connector.</returns>
-		public virtual bool EA_OnPreDeleteConnector(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeleteDiagram notifies Add-Ins that an diagram is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the diagram.
-		/// This event occurs when a user attempts to permanently delete a diagram from the Project Browser.
-		/// The notification is provided immediately before the diagram is deleted, so that the Add-In can disable deletion of the diagram.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the diagram to be deleted:
-		/// - DiagramID: A long value corresponding to Diagram.DiagramID.</param>	
-		/// <returns>Return True to enable deletion of the diagram from the model. Return False to disable deletion of the diagram.</returns>
-		public virtual bool EA_OnPreDeleteDiagram(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeletePackage notifies Add-Ins that an package is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the package.
-		/// This event occurs when a user attempts to permanently delete a package from the Project Browser.
-		/// The notification is provided immediately before the package is deleted, so that the Add-In can disable deletion of the package.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the package to be deleted:
-		/// - PackageID: A long value corresponding to Package.PackageID.</param>	
-		/// <returns>Return True to enable deletion of the package from the model. Return False to disable deletion of the package.</returns>
-		public virtual bool EA_OnPreDeletePackage(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreDeleteGlossaryTerm notifies Add-Ins that a glossary term is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the glossary term.
-		/// The notification is provided immediately before the glossary term is deleted, so that the Add-In can disable deletion of the glossary term.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
-		/// TermID: A long value corresponding to Term.TermID.</param>
-		/// <returns>Return True to enable deletion of the glossary term from the model. Return False to disable deletion of the glossary term.</returns>
-		public virtual bool EA_OnPreDeleteGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		
-		#endregion EA Pre-Deletion Events
-		
-		#region EA Pre-New Events
-		
-		/// <summary>
-		/// EA_OnPreNewElement notifies Add-Ins that a new element is about to be created on a diagram. It enables Add-Ins to permit or deny creation of the new element.
-		/// This event occurs when a user drags a new element from the Toolbox or Resources window onto a diagram. 
-		/// The notification is provided immediately before the element is created, so that the Add-In can disable addition of the element.
-		/// Also look at EA_OnPostNewElement.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the element to be created:
-		/// - Type: A string value corresponding to Element.Type
-		/// - Stereotype: A string value corresponding to Element.Stereotype
-		/// - ParentID: A long value corresponding to Element.ParentID
-		/// - DiagramID: A long value corresponding to the ID of the diagram to which the element is being added. </param>
-		/// <returns>Return True to enable addition of the new element to the model. Return False to disable addition of the new element.</returns>
-		public virtual bool EA_OnPreNewElement(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreNewConnector notifies Add-Ins that a new connector is about to be created on a diagram. It enables Add-Ins to permit or deny creation of a new connector.
-		/// This event occurs when a user drags a new connector from the Toolbox or Resources window, onto a diagram. The notification is provided immediately before the connector is created, so that the Add-In can disable addition of the connector.
-		/// Also look at EA_OnPostNewConnector.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the connector to be created:
-		/// - Type: A string value corresponding to Connector.Type
-		/// - Subtype: A string value corresponding to Connector.Subtype
-		/// - Stereotype: A string value corresponding to Connector.Stereotype
-		/// - ClientID: A long value corresponding to Connector.ClientID
-		/// - SupplierID: A long value corresponding to Connector.SupplierID
-		/// - DiagramID: A long value corresponding to Connector.DiagramID.
-		/// </param>
-		/// <returns>Return True to enable addition of the new connector to the model. Return False to disable addition of the new connector.</returns>
-		public virtual bool EA_OnPreNewConnector(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreNewDiagram notifies Add-Ins that a new diagram is about to be created. It enables Add-Ins to permit or deny creation of the new diagram.
-		/// The notification is provided immediately before the diagram is created, so that the Add-In can disable addition of the diagram.
-		/// Also look at EA_OnPostNewDiagram.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the diagram to be created:
-		/// - Type: A string value corresponding to Diagram.Type
-		/// - ParentID: A long value corresponding to Diagram.ParentID
-		/// - PackageID: A long value corresponding to Diagram.PackageID. </param>
-		/// <returns>Return True to enable addition of the new diagram to the model. Return False to disable addition of the new diagram.</returns>
-		public virtual bool EA_OnPreNewDiagram(EA.Repository Repository, EA.EventProperties Info){return true;}
-				
-		/// <summary>
-		/// EA_OnPreNewDiagramObject notifies Add-Ins that a new diagram object is about to be dropped on a diagram. It enables Add-Ins to permit or deny creation of the new object.
-		/// This event occurs when a user drags an object from the Enterprise Architect Project Browser or Resources window onto a diagram. The notification is provided immediately before the object is created, so that the Add-In can disable addition of the object.
-		/// Also look at EA_OnPostNewDiagramObject.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the object to be created:
-		/// - Type: A string value corresponding to Object.Type
-		/// - Stereotype: A string value corresponding to Object.Stereotype
-		/// - ParentID: A long value corresponding to Object.ParentID
-		/// - DiagramID: A long value corresponding to the ID of the diagram to which the object is being added. </param>
-		/// <returns>Return True to enable addition of the object to the model. Return False to disable addition of the object.</returns>
-		public virtual bool EA_OnPreNewDiagramObject(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreNewAttribute notifies Add-Ins that a new attribute is about to be created on an element. It enables Add-Ins to permit or deny creation of the new attribute.
-		/// This event occurs when a user creates a new attribute on an element by either drag-dropping from the Project Browser, using the Attributes Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately before the attribute is created, so that the Add-In can disable addition of the attribute.
-		/// Also look at EA_OnPostNewAttribute.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the attribute to be created:
-		/// - Type: A string value corresponding to Attribute.Type
-		/// - Stereotype: A string value corresponding to Attribute.Stereotype
-		/// - ParentID: A long value corresponding to Attribute.ParentID
-		/// - ClassifierID: A long value corresponding to Attribute.ClassifierID. </param>
-		/// <returns>Return True to enable addition of the new attribute to the model. Return False to disable addition of the new attribute.</returns>
-		public virtual bool EA_OnPreNewAttribute(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreNewMethod notifies Add-Ins that a new method is about to be created on an element. It enables Add-Ins to permit or deny creation of the new method.
-		/// This event occurs when a user creates a new method on an element by either drag-dropping from the Project Browser, using the method Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately before the method is created, so that the Add-In can disable addition of the method.
-		/// Also look at EA_OnPostNewMethod.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the method to be created:
-		/// - ReturnType: A string value corresponding to Method.ReturnType
-		/// - Stereotype: A string value corresponding to Method.Stereotype
-		/// - ParentID: A long value corresponding to Method.ParentID
-		/// - ClassifierID: A long value corresponding to Method.ClassifierID. </param>
-		/// <returns>Return True to enable addition of the new method to the model. Return False to disable addition of the new method.</returns>
-		public virtual bool EA_OnPreNewMethod(EA.Repository Repository, EA.EventProperties Info){return true;}
-					
-		/// <summary>
-		/// EA_OnPreNewPackage notifies Add-Ins that a new package is about to be created in the model. It enables Add-Ins to permit or deny creation of the new package.
-		/// This event occurs when a user drags a new package from the Toolbox or Resources window onto a diagram, or by selecting the New Package icon from the Project Browser. The notification is provided immediately before the package is created, so that the Add-In can disable addition of the package.
-		/// Also look at EA_OnPostNewPackage.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the package to be created:
-		/// Stereotype: A string value corresponding to Package.Stereotype
-		/// ParentID: A long value corresponding to Package.ParentID
-		/// DiagramID: A long value corresponding to the ID of the diagram to which the package is being added. </param>
-		/// <returns>Return True to enable addition of the new package to the model. Return False to disable addition of the new package.</returns>
-		public virtual bool EA_OnPreNewPackage(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-		/// <summary>
-		/// EA_OnPreNewGlossaryTerm notifies Add-Ins that a new glossary term is about to be created. It enables Add-Ins to permit or deny creation of the new glossary term.
-		/// The notification is provided immediately before the glossary term is created, so that the Add-In can disable addition of the element.
-		/// Also look at EA_OnPostNewGlossaryTerm.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
-		/// TermID: A long value corresponding to Term.TermID.</param>
-		/// <returns>Return True to enable addition of the new glossary term to the model. Return False to disable addition of the new glossary term.</returns>
-		public virtual bool EA_OnPreNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
-				
-		#endregion EA Pre-New Events
-		
-		/// <summary>
+        
+        /// <summary>
 		/// EA_OnPreExitInstance is not currently used.
 		/// </summary>
 		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
 		public virtual void EA_OnPreExitInstance(EA.Repository Repository){}
-		
-		#region EA Post-New Events
-		
-		/// <summary>
-		/// EA_OnPostNewElement notifies Add-Ins that a new element has been created on a diagram. It enables Add-Ins to modify the element upon creation.
-		/// This event occurs after a user has dragged a new element from the Toolbox or Resources window onto a diagram. The notification is provided immediately after the element is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewElement.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new element:
-		/// - ElementID: A long value corresponding to Element.ElementID. </param>
-		/// <returns>Return True if the element has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewElement(EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		/// <summary>
-		/// EA_OnPostNewConnector notifies Add-Ins that a new connector has been created on a diagram. It enables Add-Ins to modify the connector upon creation.
-		/// This event occurs after a user has dragged a new connector from the Toolbox or Resources window onto a diagram. The notification is provided immediately after the connector is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewConnector.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new connector:
-		/// - ConnectorID: A long value corresponding to Connector.ConnectorID.
-		/// </param>
-		/// <returns>Return True if the connector has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewConnector(EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		/// <summary>
-		/// EA_OnPostNewDiagram notifies Add-Ins that a new diagram has been created. It enables Add-Ins to modify the diagram upon creation.
-		/// Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewDiagram.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new diagram:
-		/// - DiagramID: A long value corresponding to Diagram.DiagramID.</param>
-		/// <returns>Return True if the diagram has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewDiagram(EA.Repository Repository, EA.EventProperties Info){return false;}
-				
-		/// <summary>
-		/// EA_OnPostNewDiagramObject notifies Add-Ins that a new object has been created on a diagram. It enables Add-Ins to modify the object upon creation.
-		/// This event occurs after a user has dragged a new object from the Project Browser or Resources window onto a diagram. The notification is provided immediately after the object is added to the diagram. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewDiagramObject.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new element:
-		/// - ObjectID: A long value corresponding to Object.ObjectID.</param>
-		/// <returns>Return True if the element has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewDiagramObject(EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		/// <summary>
-		/// EA_OnPostNewAttribute notifies Add-Ins that a new attribute has been created on a diagram. It enables Add-Ins to modify the attribute upon creation.
-		/// This event occurs when a user creates a new attribute on an element by either drag-dropping from the Project Browser, using the Attributes Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately after the attribute is created. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewAttribute.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new attribute:
-		/// - AttributeID: A long value corresponding to Attribute.AttributeID.</param>
-		/// <returns>Return True if the attribute has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewAttribute(EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		/// <summary>
-		/// EA_OnPostNewMethod notifies Add-Ins that a new method has been created on a diagram. It enables Add-Ins to modify the method upon creation.
-		/// This event occurs when a user creates a new method on an element by either drag-dropping from the Project Browser, using the method's Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately after the method is created. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewMethod.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new method:
-		/// - MethodID: A long value corresponding to Method.MethodID.</param>
-		/// <returns>Return True if the method has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewMethod(EA.Repository Repository, EA.EventProperties Info){return false;}
-					
-		/// <summary>
-		/// EA_OnPostNewPackage notifies Add-Ins that a new package has been created on a diagram. It enables Add-Ins to modify the package upon creation.
-		/// This event occurs when a user drags a new package from the Toolbox or Resources window onto a diagram, or by selecting the New Package icon from the Project Browser. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewPackage.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the new package:
-		/// - PackageID: A long value corresponding to Package.PackageID.</param>
-		/// <returns>Return True if the package has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewPackage(EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		/// <summary>
-		/// EA_OnPostNewGlossaryTerm notifies Add-Ins that a new glossary term has been created. It enables Add-Ins to modify the glossary term upon creation.
-		/// The notification is provided immediately after the glossary term is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
-		/// Also look at EA_OnPreNewGlossaryTerm.
-		/// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
-		/// TermID: A long value corresponding to Term.TermID.</param>
-		/// <returns>Return True if the glossary term has been updated during this notification. Return False otherwise.</returns>
-		public virtual bool EA_OnPostNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return false;}
-		
-		#endregion EA Post-New Events
+
 		/// <summary>
 		/// EA_OnPostInitialized notifies Add-Ins that the Repository object has finished loading and any necessary initialization steps can now be performed on the object.
 		/// For example, the Add-In can create an Output tab using Repository.CreateOutputTab.
@@ -582,47 +271,94 @@ namespace EAAddinFramework
 		/// - Transform: A string value corresponding to the name of the transform used
 		/// - PackageID: A long value corresponding to Package.PackageID of the destination package. </param>
 		/// <returns>Reserved for future use.</returns>
-        public virtual bool EA_OnPostTransform(EA.Repository Repository, EA.EventProperties Info){return true;}
-		
-        #region EA Technology Events
+        public virtual bool EA_OnPostTransform(EA.Repository Repository, EA.EventProperties Info){return true;}	
         
         /// <summary>
-        /// EA_OnInitializeTechnologies requests that an Add-In pass an MDG Technology to Enterprise Architect for loading.
-        /// This event occurs on Enterprise Architect startup. Return your technology XML to this function and Enterprise Architect loads and enables it.
+        /// EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
+        /// This event occurs when a user executes the Add a New Model Using Wizard command to add a model that has been defined by an MDG Technology. See the Incorporate Model Templates topic for details of how to define such model templates.
         /// </summary>
-        /// <example>
-        /// public object EA_OnInitializeTechnologies(EA.Repository Repository){
-        /// 	return My.Resources.MyTechnology;}
-        /// </example>
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-        /// <returns>Return the MDG Technology as a single XML string.</returns>
-        public virtual object EA_OnInitializeTechnologies(EA.Repository Repository){return null;}
+        /// <param name="sLocation">The name of the template requested. This should match the location attribute in the [ModelTemplates] section of an MDG Technology File. For more information, see the Incorporate Model Templates in a Technology topic.</param>	
+        /// <returns>Return a string containing the XMI export of the model that is being used as a template.</returns>
+        public virtual string EA_OnRetrieveModelTemplate(EA.Repository Repository,string sLocation){return string.Empty;}
         
         /// <summary>
-        /// EA_OnPreActivateTechnology notifies Add-Ins that an MDG Technology resource is about to be activated in the model. This event occurs when a user selects to activate an MDG Technology resource in the model (by clicking on the Set Active button on the MDG Technologies dialog or by selecting the technology in the list box in the Default Tools toolbar).
-        /// The notification is provided immediately after the user attempts to activate the MDG Technology, so that the Add-In can permit or disable activation of the Technology.
-        /// Also look at EA_OnPostActivateTechnology.
+        /// EA_OnTabChanged notifies Add-Ins that the currently open tab has changed.
+        /// Diagrams do not generate the message when they are first opened - use the broadcast event EA_OnPostOpenDiagram for this purpose.
         /// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the MDG Technology to be activated:
-		/// - TechnologyID: A string value corresponding to the MDG Technology ID.</param>
-		/// <returns>Return True to enable activation of the MDG Technology resource in the model. Return False to disable activation of the MDG Technology resource.</returns>
-        public virtual bool EA_OnPreActivateTechnology(EA.Repository Repository, EA.EventProperties Info){return true;}
+        /// <param name="TabName">The name of the tab to which focus has been switched.</param>
+        /// <param name="DiagramID">The diagram ID, or 0 if switched to an Add-In tab.</param>
+        public virtual void EA_OnTabChanged(EA.Repository Repository,string TabName ,int DiagramID){}
+		
+		#region Add-In License Management Events
+		/// <summary>
+		/// When a user directly enters a license key that doesn't match a Sparx Systems key into the License Management dialog EA_AddInLicenseValidate is broadcast to all Enterprise Architect Add-Ins, providing them with a chance to use the Add-In key to determine the level of functionality to provide. When a key is retrieved from the Sparx Systems Keystore only the target Add-In will be called with the key.
+		/// For the Add-In to validate itself against this key, the Add-In's EA_AddinLicenseValidate handler should return true to confirm that the license has been validated. As the EA_AddinLicenseValidate event is broadcast to all Add-Ins, one license can validate many Add-Ins.
+		/// If an Add-In elects to handle a license key by returning true to EA_AddinLicenseValidate, it is called upon to provide a description of the license key through the EA_AddinLicenseGetDescription event. If more than one Add-In elects to handle a license key, the first Add-In that returns true to EA_AddinLicenseValidate is queried for the license key description.
+		/// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="AddinKey">The Add-in license key that has been entered in the License Management dialog.</param>
+		/// <returns>For the Add-in to validate against this key it should return true to indicate that the key is valid and has been handled.</returns>
+		public virtual bool EA_AddInLicenseValidate(EA.Repository Repository, string AddinKey){return false;}
+		
+		/// <summary>
+		/// Before the Enterprise Architect License Management dialog is displayed, EA_AddInLicenseGetDescription is sent once for each Add-In key to the first Add-In that elected to handle that key. 
+		/// The value returned by EA_AddinLicenseGetDescription is used as the key's plain text description.
+		/// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="AddinKey">The Add-In license key that Enterprise Architect requires a description for.</param>
+		/// <returns>A String containing a plain text description of the provided AddinKey.</returns>
+		public virtual string EA_AddinLicenseGetDescription(EA.Repository Repository, string AddinKey){return string.Empty;}
+		
+		/// <summary>
+		/// As an add-in writer you can distribute keys to your add-in via the Enterprise Architect Keystore providing your 
+		/// keys are generated using a prefix that allows Enterprise Architect to identify the add-in to which they belong. 
+		/// EA_GetSharedAddinName is called by Enterprise Architect to determine what prefix an add-in is using. 
+		/// If a matching key is found in the keystore the License Management dialog will display the name returned 
+		/// by EA_AddinLicenseGetDescription to your users. 
+		/// Finally, when the user selects a key, that key will be passed to your add-in to validate 
+		/// by calling EA_AddinLicenseValidate.
+		/// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <returns>A String containing a product name code for the provided Add-In. This will be shown in plain text at the start of any keys added to the keystore. We recommend contacting Sparx Systems directly with proposed values to ensure you don't clash with any other add-ins.
+		/// eg. The following keys would all be interpreted as belonging to an add-in returning "MYADDIN" from this function:
+		/// · MYADDIN-Test
+		/// · MYADDIN-{7AC4D426-9083-4fa2-93B7-25E2B7FB8DC5}
+		/// · MYADDIN-7AC4D426-9083-4fa2-93B7
+		/// · MYADDIN-25E2B7FB8DC5
+		/// · MYADDIN-2hDfHKA5jf0GAjn92UvqAnxwC13dxQGJtH7zLHJ9Ym8=</returns>
+		public virtual string EA_GetSharedAddinName(EA.Repository Repository){return string.Empty;}
+		
+		#endregion
+		
+		#region EA Compartment Events
         
         /// <summary>
-        /// EA_OnPostActivateTechnology notifies Add-Ins that an MDG Technology resource has been activated in the model. This event occurs when a user activates an MDG Technology resource in the model (by clicking on the Set Active button on the MDG Technologies dialog or by selecting the technology in the list box in the Default Tools toolbar). The notification is provided immediately after the user succeeds in activating the MDG Technology, so that the Add-In can update the Technology if necessary.
-        /// Also look at EA_OnPreActivateTechnology.
+        /// This event occurs when Enterprise Architect's diagrams are refreshed. It is a request for the Add-In to provide a list of user-defined compartments. The EA_GetCompartmentData event then queries each object for the data to display in each user-defined compartment.
         /// </summary>
-		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-		/// <param name="Info">Contains the following EventProperty object for the MDG Technology to be activated:
-		/// - TechnologyID: A string value corresponding to the MDG Technology ID.</param>
-		/// <returns>Return True if the MDG Technology resource is updated during this notification. Return False otherwise.</returns>
-        public virtual bool EA_OnPostActivateTechnology(EA.Repository Repository, EA.EventProperties Info){return true;}
-                
-        #endregion EA Technology Events
+        /// <returns>A String containing a comma-separated list of user-defined compartments.</returns>
+         public virtual object EA_QueryAvailableCompartments(EA.Repository Repository){return null;}
+         
+        /// <summary>
+        /// This event occurs when Enterprise Architect is instructed to redraw an element. It requests that the Add-In provide the data to populate the element's compartment.
+        /// </summary>
+        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+        /// <param name="sCompartment">The name of the compartment for which data is being requested.</param>
+        /// <param name="sGUID">The GUID of the element for which data is being requested.</param>
+        /// <param name="oType">The type of the element for which data is being requested.</param>
+        /// <returns>Variant containing a formatted string. See the example in the EA Help file to understand the format.</returns>
+        public virtual object EA_GetCompartmentData(EA.Repository Repository ,string sCompartment ,string sGUID , EA.ObjectType oType ) {return null;}
+        
+        #endregion EA Compartment Events
         
         #region EA Context Item Events
         
@@ -689,30 +425,7 @@ namespace EAAddinFramework
         public virtual void EA_OnNotifyContextItemModified(EA.Repository Repository,string GUID, EA.ObjectType ot){}                                                
         
         #endregion EA Context Item Events
-        
-        #region EA Compartment Events
-        
-        /// <summary>
-        /// This event occurs when Enterprise Architect's diagrams are refreshed. It is a request for the Add-In to provide a list of user-defined compartments. The EA_GetCompartmentData event then queries each object for the data to display in each user-defined compartment.
-        /// </summary>
-        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-        /// <returns>A String containing a comma-separated list of user-defined compartments.</returns>
-         public virtual object EA_QueryAvailableCompartments(EA.Repository Repository){return null;}
-         
-        /// <summary>
-        /// This event occurs when Enterprise Architect is instructed to redraw an element. It requests that the Add-In provide the data to populate the element's compartment.
-        /// </summary>
-        /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
-        /// Poll its members to retrieve model data and user interface status information.</param>
-        /// <param name="sCompartment">The name of the compartment for which data is being requested.</param>
-        /// <param name="sGUID">The GUID of the element for which data is being requested.</param>
-        /// <param name="oType">The type of the element for which data is being requested.</param>
-        /// <returns>Variant containing a formatted string. See the example in the EA Help file to understand the format.</returns>
-        public virtual object EA_GetCompartmentData(EA.Repository Repository ,string sCompartment ,string sGUID , EA.ObjectType oType ) {return null;}
-        
-        #endregion EA Compartment Events
-        
+
         #region EA Model Validation Broadcasts
         
         /// <summary>
@@ -819,8 +532,346 @@ namespace EAAddinFramework
         /// <param name="ObjectID">The ID of the object that owns the given parameter. Use the Repository.GetObjectByID parameter to retrieve the object.</param>
         public virtual void EA_OnRunParameterRule(EA.Repository Repository,string RuleID, string ParameterGUID,string MethodGUID, long ObjectID){}
                 
-        #endregion EA Model Validation Broadcasts
+        #endregion EA Model Validation Broadcasts        
         
+		#region EA Post-New Events
+		
+		/// <summary>
+		/// EA_OnPostNewElement notifies Add-Ins that a new element has been created on a diagram. It enables Add-Ins to modify the element upon creation.
+		/// This event occurs after a user has dragged a new element from the Toolbox or Resources window onto a diagram. The notification is provided immediately after the element is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewElement.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new element:
+		/// - ElementID: A long value corresponding to Element.ElementID. </param>
+		/// <returns>Return True if the element has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewElement(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewConnector notifies Add-Ins that a new connector has been created on a diagram. It enables Add-Ins to modify the connector upon creation.
+		/// This event occurs after a user has dragged a new connector from the Toolbox or Resources window onto a diagram. The notification is provided immediately after the connector is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewConnector.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new connector:
+		/// - ConnectorID: A long value corresponding to Connector.ConnectorID.
+		/// </param>
+		/// <returns>Return True if the connector has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewConnector(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewDiagram notifies Add-Ins that a new diagram has been created. It enables Add-Ins to modify the diagram upon creation.
+		/// Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewDiagram.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new diagram:
+		/// - DiagramID: A long value corresponding to Diagram.DiagramID.</param>
+		/// <returns>Return True if the diagram has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewDiagram(EA.Repository Repository, EA.EventProperties Info){return false;}
+				
+		/// <summary>
+		/// EA_OnPostNewDiagramObject notifies Add-Ins that a new object has been created on a diagram. It enables Add-Ins to modify the object upon creation.
+		/// This event occurs after a user has dragged a new object from the Project Browser or Resources window onto a diagram. The notification is provided immediately after the object is added to the diagram. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewDiagramObject.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new element:
+		/// - ObjectID: A long value corresponding to Object.ObjectID.</param>
+		/// <returns>Return True if the element has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewDiagramObject(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewAttribute notifies Add-Ins that a new attribute has been created on a diagram. It enables Add-Ins to modify the attribute upon creation.
+		/// This event occurs when a user creates a new attribute on an element by either drag-dropping from the Project Browser, using the Attributes Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately after the attribute is created. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewAttribute.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new attribute:
+		/// - AttributeID: A long value corresponding to Attribute.AttributeID.</param>
+		/// <returns>Return True if the attribute has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewAttribute(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewMethod notifies Add-Ins that a new method has been created on a diagram. It enables Add-Ins to modify the method upon creation.
+		/// This event occurs when a user creates a new method on an element by either drag-dropping from the Project Browser, using the method's Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately after the method is created. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewMethod.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new method:
+		/// - MethodID: A long value corresponding to Method.MethodID.</param>
+		/// <returns>Return True if the method has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewMethod(EA.Repository Repository, EA.EventProperties Info){return false;}
+					
+		/// <summary>
+		/// EA_OnPostNewPackage notifies Add-Ins that a new package has been created on a diagram. It enables Add-Ins to modify the package upon creation.
+		/// This event occurs when a user drags a new package from the Toolbox or Resources window onto a diagram, or by selecting the New Package icon from the Project Browser. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewPackage.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the new package:
+		/// - PackageID: A long value corresponding to Package.PackageID.</param>
+		/// <returns>Return True if the package has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewPackage(EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		/// <summary>
+		/// EA_OnPostNewGlossaryTerm notifies Add-Ins that a new glossary term has been created. It enables Add-Ins to modify the glossary term upon creation.
+		/// The notification is provided immediately after the glossary term is added to the model. Set Repository.SuppressEADialogs to true to suppress Enterprise Architect from showing its default dialogs.
+		/// Also look at EA_OnPreNewGlossaryTerm.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True if the glossary term has been updated during this notification. Return False otherwise.</returns>
+		public virtual bool EA_OnPostNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return false;}
+		
+		#endregion EA Post-New Events        
+        
+		#region EA Pre-Deletion Events
+		
+		/// <summary>
+		/// EA_OnPreDeleteElement notifies Add-Ins that an element is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the element.
+		/// This event occurs when a user deletes an element from the Project Browser or on a diagram. 
+		/// The notification is provided immediately before the element is deleted, so that the Add-In can disable deletion of the element.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the element to be deleted:
+		/// - ElementID: A long value corresponding to Element.ElementID.</param>	
+		/// <returns>Return True to enable deletion of the element from the model. Return False to disable deletion of the element.</returns>
+		public virtual bool EA_OnPreDeleteElement(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteAttribute notifies Add-Ins that an attribute is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the attribute.
+		/// This event occurs when a user deletes an attribute from the Project Browser or on a diagram. 
+		/// The notification is provided immediately before the attribute is deleted, so that the Add-In can disable deletion of the attribute.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the Attribute to be deleted:
+		/// - AttributeID: A long value corresponding to Attribute.AttributeID.</param>	
+		/// <returns>Return True to enable deletion of the attribute from the model. Return False to disable deletion of the attribute.</returns>
+		public virtual bool EA_OnPreDeleteAttribute(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteMethod notifies Add-Ins that an method is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the method.
+		/// This event occurs when a user deletes an method from the Project Browser or on a diagram. 
+		/// The notification is provided immediately before the method is deleted, so that the Add-In can disable deletion of the method.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the Method to be deleted:
+		/// - MethodID: A long value corresponding to Method.MethodID.</param>	
+		/// <returns>Return True to enable deletion of the method from the model. Return False to disable deletion of the method.</returns>
+		public virtual bool EA_OnPreDeleteMethod(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteConnector notifies Add-Ins that an connector is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the connector.
+		/// This event occurs when a user attempts to permanently delete a connector on a diagram.
+		/// The notification is provided immediately before the connector is deleted, so that the Add-In can disable deletion of the connector.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the connector to be deleted:
+		/// - ConnectorID: A long value corresponding to Connector.ConnectorID.</param>	
+		/// <returns>Return True to enable deletion of the connector from the model. Return False to disable deletion of the connector.</returns>
+		public virtual bool EA_OnPreDeleteConnector(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteDiagram notifies Add-Ins that an diagram is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the diagram.
+		/// This event occurs when a user attempts to permanently delete a diagram from the Project Browser.
+		/// The notification is provided immediately before the diagram is deleted, so that the Add-In can disable deletion of the diagram.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the diagram to be deleted:
+		/// - DiagramID: A long value corresponding to Diagram.DiagramID.</param>	
+		/// <returns>Return True to enable deletion of the diagram from the model. Return False to disable deletion of the diagram.</returns>
+		public virtual bool EA_OnPreDeleteDiagram(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteDiagramObject notifies Add-Ins that a diagram object is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the element.
+		/// This event occurs when a user attempts to permanently delete an element from a diagram. The notification is provided immediately before the element is deleted, so that the Add-In can disable deletion of the element.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the element to be deleted:
+		/// · ID: A long value corresponding to DiagramObject.ElementID</param>
+		/// <returns>Return True to enable deletion of the element from the model. Return False to disable deletion of the element.</returns>
+		public virtual bool EA_OnPreDeleteDiagramObject(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeletePackage notifies Add-Ins that an package is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the package.
+		/// This event occurs when a user attempts to permanently delete a package from the Project Browser.
+		/// The notification is provided immediately before the package is deleted, so that the Add-In can disable deletion of the package.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the package to be deleted:
+		/// - PackageID: A long value corresponding to Package.PackageID.</param>	
+		/// <returns>Return True to enable deletion of the package from the model. Return False to disable deletion of the package.</returns>
+		public virtual bool EA_OnPreDeletePackage(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreDeleteGlossaryTerm notifies Add-Ins that a glossary term is to be deleted from the model. It enables Add-Ins to permit or deny deletion of the glossary term.
+		/// The notification is provided immediately before the glossary term is deleted, so that the Add-In can disable deletion of the glossary term.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True to enable deletion of the glossary term from the model. Return False to disable deletion of the glossary term.</returns>
+		public virtual bool EA_OnPreDeleteGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		
+		#endregion EA Pre-Deletion Events
+		
+		#region EA Pre-New-Object Events
+		
+		/// <summary>
+		/// EA_OnPreNewElement notifies Add-Ins that a new element is about to be created on a diagram. It enables Add-Ins to permit or deny creation of the new element.
+		/// This event occurs when a user drags a new element from the Toolbox or Resources window onto a diagram. 
+		/// The notification is provided immediately before the element is created, so that the Add-In can disable addition of the element.
+		/// Also look at EA_OnPostNewElement.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the element to be created:
+		/// - Type: A string value corresponding to Element.Type
+		/// - Stereotype: A string value corresponding to Element.Stereotype
+		/// - ParentID: A long value corresponding to Element.ParentID
+		/// - DiagramID: A long value corresponding to the ID of the diagram to which the element is being added. </param>
+		/// <returns>Return True to enable addition of the new element to the model. Return False to disable addition of the new element.</returns>
+		public virtual bool EA_OnPreNewElement(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreNewConnector notifies Add-Ins that a new connector is about to be created on a diagram. It enables Add-Ins to permit or deny creation of a new connector.
+		/// This event occurs when a user drags a new connector from the Toolbox or Resources window, onto a diagram. The notification is provided immediately before the connector is created, so that the Add-In can disable addition of the connector.
+		/// Also look at EA_OnPostNewConnector.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the connector to be created:
+		/// - Type: A string value corresponding to Connector.Type
+		/// - Subtype: A string value corresponding to Connector.Subtype
+		/// - Stereotype: A string value corresponding to Connector.Stereotype
+		/// - ClientID: A long value corresponding to Connector.ClientID
+		/// - SupplierID: A long value corresponding to Connector.SupplierID
+		/// - DiagramID: A long value corresponding to Connector.DiagramID.
+		/// </param>
+		/// <returns>Return True to enable addition of the new connector to the model. Return False to disable addition of the new connector.</returns>
+		public virtual bool EA_OnPreNewConnector(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreNewDiagram notifies Add-Ins that a new diagram is about to be created. It enables Add-Ins to permit or deny creation of the new diagram.
+		/// The notification is provided immediately before the diagram is created, so that the Add-In can disable addition of the diagram.
+		/// Also look at EA_OnPostNewDiagram.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the diagram to be created:
+		/// - Type: A string value corresponding to Diagram.Type
+		/// - ParentID: A long value corresponding to Diagram.ParentID
+		/// - PackageID: A long value corresponding to Diagram.PackageID. </param>
+		/// <returns>Return True to enable addition of the new diagram to the model. Return False to disable addition of the new diagram.</returns>
+		public virtual bool EA_OnPreNewDiagram(EA.Repository Repository, EA.EventProperties Info){return true;}
+				
+		/// <summary>
+		/// EA_OnPreNewDiagramObject notifies Add-Ins that a new diagram object is about to be dropped on a diagram. It enables Add-Ins to permit or deny creation of the new object.
+		/// This event occurs when a user drags an object from the Enterprise Architect Project Browser or Resources window onto a diagram. The notification is provided immediately before the object is created, so that the Add-In can disable addition of the object.
+		/// Also look at EA_OnPostNewDiagramObject.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the object to be created:
+		/// - Type: A string value corresponding to Object.Type
+		/// - Stereotype: A string value corresponding to Object.Stereotype
+		/// - ParentID: A long value corresponding to Object.ParentID
+		/// - DiagramID: A long value corresponding to the ID of the diagram to which the object is being added. </param>
+		/// <returns>Return True to enable addition of the object to the model. Return False to disable addition of the object.</returns>
+		public virtual bool EA_OnPreNewDiagramObject(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// When a user drags any kind of element from the Project Browser onto a diagram, EA_OnPreDropFromTree notifies the Add-In that a new item is about to be dropped onto a diagram. The notification is provided immediately before the element is dropped, so that the Add-In can override the default action that would be taken for this drag.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the element to be created:
+		/// · ID: A long value of the type being dropped
+		/// · Type: A string value corresponding to type of element being dropped
+		/// · DiagramID: A long value corresponding to the ID of the diagram to which the element is being added
+		/// · PositionX: The X coordinate into which the element is being dropped
+		/// · PositionY: The Y coordinate into which the element is being dropped
+		/// · DroppedID: A long value corresponding to the ID of the element the item has been dropped onto</param>
+		/// <returns>Returns True to allow the default behavior to be executed. Return False if you are overriding this behavior.</returns>
+		public virtual bool EA_OnPreDropFromTree(EA.Repository Repository, EA.EventProperties Info){return true;}
+		 
+		/// <summary>
+		/// EA_OnPreNewAttribute notifies Add-Ins that a new attribute is about to be created on an element. It enables Add-Ins to permit or deny creation of the new attribute.
+		/// This event occurs when a user creates a new attribute on an element by either drag-dropping from the Project Browser, using the Attributes Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately before the attribute is created, so that the Add-In can disable addition of the attribute.
+		/// Also look at EA_OnPostNewAttribute.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the attribute to be created:
+		/// - Type: A string value corresponding to Attribute.Type
+		/// - Stereotype: A string value corresponding to Attribute.Stereotype
+		/// - ParentID: A long value corresponding to Attribute.ParentID
+		/// - ClassifierID: A long value corresponding to Attribute.ClassifierID. </param>
+		/// <returns>Return True to enable addition of the new attribute to the model. Return False to disable addition of the new attribute.</returns>
+		public virtual bool EA_OnPreNewAttribute(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreNewMethod notifies Add-Ins that a new method is about to be created on an element. It enables Add-Ins to permit or deny creation of the new method.
+		/// This event occurs when a user creates a new method on an element by either drag-dropping from the Project Browser, using the method Properties dialog, or using the in-place editor on the diagram. The notification is provided immediately before the method is created, so that the Add-In can disable addition of the method.
+		/// Also look at EA_OnPostNewMethod.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the method to be created:
+		/// - ReturnType: A string value corresponding to Method.ReturnType
+		/// - Stereotype: A string value corresponding to Method.Stereotype
+		/// - ParentID: A long value corresponding to Method.ParentID
+		/// - ClassifierID: A long value corresponding to Method.ClassifierID. </param>
+		/// <returns>Return True to enable addition of the new method to the model. Return False to disable addition of the new method.</returns>
+		public virtual bool EA_OnPreNewMethod(EA.Repository Repository, EA.EventProperties Info){return true;}
+					
+		/// <summary>
+		/// EA_OnPreNewPackage notifies Add-Ins that a new package is about to be created in the model. It enables Add-Ins to permit or deny creation of the new package.
+		/// This event occurs when a user drags a new package from the Toolbox or Resources window onto a diagram, or by selecting the New Package icon from the Project Browser. The notification is provided immediately before the package is created, so that the Add-In can disable addition of the package.
+		/// Also look at EA_OnPostNewPackage.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the package to be created:
+		/// Stereotype: A string value corresponding to Package.Stereotype
+		/// ParentID: A long value corresponding to Package.ParentID
+		/// DiagramID: A long value corresponding to the ID of the diagram to which the package is being added. </param>
+		/// <returns>Return True to enable addition of the new package to the model. Return False to disable addition of the new package.</returns>
+		public virtual bool EA_OnPreNewPackage(EA.Repository Repository, EA.EventProperties Info){return true;}
+		
+		/// <summary>
+		/// EA_OnPreNewGlossaryTerm notifies Add-Ins that a new glossary term is about to be created. It enables Add-Ins to permit or deny creation of the new glossary term.
+		/// The notification is provided immediately before the glossary term is created, so that the Add-In can disable addition of the element.
+		/// Also look at EA_OnPostNewGlossaryTerm.
+		/// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty objects for the glossary term to be deleted:
+		/// TermID: A long value corresponding to Term.TermID.</param>
+		/// <returns>Return True to enable addition of the new glossary term to the model. Return False to disable addition of the new glossary term.</returns>
+		public virtual bool EA_OnPreNewGlossaryTerm (EA.Repository Repository, EA.EventProperties Info){return true;}
+				
+		#endregion EA Pre-New Events
+		
         #region EA Tagged Value Broadcasts
         /// <summary>
         /// EA_OnAttributeTagEdit is called when the user clicks the ellipsis ( ... ) button 
@@ -888,17 +939,48 @@ namespace EAAddinFramework
         /// <param name="TagNotes">The current value of the Tagged Value notes; if the value 
         public virtual void EA_OnMethodTagEdit(EA.Repository Repository, long MethodID, ref string TagName, ref string TagValue, ref string TagNotes) {}
         #endregion
+		
+        #region EA Technology Events
         
         /// <summary>
-        /// EA_OnRetrieveModelTemplate requests that an Add-In pass a model template to Enterprise Architect.
-        /// This event occurs when a user executes the Add a New Model Using Wizard command to add a model that has been defined by an MDG Technology. See the Incorporate Model Templates topic for details of how to define such model templates.
+        /// EA_OnInitializeTechnologies requests that an Add-In pass an MDG Technology to Enterprise Architect for loading.
+        /// This event occurs on Enterprise Architect startup. Return your technology XML to this function and Enterprise Architect loads and enables it.
         /// </summary>
+        /// <example>
+        /// public object EA_OnInitializeTechnologies(EA.Repository Repository){
+        /// 	return My.Resources.MyTechnology;}
+        /// </example>
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-        /// <param name="sLocation">The name of the template requested. This should match the location attribute in the [ModelTemplates] section of an MDG Technology File. For more information, see the Incorporate Model Templates in a Technology topic.</param>	
-        /// <returns>Return a string containing the XMI export of the model that is being used as a template.</returns>
-        public virtual string EA_OnRetrieveModelTemplate(EA.Repository Repository,string sLocation){return string.Empty;}
+        /// <returns>Return the MDG Technology as a single XML string.</returns>
+        public virtual object EA_OnInitializeTechnologies(EA.Repository Repository){return null;}
         
+        /// <summary>
+        /// EA_OnPreActivateTechnology notifies Add-Ins that an MDG Technology resource is about to be activated in the model. This event occurs when a user selects to activate an MDG Technology resource in the model (by clicking on the Set Active button on the MDG Technologies dialog or by selecting the technology in the list box in the Default Tools toolbar).
+        /// The notification is provided immediately after the user attempts to activate the MDG Technology, so that the Add-In can permit or disable activation of the Technology.
+        /// Also look at EA_OnPostActivateTechnology.
+        /// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the MDG Technology to be activated:
+		/// - TechnologyID: A string value corresponding to the MDG Technology ID.</param>
+		/// <returns>Return True to enable activation of the MDG Technology resource in the model. Return False to disable activation of the MDG Technology resource.</returns>
+        public virtual bool EA_OnPreActivateTechnology(EA.Repository Repository, EA.EventProperties Info){return true;}
+        
+        /// <summary>
+        /// EA_OnPostActivateTechnology notifies Add-Ins that an MDG Technology resource has been activated in the model. This event occurs when a user activates an MDG Technology resource in the model (by clicking on the Set Active button on the MDG Technologies dialog or by selecting the technology in the list box in the Default Tools toolbar). The notification is provided immediately after the user succeeds in activating the MDG Technology, so that the Add-In can update the Technology if necessary.
+        /// Also look at EA_OnPreActivateTechnology.
+        /// </summary>
+		/// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
+        /// Poll its members to retrieve model data and user interface status information.</param>
+		/// <param name="Info">Contains the following EventProperty object for the MDG Technology to be activated:
+		/// - TechnologyID: A string value corresponding to the MDG Technology ID.</param>
+		/// <returns>Return True if the MDG Technology resource is updated during this notification. Return False otherwise.</returns>
+        public virtual bool EA_OnPostActivateTechnology(EA.Repository Repository, EA.EventProperties Info){return true;}
+                
+        #endregion EA Technology Events
+        
+  
 		#endregion EA Broadcast Events   
 		
 		#region EA MDG Events
