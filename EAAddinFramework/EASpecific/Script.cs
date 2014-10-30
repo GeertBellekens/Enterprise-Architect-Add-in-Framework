@@ -23,12 +23,15 @@ namespace EAAddinFramework.EASpecific
 	public class Script
 	{
 		static string scriptLanguageIndicator = "Language=\"";
+		static string scriptNameIndicator = "Script Name=\"";
 		private string _code;
 		public string errorMessage {get;set;}
 		private ScriptControl scriptController;
 		public List<ScriptFunction> functions {get;set;}
-		public Script(string code, string language,EAWrappers.Model model)
+		public string name{get;set;}
+		public Script(string scriptName, string code, string language, EAWrappers.Model model)
 		{
+			this.name = scriptName;
 			this.functions = new List<ScriptFunction>();
 			this._code = code;
 			this.scriptController = new ScriptControl();
@@ -60,6 +63,8 @@ namespace EAAddinFramework.EASpecific
 		public static List<Script> getAllScripts(EAWrappers.Model model)
 		{
 			List<Script> allScripts = new List<Script>();
+			if (model != null)
+			{
 			 XmlDocument xmlScripts = model.SQLQuery("select * from t_script");
 			 XmlNodeList scriptNodes = xmlScripts.SelectNodes(model.formatXPath("//Row"));
               foreach (XmlNode scriptNode in scriptNodes)
@@ -69,40 +74,43 @@ namespace EAAddinFramework.EASpecific
               	if (notesNode.InnerText.Contains(scriptLanguageIndicator))
           	    {
           	    	//we have an actual script.
+          	    	//the name of the script
+          	    	string scriptName = getValueByName(notesNode.InnerText, scriptNameIndicator);
 					//now figure out the language
-					string language = getScriptLanguage(notesNode.InnerText);
+					string language = getValueByName(notesNode.InnerText, scriptLanguageIndicator);
 					//then get teh code
 					XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));	
 					if (codeNode != null && language != string.Empty)
 					{
 						//and create the script if both code and language are found
-						allScripts.Add(new Script(codeNode.InnerText, language,model));
+						allScripts.Add(new Script(scriptName,codeNode.InnerText, language,model));
 					}
           	    }
-          	
               }
-			 return allScripts;
+			}
+			return allScripts;
 		}
 		/// <summary>
-		/// gets the language from the content of the notes.
-		/// The langage can be found after "Language="
+		/// gets the value from the content of the notes.
+		/// The value can be found after "name="
 		/// </summary>
 		/// <param name="notesContent">the contents of the notes node</param>
-		/// <returns>the language string</returns>
-		private static string getScriptLanguage(string notesContent)
+		/// <param name="name">the name of the tag</param>
+		/// <returns>the value string</returns>
+		private static string getValueByName(string notesContent,string name)
 		{
-			string language = string.Empty;
-			if (notesContent.Contains(scriptLanguageIndicator))
+			string returnValue = string.Empty;
+			if (notesContent.Contains(name))
 		    {
-		    	int startLanguage = notesContent.IndexOf(scriptLanguageIndicator) + scriptLanguageIndicator.Length;
-		    	int endLanguage = notesContent.IndexOf("\"",startLanguage);
-		    	if (endLanguage > startLanguage)
+		    	int startName = notesContent.IndexOf(name) + name.Length;
+		    	int endName = notesContent.IndexOf("\"",startName);
+		    	if (endName > startName)
 		    	{
-		    		language = notesContent.Substring(startLanguage, endLanguage - startLanguage);
+		    		returnValue = notesContent.Substring(startName, endName - startName);
 		    	}
 		    	
 		    }
-			return language;
+			return returnValue;
 			
 		}
 		/// <summary>

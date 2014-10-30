@@ -24,6 +24,12 @@ namespace EAAddinFramework.EASpecific
 				return this.procedure.Name;
 			}
 		}
+		public string fullName
+		{get
+			{
+				return this.owner.name +"."+ this.procedure.Name;
+			}
+		}
 		public int numberOfParameters
 		{
 			get
