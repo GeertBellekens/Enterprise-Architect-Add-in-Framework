@@ -7,7 +7,7 @@
         <member name="T:EAAddinFramework.EAAddinBase">
             <summary>
             This abstract class can be used as a base class for creating add-ins for Enterprise Architec
-            It contains all supported operations for EA v 8.0.864
+            It contains all supported operations for EA v 11.1.1112
             </summary>
         </member>
         <member name="M:EAAddinFramework.EAAddinBase.IsProjectOpen(EA.Repository)">

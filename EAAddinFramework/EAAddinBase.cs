@@ -4,7 +4,7 @@ namespace EAAddinFramework
 {
 	/// <summary>
 	/// This abstract class can be used as a base class for creating add-ins for Enterprise Architec
-	/// It contains all supported operations for EA v 8.0.864
+	/// It contains all supported operations for EA v 11.1.1112
 	/// </summary>
 	public abstract class EAAddinBase
 	{
