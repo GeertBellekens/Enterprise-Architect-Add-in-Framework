@@ -111,7 +111,7 @@ namespace EAAddinTester
 	                    // get the newly added item
 	                    ToolStripMenuItem newMenuItem = (ToolStripMenuItem)addinMenu.DropDownItems[addinMenu.DropDownItems.Count - 1];
 	                    //set its state, only leaf items get their state set.
-	                    bool enabledValue = false;
+	                    bool enabledValue = true;
 	                    bool checkedValue = false;
 	                    addin.EA_GetMenuState(eaRepository, location, newMenuItem.OwnerItem.Text, newMenuItem.Text, ref enabledValue, ref checkedValue);
 	                    newMenuItem.Enabled = enabledValue;
