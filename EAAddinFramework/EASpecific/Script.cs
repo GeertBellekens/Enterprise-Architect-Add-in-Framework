@@ -29,6 +29,13 @@ namespace EAAddinFramework.EASpecific
 		private ScriptControl scriptController;
 		public List<ScriptFunction> functions {get;set;}
 		public string name{get;set;}
+		public string displayName 
+		{
+			get
+			{
+				return this.name + " - " + this.scriptController.Language;
+			}
+		}
 		public Script(string scriptName, string code, string language, EAWrappers.Model model)
 		{
 			this.name = scriptName;
