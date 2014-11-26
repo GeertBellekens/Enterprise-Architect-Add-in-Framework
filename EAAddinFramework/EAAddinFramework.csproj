@@ -59,9 +59,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EASpecific\JavaScriptLanguage.cs" />
+    <Compile Include="EASpecific\JavaScriptLanguageBase.cs" />
+    <Compile Include="EASpecific\JScriptLanguage.cs" />
     <Compile Include="EASpecific\Script.cs" />
     <Compile Include="EASpecific\ScriptFunction.cs" />
+    <Compile Include="EASpecific\ScriptLanguage.cs" />
     <Compile Include="EASpecific\User.cs" />
+    <Compile Include="EASpecific\VBScriptLanguage.cs" />
     <Compile Include="EASpecific\WorkingSet.cs" />
     <Compile Include="EAWrappers\Action.cs" />
     <Compile Include="EAWrappers\Activity.cs" />

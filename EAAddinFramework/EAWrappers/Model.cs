@@ -440,6 +440,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     			return xpath;
     	}
     }
+    /// <summary>
+    /// escapes a literal string so it can be inserted using sql
+    /// </summary>
+    /// <param name="sqlString">the string to be escaped</param>
+    /// <returns>the escaped string</returns>
+    public string escapeSQLString(string sqlString)
+    {
+    	// replace backslash "\" by double backslash "\\"
+    	string escapedString = sqlString.Replace(@"\",@"\\");
+    	// replace the single qoutes "'" by double single quotes "''"
+    	escapedString = escapedString.Replace("'","''");
+
+    	return escapedString;
+    }
     /// generic query operation on the model.
     /// Returns results in an xml format
     public XmlDocument SQLQuery(string sqlQuery)
@@ -722,7 +736,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
         return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as UML.Classes.Kernel.Operation;
     }
-
+	
     
     internal void executeSQL(string SQLString)
     {

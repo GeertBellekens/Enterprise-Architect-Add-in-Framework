@@ -1045,9 +1045,34 @@
             Set these options in the constructor of the derived add-in class
             </summary>
         </member>
+        <member name="T:EAAddinFramework.EASpecific.JavaScriptLanguage">
+            <summary>
+            Description of JavaScriptLanguage.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.JavaScriptLanguageBase">
+            <summary>
+            Description of JavaScriptLanguageBase.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.ScriptLanguage">
+            <summary>
+            Description of ScriptLanguage.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.JScriptLanguage">
+            <summary>
+            Description of JScriptLanguage.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.Script">
             <summary>
             Description of Script.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.reloadCode">
+            <summary>
+            reload the code into the controller to refresh the functions
             </summary>
         </member>
         <member name="M:EAAddinFramework.EASpecific.Script.getAllScripts(TSF.UmlToolingFramework.Wrappers.EA.Model)">
@@ -1081,6 +1106,19 @@
             <param name="functionName">name of the function to execute</param>
             <returns>whathever (if anything) the function returns</returns>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.addFunction(System.Reflection.MethodInfo)">
+            <summary>
+            add a function with based on the given operation
+            </summary>
+            <param name="operation">the operation to base this function on</param>
+            <returns>the new function</returns>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.addCode(System.String)">
+            <summary>
+            adds the given code to the end of the script
+            </summary>
+            <param name="functionCode">the code to be added</param>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
             <summary>
             Description of ScriptFunction.
@@ -1106,6 +1144,11 @@
             <param name="login">the string used to log in into the tool</param>
             <param name="firstName">the first name of the user</param>
             <param name="lastName">the last name of the user</param>
+        </member>
+        <member name="T:EAAddinFramework.EASpecific.VBScriptLanguage">
+            <summary>
+            Description of VBScriptLanuguage.
+            </summary>
         </member>
         <member name="T:EAAddinFramework.EASpecific.WorkingSet">
             <summary>
@@ -1966,6 +2009,13 @@
             </summary>
             <param name="xpath">the xpath to format</param>
             <returns>the formatted xpath</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.escapeSQLString(System.String)">
+            <summary>
+            escapes a literal string so it can be inserted using sql
+            </summary>
+            <param name="sqlString">the string to be escaped</param>
+            <returns>the escaped string</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
             generic query operation on the model.
