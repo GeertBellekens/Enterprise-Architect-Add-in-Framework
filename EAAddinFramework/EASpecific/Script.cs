@@ -104,7 +104,7 @@ namespace EAAddinFramework.EASpecific
 			if (model != null)
 			{
 			 XmlDocument xmlScripts = model.SQLQuery("select ScriptID, Notes, Script from t_script");
-			 XmlNodeList scriptNodes = xmlScripts.SelectNodes(model.formatXPath("//Row"));
+			 XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
               foreach (XmlNode scriptNode in scriptNodes)
               {
               	//TODO get the <notes> node. If it countaints "Group Type=" then it is a group. Else we need to find "Language=" 
@@ -123,8 +123,14 @@ namespace EAAddinFramework.EASpecific
 					XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));	
 					if (codeNode != null && language != string.Empty)
 					{
+						//if the script is still empty EA returns NULL
+						string scriptCode = codeNode.InnerText;
+						if (scriptCode.Equals("NULL",StringComparison.InvariantCultureIgnoreCase))
+						{
+							scriptCode = string.Empty;
+						}
 						//and create the script if both code and language are found
-						allScripts.Add(new Script(ScriptID,scriptName,codeNode.InnerText, language,model));
+						allScripts.Add(new Script(ScriptID,scriptName,scriptCode, language,model));
 					}
           	    }
               }
