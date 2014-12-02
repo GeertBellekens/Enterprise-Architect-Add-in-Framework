@@ -9,9 +9,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 
 using MSScriptControl;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
@@ -66,7 +67,7 @@ namespace EAAddinFramework.EASpecific
 			try
 			{
 				//add the actual code
-				this.scriptController.AddCode(this._code);
+				this.scriptController.AddCode(this.IncludeLocalScripts(this._code));
 				//set the functions
 				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
 				{
@@ -79,6 +80,75 @@ namespace EAAddinFramework.EASpecific
 				this.errorMessage = e.Message;
 			}
 		}
+		/// <summary>
+		/// replaces teh !INC Local Scripts.<filename> statements with the actual code of the local script.
+		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+		/// 
+		/// </summary>
+		/// <param name="code">the code containing the include parameters</param>
+		/// <returns>the code including the included code</returns>
+		private string IncludeLocalScripts(string code,string parentIncludeStatement = null)
+		{
+			string includedCode = code;
+			//find all lines starting with !INC
+			foreach (string includeString in this.getIncludes(code)) 
+			{
+				if (includeString != parentIncludeStatement) //prevent eternal loop
+				{
+					//then replace with the contents of the included script
+					includedCode = includedCode.Replace(includeString,this.IncludeLocalScripts(this.getIncludedcode(includeString),includeString));
+				}
+			}
+			
+			return includedCode;
+			
+		}
+		/// <summary>
+		/// gets the code to be included based on the include string. !INC Local Scripts.<filename> statements
+		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+		/// </summary>
+		/// <param name="includeString"></param>
+		/// <returns></returns>
+		private string getIncludedcode(string includeString)
+		{
+			string includedCode = string.Empty;
+			int fileNameStart = includeString.IndexOf(".") +1;
+			if (fileNameStart > 0)
+			{
+				string filename = includeString.Substring(fileNameStart);
+				string scriptsDirectory = Path.GetDirectoryName(this.model.applicationFullPath) + "\\Scripts";
+				string[] scriptFiles = Directory.GetFiles(scriptsDirectory,filename + ".*",SearchOption.AllDirectories);
+									
+				if (scriptFiles.Length > 0)
+				{
+					includedCode = File.ReadAllText(scriptFiles[0]);
+				}
+			}
+			
+			return includedCode;
+		}
+		/// <summary>
+		/// finds each instance of "!INC" and returns the whole line
+		/// </summary>
+		/// <param name="code">the code to search</param>
+		/// <returns>the contents of each line starting with "!INC"</returns>
+		private List<string> getIncludes(string code)
+		{
+			List<string> includes = new List<string>();
+			using (StringReader reader = new StringReader(code))
+			{
+				string line;
+			    while ((line = reader.ReadLine()) != null)
+			    {
+			    	if (line.StartsWith("!INC"))
+		    	    {
+			    		includes.Add(line);
+		    	    }
+			    }
+			}
+			return includes;
+		}
+		
 		private void setLanguage(string language)
 		{
 			switch (language) {

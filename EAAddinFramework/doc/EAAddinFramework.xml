@@ -1075,6 +1075,15 @@
             reload the code into the controller to refresh the functions
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EASpecific.Script.IncludeLocalScripts(System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EASpecific.Script.getIncludedcode(System.String)" -->
+        <member name="M:EAAddinFramework.EASpecific.Script.getIncludes(System.String)">
+            <summary>
+            finds each instance of "!INC" and returns the whole line
+            </summary>
+            <param name="code">the code to search</param>
+            <returns>the contents of each line starting with "!INC"</returns>
+        </member>
         <member name="M:EAAddinFramework.EASpecific.Script.getAllScripts(TSF.UmlToolingFramework.Wrappers.EA.Model)">
             <summary>
             gets all scripts defined in the model
@@ -2078,6 +2087,11 @@
             returns the repository object
             </summary>
             <returns>the wrapped repository object</returns>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
+            <summary>
+            returns the full path of the running ea.exe
+            </summary>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.repositoryType">
             <summary>

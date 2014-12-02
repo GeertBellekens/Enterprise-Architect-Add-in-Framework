@@ -15,6 +15,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private global::EA.Repository wrappedModel;
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
+    private string _applicationFullPath;
+    
+    /// <summary>
+    /// returns the full path of the running ea.exe
+    /// </summary>
+    public string applicationFullPath
+    {
+    	get
+    	{
+    		if  (string.IsNullOrEmpty(this._applicationFullPath))
+    		{
+    			Process[] processes = Process.GetProcessesByName("EA");
+    			if(processes.Length > 0)
+    			{
+    				this._applicationFullPath = processes[0].MainModule.FileName;
+    			}
+    		}
+    		return this._applicationFullPath;
+    	}
+    }
     /// <summary>
     /// returns the type of repository backend.
     /// This is mostly needed to adjust to sql to the specific sql dialect
@@ -447,11 +467,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns>the escaped string</returns>
     public string escapeSQLString(string sqlString)
     {
-    	// replace backslash "\" by double backslash "\\"
-    	string escapedString = sqlString.Replace(@"\",@"\\");
-    	// replace the single qoutes "'" by double single quotes "''"
+    	string escapedString = sqlString;
+    	switch ( this.repositoryType) 
+	    {
+    		case RepositoryType.MYSQL:
+    		case RepositoryType.POSTGRES:
+		    	// replace backslash "\" by double backslash "\\"
+		    	escapedString = escapedString.Replace(@"\",@"\\");
+			break;
+    	}
+    	// ALL DBMS types: replace the single qoutes "'" by double single quotes "''"
     	escapedString = escapedString.Replace("'","''");
-
     	return escapedString;
     }
     /// generic query operation on the model.
