@@ -2251,6 +2251,49 @@
             Wrapper needed to be able to open properties dialog in EA
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Licensing.KeyGenerator">
+            <summary>
+            Description of KeyGenerator.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Licensing.KeyGenerator.#ctor">
+            <summary>
+            searches for a file called privateKey.txt in the assembly's folder
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Licensing.KeyGenerator.generateKey(System.String)">
+            <summary>
+            encripts the given contents with the private key
+            </summary>
+            <param name="contents">the contents of the license key to be generator</param>
+            <returns>the encrypted key</returns>
+        </member>
+        <member name="M:EAAddinFramework.Licensing.KeyGenerator.generateLicenses(System.String,System.DateTime,System.Boolean,System.String,System.Int32)">
+            <summary>
+            creates the required number of licenses
+            </summary>
+            <param name="application"></param>
+            <param name="validUntil"></param>
+            <param name="floating"></param>
+            <param name="client"></param>
+            <param name="nbrOfKeys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:EAAddinFramework.Licensing.KeyGenerator.generateLicense(System.String,System.DateTime,System.Boolean,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="application"></param>
+            <param name="validUntil"></param>
+            <param name="floating"></param>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="T:EAAddinFramework.Licensing.License">
+            <summary>
+            Description of License.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">
             <summary>
             Description of AbortableBackgroundWorker.

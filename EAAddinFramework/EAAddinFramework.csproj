@@ -51,6 +51,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -136,6 +137,8 @@
     <Compile Include="EAWrappers\UseCaseDiagram.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="EAWrappers\WindowWrapper.cs" />
+    <Compile Include="Licensing\KeyGenerator.cs" />
+    <Compile Include="Licensing\License.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
     <Compile Include="Utilities\Logger.cs" />
@@ -145,6 +148,7 @@
     <Folder Include="EAWrappers" />
     <Folder Include="EASpecific" />
     <Folder Include="EAWrappers\BehaviorStateMachines" />
+    <Folder Include="Licensing" />
     <Folder Include="Utilities" />
   </ItemGroup>
   <ItemGroup>
