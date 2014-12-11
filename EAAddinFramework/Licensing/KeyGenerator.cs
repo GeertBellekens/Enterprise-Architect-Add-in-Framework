@@ -134,5 +134,6 @@ namespace EAAddinFramework.Licensing
 			}
 			return keySizes;
 		}
+
 	}
 }
