@@ -22,6 +22,7 @@ namespace EAAddinFramework.Licensing
 		public bool floating {get;set;}
 		public string client {get;set;}
 		public bool isValid {get;private set;}
+		public DateTime validUntil {get; private set;}
 		public string key 
 		{
 			get
@@ -72,6 +73,8 @@ namespace EAAddinFramework.Licensing
 					this.isValid = true;
 				}
 			}
+			//get expiration date
+			this.validUntil = wrappedlicense.DateExpires;
 			
 		}
 		
