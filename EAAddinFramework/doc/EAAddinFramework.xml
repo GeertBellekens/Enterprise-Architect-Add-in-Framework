@@ -2256,6 +2256,13 @@
             Description of License.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.Licensing.License.#ctor(System.String,System.String)">
+            <summary>
+            create a new License for the given license key and public key.
+            </summary>
+            <param name="key">the key</param>
+            <param name="publicKey">the public key</param>
+        </member>
         <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">
             <summary>
             Description of AbortableBackgroundWorker.
