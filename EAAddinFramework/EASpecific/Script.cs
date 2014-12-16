@@ -26,6 +26,8 @@ namespace EAAddinFramework.EASpecific
 	{
 		static string scriptLanguageIndicator = "Language=\"";
 		static string scriptNameIndicator = "Script Name=\"";
+		private static int scriptHash;
+		private static List<Script> allScripts = new List<Script>();
 		private EAWrappers.Model model;
 		private string scriptID;
 		private string _code;
@@ -169,15 +171,23 @@ namespace EAAddinFramework.EASpecific
 		/// <param name="model"></param>
 		/// <returns></returns>
 		public static List<Script> getAllScripts(EAWrappers.Model model)
-		{
-			List<Script> allScripts = new List<Script>();
+		{			
 			if (model != null)
 			{
 			 XmlDocument xmlScripts = model.SQLQuery("select ScriptID, Notes, Script from t_script");
-			 XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
+			 //check the hash before continuing
+			 int newHash = xmlScripts.InnerXml.GetHashCode();
+			 //only create the scripts of the hash is different
+			 //otherwise we returned the cached scripts
+			 if (newHash != scriptHash)
+			 {
+			  //set the new hashcode
+			  scriptHash = newHash;
+		 	  allScripts = new List<Script>();
+		 	  XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
               foreach (XmlNode scriptNode in scriptNodes)
               {
-              	//TODO get the <notes> node. If it countaints "Group Type=" then it is a group. Else we need to find "Language=" 
+              	//get the <notes> node. If it countaints "Group Type=" then it is a group. Else we need to find "Language=" 
               	XmlNode notesNode = scriptNode.SelectSingleNode(model.formatXPath("Notes"));
               	if (notesNode.InnerText.Contains(scriptLanguageIndicator))
           	    {
@@ -203,7 +213,8 @@ namespace EAAddinFramework.EASpecific
 						allScripts.Add(new Script(ScriptID,scriptName,scriptCode, language,model));
 					}
           	    }
-              }
+              }	              
+			 }
 			}
 			return allScripts;
 		}
