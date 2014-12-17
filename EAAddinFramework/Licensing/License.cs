@@ -19,10 +19,24 @@ namespace EAAddinFramework.Licensing
 	public class License
 	{
 		private string _key;
+		private CryptoLicense wrappedLicense;
 		public bool floating {get;set;}
 		public string client {get;set;}
 		public bool isValid {get;private set;}
-		public DateTime validUntil {get; private set;}
+		public DateTime validUntil 
+		{
+			get
+			{
+				if (this.wrappedLicense.HasMaxUsageDays)
+				{
+					return DateTime.Now.AddDays(this.wrappedLicense.RemainingUsageDays);
+				}
+				else
+				{
+					return this.wrappedLicense.DateExpires;
+				}
+			}
+		}
 		public string key 
 		{
 			get
@@ -45,23 +59,23 @@ namespace EAAddinFramework.Licensing
 			key = key.Replace("{",string.Empty).Replace("}",string.Empty);
 			this.key = key;
 			//create the wrapped license
-			CryptoLicense wrappedlicense = new CryptoLicense(key, publicKey);
+			wrappedLicense = new CryptoLicense(key, publicKey);
 			bool validateFloating = false;
 			
 			//if the license is not valid then it might be a floating license.
 			//in that case we strip the first part until the "-" and try again.
 			int startActualKey = key.IndexOf("-") +1;
-			if (wrappedlicense.Status != LicenseStatus.Valid && startActualKey > 0)
+			if (wrappedLicense.Status != LicenseStatus.Valid && startActualKey > 0)
 			{
 				key = key.Substring(startActualKey);
-				wrappedlicense = new CryptoLicense(key, publicKey);
+				wrappedLicense = new CryptoLicense(key, publicKey);
 				validateFloating = true;
 			}
 			//get user data
-			if (wrappedlicense.Status == LicenseStatus.Valid)
+			if (wrappedLicense.Status == LicenseStatus.Valid)
 			{
-				this.client = wrappedlicense.GetUserDataFieldValue("Client", "|");
-				string isFloating = wrappedlicense.GetUserDataFieldValue("Isfloating","|");
+				this.client = wrappedLicense.GetUserDataFieldValue("Client", "|");
+				string isFloating = wrappedLicense.GetUserDataFieldValue("Isfloating","|");
 				bool isFloatingBool;
 				if(bool.TryParse(isFloating,out isFloatingBool))
 				{
@@ -73,8 +87,6 @@ namespace EAAddinFramework.Licensing
 					this.isValid = true;
 				}
 			}
-			//get expiration date
-			this.validUntil = wrappedlicense.DateExpires;
 			
 		}
 		
