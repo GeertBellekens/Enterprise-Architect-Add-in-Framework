@@ -1075,8 +1075,39 @@
             reload the code into the controller to refresh the functions
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EASpecific.Script.IncludeLocalScripts(System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EASpecific.Script.getIncludedcode(System.String)" -->
+        <member name="M:EAAddinFramework.EASpecific.Script.loadLocalScripts">
+            <summary>
+            The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+            The contents of the local scripts is loaded into the includableScripts
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadLocalMDGScripts">
+            <summary>
+            get the mdg files in the local MDGtechnologies folder
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadMDGScripts(System.String)">
+            <summary>
+            loads the scripts described in the MDG file into the includable scripts
+            </summary>
+            <param name="mdgXmlContent">the string content of the mdg file</param>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.IncludeScripts(System.String,System.String)">
+            <summary>
+            replaces the !INC  statements with the actual code of the local script.
+            The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+            
+            </summary>
+            <param name="code">the code containing the include parameters</param>
+            <returns>the code including the included code</returns>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.getIncludedcode(System.String)">
+            <summary>
+            gets the code to be included based on the include string. !INC statements
+            </summary>
+            <param name="includeString">the include statement</param>
+            <returns>the code to be included</returns>
+        </member>
         <member name="M:EAAddinFramework.EASpecific.Script.getIncludes(System.String)">
             <summary>
             finds each instance of "!INC" and returns the whole line

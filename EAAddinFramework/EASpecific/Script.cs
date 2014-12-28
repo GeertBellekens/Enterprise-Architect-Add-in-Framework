@@ -28,6 +28,7 @@ namespace EAAddinFramework.EASpecific
 		static string scriptNameIndicator = "Script Name=\"";
 		private static int scriptHash;
 		private static List<Script> allScripts = new List<Script>();
+		private static Dictionary<string,string> _includableScripts ;
 		private EAWrappers.Model model;
 		private string scriptID;
 		private string _code;
@@ -42,6 +43,22 @@ namespace EAAddinFramework.EASpecific
 			{
 				return this.name + " - " + this.scriptController.Language;
 			}
+		}
+		private static Dictionary<string,string> includableScripts 
+		{
+			get
+			{
+				if (_includableScripts == null)
+				{
+					loadIncludableScripts();
+				}
+				return _includableScripts;					
+			}
+			set
+			{
+				_includableScripts = value;
+			}
+
 		}
 
 		public Script(string scriptID,string scriptName, string code, string language, EAWrappers.Model model)
@@ -69,7 +86,7 @@ namespace EAAddinFramework.EASpecific
 			try
 			{
 				//add the actual code
-				this.scriptController.AddCode(this.IncludeLocalScripts(this._code));
+				this.scriptController.AddCode(this.IncludeScripts(this._code));
 				//set the functions
 				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
 				{
@@ -82,14 +99,88 @@ namespace EAAddinFramework.EASpecific
 				this.errorMessage = e.Message;
 			}
 		}
+		private static void loadIncludableScripts()
+		{
+			includableScripts = new Dictionary<string, string>();
+			//local scripts
+			loadLocalScripts();
+			//MDG scripts in the program folder
+			loadLocalMDGScripts();
+			//TODO: MDG scripts in other locations
+			
+		}
 		/// <summary>
-		/// replaces teh !INC Local Scripts.<filename> statements with the actual code of the local script.
+		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+		/// The contents of the local scripts is loaded into the includableScripts
+		/// </summary>
+		private static void loadLocalScripts()
+		{
+			string scriptsDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\Scripts";
+			string[] scriptFiles = Directory.GetFiles(scriptsDirectory,"*.*",SearchOption.AllDirectories);
+			foreach(string scriptfile in scriptFiles)
+			{
+				includableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
+			}
+		}
+		/// <summary>
+		/// get the mdg files in the local MDGtechnologies folder
+		/// </summary>
+		private static void loadLocalMDGScripts()
+		{
+			string mdgDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\MDGTechnologies";
+			string[] mdgFiles = Directory.GetFiles(mdgDirectory,"*.xml",SearchOption.AllDirectories);
+			foreach(string mdgFile in mdgFiles)
+			{
+				loadMDGScripts(File.ReadAllText(mdgFile));
+			}
+		}
+		private static void loadMDGScriptsFromFolder(string folderPath)
+		{
+			string[] mdgFiles = Directory.GetFiles(folderPath,"*.xml",SearchOption.AllDirectories);
+			foreach(string scriptfile in mdgFiles)
+			{
+				includableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
+			}
+		}
+		/// <summary>
+		/// loads the scripts described in the MDG file into the includable scripts
+		/// </summary>
+		/// <param name="mdgXmlContent">the string content of the mdg file</param>
+		private static void loadMDGScripts(string mdgXmlContent)
+		{
+			XmlDocument xmlDoc = new XmlDocument();
+			xmlDoc.LoadXml(mdgXmlContent);
+			//first get the name of the MDG
+			XmlElement documentationElement = xmlDoc.SelectSingleNode("//Documentation") as XmlElement;
+			if (documentationElement != null)
+			{
+				string mdgName = documentationElement.GetAttribute("id");
+				//then get the scripts
+				XmlNodeList scriptNodes = xmlDoc.SelectNodes("//Script");
+				foreach (XmlNode scriptNode in scriptNodes) 
+				{
+					XmlElement scriptElement = (XmlElement)scriptNode;
+					//get the name of the script
+					string scriptName = scriptElement.GetAttribute("name");
+					//get the script itself
+					XmlNode contentNode = scriptElement.SelectSingleNode("Content");
+					if (contentNode != null)
+					{
+						//the script itstelf is base64 endcoded in the content tag
+						string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
+						includableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// replaces the !INC  statements with the actual code of the local script.
 		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
 		/// 
 		/// </summary>
 		/// <param name="code">the code containing the include parameters</param>
 		/// <returns>the code including the included code</returns>
-		private string IncludeLocalScripts(string code,string parentIncludeStatement = null)
+		private string IncludeScripts(string code,string parentIncludeStatement = null)
 		{
 			string includedCode = code;
 			//find all lines starting with !INC
@@ -98,7 +189,7 @@ namespace EAAddinFramework.EASpecific
 				if (includeString != parentIncludeStatement) //prevent eternal loop
 				{
 					//then replace with the contents of the included script
-					includedCode = includedCode.Replace(includeString,this.IncludeLocalScripts(this.getIncludedcode(includeString),includeString));
+					includedCode = includedCode.Replace(includeString,this.IncludeScripts(this.getIncludedcode(includeString),includeString));
 				}
 			}
 			
@@ -106,27 +197,17 @@ namespace EAAddinFramework.EASpecific
 			
 		}
 		/// <summary>
-		/// gets the code to be included based on the include string. !INC Local Scripts.<filename> statements
-		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
+		/// gets the code to be included based on the include string. !INC statements
 		/// </summary>
-		/// <param name="includeString"></param>
-		/// <returns></returns>
+		/// <param name="includeString">the include statement</param>
+		/// <returns>the code to be included</returns>
 		private string getIncludedcode(string includeString)
 		{
 			string includedCode = string.Empty;
-			int fileNameStart = includeString.IndexOf(".") +1;
-			if (fileNameStart > 0)
+			if (includableScripts.ContainsKey(includeString))
 			{
-				string filename = includeString.Substring(fileNameStart);
-				string scriptsDirectory = Path.GetDirectoryName(this.model.applicationFullPath) + "\\Scripts";
-				string[] scriptFiles = Directory.GetFiles(scriptsDirectory,filename + ".*",SearchOption.AllDirectories);
-									
-				if (scriptFiles.Length > 0)
-				{
-					includedCode = File.ReadAllText(scriptFiles[0]);
-				}
+				includedCode = includableScripts[includeString];
 			}
-			
 			return includedCode;
 		}
 		/// <summary>

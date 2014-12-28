@@ -15,24 +15,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private global::EA.Repository wrappedModel;
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
-    private string _applicationFullPath;
+    private static string _applicationFullPath;
     
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>
-    public string applicationFullPath
+    public static string applicationFullPath
     {
     	get
     	{
-    		if  (string.IsNullOrEmpty(this._applicationFullPath))
+    		if  (string.IsNullOrEmpty(_applicationFullPath))
     		{
     			Process[] processes = Process.GetProcessesByName("EA");
     			if(processes.Length > 0)
     			{
-    				this._applicationFullPath = processes[0].MainModule.FileName;
+    				_applicationFullPath = processes[0].MainModule.FileName;
     			}
     		}
-    		return this._applicationFullPath;
+    		return _applicationFullPath;
     	}
     }
     /// <summary>
