@@ -29,6 +29,8 @@ namespace EAAddinFramework.EASpecific
 		private static int scriptHash;
 		private static List<Script> allScripts = new List<Script>();
 		private static Dictionary<string,string> _includableScripts ;
+		private static Dictionary<string,string> staticIncludableScripts ;
+		private static Dictionary<string,string> modelIncludableScripts = new Dictionary<string, string>(); 
 		private EAWrappers.Model model;
 		private string scriptID;
 		private string _code;
@@ -37,6 +39,7 @@ namespace EAAddinFramework.EASpecific
 		public List<ScriptFunction> functions {get;set;}
 		private ScriptLanguage language;
 		public string name{get;set;}
+		public string groupName {get;set;}
 		public string displayName 
 		{
 			get
@@ -48,9 +51,20 @@ namespace EAAddinFramework.EASpecific
 		{
 			get
 			{
+				if (staticIncludableScripts == null)
+				{
+					loadStaticIncludableScripts();
+				}
+				//if _includableScript is null then it has been made empty because the model scripts changed
 				if (_includableScripts == null)
 				{
-					loadIncludableScripts();
+					//start with the static includeable scripts
+					_includableScripts = new Dictionary<string, string>(staticIncludableScripts);
+					//then add the model scripts
+					foreach (KeyValuePair<string, string> script in modelIncludableScripts) 
+					{
+						_includableScripts.Add(script.Key, script.Value);
+					}			
 				}
 				return _includableScripts;					
 			}
@@ -61,15 +75,16 @@ namespace EAAddinFramework.EASpecific
 
 		}
 
-		public Script(string scriptID,string scriptName, string code, string language, EAWrappers.Model model)
+		public Script(string scriptID,string scriptName,string groupName, string code, string language, EAWrappers.Model model)
 		{
 			this.scriptID = scriptID;
 			this.model = model;
 			this.name = scriptName;
+			this.groupName = groupName;
 			this.functions = new List<ScriptFunction>();
 			this._code = code;
 			this.setLanguage(language);
-			this.reloadCode();
+			//this.reloadCode();
 		}
 		/// <summary>
 		/// reload the code into the controller to refresh the functions
@@ -99,16 +114,19 @@ namespace EAAddinFramework.EASpecific
 				this.errorMessage = e.Message;
 			}
 		}
-		private static void loadIncludableScripts()
+		private static void loadStaticIncludableScripts()
 		{
-			includableScripts = new Dictionary<string, string>();
+			staticIncludableScripts = new Dictionary<string, string>();
 			//local scripts
 			loadLocalScripts();
 			//MDG scripts in the program folder
 			loadLocalMDGScripts();
 			//TODO: MDG scripts in other locations
-			
+			//store the staticIncludeable scripts in a separate dictionary
+			_includableScripts = new Dictionary<string, string>(staticIncludableScripts);
+
 		}
+
 		/// <summary>
 		/// The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
 		/// The contents of the local scripts is loaded into the includableScripts
@@ -119,7 +137,7 @@ namespace EAAddinFramework.EASpecific
 			string[] scriptFiles = Directory.GetFiles(scriptsDirectory,"*.*",SearchOption.AllDirectories);
 			foreach(string scriptfile in scriptFiles)
 			{
-				includableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
+				staticIncludableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
 			}
 		}
 		/// <summary>
@@ -137,9 +155,9 @@ namespace EAAddinFramework.EASpecific
 		private static void loadMDGScriptsFromFolder(string folderPath)
 		{
 			string[] mdgFiles = Directory.GetFiles(folderPath,"*.xml",SearchOption.AllDirectories);
-			foreach(string scriptfile in mdgFiles)
+			foreach(string mdgfile in mdgFiles)
 			{
-				includableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
+				loadMDGScripts(File.ReadAllText(mdgfile));
 			}
 		}
 		/// <summary>
@@ -168,7 +186,7 @@ namespace EAAddinFramework.EASpecific
 					{
 						//the script itstelf is base64 endcoded in the content tag
 						string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
-						includableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+						staticIncludableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
 					}
 				}
 			}
@@ -255,7 +273,8 @@ namespace EAAddinFramework.EASpecific
 		{			
 			if (model != null)
 			{
-			 XmlDocument xmlScripts = model.SQLQuery("select ScriptID, Notes, Script from t_script");
+			 XmlDocument xmlScripts = model.SQLQuery(@"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP from t_script s
+													   inner join t_script ps on s.ScriptAuthor = ps.ScriptName");
 			 //check the hash before continuing
 			 int newHash = xmlScripts.InnerXml.GetHashCode();
 			 //only create the scripts of the hash is different
@@ -264,7 +283,13 @@ namespace EAAddinFramework.EASpecific
 			 {
 			  //set the new hashcode
 			  scriptHash = newHash;
+			  //reset scripts
 		 	  allScripts = new List<Script>();
+		 	  
+		 	  //reset includableScripts
+		 	  _includableScripts = null;
+		 	  modelIncludableScripts = new Dictionary<string, string>();
+		 	  
 		 	  XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
               foreach (XmlNode scriptNode in scriptNodes)
               {
@@ -280,6 +305,9 @@ namespace EAAddinFramework.EASpecific
 					//get the ID
 					XmlNode IDNode = scriptNode.SelectSingleNode(model.formatXPath("ScriptID"));
 					string ScriptID = IDNode.InnerText;
+					//get the group
+					XmlNode groupNode = scriptNode.SelectSingleNode(model.formatXPath("SCRIPTGROUP"));
+					string groupName = groupNode.InnerText;
 					//then get teh code
 					XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));	
 					if (codeNode != null && language != string.Empty)
@@ -290,11 +318,19 @@ namespace EAAddinFramework.EASpecific
 						{
 							scriptCode = string.Empty;
 						}
+						Script script = new Script(ScriptID,scriptName,groupName,scriptCode, language,model); 
 						//and create the script if both code and language are found
-						allScripts.Add(new Script(ScriptID,scriptName,scriptCode, language,model));
+						allScripts.Add(script);
+						//also add the script to the include dictionary
+						modelIncludableScripts.Add("!INC "+ script.groupName + "." + script.name,script._code);
 					}
           	    }
-              }	              
+              }
+			  //load the code of the scripts (because a script can include another script we can only load the code after all scripts have been created)
+			  foreach (Script script in allScripts) 
+			  {
+			  	script.reloadCode();
+			  }			  
 			 }
 			}
 			return allScripts;
