@@ -1070,9 +1070,25 @@
             Description of Script.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.#ctor(System.String,System.String,System.String,System.String,System.String,TSF.UmlToolingFramework.Wrappers.EA.Model)">
+            <summary>
+            creaates a new script
+            </summary>
+            <param name="scriptID">the id of the script</param>
+            <param name="scriptName">the name of the script</param>
+            <param name="groupName">the name of the scriptgroup</param>
+            <param name="code">the code</param>
+            <param name="language">the language the code is written in</param>
+            <param name="model">the model this script resides in</param>
+        </member>
         <member name="M:EAAddinFramework.EASpecific.Script.reloadCode">
             <summary>
             reload the code into the controller to refresh the functions
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadStaticIncludableScripts">
+            <summary>
+            loads all static includable scripts. These scripts are stored outside the model and can not be changed by the user
             </summary>
         </member>
         <member name="M:EAAddinFramework.EASpecific.Script.loadLocalScripts">
@@ -1081,10 +1097,29 @@
             The contents of the local scripts is loaded into the includableScripts
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadOtherMDGScripts">
+            <summary>
+            loads the mdg scripts from the locations added from MDG Technologies|Advanced. 
+            these locations are stored as a comma separated string in the registry
+            a location can either be a directory, or an url
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadMDGScriptsFromURL(System.String)">
+            <summary>
+            load the mdg scripts from the mdg file located at the given url
+            </summary>
+            <param name="url">the url pointing to the mdg file</param>
+        </member>
         <member name="M:EAAddinFramework.EASpecific.Script.loadLocalMDGScripts">
             <summary>
             get the mdg files in the local MDGtechnologies folder
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.loadMDGScriptsFromFolder(System.String)">
+            <summary>
+            load the scripts from the mdg files in the given directory
+            </summary>
+            <param name="folderPath">the path to the directory</param>
         </member>
         <member name="M:EAAddinFramework.EASpecific.Script.loadMDGScripts(System.String)">
             <summary>
@@ -1158,6 +1193,12 @@
             adds the given code to the end of the script
             </summary>
             <param name="functionCode">the code to be added</param>
+        </member>
+        <member name="P:EAAddinFramework.EASpecific.Script.includableScripts">
+            <summary>
+            A dictionary with all the includable script.
+            The key is the complete !INC statement, the value is the code
+            </summary>
         </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
             <summary>

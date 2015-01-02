@@ -11,9 +11,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Xml;
-
+using Microsoft.Win32;
 using MSScriptControl;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
 
@@ -31,6 +32,7 @@ namespace EAAddinFramework.EASpecific
 		private static Dictionary<string,string> _includableScripts ;
 		private static Dictionary<string,string> staticIncludableScripts ;
 		private static Dictionary<string,string> modelIncludableScripts = new Dictionary<string, string>(); 
+		private static bool reloadModelIncludableScripts;
 		private EAWrappers.Model model;
 		private string scriptID;
 		private string _code;
@@ -47,6 +49,10 @@ namespace EAAddinFramework.EASpecific
 				return this.name + " - " + this.scriptController.Language;
 			}
 		}
+		/// <summary>
+		/// A dictionary with all the includable script.
+		/// The key is the complete !INC statement, the value is the code
+		/// </summary>
 		private static Dictionary<string,string> includableScripts 
 		{
 			get
@@ -56,7 +62,7 @@ namespace EAAddinFramework.EASpecific
 					loadStaticIncludableScripts();
 				}
 				//if _includableScript is null then it has been made empty because the model scripts changed
-				if (_includableScripts == null)
+				if (reloadModelIncludableScripts)
 				{
 					//start with the static includeable scripts
 					_includableScripts = new Dictionary<string, string>(staticIncludableScripts);
@@ -64,7 +70,9 @@ namespace EAAddinFramework.EASpecific
 					foreach (KeyValuePair<string, string> script in modelIncludableScripts) 
 					{
 						_includableScripts.Add(script.Key, script.Value);
-					}			
+					}
+					//turn off flag to reload scripts
+					reloadModelIncludableScripts = false;					
 				}
 				return _includableScripts;					
 			}
@@ -74,7 +82,15 @@ namespace EAAddinFramework.EASpecific
 			}
 
 		}
-
+		/// <summary>
+		/// creaates a new script
+		/// </summary>
+		/// <param name="scriptID">the id of the script</param>
+		/// <param name="scriptName">the name of the script</param>
+		/// <param name="groupName">the name of the scriptgroup</param>
+		/// <param name="code">the code</param>
+		/// <param name="language">the language the code is written in</param>
+		/// <param name="model">the model this script resides in</param>
 		public Script(string scriptID,string scriptName,string groupName, string code, string language, EAWrappers.Model model)
 		{
 			this.scriptID = scriptID;
@@ -112,8 +128,12 @@ namespace EAAddinFramework.EASpecific
 			{
 				//the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
 				this.errorMessage = e.Message;
+				EAAddinFramework.Utilities.Logger.logError("Error in loading code for script " + this.name +": "+ e.Message);
 			}
 		}
+		/// <summary>
+		/// loads all static includable scripts. These scripts are stored outside the model and can not be changed by the user
+		/// </summary>
 		private static void loadStaticIncludableScripts()
 		{
 			staticIncludableScripts = new Dictionary<string, string>();
@@ -122,6 +142,7 @@ namespace EAAddinFramework.EASpecific
 			//MDG scripts in the program folder
 			loadLocalMDGScripts();
 			//TODO: MDG scripts in other locations
+			loadOtherMDGScripts();
 			//store the staticIncludeable scripts in a separate dictionary
 			_includableScripts = new Dictionary<string, string>(staticIncludableScripts);
 
@@ -141,23 +162,74 @@ namespace EAAddinFramework.EASpecific
 			}
 		}
 		/// <summary>
+		/// loads the mdg scripts from the locations added from MDG Technologies|Advanced. 
+		/// these locations are stored as a comma separated string in the registry
+		/// a location can either be a directory, or an url
+		/// </summary>
+		private static void loadOtherMDGScripts()
+		{
+			//read the registry key to find the locations
+			string pathList = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Sparx Systems\EA400\EA\OPTIONS", "MDGTechnology PathList", null) as string;    
+			if (pathList != null)
+			{
+				string[] mdgPaths = pathList.Split(',');
+				foreach (string mdgPath in mdgPaths) 
+				{
+					//figure out it we have a folderpath or an url
+					if (mdgPath.StartsWith("http",StringComparison.InvariantCultureIgnoreCase))
+				    {
+						//url
+						loadMDGScriptsFromURL(mdgPath);
+				    }
+					else
+					{
+						//directory
+						loadMDGScriptsFromFolder(mdgPath);
+					}
+				}
+			}
+	
+		}
+		/// <summary>
+		/// load the mdg scripts from the mdg file located at the given url
+		/// </summary>
+		/// <param name="url">the url pointing to the mdg file</param>
+		private static void loadMDGScriptsFromURL(string url)
+		{
+			try
+			{
+				loadMDGScripts(new WebClient().DownloadString(url));
+			}
+			catch (Exception e)
+			{
+				EAAddinFramework.Utilities.Logger.logError("Error in loadMDGScriptsFromURL: " + e.Message);
+			}
+		}
+		/// <summary>
 		/// get the mdg files in the local MDGtechnologies folder
 		/// </summary>
 		private static void loadLocalMDGScripts()
 		{
 			string mdgDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\MDGTechnologies";
-			string[] mdgFiles = Directory.GetFiles(mdgDirectory,"*.xml",SearchOption.AllDirectories);
-			foreach(string mdgFile in mdgFiles)
-			{
-				loadMDGScripts(File.ReadAllText(mdgFile));
-			}
+			loadMDGScriptsFromFolder(mdgDirectory);
 		}
+		/// <summary>
+		/// load the scripts from the mdg files in the given directory
+		/// </summary>
+		/// <param name="folderPath">the path to the directory</param>
 		private static void loadMDGScriptsFromFolder(string folderPath)
 		{
-			string[] mdgFiles = Directory.GetFiles(folderPath,"*.xml",SearchOption.AllDirectories);
-			foreach(string mdgfile in mdgFiles)
+			try
 			{
-				loadMDGScripts(File.ReadAllText(mdgfile));
+				string[] mdgFiles = Directory.GetFiles(folderPath,"*.xml",SearchOption.TopDirectoryOnly);
+				foreach(string mdgfile in mdgFiles)
+				{
+					loadMDGScripts(File.ReadAllText(mdgfile));
+				}
+			}
+			catch (Exception e)
+			{
+				EAAddinFramework.Utilities.Logger.logError("Error in loadMDGScriptsFromFolder: " + e.Message);
 			}
 		}
 		/// <summary>
@@ -166,29 +238,36 @@ namespace EAAddinFramework.EASpecific
 		/// <param name="mdgXmlContent">the string content of the mdg file</param>
 		private static void loadMDGScripts(string mdgXmlContent)
 		{
-			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.LoadXml(mdgXmlContent);
-			//first get the name of the MDG
-			XmlElement documentationElement = xmlDoc.SelectSingleNode("//Documentation") as XmlElement;
-			if (documentationElement != null)
+			try
 			{
-				string mdgName = documentationElement.GetAttribute("id");
-				//then get the scripts
-				XmlNodeList scriptNodes = xmlDoc.SelectNodes("//Script");
-				foreach (XmlNode scriptNode in scriptNodes) 
+				XmlDocument xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(mdgXmlContent);
+				//first get the name of the MDG
+				XmlElement documentationElement = xmlDoc.SelectSingleNode("//Documentation") as XmlElement;
+				if (documentationElement != null)
 				{
-					XmlElement scriptElement = (XmlElement)scriptNode;
-					//get the name of the script
-					string scriptName = scriptElement.GetAttribute("name");
-					//get the script itself
-					XmlNode contentNode = scriptElement.SelectSingleNode("Content");
-					if (contentNode != null)
+					string mdgName = documentationElement.GetAttribute("id");
+					//then get the scripts
+					XmlNodeList scriptNodes = xmlDoc.SelectNodes("//Script");
+					foreach (XmlNode scriptNode in scriptNodes) 
 					{
-						//the script itstelf is base64 endcoded in the content tag
-						string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
-						staticIncludableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+						XmlElement scriptElement = (XmlElement)scriptNode;
+						//get the name of the script
+						string scriptName = scriptElement.GetAttribute("name");
+						//get the script itself
+						XmlNode contentNode = scriptElement.SelectSingleNode("Content");
+						if (contentNode != null)
+						{
+							//the script itstelf is base64 endcoded in the content tag
+							string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
+							staticIncludableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+						}
 					}
 				}
+			}
+			catch (Exception e)
+			{
+				EAAddinFramework.Utilities.Logger.logError("Error in loadMDGScripts: " + e.Message);
 			}
 		}
 		/// <summary>
@@ -286,8 +365,8 @@ namespace EAAddinFramework.EASpecific
 			  //reset scripts
 		 	  allScripts = new List<Script>();
 		 	  
-		 	  //reset includableScripts
-		 	  _includableScripts = null;
+		 	  //set flag to reload scripts in includableScripts
+		 	  reloadModelIncludableScripts = true;
 		 	  modelIncludableScripts = new Dictionary<string, string>();
 		 	  
 		 	  XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
