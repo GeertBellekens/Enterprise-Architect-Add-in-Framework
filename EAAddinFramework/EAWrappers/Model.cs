@@ -82,12 +82,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Model(){
       object obj = Marshal.GetActiveObject("EA.App");
       global::EA.App eaApp = obj as global::EA.App;
-      wrappedModel = eaApp.Repository;
+      this.initialize(eaApp.Repository);
     }
-
+    /// <summary>
+    /// (re)initialises this model with the given ea repository object
+    /// </summary>
+    /// <param name="eaRepository">the ea repository object</param>
+	public void initialize(global::EA.Repository eaRepository)
+	{
+      wrappedModel = eaRepository;
+    }
     /// constructor creates EAModel based on the given repository
     public Model(global::EA.Repository eaRepository){
-      wrappedModel = eaRepository;
+    	this.initialize(eaRepository);
     }
     public UserControl addWindow(string title, string fullControlName)
     {

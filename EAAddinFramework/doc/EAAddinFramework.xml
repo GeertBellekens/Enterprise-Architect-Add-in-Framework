@@ -1060,6 +1060,20 @@
             Description of ScriptLanguage.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.ScriptLanguage.removeExecutingStatements(System.String)">
+            <summary>
+            removes the statements that execute a function/procedure from the code
+            </summary>
+            <param name="code">the code with executing statements</param>
+            <returns>the code without executing statements</returns>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.JavaScriptLanguageBase.removeExecutingStatements(System.String)">
+            <summary>
+            removes the statements that execute a function/procedure from the code
+            </summary>
+            <param name="code">the code with executing statements</param>
+            <returns>the code without executing statements</returns>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.JScriptLanguage">
             <summary>
             Description of JScriptLanguage.
@@ -1230,6 +1244,13 @@
             <summary>
             Description of VBScriptLanuguage.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.EASpecific.VBScriptLanguage.removeExecutingStatements(System.String)">
+            <summary>
+            removes the statements that execute a function/procedure from the code
+            </summary>
+            <param name="code">the code with executing statements</param>
+            <returns>the code without executing statements</returns>
         </member>
         <member name="T:EAAddinFramework.EASpecific.WorkingSet">
             <summary>
@@ -2024,6 +2045,12 @@
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor">
             Creates a model connecting to the first running instance of EA
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.initialize(EA.Repository)">
+            <summary>
+            (re)initialises this model with the given ea repository object
+            </summary>
+            <param name="eaRepository">the ea repository object</param>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor(EA.Repository)">
             constructor creates EAModel based on the given repository

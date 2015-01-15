@@ -31,6 +31,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public static new Factory getInstance(){
       return getInstance(new Model());
     }
+
 	/// <summary>
 	/// creates a diagram based on the given EA.Diagram object
 	/// </summary>

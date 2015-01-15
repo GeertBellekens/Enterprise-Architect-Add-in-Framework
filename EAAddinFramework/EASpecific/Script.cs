@@ -116,8 +116,12 @@ namespace EAAddinFramework.EASpecific
 			//Add the actual code. This must be done in a try/catch because a syntax error in the script will result in an exception from AddCode
 			try
 			{
-				//add the actual code
-				this.scriptController.AddCode(this.IncludeScripts(this._code));
+				//first add the included code
+				string includedCode = this.IncludeScripts(this._code);
+				//then remove any statements that execute a function or procedure because scriptControl.AddCode actually executes those statements
+				string cleanedCode = this.language.removeExecutingStatements(includedCode);
+				//then add the cleaned code to the scriptcontroller
+				this.scriptController.AddCode(cleanedCode);
 				//set the functions
 				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
 				{
