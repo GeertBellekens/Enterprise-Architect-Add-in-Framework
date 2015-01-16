@@ -36,12 +36,7 @@ namespace EAAddinFramework.EASpecific
 		protected abstract string bodyEnd {get;}
 		protected abstract string functionEnd {get;}
 		protected abstract string commentLine {get;}
-		/// <summary>
-		/// removes the statements that execute a function/procedure from the code
-		/// </summary>
-		/// <param name="code">the code with executing statements</param>
-		/// <returns>the code without executing statements</returns>
-		public abstract string removeExecutingStatements(string code);
+
 		public string translate(MethodInfo operation)
 		{
 			//start with e new line

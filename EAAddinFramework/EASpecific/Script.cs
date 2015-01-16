@@ -118,10 +118,9 @@ namespace EAAddinFramework.EASpecific
 			{
 				//first add the included code
 				string includedCode = this.IncludeScripts(this._code);
-				//then remove any statements that execute a function or procedure because scriptControl.AddCode actually executes those statements
-				string cleanedCode = this.language.removeExecutingStatements(includedCode);
-				//then add the cleaned code to the scriptcontroller
-				this.scriptController.AddCode(cleanedCode);
+
+				//then add the included code to the scriptcontroller
+				this.scriptController.AddCode(includedCode);
 				//set the functions
 				foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures) 
 				{
@@ -352,12 +351,13 @@ namespace EAAddinFramework.EASpecific
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public static List<Script> getAllScripts(EAWrappers.Model model)
+		public static List<Script> getEAMaticScripts(EAWrappers.Model model)
 		{			
 			if (model != null)
 			{
-			 XmlDocument xmlScripts = model.SQLQuery(@"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP from t_script s
-													   inner join t_script ps on s.ScriptAuthor = ps.ScriptName");
+			 XmlDocument xmlScripts = model.SQLQuery(@"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES from t_script s
+													   inner join t_script ps on s.ScriptAuthor = ps.ScriptName
+													   where s.Script like '%EA-Matic%'");
 			 //check the hash before continuing
 			 int newHash = xmlScripts.InnerXml.GetHashCode();
 			 //only create the scripts of the hash is different

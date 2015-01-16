@@ -1045,6 +1045,11 @@
             Set these options in the constructor of the derived add-in class
             </summary>
         </member>
+        <member name="T:EAAddinFramework.EASpecific.ScriptType">
+            <summary>
+            The different types of scripts you can make in EA.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.JavaScriptLanguage">
             <summary>
             Description of JavaScriptLanguage.
@@ -1059,20 +1064,6 @@
             <summary>
             Description of ScriptLanguage.
             </summary>
-        </member>
-        <member name="M:EAAddinFramework.EASpecific.ScriptLanguage.removeExecutingStatements(System.String)">
-            <summary>
-            removes the statements that execute a function/procedure from the code
-            </summary>
-            <param name="code">the code with executing statements</param>
-            <returns>the code without executing statements</returns>
-        </member>
-        <member name="M:EAAddinFramework.EASpecific.JavaScriptLanguageBase.removeExecutingStatements(System.String)">
-            <summary>
-            removes the statements that execute a function/procedure from the code
-            </summary>
-            <param name="code">the code with executing statements</param>
-            <returns>the code without executing statements</returns>
         </member>
         <member name="T:EAAddinFramework.EASpecific.JScriptLanguage">
             <summary>
@@ -1164,7 +1155,7 @@
             <param name="code">the code to search</param>
             <returns>the contents of each line starting with "!INC"</returns>
         </member>
-        <member name="M:EAAddinFramework.EASpecific.Script.getAllScripts(TSF.UmlToolingFramework.Wrappers.EA.Model)">
+        <member name="M:EAAddinFramework.EASpecific.Script.getEAMaticScripts(TSF.UmlToolingFramework.Wrappers.EA.Model)">
             <summary>
             gets all scripts defined in the model
             </summary>
@@ -1244,13 +1235,6 @@
             <summary>
             Description of VBScriptLanuguage.
             </summary>
-        </member>
-        <member name="M:EAAddinFramework.EASpecific.VBScriptLanguage.removeExecutingStatements(System.String)">
-            <summary>
-            removes the statements that execute a function/procedure from the code
-            </summary>
-            <param name="code">the code with executing statements</param>
-            <returns>the code without executing statements</returns>
         </member>
         <member name="T:EAAddinFramework.EASpecific.WorkingSet">
             <summary>
