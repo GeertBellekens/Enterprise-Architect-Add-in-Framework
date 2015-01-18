@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Xml;
-using System.Linq;
-using System.Windows.Forms;
-using EAAddinFramework.EASpecific;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Xml;
 
-using UML=TSF.UmlToolingFramework.UML;
+using EAAddinFramework.EASpecific;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Model : UML.UMLModel 
@@ -99,6 +100,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public UserControl addWindow(string title, string fullControlName)
     {
     	return this.wrappedModel.AddWindow(title,fullControlName) as UserControl;
+    }
+    public ArrayList toArrayList(IEnumerable collection)
+    {
+    	ArrayList arrayList = new ArrayList();
+    	foreach (object  element in collection) 
+    	{
+    		arrayList.Add(element);
+    	}
+    	return arrayList;
     }
     /// the Element currently selected in EA
     public UML.Classes.Kernel.Element selectedElement {
@@ -358,27 +368,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { this.wrappedModel.OpenDiagram(((Diagram)value).DiagramID); }
     }
     
-    internal Diagram getDiagramByID(int diagramID){
+    public Diagram getDiagramByID(int diagramID){
       return ((Factory)this.factory).createDiagram
         ( this.wrappedModel.GetDiagramByID(diagramID) ) as Diagram;
     }
     
-    internal Diagram getDiagramByGUID(string diagramGUID){
+    public Diagram getDiagramByGUID(string diagramGUID){
       return ((Factory)this.factory).createDiagram
         ( this.wrappedModel.GetDiagramByGuid(diagramGUID) ) as Diagram;
     }
 
-    internal ConnectorWrapper getRelationByID(int relationID) {
+    public ConnectorWrapper getRelationByID(int relationID) {
       return ((Factory)this.factory).createElement
         ( this.wrappedModel.GetConnectorByID(relationID)) as ConnectorWrapper;
     }
 	
-    internal ConnectorWrapper getRelationByGUID(string relationGUID) {
+    public ConnectorWrapper getRelationByGUID(string relationGUID) {
       return ((Factory)this.factory).createElement
         ( this.wrappedModel.GetConnectorByGuid(relationGUID)) as ConnectorWrapper;
     }
     
-    internal List<ConnectorWrapper> getRelationsByQuery(string SQLQuery){
+    public List<ConnectorWrapper> getRelationsByQuery(string SQLQuery){
       // get the nodes with the name "Connector_ID"
       XmlDocument xmlrelationIDs = this.SQLQuery(SQLQuery);
       XmlNodeList relationIDNodes = 
@@ -394,7 +404,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return relations;
     }
     
-      internal List<Attribute> getAttributesByQuery(string SQLQuery){
+    public List<Attribute> getAttributesByQuery(string SQLQuery){
       // get the nodes with the name "ea_guid"
       XmlDocument xmlAttributeIDs = this.SQLQuery(SQLQuery);
       XmlNodeList attributeIDNodes = xmlAttributeIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -410,7 +420,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return attributes;
     }
-    internal List<Parameter>getParametersByQuery(string SQLQuery)
+    public List<Parameter>getParametersByQuery(string SQLQuery)
     {
       // get the nodes with the name "ea_guid"
       XmlDocument xmlParameterIDs = this.SQLQuery(SQLQuery);
@@ -427,7 +437,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return parameters;
     }
-    internal List<Operation>getOperationsByQuery(string SQLQuery)
+    public List<Operation>getOperationsByQuery(string SQLQuery)
     {
       // get the nodes with the name "OperationID"
       XmlDocument xmlOperationIDs = this.SQLQuery(SQLQuery);
@@ -645,7 +655,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// Gets the Repository type for this model
     /// </summary>
     /// <returns></returns>
-    private RepositoryType getRepositoryType()
+    public RepositoryType getRepositoryType()
     {
     	string connectionString = this.wrappedModel.ConnectionString;
     	RepositoryType repoType = RepositoryType.ADOJET; //default to .eap file
@@ -721,14 +731,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       throw new NotImplementedException();
     }
 
-    internal ElementWrapper getElementWrapperByPackageID(int packageID)
+    public ElementWrapper getElementWrapperByPackageID(int packageID)
     {
       return this.factory.createElement(this.wrappedModel.GetPackageByID(packageID)) as ElementWrapper;
     }
 
     //returns a list of diagrams according to the given query.
     //the given query should return a list of diagram id's
-    internal List<Diagram> getDiagramsByQuery(string sqlGetDiagrams)
+    public List<Diagram> getDiagramsByQuery(string sqlGetDiagrams)
     {
         // get the nodes with the name "Diagram_ID"
         XmlDocument xmlDiagramIDs = this.SQLQuery(sqlGetDiagrams);
@@ -747,7 +757,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return diagrams;
     }
 
-    internal UML.Classes.Kernel.Operation getOperationByGUID(string guid)
+    public UML.Classes.Kernel.Operation getOperationByGUID(string guid)
     {
     	Operation operation = this.factory.createElement(this.wrappedModel.GetMethodByGuid(guid)) as Operation;
     	if (operation == null)
@@ -765,13 +775,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return operation;
         
     }
-    internal UML.Classes.Kernel.Operation getOperationByID(int operationID)
+    public UML.Classes.Kernel.Operation getOperationByID(int operationID)
     {
         return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as UML.Classes.Kernel.Operation;
     }
 	
     
-    internal void executeSQL(string SQLString)
+    public void executeSQL(string SQLString)
     {
     	this.wrappedModel.Execute(SQLString);
     }
@@ -1324,7 +1334,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// returns the repository object
 	/// </summary>
 	/// <returns>the wrapped repository object</returns>
-	internal global::EA.Repository getWrappedModel()
+	public global::EA.Repository getWrappedModel()
 	{
 		return this.wrappedModel;
 	}
