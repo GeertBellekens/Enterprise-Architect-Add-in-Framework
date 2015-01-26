@@ -5,8 +5,8 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class DiagramObjectWrapper : UML.Diagrams.DiagramElement {
-    internal global::EA.DiagramObject wrappedDiagramObject { get; set; }
-    internal Model model { get; set; }
+    public global::EA.DiagramObject wrappedDiagramObject { get; set; }
+    public Model model { get; set; }
     
     public DiagramObjectWrapper(Model model,
                                 global::EA.DiagramObject diagramObject) 

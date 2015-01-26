@@ -6,9 +6,9 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Diagram : UML.Diagrams.Diagram {
-    internal global::EA.Diagram wrappedDiagram { get; set; }
+    public global::EA.Diagram wrappedDiagram { get; set; }
 
-    internal Model model;
+    public Model model;
 
     public Diagram(Model model, global::EA.Diagram wrappedDiagram ) {
       this.model = model;
@@ -56,7 +56,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     /// find the diagramlink object (if any) that represents the given 
     /// relation
-    internal global::EA.DiagramLink getDiagramLinkForRelation
+    public global::EA.DiagramLink getDiagramLinkForRelation
       ( ConnectorWrapper relation )
     {
       foreach(global::EA.DiagramLink diagramLink 
@@ -69,7 +69,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return null;
     }
 
-    internal HashSet<DiagramLinkWrapper> diagramLinkWrappers {
+    public HashSet<DiagramLinkWrapper> diagramLinkWrappers {
       get {
         List<ConnectorWrapper> relations = this.getRelations();
         return new HashSet<DiagramLinkWrapper>
@@ -78,7 +78,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
              this).Cast<DiagramLinkWrapper>());
       }
     }
-    internal HashSet<UML.Diagrams.DiagramElement> diagramObjectWrappers {
+    public HashSet<UML.Diagrams.DiagramElement> diagramObjectWrappers {
       get {
         return ((Factory) this.model.factory).createDiagramElements
           ( this.wrappedDiagram.DiagramObjects );
@@ -96,7 +96,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// query
     /// </summary>
     /// <returns>all reations ont he diagram</returns>
-    internal virtual List<ConnectorWrapper> getRelations(){
+    public virtual List<ConnectorWrapper> getRelations(){
       string SQLQuery = @"
       SELECT c.Connector_ID
         FROM (((( t_Connector c 
@@ -109,7 +109,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return this.model.getRelationsByQuery(SQLQuery);
     }
     
-    internal global::EA.DiagramObject getdiagramObjectForElement
+    public global::EA.DiagramObject getdiagramObjectForElement
       ( ElementWrapper element)
     {
       foreach( global::EA.DiagramObject diagramObject 
@@ -148,7 +148,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedDiagram.Update();
     }
     
-    internal int DiagramID {
+    public int DiagramID {
       get { return this.wrappedDiagram.DiagramID; }
     }
     
