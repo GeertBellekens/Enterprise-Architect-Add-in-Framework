@@ -130,8 +130,9 @@ namespace EAAddinFramework.EASpecific
 			catch (Exception e)
 			{
 				//the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
-				this.errorMessage = e.Message;
-				EAAddinFramework.Utilities.Logger.logError("Error in loading code for script " + this.name +": "+ e.Message);
+				MSScriptControl.IScriptControl iscriptControl = this.scriptController as MSScriptControl.IScriptControl;
+				this.errorMessage = e.Message + " ERROR : " + iscriptControl.Error.Description + " | Line of error: " + iscriptControl.Error.Line + " | Code error: " + iscriptControl.Error.Text;
+				EAAddinFramework.Utilities.Logger.logError("Error in loading code for script " + this.name +": "+ this.errorMessage);
 			}
 		}
 		/// <summary>

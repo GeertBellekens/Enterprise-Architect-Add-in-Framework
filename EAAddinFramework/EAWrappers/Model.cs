@@ -110,6 +110,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	}
     	return arrayList;
     }
+    public Object toObject(object someObject)
+    {
+    	return someObject as Object;
+    }
     /// the Element currently selected in EA
     public UML.Classes.Kernel.Element selectedElement {
       get {
@@ -757,7 +761,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         return diagrams;
     }
 
-    public UML.Classes.Kernel.Operation getOperationByGUID(string guid)
+    public Operation getOperationByGUID(string guid)
     {
     	Operation operation = this.factory.createElement(this.wrappedModel.GetMethodByGuid(guid)) as Operation;
     	if (operation == null)
@@ -775,9 +779,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return operation;
         
     }
-    public UML.Classes.Kernel.Operation getOperationByID(int operationID)
+    public Operation getOperationByID(int operationID)
     {
-        return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as UML.Classes.Kernel.Operation;
+        return this.factory.createElement(this.wrappedModel.GetMethodByID(operationID)) as Operation;
     }
 	
     
