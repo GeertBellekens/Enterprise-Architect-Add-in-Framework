@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace EAAddinFramework
 {
@@ -8,6 +10,35 @@ namespace EAAddinFramework
 	/// </summary>
 	public abstract class EAAddinBase
 	{
+		//TODO: figure out how to get this global exception catching thing to work.
+		public EAAddinBase()
+		{
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+      		currentDomain.UnhandledException += new UnhandledExceptionEventHandler(catchAllUnhandledExceptions);
+		    
+      		// Add the event handler for handling UI thread exceptions to the event.
+		    Application.ThreadException += new ThreadExceptionEventHandler(catchUIThreadException);
+
+		    // Set the unhandled exception mode to force all Windows Forms errors to go through 
+		    // our handler.
+		    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+		}
+		
+		static void catchAllUnhandledExceptions(object sender, UnhandledExceptionEventArgs args)
+   		{
+	      Exception e = (Exception) args.ExceptionObject;
+	      MessageBox.Show("An unhandled exception has occured." + Environment.NewLine
+	                     +"Error Message: " + e.Message + Environment.NewLine
+	                     +"Stacktrace: " + e.StackTrace,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
+   		}
+		static void catchUIThreadException(object sender, ThreadExceptionEventArgs args)
+		{
+		  Exception e =  args.Exception;
+	      MessageBox.Show("An unhandled thread exception has occured." + Environment.NewLine
+	                     +"Error Message: " + e.Message + Environment.NewLine
+	                     +"Stacktrace: " + e.StackTrace,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
+		}
 
  	    // define menu constants
 //        private string _menuHeader = "-&MenuHeader";

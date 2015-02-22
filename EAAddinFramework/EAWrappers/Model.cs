@@ -737,7 +737,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     public ElementWrapper getElementWrapperByPackageID(int packageID)
     {
-      return this.factory.createElement(this.wrappedModel.GetPackageByID(packageID)) as ElementWrapper;
+    	try
+    	{
+      		return this.factory.createElement(this.wrappedModel.GetPackageByID(packageID)) as ElementWrapper;
+    	}
+    	catch (System.Runtime.InteropServices.COMException e)
+  		{
+  			if (e.Message.Contains("Can't find matching ID"))
+  			{
+  				return null;
+  			}
+  			else
+  			{
+  				throw e;
+  			}
+  		}
     }
 
     //returns a list of diagrams according to the given query.

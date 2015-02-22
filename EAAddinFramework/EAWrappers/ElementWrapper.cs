@@ -174,18 +174,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { 
     		// if the parentID is filled in then this element is owned by
     		// another element, otherwise it is owned by a package
-// removed caching to test if that solves the multithreading issue
-//    		if (this._owner == null)
-//    		{
-	    		if (this.wrappedElement.ParentID > 0)
-	    		{
-	    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
-	    		}else
-	    		{
-	    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
-	    		}
-//    		}
-    		return this._owner;
+    		    		
+    		if (this.wrappedElement.ParentID > 0)
+    		{
+    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
+    		}else
+    		{
+    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+    		}
+    		
+			return this._owner;
+			
     	}
       set { throw new NotImplementedException(); }
     }
@@ -320,8 +319,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override bool Equals(object obj){
       ElementWrapper otherElement = obj as ElementWrapper;
       return otherElement != null 
-             && this.wrappedElement.ElementGUID == 
-                otherElement.wrappedElement.ElementGUID;
+      	&& otherElement.wrappedElement != null
+      	&& this.wrappedElement != null
+        && this.wrappedElement.ElementGUID == otherElement.wrappedElement.ElementGUID;
     }
 
     /// return the hashcode based on the elements guid
