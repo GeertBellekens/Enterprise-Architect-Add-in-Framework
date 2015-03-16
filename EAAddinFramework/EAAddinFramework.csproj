@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
     <Compile Include="EASpecific\JavaScriptLanguage.cs" />
     <Compile Include="EASpecific\JavaScriptLanguageBase.cs" />

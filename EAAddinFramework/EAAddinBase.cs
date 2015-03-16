@@ -19,9 +19,16 @@ namespace EAAddinFramework
       		// Add the event handler for handling UI thread exceptions to the event.
 		    Application.ThreadException += new ThreadExceptionEventHandler(catchUIThreadException);
 
-		    // Set the unhandled exception mode to force all Windows Forms errors to go through 
-		    // our handler.
-		    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+		    try
+		    {
+			    // Set the unhandled exception mode to force all Windows Forms errors to go through
+			    // our handler.
+			    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+		    }
+		    catch(InvalidOperationException)
+		    {
+		    	//this doesn't work if there are already controls created. I that case we don't bother
+		    }
 
 		}
 		

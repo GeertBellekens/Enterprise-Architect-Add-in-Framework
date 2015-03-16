@@ -1045,6 +1045,11 @@
             Set these options in the constructor of the derived add-in class
             </summary>
         </member>
+        <member name="T:EAAddinFramework.EASpecific.EAAddin">
+            <summary>
+            Description of EAAddin.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptType">
             <summary>
             The different types of scripts you can make in EA.
