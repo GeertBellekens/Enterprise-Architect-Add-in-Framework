@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace MyAddin
 {
@@ -171,7 +172,6 @@ namespace MyAddin
 
         
 	}
-	
     public class InternalHelpers
 	{
 	   static public IWin32Window GetMainWindow()

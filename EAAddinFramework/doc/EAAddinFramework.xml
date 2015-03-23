@@ -1050,6 +1050,13 @@
             Description of EAAddin.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.EAAddin.isComVisible(System.Type)">
+            <summary>
+            Check if the given type is ComVisible
+            </summary>
+            <param name="type">the type to check</param>
+            <returns>whether or not the given type is ComVisible</returns>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptType">
             <summary>
             The different types of scripts you can make in EA.
