@@ -75,14 +75,24 @@ namespace EAAddinFramework.EASpecific
 			
 			foreach (Type type in assembly.GetExportedTypes()) 
 			{
-					register(type);
+					bool isAlreadyRegistered = register(type);
+					if (isAlreadyRegistered)
+					{
+						//don't bother, this assembly has already been registered in HKCR
+						break;
+					}
+					//debug
+					//cleanRegistry(type);
 			}
 		}
 		
-		private void register(Type type)
+		private bool register(Type type)
 		{
-			if (isComVisible(type))
+			bool isAlreadyRegistered = isAlreadyRegisteredInHKCR(type);
+				
+			if (!isAlreadyRegistered && isComVisible(type))
 			{
+				
 				// software classes
 				RegistryKey controlKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\" + type.FullName);
 				controlKey.SetValue(string.Empty,type.FullName);
@@ -90,15 +100,15 @@ namespace EAAddinFramework.EASpecific
 				clsidKey.SetValue(string.Empty,type.GUID.ToString("B"));
 				
 				//CLSID
-				RegistryKey classKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("P"));
+				RegistryKey classKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B"));
 				classKey.SetValue(string.Empty,type.FullName);
 				
 				//implemented category
-				Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("B") + @"\Implemented Categories");
-				Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("B") + @"\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}");
+				Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B") + @"\Implemented Categories");
+				Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B") + @"\Implemented Categories\{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}");
 				
 				//inprocerver
-				RegistryKey inprocKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("B") + @"\InprocServer32");
+				RegistryKey inprocKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B") + @"\InprocServer32");
 				inprocKey.SetValue(string.Empty,"mscoree.dll"); //hardcoded
 				inprocKey.SetValue("ThreadingModel","Both"); //hardcoded?
 				inprocKey.SetValue("Class",type.FullName);
@@ -107,18 +117,35 @@ namespace EAAddinFramework.EASpecific
 				inprocKey.SetValue("CodeBase",type.Assembly.EscapedCodeBase);
 				
 				//version
-				RegistryKey versionKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("B") + @"\InprocServer32\" + type.Assembly.GetName().Version);
+				RegistryKey versionKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B") + @"\InprocServer32\" + type.Assembly.GetName().Version);
 				versionKey.SetValue("Class",type.FullName);
 				versionKey.SetValue("Assembly",type.Assembly.FullName);
 				versionKey.SetValue("RuntimeVersion",type.Assembly.ImageRuntimeVersion);
 				versionKey.SetValue("CodeBase",type.Assembly.EscapedCodeBase);
 	
 				//ProgID
-				RegistryKey progIdkey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\Wow6432Node\CLSID\" + type.GUID.ToString("B") + @"\ProgId");
+				RegistryKey progIdkey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\CLSID\" + type.GUID.ToString("B") + @"\ProgId");
 				progIdkey.SetValue(string.Empty,type.FullName);
 			}
+			return isAlreadyRegistered;
 		}
 		
+		private bool isAlreadyRegisteredInHKCR(Type type)
+		{
+			return (Registry.ClassesRoot.OpenSubKey(type.FullName) != null);
+		}
+		
+		private void cleanRegistry(Type type)
+		{
+			if (isComVisible(type))
+			{
+				// software classes			
+				Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\" + type.FullName,false);
+			
+				//CLSID
+				Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\CLSID\" + type.GUID.ToString("B"),false);
+			} 	
+		}
 		/// <summary>
 		/// Check if the given type is ComVisible
 		/// </summary>
