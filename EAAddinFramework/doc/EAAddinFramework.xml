@@ -1098,6 +1098,17 @@
             <param name="language">the language the code is written in</param>
             <param name="model">the model this script resides in</param>
         </member>
+        <member name="M:EAAddinFramework.EASpecific.Script.#ctor(System.String,System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            creaates a new script
+            </summary>
+            <param name="scriptID">the id of the script</param>
+            <param name="scriptName">the name of the script</param>
+            <param name="groupName">the name of the scriptgroup</param>
+            <param name="code">the code</param>
+            <param name="language">the language the code is written in</param>
+            <param name="model">the model this script resides in</param>
+        </member>
         <member name="M:EAAddinFramework.EASpecific.Script.reloadCode">
             <summary>
             reload the code into the controller to refresh the functions

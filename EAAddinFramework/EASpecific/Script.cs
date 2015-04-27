@@ -31,6 +31,7 @@ namespace EAAddinFramework.EASpecific
 		private static List<Script> allScripts = new List<Script>();
 		private static Dictionary<string,string> _includableScripts ;
 		private static Dictionary<string,string> staticIncludableScripts ;
+		private static List<Script> staticEAMaticScripts = new List<Script>();
 		private static Dictionary<string,string> modelIncludableScripts = new Dictionary<string, string>(); 
 		private static bool reloadModelIncludableScripts;
 		private EAWrappers.Model model;
@@ -48,6 +49,11 @@ namespace EAAddinFramework.EASpecific
 			{
 				return this.name + " - " + this.scriptController.Language;
 			}
+		}
+		public bool isStatic{get;private set;}
+		static Script()
+		{
+			loadStaticIncludableScripts();
 		}
 		/// <summary>
 		/// A dictionary with all the includable script.
@@ -91,16 +97,28 @@ namespace EAAddinFramework.EASpecific
 		/// <param name="code">the code</param>
 		/// <param name="language">the language the code is written in</param>
 		/// <param name="model">the model this script resides in</param>
-		public Script(string scriptID,string scriptName,string groupName, string code, string language, EAWrappers.Model model)
+		public Script(string scriptID,string scriptName,string groupName, string code, string language, EAWrappers.Model model):this(scriptID, scriptName, groupName, code, language, false)
+		{
+			this.model = model;
+		}
+		/// <summary>
+		/// creaates a new script
+		/// </summary>
+		/// <param name="scriptID">the id of the script</param>
+		/// <param name="scriptName">the name of the script</param>
+		/// <param name="groupName">the name of the scriptgroup</param>
+		/// <param name="code">the code</param>
+		/// <param name="language">the language the code is written in</param>
+		/// <param name="model">the model this script resides in</param>
+		public Script(string scriptID,string scriptName,string groupName, string code, string language, bool isStatic)
 		{
 			this.scriptID = scriptID;
-			this.model = model;
 			this.name = scriptName;
 			this.groupName = groupName;
 			this.functions = new List<ScriptFunction>();
 			this._code = code;
 			this.setLanguage(language);
-			//this.reloadCode();
+			this.isStatic = isStatic;
 		}
 		/// <summary>
 		/// reload the code into the controller to refresh the functions
@@ -145,7 +163,7 @@ namespace EAAddinFramework.EASpecific
 			loadLocalScripts();
 			//MDG scripts in the program folder
 			loadLocalMDGScripts();
-			//TODO: MDG scripts in other locations
+			// MDG scripts in other locations
 			loadOtherMDGScripts();
 			//store the staticIncludeable scripts in a separate dictionary
 			_includableScripts = new Dictionary<string, string>(staticIncludableScripts);
@@ -162,9 +180,36 @@ namespace EAAddinFramework.EASpecific
 			string[] scriptFiles = Directory.GetFiles(scriptsDirectory,"*.*",SearchOption.AllDirectories);
 			foreach(string scriptfile in scriptFiles)
 			{
-				staticIncludableScripts.Add("!INC Local Scripts." + Path.GetFileNameWithoutExtension(scriptfile), File.ReadAllText(scriptfile));
+				string scriptcode = File.ReadAllText(scriptfile);
+				string scriptName = Path.GetFileNameWithoutExtension(scriptfile);
+				string scriptLanguage = getLanguageFromPath(scriptfile);
+				staticIncludableScripts.Add("!INC Local Scripts." + scriptName, scriptcode);
+				//also check if the script needs to be loaded as static EA-Matic script
+				loadStaticEAMaticScript(scriptName, "Local Scripts", scriptcode,scriptLanguage);
 			}
 		}
+		private static string getLanguageFromPath (string path)
+		{
+			string extension = Path.GetExtension(path);
+			string foundLanguage = "VBScript";
+			if (extension.Equals("vbs",StringComparison.InvariantCultureIgnoreCase))
+		    {
+		    	foundLanguage =  "VBScript";
+			} 
+			else if (extension.Equals("js",StringComparison.InvariantCultureIgnoreCase))
+			{
+				if (path.Contains("Jscript"))
+				{
+					foundLanguage =  "Jscript";
+				}
+				else
+				{
+					foundLanguage =  "JavaScript";
+				}
+			}
+			return foundLanguage;
+		}
+			
 		/// <summary>
 		/// loads the mdg scripts from the locations added from MDG Technologies|Advanced. 
 		/// these locations are stored as a comma separated string in the registry
@@ -258,6 +303,8 @@ namespace EAAddinFramework.EASpecific
 						XmlElement scriptElement = (XmlElement)scriptNode;
 						//get the name of the script
 						string scriptName = scriptElement.GetAttribute("name");
+						//get the language of the script
+						string scriptLanguage = scriptElement.GetAttribute("language");
 						//get the script itself
 						XmlNode contentNode = scriptElement.SelectSingleNode("Content");
 						if (contentNode != null)
@@ -265,6 +312,8 @@ namespace EAAddinFramework.EASpecific
 							//the script itstelf is base64 endcoded in the content tag
 							string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
 							staticIncludableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+							//also check if the script needs to be loaded as static EA-Matic script
+							loadStaticEAMaticScript(scriptName, mdgName, scriptcontent,scriptLanguage);
 						}
 					}
 				}
@@ -272,6 +321,14 @@ namespace EAAddinFramework.EASpecific
 			catch (Exception e)
 			{
 				EAAddinFramework.Utilities.Logger.logError("Error in loadMDGScripts: " + e.Message);
+			}
+		}
+		private static void loadStaticEAMaticScript(string scriptName, string groupName, string scriptCode, string language)
+		{
+			if (scriptCode.Contains("EA-Matic"))
+			{
+				Script script = new Script(groupName + "." + scriptName,scriptName,groupName,scriptCode, language,true);
+				staticEAMaticScripts.Add(script);
 			}
 		}
 		/// <summary>
@@ -410,6 +467,14 @@ namespace EAAddinFramework.EASpecific
 					}
           	    }
               }
+              //Add the static EA-Matic scripts to allScripts
+              foreach (Script staticScript in staticEAMaticScripts)
+              {
+              	//add the model to the static script first
+              	staticScript.model = model;
+              	//then add the static scrip to all scripts
+              	allScripts.Add(staticScript);
+			  }              
 			  //load the code of the scripts (because a script can include another script we can only load the code after all scripts have been created)
 			  foreach (Script script in allScripts) 
 			  {
