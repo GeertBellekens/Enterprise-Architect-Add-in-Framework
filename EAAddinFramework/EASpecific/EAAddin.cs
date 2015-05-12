@@ -21,10 +21,11 @@ namespace EAAddinFramework.EASpecific
 	{
 		private Assembly addinDLL;
 		private object wrappedAddin;
+		public string name {get;set;}
 		
-		
-		public EAAddin(string fileName):base()
+		public EAAddin(string fileName,string name):base()
 		{
+			this.name = name;
 			//load the dll
 			this.addinDLL = Assembly.LoadFrom(fileName);
 			//register the COM visible classes
@@ -185,7 +186,7 @@ namespace EAAddinFramework.EASpecific
 				}
 				catch (Exception e)
 				{
-					EAAddinFramework.Utilities.Logger.logError ("Error occured executing " + methodName + " : " + e.Message + "stacktrace: " + e.StackTrace);
+					EAAddinFramework.Utilities.Logger.logError ("Error occured executing " + methodName + " : " + e.Message + " stacktrace: " + e.StackTrace);
 					return null;						
 				}
 			}
