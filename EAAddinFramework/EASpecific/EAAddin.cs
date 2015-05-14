@@ -7,9 +7,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using Microsoft.Win32;
 
 namespace EAAddinFramework.EASpecific
@@ -22,9 +24,11 @@ namespace EAAddinFramework.EASpecific
 		private Assembly addinDLL;
 		private object wrappedAddin;
 		public string name {get;set;}
+		public List<string> lastMenuOptions {get;set;}
 		
 		public EAAddin(string fileName,string name):base()
 		{
+			this.lastMenuOptions = new List<string>();
 			this.name = name;
 			//load the dll
 			this.addinDLL = Assembly.LoadFrom(fileName);
