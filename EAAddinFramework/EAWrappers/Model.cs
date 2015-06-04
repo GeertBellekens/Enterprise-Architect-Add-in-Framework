@@ -476,7 +476,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		case RepositoryType.ORACLE:
     		case RepositoryType.FIREBIRD:
     			return xpath.ToUpper();
-    		
+    		case RepositoryType.POSTGRES:
+    			return xpath.ToLower();
     		default:
     			return xpath;
     	}
@@ -541,7 +542,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	if (this.repositoryType == RepositoryType.SQLSVR || 
     	    this.repositoryType == RepositoryType.ASA ||
     	   	this.repositoryType == RepositoryType.ORACLE ||
-    	   	this.repositoryType == RepositoryType.FIREBIRD)
+    	   	this.repositoryType == RepositoryType.FIREBIRD ||
+    	   	this.repositoryType == RepositoryType.POSTGRES)
     	{
     		formattedSQL = formattedSQL.Replace("lcase(","lower(");
     	}

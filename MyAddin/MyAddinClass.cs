@@ -143,7 +143,7 @@ namespace MyAddin
 		}
 		public override void EA_OnNotifyContextItemModified(EA.Repository Repository, string GUID, EA.ObjectType ot)
 		{
-			MessageBox.Show("OnNotifyContextItemModified works!");
+			//MessageBox.Show("OnNotifyContextItemModified works!");
 		}
         /// <summary>
         /// Say Hello to the world
