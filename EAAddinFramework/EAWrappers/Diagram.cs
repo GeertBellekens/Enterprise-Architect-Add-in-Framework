@@ -84,7 +84,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
           ( this.wrappedDiagram.DiagramObjects );
       }
     }
-
+    public string diagramGUID {
+    	get
+    	{
+    		return this.wrappedDiagram.DiagramGUID;
+    	}
+    }
 
     
     /// <summary>
@@ -405,5 +410,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return this.name;
 		}
 
+  		/// <summary>
+  		/// The elements that have this diagram as composite diagram
+  		/// </summary>
+		public HashSet<UML.Classes.Kernel.Element> compositeElements {
+		get 
+		{
+			throw new NotImplementedException();
+		}
+	}
   }
 }

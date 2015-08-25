@@ -63,8 +63,9 @@ namespace EAAddinFramework.Licensing
 			bool validateFloating = false;
 			
 			//if the license is not valid then it might be a floating license.
-			//in that case we strip the first part until the "-" and try again.
-			int startActualKey = key.IndexOf("-") +1;
+			//in that case we strip the first part until the second "-" and try again.
+			//EA's floating licenses are in the form of EASK-AddinName-license
+			int startActualKey = key.IndexOf("-",key.IndexOf("-") +1) +1;
 			if (wrappedLicense.Status != LicenseStatus.Valid && startActualKey > 0)
 			{
 				key = key.Substring(startActualKey);

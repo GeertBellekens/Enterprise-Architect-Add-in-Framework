@@ -1526,6 +1526,11 @@
             all elements shown on this diagram.
             Currently only diagramObjectWrappers and relations
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.compositeElements">
+            <summary>
+            The elements that have this diagram as composite diagram
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
             <summary>
             adding both the start and the end element to the diagram will automatically add the connector to the diagram
