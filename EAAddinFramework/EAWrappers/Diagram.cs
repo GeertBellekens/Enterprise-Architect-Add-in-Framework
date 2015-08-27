@@ -416,7 +416,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		public HashSet<UML.Classes.Kernel.Element> compositeElements {
 		get 
 		{
-			throw new NotImplementedException();
+			HashSet<UML.Classes.Kernel.Element> results = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Element>();
+			string sqlGet = " select o.Object_ID from t_object o                          " +
+							" where o.PDATA1 = '"+this.DiagramID.ToString() +"'           " +
+							" union                                                       " +
+							" select o.Object_ID from t_object o                          " +
+							" inner join t_xref x on o.ea_guid = x.Client                 " +
+							" where x.Supplier = '"+ this.diagramGUID + "'                ";
+			foreach (ElementWrapper element in this.model.getElementWrappersByQuery(sqlGet))
+			{
+				results.Add(element);
+			}
+			return results;
 		}
 	}
   }
