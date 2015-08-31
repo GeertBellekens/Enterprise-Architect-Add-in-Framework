@@ -419,6 +419,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			HashSet<UML.Classes.Kernel.Element> results = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Element>();
 			string sqlGet = " select o.Object_ID from t_object o                          " +
 							" where o.PDATA1 = '"+this.DiagramID.ToString() +"'           " +
+							" and o.Object_Type <> 'Package'                              " +
 							" union                                                       " +
 							" select o.Object_ID from t_object o                          " +
 							" inner join t_xref x on o.ea_guid = x.Client                 " +
