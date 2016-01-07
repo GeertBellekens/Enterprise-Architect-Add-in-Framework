@@ -583,6 +583,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		return this.model.getTaggedValuesWithValue(this.wrappedElement.ElementGUID);
 	}
   	
+	public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram 
+	{
+		get { return this.model.factory.createDiagram(this.wrappedElement.CompositeDiagram) ;}
+		set { this.wrappedElement.SetCompositeDiagram(((Diagram)value).diagramGUID); }
+	}
 
   	
 

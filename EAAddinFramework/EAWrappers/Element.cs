@@ -65,9 +65,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         ((Element)element).save();
       }
     }
-
-
-
+	//default empty implemenation
+	public virtual UML.Diagrams.Diagram compositeDiagram 
+	{
+		get {return null;}
+		set {}//do absolutely nothing
+	}
+	
     //default not implemented
     public virtual HashSet<T> getUsingDiagrams<T>() where T : class, UML.Diagrams.Diagram
     {
