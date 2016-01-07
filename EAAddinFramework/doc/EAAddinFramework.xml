@@ -2398,6 +2398,42 @@
             <param name="key">the key</param>
             <param name="publicKey">the public key</param>
         </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaAssociation">
+            <summary>
+            Description of EASchemaAssociation.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper">
+            <summary>
+            Description of EASchemaProperty.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory">
+            <summary>
+            Description of EASchemaBuilderFactory.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance(TSF.UmlToolingFramework.UML.UMLModel)">
+            returns the singleton instance for the given model.
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance">
+            returns the singleton instance for a new model
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchema">
+            <summary>
+            Description of Schema.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaElement">
+            <summary>
+            Description of EASchemaElement.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">
+            <summary>
+            Description of EASchemaProperty.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">
             <summary>
             Description of AbortableBackgroundWorker.
