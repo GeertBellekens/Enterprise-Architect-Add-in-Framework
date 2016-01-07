@@ -1230,5 +1230,32 @@ namespace EAAddinFramework
 	
 		#endregion EA MDG Events
 		
+		#region EA Schema Composer operations
+		/// <summary>
+		/// The Add-in must implement this function to be listed in the Schema Composer.
+		/// </summary>
+		/// <param name="Repository">the repository object</param>
+		/// <param name="displayName">the name that will be displayed</param>
+		/// <returns>true if this addin is a schema composer add-in</returns>
+		public virtual bool EA_IsSchemaExporter (EA.Repository Repository, ref string displayName) {return false;}
+		
+		/// <summary>
+		/// The Add-in can optionally implement this function.
+		/// Using the SchemaProfile interface an Add-in can adjust the capabilities of the Schema Composer. (See Automation Interface)
+		/// </summary>
+		/// <param name="Repository">the repository object</param>
+		/// <param name="profile">the EA SchemaProfile object</param>
+		public virtual void EA_GetProfileInfo (EA.Repository Repository, EA.SchemaProfile profile){}
+		
+		/// <summary>
+		/// If a user selects any of the outputs listed by the Add-in, this function will be invoked. 
+		/// The function receives the Schema Composer automation interface, which can be used to traverse the schema.
+		/// </summary>
+		/// <param name="Repository"></param>
+		/// <param name="composer"></param>
+		public virtual void EA_GenerateFromSchema (EA.Repository Repository, EA.SchemaComposer composer,string exports){}
+		
+		#endregion EA Schema Composer operations
+		
 	}
 }

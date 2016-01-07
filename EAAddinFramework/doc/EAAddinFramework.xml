@@ -791,9 +791,9 @@
             <param name="TagNotes">The current value of the Tagged Value notes; if the value 
             is updated, the new value is stored in the repository on exit of the function.</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
-        <!-- Badly formed XML comment ignored for member "M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@)" -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnConnectorTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnElementTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:EAAddinFramework.EAAddinBase.EA_OnMethodTagEdit(EA.Repository,System.Int64,System.String@,System.String@,System.String@) -->
         <member name="M:EAAddinFramework.EAAddinBase.EA_OnInitializeTechnologies(EA.Repository)">
             <summary>
             EA_OnInitializeTechnologies requests that an Add-In pass an MDG Technology to Enterprise Architect for loading.
@@ -1032,6 +1032,30 @@
             For example if a user has selected the m_Name attribute of Class1 located in namespace Name1, the class ID would be passed through in the following format:
             @Name1#Class1%m_Name</param>
             <returns>Return a non-zero value to indicate that the Add-In has processed the request. Returning a zero value results in Enterprise Architect employing the standard viewing process which is to launch the associated source file.</returns>
+        </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_IsSchemaExporter(EA.Repository,System.String@)">
+            <summary>
+            The Add-in must implement this function to be listed in the Schema Composer.
+            </summary>
+            <param name="Repository">the repository object</param>
+            <param name="displayName">the name that will be displayed</param>
+            <returns>true if this addin is a schema composer add-in</returns>
+        </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_GetProfileInfo(EA.Repository,EA.SchemaProfile)">
+            <summary>
+            The Add-in can optionally implement this function.
+            Using the SchemaProfile interface an Add-in can adjust the capabilities of the Schema Composer. (See Automation Interface)
+            </summary>
+            <param name="Repository">the repository object</param>
+            <param name="profile">the EA SchemaProfile object</param>
+        </member>
+        <member name="M:EAAddinFramework.EAAddinBase.EA_GenerateFromSchema(EA.Repository,EA.SchemaComposer,System.String)">
+            <summary>
+            If a user selects any of the outputs listed by the Add-in, this function will be invoked. 
+            The function receives the Schema Composer automation interface, which can be used to traverse the schema.
+            </summary>
+            <param name="Repository"></param>
+            <param name="composer"></param>
         </member>
         <member name="P:EAAddinFramework.EAAddinBase.menuHeader">
             <summary>
@@ -2155,7 +2179,7 @@
             <param name="sqlQuery">the query to format</param>
             <returns>a query with traslated functions</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
+        <!-- Ongeldig XML-commentaar genegeerd voor het lid M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String) -->
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
             <summary>
             replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
