@@ -99,7 +99,15 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				throw new NotImplementedException();
+				HashSet<SBF.SchemaAssociation> associations = new HashSet<SBF.SchemaAssociation>();
+				foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
+				{
+					if (wrapper is EASchemaAssociation)
+					{
+						associations.Add((SBF.SchemaAssociation)wrapper );
+					}
+				}
+				return associations;				
 			}
 			set 
 			{
