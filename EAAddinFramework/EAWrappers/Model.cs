@@ -1360,5 +1360,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 	
 	
+  	/// <summary>
+  	/// Show a dialog to the user that allows him to select a package from the model
+  	/// </summary>
+  	/// <returns></returns>
+	public UML.Classes.Kernel.Package getUserSelectedPackage()
+	{
+		int EAElementID = this.wrappedModel.InvokeConstructPicker("IncludedTypes=Package");
+		return this.getElementWrapperByID(EAElementID) as UML.Classes.Kernel.Package;
+	}
   }
 }

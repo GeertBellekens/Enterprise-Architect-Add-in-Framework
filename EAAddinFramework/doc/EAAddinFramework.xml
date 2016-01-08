@@ -2223,6 +2223,12 @@
             </summary>
             <returns>the wrapped repository object</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedPackage">
+            <summary>
+            Show a dialog to the user that allows him to select a package from the model
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
             <summary>
             returns the full path of the running ea.exe
@@ -2421,7 +2427,38 @@
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchema">
             <summary>
-            Description of Schema.
+            The EA Specific implementation of the Schema, wrapping the EA.SchemaComposer object
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.SchemaComposer)">
+            <summary>
+            Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
+            </summary>
+            <param name="model">The model containing this Scheam</param>
+            <param name="composer">The EA.SchemaComposer object to be wrapped</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaTypes">
+            <summary>
+            gets the EA.SchemaTypes from the enumerator
+            </summary>
+            <returns>all the EA.Schematypes in this schema</returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementForUMLElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            returns the SchemaElement that corresponds with the given UML element
+            </summary>
+            <param name="umlElement">the source UMLElement</param>
+            <returns></returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package)">
+            <summary>
+            creates a subset of the source model with only the properties and associations used in this schema
+            </summary>
+            <param name="destinationPackage">the package to create the subset in</param>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
+            <summary>
+            the SchemaElements owned by this Schema
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaElement">
