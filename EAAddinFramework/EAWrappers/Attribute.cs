@@ -177,11 +177,12 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
         return type;
       }
       set {
+    		//set classifier if needed
         if( value is ElementWrapper ) {
           this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
-        } else {
-          this.wrappedAttribute.Type = value.name;
         }
+    		//always set type field
+          this.wrappedAttribute.Type = value.name;
       }
     }
     
@@ -235,7 +236,10 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
         return ((Factory)this.model.factory).createStereotypes
           ( this, this.wrappedAttribute.StereotypeEx );
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+      	this.wrappedAttribute.StereotypeEx = Stereotype.getStereotypeEx(value);
+      }
     }
     
     public bool isNavigable(){ throw new NotImplementedException(); }

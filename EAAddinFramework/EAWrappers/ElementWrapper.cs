@@ -203,7 +203,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     			return new HashSet<UML.Profiles.Stereotype>();
     		}
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+      	this.wrappedElement.StereotypeEx = Stereotype.getStereotypeEx(value);
+      }
     }
 
     /// EA provides a shortcut tot the superclasses through its 
@@ -338,7 +341,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
     /// creates a new element of the given type as an owned element of this 
     /// element
-    public T addOwnedElement<T>(String name, string EAType) 
+    public virtual T addOwnedElement<T>(String name, string EAType) 
       where T : class, UML.Classes.Kernel.Element 
     {	
       System.Type type = typeof(T);

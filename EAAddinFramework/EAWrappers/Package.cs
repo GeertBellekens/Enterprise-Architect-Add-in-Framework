@@ -142,5 +142,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 			return newFQN;
 		}
+		/// creates a new element of the given type as an owned element of this 
+	    /// element
+	    public override T addOwnedElement<T>(String name, string EAType) 
+	    {	
+	      System.Type type = typeof(T);
+	      T newElement;
+	
+	      if(((Factory)this.model.factory).isEAAtttribute(type)) 
+	      {
+	      	throw new Exception("Cannot add an Attribute to a Package");
+	      } 
+	      else if(((Factory)this.model.factory).isEAOperation(type))
+	      {
+	        throw new Exception("Cannot add an Attribute to a Package");
+	      } 
+	      else if (((Factory)this.model.factory).isEAConnector(type))
+	      {
+	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	          ( this.wrappedPackage.Connectors, name, EAType  );
+	      } else {
+	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	          ( this.wrappedPackage.Elements, name, EAType );
+	      }
+	      return newElement;
+	    }
 	}
 }

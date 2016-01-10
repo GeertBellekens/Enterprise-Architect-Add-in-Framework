@@ -78,9 +78,20 @@ namespace EAAddinFramework.SchemaBuilder
 		/// creates a subset of the source model with only the properties and associations used in this schema
 		/// </summary>
 		/// <param name="destinationPackage">the package to create the subset in</param>
-		public void createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package destinationPackage)
+		public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage)
 		{
-			throw new NotImplementedException();
+			//loop the elemets to create the subSetElements
+			foreach (EASchemaElement schemaElement in this.elements) 
+			{
+				//only create subset elements for classes, not for datatypes
+				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
+				{
+					schemaElement.createSubsetElement(destinationPackage);
+				}
+			}
+			//TODO: then loop them again to create the associations
+			// and to resolve the attributes types to subset types if required
+			
 		}
 	}
 }

@@ -2318,6 +2318,10 @@
             <param name="parentID">the id of the package</param>
             <returns>the fqn of the package</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedElement``1(System.String,System.String)">
+            creates a new element of the given type as an owned element of this 
+            element
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>
             
@@ -2469,6 +2473,30 @@
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">
             <summary>
             Description of EASchemaProperty.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EAAddinFramework.SchemaBuilder.EASchemaElement,EA.SchemaProperty)">
+            <summary>
+            constructor. Nothing specific, just calling base constructor
+            </summary>
+            <param name="model">the model</param>
+            <param name="owner">the owner Schema Element</param>
+            <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.createSubsetProperty">
+            <summary>
+            Creates the subset property in the subsetElement of the owning SchemaElement
+            </summary>
+            <returns>the new property</returns>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.sourceProperty">
+            <summary>
+            The property int he model where this Schema property was derived from
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.subSetProperty">
+            <summary>
+            the property in the subset model generated from this property
             </summary>
         </member>
         <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -83,6 +84,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
 		return null;
+	}
+	internal static string getStereotypeEx (IEnumerable<UML.Profiles.Stereotype> stereotypes)
+	{
+		List<string> stereotypeList = new List<string>();
+		foreach (Stereotype stereotype in stereotypes) 
+		{
+			stereotypeList.Add(stereotype.name);
+		}			
+		return string.Join(",",stereotypeList);
 	}
   }
 }
