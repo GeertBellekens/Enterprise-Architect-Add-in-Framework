@@ -1375,6 +1375,13 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.GetHashCode">
             return the hashcode based on the elements guid
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedDiagram``1(System.String)">
+            <summary>
+            creates a new diagram under this element
+            </summary>
+            <param name="name">the name of the new diagram</param>
+            <returns>the new diagram</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String)">
             creates a new element of the given type as an owned element of this 
             element
@@ -2321,6 +2328,13 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedElement``1(System.String,System.String)">
             creates a new element of the given type as an owned element of this 
             element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedDiagram``1(System.String)">
+            <summary>
+            creates a new diagram under this package
+            </summary>
+            <param name="name">the name of the new diagram</param>
+            <returns>the new diagram</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>

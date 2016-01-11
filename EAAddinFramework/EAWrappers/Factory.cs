@@ -669,7 +669,70 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     public override T createNewDiagram<T>(UML.Classes.Kernel.Element owner, string name)
     {
-        throw new NotImplementedException();
+    	if (owner is ElementWrapper)
+    	{
+    		return ((ElementWrapper)owner).addOwnedDiagram<T>(name);
+    	}
+    	else
+    	{
+    		return default(T);
+    	}
+    }
+    internal T addNewDiagramToEACollection<T>(global::EA.Collection collection, string name) where T:class, UML.Diagrams.Diagram
+    {
+    	string EADiagramType = translateUMLDiagramtypes(typeof(T).Name);
+    	object newEADiagram = collection.AddNew(name, EADiagramType);
+    	return this.createDiagram(newEADiagram) as T;
+    }
+    private string translateUMLDiagramtypes(string UMLDiagramtype)
+    {
+    	string EADiagramtype;
+    	switch (UMLDiagramtype) 
+    	{
+    		case "ActivityDiagram":
+    			EADiagramtype = "Activity";		
+    			break;
+    		case "ClassDiagram":
+    			EADiagramtype = "Logical";		
+    			break;
+    		case "DeploymentDiagram":
+    			EADiagramtype = "Deployment";		
+    			break;
+    		case "ComponentDiagram":
+    			EADiagramtype = "Component";		
+    			break;
+    		case "SequenceDiagram":
+    			EADiagramtype = "Sequence";		
+    			break;
+    		case "StateMachineDiagram":
+    			EADiagramtype = "Statechart";		
+    			break;	
+    		case "UseCaseDiagram":
+    			EADiagramtype = "Use Case";		
+    			break;	   
+    		case "CommunicationDiagram":
+    			EADiagramtype = "Collaboration";		
+    			break;	       			
+    		case "CompositeStructureDiagram":
+    			EADiagramtype = "CompositeStructure";		
+    			break;	     
+			case "InteractionOverviewDiagramram":
+    			EADiagramtype = "InteractionOverview";		
+    			break;	   			
+			case "PackageDiagram":
+    			EADiagramtype = "Package";		
+    			break;				    			
+			case "TimingDiagram":
+    			EADiagramtype = "Timing";		
+    			break;
+			case "ObjectDiagram":
+    			EADiagramtype = "Object";		
+    			break;	    			
+    		default:
+    			EADiagramtype = "Custom";
+    			break;
+    	}
+    	return EADiagramtype;
     }
   	
 	public override UML.Profiles.TaggedValue createTaggedValue(object objectToWrap)

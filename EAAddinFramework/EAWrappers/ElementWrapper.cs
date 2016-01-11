@@ -331,7 +331,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override int GetHashCode(){
       return new Guid(this.wrappedElement.ElementGUID).GetHashCode();
     }
-    
+	/// <summary>
+    /// creates a new diagram under this element
+    /// </summary>
+    /// <param name="name">the name of the new diagram</param>
+    /// <returns>the new diagram</returns>
+    public virtual T addOwnedDiagram<T>(String name) where T: class, UML.Diagrams.Diagram
+    {
+    	return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedElement.Diagrams,name);
+    }
     /// creates a new element of the given type as an owned element of this 
     /// element
     public T addOwnedElement<T>(String name) 

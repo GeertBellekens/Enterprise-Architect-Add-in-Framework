@@ -14,6 +14,7 @@ namespace EAAddinFramework.SchemaBuilder
 	{
 		private UTF_EA.Model model;
 		private EA.SchemaComposer wrappedComposer;
+		private HashSet<SBF.SchemaElement> schemaElements = null;
 		/// <summary>
 		/// Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
 		/// </summary>
@@ -30,10 +31,13 @@ namespace EAAddinFramework.SchemaBuilder
 		public HashSet<SBF.SchemaElement> elements {
 			get 
 			{
-				HashSet<SBF.SchemaElement> schemaElements = new HashSet<SchemaBuilderFramework.SchemaElement>();
-				foreach (EA.SchemaType schemaType in getSchemaTypes ()) 
+				if (schemaElements == null)
 				{
-					schemaElements.Add(EASchemaBuilderFactory.getInstance(this.model).createSchemaElement(this,schemaType));
+					schemaElements = new HashSet<SBF.SchemaElement>();
+					foreach (EA.SchemaType schemaType in getSchemaTypes ()) 
+					{
+						schemaElements.Add(EASchemaBuilderFactory.getInstance(this.model).createSchemaElement(this,schemaType));
+					}
 				}
 				return schemaElements;
 			}

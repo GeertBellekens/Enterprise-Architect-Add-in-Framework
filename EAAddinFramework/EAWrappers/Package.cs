@@ -167,5 +167,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      }
 	      return newElement;
 	    }
+	    /// <summary>
+	    /// creates a new diagram under this package
+	    /// </summary>
+	    /// <param name="name">the name of the new diagram</param>
+	    /// <returns>the new diagram</returns>
+		public override T addOwnedDiagram<T>(string name)
+		{
+			return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedPackage.Diagrams,name);
+		}
 	}
 }
