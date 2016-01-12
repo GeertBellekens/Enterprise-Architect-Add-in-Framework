@@ -1567,6 +1567,14 @@
             adding both the start and the end element to the diagram will automatically add the connector to the diagram
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addRelatedElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds a related element to this connector.
+            This operation checks if the source or target is empty and then adds the related element to the empty spot.
+            If none of the two are empty then the target is being replaced
+            </summary>
+            <param name="relatedElement"></param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
             <summary>
             not fully correct, but we will return the element at the source of the relation
@@ -1951,6 +1959,12 @@
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
             <summary>
             Description of DataType.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">
+            <summary>
+            Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
+            it is usually represented as [lower limit]..[upper limit] e.g. 0..1, 1..1, 0..*
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RepositoryType">
@@ -2392,6 +2406,11 @@
             Description of TimingDiagram.
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UnlimitedNatural">
+            <summary>
+            Description of UnlimitedNatural.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UseCaseDiagram">
             <summary>
             Description of UseCaseDiagram.
@@ -2431,6 +2450,12 @@
             <summary>
             Description of EASchemaProperty.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaAssociation.createSubsetAssociation">
+            <summary>
+            Creates the association in the subset. This is a copy of the source association but now between the subsetelements
+            </summary>
+            <returns>the new subset association</returns>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory">
             <summary>
@@ -2482,6 +2507,11 @@
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaElement">
             <summary>
             Description of EASchemaElement.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.createSubsetAssociations">
+            <summary>
+            duplicates the asociations in the schema to associations between schema elements
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">

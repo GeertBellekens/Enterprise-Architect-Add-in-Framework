@@ -98,6 +98,7 @@
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
+    <Compile Include="EAWrappers\Multiplicity.cs" />
     <Compile Include="EAWrappers\RepositoryType.cs" />
     <Compile Include="EAWrappers\DeploymentDiagram.cs" />
     <Compile Include="EAWrappers\Enumeration.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="EAWrappers\Stereotype.cs" />
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\TimingDiagram.cs" />
+    <Compile Include="EAWrappers\UnlimitedNatural.cs" />
     <Compile Include="EAWrappers\UseCaseDiagram.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="EAWrappers\WindowWrapper.cs" />

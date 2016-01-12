@@ -145,5 +145,16 @@ namespace EAAddinFramework.SchemaBuilder
 			((UTF_EA.Element) this.subsetElement).save();
 			return this.subsetElement;
 		}		
+		
+		/// <summary>
+		/// duplicates the asociations in the schema to associations between schema elements
+		/// </summary>
+		public void createSubsetAssociations()
+		{
+			foreach (SBF.SchemaAssociation schemaAssociation in this.schemaAssociations) 
+			{
+				schemaAssociation.createSubsetAssociation();
+			}
+		}
 	}
 }

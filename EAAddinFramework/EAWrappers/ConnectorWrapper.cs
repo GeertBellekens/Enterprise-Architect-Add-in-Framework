@@ -42,7 +42,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-// removed cachign to try and solve multithreading issue.      	
+// removed caching to try and solve multithreading issue.      	
 //      	if (this._owner == null)
 //      	{
       		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
@@ -57,7 +57,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         return ((Factory)this.model.factory).createStereotypes
           ( this, this.wrappedConnector.StereotypeEx );
       }
-      set { throw new NotImplementedException(); }
+      set 
+      { 
+      	this.WrappedConnector.StereotypeEx = Stereotype.getStereotypeEx(value); 
+      }
     }
     /// returns the related elements.
     /// In EA the Connectoris a binary relationship. So only two Elements will 
@@ -120,7 +123,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         return this.model.getElementWrapperByID
           ( this.wrappedConnector.SupplierID );
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+		if (value is ElementWrapper)
+		{
+			this.WrappedConnector.SupplierID = ((ElementWrapper)value).id;
+		}
+		else
+		{
+			//currently only implemented for ElementWrappers
+			throw new NotImplementedException();
+		}      	
+      }
     }
     
     public UML.Classes.Kernel.Element source {
@@ -128,8 +142,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         return this.model.getElementWrapperByID
           ( this.wrappedConnector.ClientID );
       }
-      set { throw new NotImplementedException(); }
+      set
+     {
+		if (value is ElementWrapper)
+		{
+			this.WrappedConnector.ClientID = ((ElementWrapper)value).id;
+		}
+		else
+		{
+			//currently only implemented for ElementWrappers
+			throw new NotImplementedException();
+		}      	
+      }
     }
+    
     
     public bool isDerived {
       get { throw new NotImplementedException(); }
@@ -161,21 +187,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// Each end represents participation of instances of the classifier 
     /// connected to the end in links of the association. This is
     /// an ordered association. Subsets Namespace::member.
-    public List<UML.Classes.Kernel.Property> memberEnds {
+    public List<UML.Classes.Kernel.Property> memberEnds 
+    {
       get {
-        List<UML.Classes.Kernel.Property> returnedMembers = 
-          new List<UML.Classes.Kernel.Property>();
-        returnedMembers.Add
-          ( ((Factory)this.model.factory).createAssociationEnd
-            (this, this.wrappedConnector.ClientEnd) 
-              as UML.Classes.Kernel.Property);
-        returnedMembers.Add
-          (((Factory)this.model.factory).createAssociationEnd
-            (this, this.wrappedConnector.SupplierEnd) 
-              as UML.Classes.Kernel.Property);
+        List<UML.Classes.Kernel.Property> returnedMembers = new List<UML.Classes.Kernel.Property>();
+        returnedMembers.Add(this.sourceEnd as UML.Classes.Kernel.Property) ;
+        returnedMembers.Add(this.targetEnd as UML.Classes.Kernel.Property);
         return returnedMembers;
       }
       set { throw new NotImplementedException(); }
+    }
+    public AssociationEnd sourceEnd
+    {
+    	get
+    	{
+    		return ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd) ;
+    	}
+    }
+    public AssociationEnd targetEnd
+    {
+    	get
+    	{
+    		return ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd);
+    	}
     }
     public bool isAbstract {
       get { throw new NotImplementedException(); }
@@ -261,8 +295,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       set { throw new NotImplementedException(); }
     }
 
-    internal override void saveElement(){
-      this.wrappedConnector.Update();
+    internal override void saveElement()
+    {
+    	this.wrappedConnector.Update();
     }
 
     public override string notes {
@@ -326,5 +361,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 	}
 
+  	/// <summary>
+  	/// adds a related element to this connector.
+  	/// This operation checks if the source or target is empty and then adds the related element to the empty spot.
+  	/// If none of the two are empty then the target is being replaced
+  	/// </summary>
+  	/// <param name="relatedElement"></param>
+	public void addRelatedElement(UML.Classes.Kernel.Element relatedElement)
+	{
+		if (this.WrappedConnector.ClientID <= 0 )
+		{
+			this.source = relatedElement;
+		}
+		else
+		{
+			this.target = relatedElement;
+		}
+
+	}
   }
 }

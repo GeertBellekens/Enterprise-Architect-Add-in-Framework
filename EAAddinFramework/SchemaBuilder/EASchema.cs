@@ -94,6 +94,14 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 			//TODO: then loop them again to create the associations
+			foreach (EASchemaElement schemaElement in this.elements) 
+			{
+				//only create subset elements for classes, not for datatypes
+				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
+				{
+					schemaElement.createSubsetAssociations();
+				}
+			}
 			// and to resolve the attributes types to subset types if required
 			
 		}

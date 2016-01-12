@@ -27,7 +27,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public abstract String _default { get; set; }
     public abstract bool isOrdered { get; set; }
     public abstract bool isUnique { get; set; }
-    public abstract int lower { get; set; }
+    public abstract uint lower { get; set; }
     
     public abstract String qualifiedName { get; set; }
 

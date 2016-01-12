@@ -205,14 +205,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
 
-    public UML.Classes.Kernel.UnlimitedNatural upper {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+    public UML.Classes.Kernel.UnlimitedNatural upper 
+    {
+      get {return this.multiplicity.upper;}
+      set 
+      { 
+      	Multiplicity newMultiplicity = this.multiplicity;
+      	newMultiplicity.upper = value;
+      	this.multiplicity = newMultiplicity;
+      }
     }
 
-    public int lower {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+    public uint lower 
+    {
+      get { return this.multiplicity.lower ;}
+      set 
+      { 
+      	Multiplicity newMultiplicity = this.multiplicity;
+      	newMultiplicity.lower = value;
+      	this.multiplicity = newMultiplicity;
+      }
     }
 
     public UML.Classes.Kernel.ValueSpecification upperValue {
@@ -257,7 +269,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
       }
     }
-  	
+    public Multiplicity multiplicity 
+    {
+    	get
+    	{
+    		return new Multiplicity(this.wrappedAssociationEnd.Cardinality);
+    	}
+    	set
+    	{
+    		this.wrappedAssociationEnd.Cardinality = value.EACardinality;
+    	}
+    }
 	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
 		UML.UMLItem item = null;

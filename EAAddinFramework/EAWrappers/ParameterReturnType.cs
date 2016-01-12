@@ -47,7 +47,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
     
-    public override int lower {
+    public override uint lower {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }

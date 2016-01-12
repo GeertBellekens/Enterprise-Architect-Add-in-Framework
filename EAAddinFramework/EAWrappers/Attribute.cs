@@ -201,7 +201,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public int lower {
+    public uint lower {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
