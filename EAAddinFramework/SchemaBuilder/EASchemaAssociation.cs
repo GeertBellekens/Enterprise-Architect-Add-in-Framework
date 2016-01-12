@@ -122,6 +122,10 @@ namespace EAAddinFramework.SchemaBuilder
 			//target.save(); (should be included in the association save
 			
 		}
+		private void copyTaggedValues ()
+		{
+			//TODO
+		}
 			
 	}
 }

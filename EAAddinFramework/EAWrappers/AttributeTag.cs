@@ -55,5 +55,10 @@ public class AttributeTag : TaggedValue
 			return this.wrappedAttributeTag.TagGUID;
 		}
 	}
+	
+	public override void save()
+	{
+		this.wrappedAttributeTag.Update();
+	}
 }
 }

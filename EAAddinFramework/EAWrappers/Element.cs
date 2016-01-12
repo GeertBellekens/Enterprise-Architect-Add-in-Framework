@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     internal Element(Model model){
       this.model = model;
     }
-
+    internal abstract global::EA.Collection eaTaggedValuesCollection {get;}
     public abstract String notes { get; set; }
     public abstract HashSet<UML.Classes.Kernel.Element> ownedElements 
       { get; set; }
@@ -180,6 +180,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override string ToString()
 	{
 		return this.name;
+	}
+	public virtual TaggedValue addTaggedValue(string name, string tagValue)
+	{
+		TaggedValue newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
+		newTaggedValue.tagValue = tagValue;
+		newTaggedValue.save();
+		return newTaggedValue;
+	}
+	public virtual void copyTaggedValues(Element sourceElement)
+	{
+		foreach (TaggedValue taggedValue in sourceElement.taggedValues) 
+		{
+			TaggedValue newTaggedValue = this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
+		}
 	}
 
   }

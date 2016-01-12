@@ -55,5 +55,10 @@ public class RelationTag : TaggedValue
 			return this.wrappedTaggedValue.TagGUID;
 		}
 	}
+	
+	public override void save()
+	{
+		this.wrappedTaggedValue.Update();
+	}
 }
 }

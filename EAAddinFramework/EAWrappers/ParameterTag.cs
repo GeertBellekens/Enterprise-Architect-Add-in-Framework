@@ -55,5 +55,10 @@ public class ParameterTag : TaggedValue
 			return this.wrappedTaggedValue.PropertyGUID;
 		}
 	}
+	
+	public override void save()
+	{
+		this.wrappedTaggedValue.Update();
+	}
 }
 }

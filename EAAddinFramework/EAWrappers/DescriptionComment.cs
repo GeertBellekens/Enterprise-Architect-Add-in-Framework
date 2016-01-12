@@ -60,5 +60,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return string.Empty;
 		}
 	}
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get {
+			throw new NotImplementedException();
+		}
+	}
   }
 }

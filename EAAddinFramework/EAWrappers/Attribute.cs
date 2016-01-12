@@ -316,5 +316,11 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 	}
 	#endregion
 
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get {
+			return this.WrappedAttribute.TaggedValues;
+		}
+	}
   }
 }

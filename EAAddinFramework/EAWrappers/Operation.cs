@@ -387,5 +387,12 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 	#endregion
 	
   	
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get 
+		{
+			return this.WrappedOperation.TaggedValues;
+		}
+	}
   }
 }

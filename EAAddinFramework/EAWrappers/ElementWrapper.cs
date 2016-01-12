@@ -602,5 +602,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
   	
 
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get 
+		{
+			return this.wrappedElement.TaggedValues;
+		}
+	}
   }
 }

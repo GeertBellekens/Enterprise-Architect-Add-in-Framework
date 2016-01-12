@@ -55,5 +55,10 @@ public class OperationTag : TaggedValue
 			return this.wrappedTaggedValue.TagGUID;
 		}
 	}
+	
+	public override void save()
+	{
+		this.wrappedTaggedValue.Update();
+	}
 }
 }

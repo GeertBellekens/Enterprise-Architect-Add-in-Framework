@@ -292,5 +292,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return this; 
 	}
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get 
+		{
+			return this.wrappedAssociationEnd.TaggedValues;
+		}
+	}
   }
 }

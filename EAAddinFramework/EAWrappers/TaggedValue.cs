@@ -115,5 +115,7 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 	{
 		this.owner.selectInCurrentDiagram();
 	}
+	
+	public abstract void save();
 }
 }

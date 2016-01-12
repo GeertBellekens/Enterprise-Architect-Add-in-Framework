@@ -608,6 +608,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return new AssociationEnd( this.model as Model, connector,
                                  associationEnd );
     }
+	public override UML.Profiles.TaggedValue createNewTaggedValue(UML.Classes.Kernel.Element owner, string name)
+	{
+		if (owner is Element)
+		{
+			global::EA.Collection eaTaggedValues = ((Element)owner).eaTaggedValuesCollection;
+			return this.createTaggedValue( eaTaggedValues.AddNew(name,""));
+		}
+		else
+		{
+			throw new NotImplementedException();
+		}
+	}
 
     /// create a new element as owned element of the given owner
     public override T createNewElement<T>
@@ -789,5 +801,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return new EAAddinFramework.EASpecific.WorkingSet((Model)this.model,ID,user,name);
 	}
+  	
+
   }
 }

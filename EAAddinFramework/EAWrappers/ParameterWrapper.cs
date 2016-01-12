@@ -155,5 +155,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return this.model.getTaggedValuesWithValue(this.wrappedParameter.ParameterGUID);
 	}
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get {
+			return this.wrappedParameter.TaggedValues;
+		}
+	}
   }
 }

@@ -94,5 +94,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}			
 		return string.Join(",",stereotypeList);
 	}
+  	
+	internal override global::EA.Collection eaTaggedValuesCollection {
+		get {
+			throw new NotImplementedException();
+		}
+	}
   }
 }
