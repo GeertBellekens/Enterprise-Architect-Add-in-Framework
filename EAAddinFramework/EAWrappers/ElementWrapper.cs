@@ -609,5 +609,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.wrappedElement.TaggedValues;
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{
+			return this.WrappedElement.ElementGUID;
+		}
+	}
   }
 }

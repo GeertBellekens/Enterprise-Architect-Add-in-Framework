@@ -322,5 +322,12 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 			return this.WrappedAttribute.TaggedValues;
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{
+			return this.WrappedAttribute.AttributeGUID;
+		}
+	}
   }
 }

@@ -100,5 +100,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override string guid 
+	{
+		get 
+		{	//no guid's for stereotypes in EA.
+			throw new NotImplementedException();
+		}
+	}
   }
 }

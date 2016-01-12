@@ -21,8 +21,9 @@ public class RelationTag : TaggedValue
 		{
 			return this.wrappedTaggedValue.Value;
 		}
-		set {
-			throw new NotImplementedException();
+		set 
+		{
+			this.wrappedTaggedValue.Value = value;
 		}
 	}
 	

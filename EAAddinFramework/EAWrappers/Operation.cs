@@ -394,5 +394,12 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 			return this.WrappedOperation.TaggedValues;
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{
+			return this.WrappedOperation.MethodGUID;
+		}
+	}
   }
 }

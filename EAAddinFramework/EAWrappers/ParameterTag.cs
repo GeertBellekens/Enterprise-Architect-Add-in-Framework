@@ -22,7 +22,7 @@ public class ParameterTag : TaggedValue
 			return this.wrappedTaggedValue.Value;
 		}
 		set {
-			throw new NotImplementedException();
+			this.wrappedTaggedValue.Value = value;
 		}
 	}
 	

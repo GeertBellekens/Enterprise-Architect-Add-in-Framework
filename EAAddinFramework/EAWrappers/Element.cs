@@ -28,7 +28,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         this.stereotypes = newStereotypes;
       }
     }
-
+    public abstract string guid {get;}
     /// returns the owner of the given type
     /// This operation will keep on looking upwards through the owners until 
     /// it finds one with the given type.
@@ -188,6 +188,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		newTaggedValue.save();
 		return newTaggedValue;
 	}
+	/// <summary>
+	/// copies the tagged values from the source as tagged values of this element
+	/// </summary>
+	/// <param name="sourceElement"></param>
 	public virtual void copyTaggedValues(Element sourceElement)
 	{
 		foreach (TaggedValue taggedValue in sourceElement.taggedValues) 

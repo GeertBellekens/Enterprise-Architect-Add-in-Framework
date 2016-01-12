@@ -140,5 +140,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override string guid 
+	{
+		get 
+		{	//no guid on primitive types (as they don't really exist in the model)
+			throw new NotImplementedException();
+		}
+	}
   }
 }

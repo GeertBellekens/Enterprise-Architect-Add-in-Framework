@@ -26,7 +26,7 @@ namespace EAAddinFramework.SchemaBuilder
 				throw new NotImplementedException();
 			}
 		}
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Association subsetAssociation {get;set;}
+		public UML.Classes.Kernel.Association subsetAssociation {get;set;}
 		
 		public List<SBF.SchemaElement> relatedElements {
 			get 
@@ -108,6 +108,9 @@ namespace EAAddinFramework.SchemaBuilder
 					this.copyAssociationEndProperties(sourceAssociationSourceEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
 					//copy target end properties
 					this.copyAssociationEndProperties(sourceAssociationTargetEnd,((UTF_EA.Association) this.subsetAssociation).targetEnd);
+					//copy tagged values
+					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
+					//save all changes
 					this.subsetAssociation.save();
 				}
 			}
@@ -121,11 +124,6 @@ namespace EAAddinFramework.SchemaBuilder
 			target.isComposite = source.isComposite;
 			//target.save(); (should be included in the association save
 			
-		}
-		private void copyTaggedValues ()
-		{
-			//TODO
-		}
-			
+		}			
 	}
 }

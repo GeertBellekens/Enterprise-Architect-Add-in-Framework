@@ -150,5 +150,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override string guid 
+	{
+		get 
+		{
+			//the return type doesn't have a guid, so we return closes thing, the guid of the operation
+			return this.wrappedOperation.MethodGUID;
+		}
+	}
   }
 }

@@ -1353,6 +1353,12 @@
             </summary>
             <returns>the name as ToString</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            copies the tagged values from the source as tagged values of this element
+            </summary>
+            <param name="sourceElement"></param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.

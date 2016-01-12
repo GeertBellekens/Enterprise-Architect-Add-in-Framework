@@ -299,5 +299,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return this.wrappedAssociationEnd.TaggedValues;
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{	//association ends don't have their own guid, so the closes thing is the guid of the association
+			return ((Association)this.owningAssociation).guid;
+		}
+	}
   }
 }

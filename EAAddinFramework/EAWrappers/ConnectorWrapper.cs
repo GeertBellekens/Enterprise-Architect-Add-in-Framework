@@ -385,5 +385,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.WrappedConnector.TaggedValues;
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{
+			return this.WrappedConnector.ConnectorGUID;
+		}
+	}
   }
 }

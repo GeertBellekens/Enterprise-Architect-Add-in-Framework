@@ -161,5 +161,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return this.wrappedParameter.TaggedValues;
 		}
 	}
+  	
+	public override string guid 
+	{
+		get 
+		{
+			return this.wrappedParameter.ParameterGUID;
+		}
+	}
   }
 }

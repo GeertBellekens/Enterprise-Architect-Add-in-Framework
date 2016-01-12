@@ -66,5 +66,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+  	
+	public override string guid {
+		get 
+		{   //no guid available
+			throw new NotImplementedException();
+		}
+	}
   }
 }

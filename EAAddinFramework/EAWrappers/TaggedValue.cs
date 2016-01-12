@@ -38,7 +38,18 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 		}
 		set
 		{
-			throw new NotImplementedException();
+			if (value is string)
+			{
+				this.eaStringValue = (string)value;
+			}
+			else if (value is Element)
+			{
+				this.eaStringValue = ((Element)value).guid;
+			}
+			else
+			{
+				this.eaStringValue = value.ToString();
+			}
 		}
 	}
 	

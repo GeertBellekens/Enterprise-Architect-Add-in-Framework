@@ -8,10 +8,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 public class AttributeTag : TaggedValue
 {
 
-	internal global::EA.AttributeTag wrappedAttributeTag {get;set;}
+	internal global::EA.AttributeTag wrappedTaggedValue {get;set;}
 	internal AttributeTag(Model model, global::EA.AttributeTag eaTag):base(model)
     {
-      this.wrappedAttributeTag = eaTag;
+      this.wrappedTaggedValue = eaTag;
     }
 
 	
@@ -19,10 +19,11 @@ public class AttributeTag : TaggedValue
 	{
 		get 
 		{
-			return this.wrappedAttributeTag.Value;
+			return this.wrappedTaggedValue.Value;
 		}
-		set {
-			throw new NotImplementedException();
+		set 
+		{
+			this.wrappedTaggedValue.Value = value;
 		}
 	}
 	
@@ -30,7 +31,7 @@ public class AttributeTag : TaggedValue
 	{
 		get 
 		{
-			return this.wrappedAttributeTag.Name;
+			return this.wrappedTaggedValue.Name;
 		}
 		set 
 		{
@@ -41,7 +42,7 @@ public class AttributeTag : TaggedValue
 	public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner {
 		get 
 		{
-			return this.model.getAttributeByID(this.wrappedAttributeTag.AttributeID);
+			return this.model.getAttributeByID(this.wrappedTaggedValue.AttributeID);
 		}
 		set {
 			throw new NotImplementedException();
@@ -52,13 +53,13 @@ public class AttributeTag : TaggedValue
 	{
 		get 
 		{
-			return this.wrappedAttributeTag.TagGUID;
+			return this.wrappedTaggedValue.TagGUID;
 		}
 	}
 	
 	public override void save()
 	{
-		this.wrappedAttributeTag.Update();
+		this.wrappedTaggedValue.Update();
 	}
 }
 }
