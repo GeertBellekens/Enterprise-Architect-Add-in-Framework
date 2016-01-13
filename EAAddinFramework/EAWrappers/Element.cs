@@ -190,14 +190,38 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 	/// <summary>
 	/// copies the tagged values from the source as tagged values of this element
+	/// if a tagged value already exists the value is copied. Else a new tagged value is created
 	/// </summary>
-	/// <param name="sourceElement"></param>
+	/// <param name="sourceElement">the element to copy the tagged values from</param>
 	public virtual void copyTaggedValues(Element sourceElement)
 	{
 		foreach (TaggedValue taggedValue in sourceElement.taggedValues) 
 		{
-			TaggedValue newTaggedValue = this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
+			//first check if the tagged value exists 
+			TaggedValue existingTaggedValue = this.getTaggedValue(taggedValue.name);
+			if (existingTaggedValue != null)
+			{
+				//if it exists then we copy the value and save it
+				existingTaggedValue.eaStringValue = taggedValue.eaStringValue;
+				existingTaggedValue.save();
+			}
+			else
+			{
+				// if it doesn't exist we create a new one 
+				TaggedValue newTaggedValue = this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
+			}
 		}
+	}
+	public virtual TaggedValue getTaggedValue(string name)
+	{
+		foreach (TaggedValue taggedValue in this.taggedValues) 
+		{
+			if (taggedValue.name == name)
+			{
+				return taggedValue;
+			}
+		}
+		return null;
 	}
 
   }

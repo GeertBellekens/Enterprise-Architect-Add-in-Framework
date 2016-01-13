@@ -49,6 +49,8 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subSetProperty.type = this.sourceProperty.type;
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;			
 			((UTF_EA.Element) this.subSetProperty).save();
+			//copy tagged values
+			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
 			return this.subSetProperty;
 		}
 	}

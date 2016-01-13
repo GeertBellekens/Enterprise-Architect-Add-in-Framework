@@ -108,10 +108,11 @@ namespace EAAddinFramework.SchemaBuilder
 					this.copyAssociationEndProperties(sourceAssociationSourceEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
 					//copy target end properties
 					this.copyAssociationEndProperties(sourceAssociationTargetEnd,((UTF_EA.Association) this.subsetAssociation).targetEnd);
-					//copy tagged values
-					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
 					//save all changes
 					this.subsetAssociation.save();
+					//copy tagged values
+					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
+					
 				}
 			}
 			return this.subsetAssociation as UML.Classes.Kernel.Association;

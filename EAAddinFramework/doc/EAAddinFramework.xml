@@ -1356,8 +1356,9 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element)">
             <summary>
             copies the tagged values from the source as tagged values of this element
+            if a tagged value already exists the value is copied. Else a new tagged value is created
             </summary>
-            <param name="sourceElement"></param>
+            <param name="sourceElement">the element to copy the tagged values from</param>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one

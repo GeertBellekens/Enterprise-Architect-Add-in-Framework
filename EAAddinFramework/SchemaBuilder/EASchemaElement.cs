@@ -143,6 +143,9 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 			((UTF_EA.Element) this.subsetElement).save();
+			//copy tagged values
+			((UTF_EA.Element) this.subsetElement).copyTaggedValues((UTF_EA.Element)this.sourceElement);
+
 			return this.subsetElement;
 		}		
 		
