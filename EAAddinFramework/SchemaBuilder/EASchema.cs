@@ -101,6 +101,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					schemaElement.createSubsetAssociations();
 				}
+				schemaElement.resolveAttributetypes(this.schemaElements);
 			}
 			// and to resolve the attributes types to subset types if required
 			

@@ -2521,6 +2521,13 @@
             duplicates the asociations in the schema to associations between schema elements
             </summary>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.resolveAttributetypes(System.Collections.Generic.HashSet{SchemaBuilderFramework.SchemaElement})">
+            <summary>
+            Checks if the attribute type is present as the source element of one of the schema elements
+            If it finds a match the type is set to the subset elemnt of this schema element
+            </summary>
+            <param name="schemaElements"></param>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">
             <summary>
             Description of EASchemaProperty.
@@ -2539,6 +2546,13 @@
             Creates the subset property in the subsetElement of the owning SchemaElement
             </summary>
             <returns>the new property</returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.resolveAttributeType(System.Collections.Generic.HashSet{SchemaBuilderFramework.SchemaElement})">
+            <summary>
+            Checks if the attribute type is present as the source element of one of the schema elements
+            If it finds a match the type is set to the subset elemnt of this schema element
+            </summary>
+            <param name="schemaElements">the list of schema elements in the schema</param>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.sourceProperty">
             <summary>

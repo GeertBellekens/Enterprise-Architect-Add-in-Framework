@@ -53,5 +53,25 @@ namespace EAAddinFramework.SchemaBuilder
 			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
 			return this.subSetProperty;
 		}
+		/// <summary>
+		/// Checks if the attribute type is present as the source element of one of the schema elements
+		/// If it finds a match the type is set to the subset elemnt of this schema element
+		/// </summary>
+		/// <param name="schemaElements">the list of schema elements in the schema</param>
+		public void resolveAttributeType(HashSet<SBF.SchemaElement> schemaElements)
+		{
+			foreach (EASchemaElement element in schemaElements) 
+			{
+				if (element.sourceElement != null && 
+				    element.subsetElement != null &&
+				    this.subSetProperty != null &&
+				    element.sourceElement.Equals(this.subSetProperty.type))
+				{
+					//replace the type if it matches the source element
+					this.subSetProperty.type = element.subsetElement;
+					((UTF_EA.Attribute)this.subSetProperty).save();
+				}
+			}
+		}
 	}
 }

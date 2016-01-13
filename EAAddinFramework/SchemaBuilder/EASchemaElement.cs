@@ -15,6 +15,7 @@ namespace EAAddinFramework.SchemaBuilder
 		private EA.SchemaType wrappedSchemaType;
 		private UTF_EA.Model model;
 		private EASchema ownerSchema;
+		private HashSet<SBF.SchemaProperty> _schemaProperties;
 		
 		public EASchemaElement(UTF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
 		{
@@ -80,15 +81,18 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				HashSet<SBF.SchemaProperty> properties = new HashSet<SBF.SchemaProperty>();
-				foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
+				if (this._schemaProperties == null)
 				{
-					if (wrapper is EASchemaProperty)
+					this._schemaProperties = new HashSet<SBF.SchemaProperty>();
+					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
 					{
-						properties.Add((SBF.SchemaProperty)wrapper );
+						if (wrapper is EASchemaProperty)
+						{
+							this._schemaProperties.Add((SBF.SchemaProperty)wrapper );
+						}
 					}
 				}
-				return properties;
+				return this._schemaProperties;
 			}
 			set 
 			{
@@ -157,6 +161,18 @@ namespace EAAddinFramework.SchemaBuilder
 			foreach (SBF.SchemaAssociation schemaAssociation in this.schemaAssociations) 
 			{
 				schemaAssociation.createSubsetAssociation();
+			}
+		}
+		/// <summary>
+		/// Checks if the attribute type is present as the source element of one of the schema elements
+		/// If it finds a match the type is set to the subset elemnt of this schema element
+		/// </summary>
+		/// <param name="schemaElements"></param>
+		public void resolveAttributetypes(HashSet<SBF.SchemaElement> schemaElements)
+		{
+			foreach (EASchemaProperty schemaProperty in this.schemaProperties) 
+			{
+				schemaProperty.resolveAttributeType(schemaElements);
 			}
 		}
 	}
