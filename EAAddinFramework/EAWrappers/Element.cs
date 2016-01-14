@@ -59,7 +59,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     internal abstract void saveElement();
 
-    public void save(){
+    public virtual void save(){
       this.saveElement();
       foreach (UML.Classes.Kernel.Element element in this.ownedElements) {
         ((Element)element).save();

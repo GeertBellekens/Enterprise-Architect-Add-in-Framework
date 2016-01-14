@@ -294,7 +294,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-
+    /// <summary>
+    /// Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
+    /// If not then the aggregationkind of the other set is reset to none.
+    /// </summary>
+	public override void save()
+	{
+		this.WrappedConnector.Update();
+		if (this.sourceEnd.aggregation == UML.Classes.Kernel.AggregationKind.none)
+		{
+			this.sourceEnd.save();
+			this.targetEnd.save();
+		}else
+		{
+			this.targetEnd.save();
+			this.sourceEnd.save();
+		}
+	}
+    
     internal override void saveElement()
     {
     	this.wrappedConnector.Update();

@@ -11,6 +11,9 @@ namespace EAAddinFramework.SchemaBuilder
 	/// </summary>
 	public class EASchemaBuilderFactory:SBF.SchemaBuilderFactory
 	{
+		public const string sourceAttributeTagName = "sourceAttribute";
+        public const string sourceAssociationTagName = "sourceAssociation";
+        
 		private UTF_EA.Model EAModel {get {return (UTF_EA.Model)this.model;}}
 		private EASchema currentSchema;
 		
@@ -22,7 +25,32 @@ namespace EAAddinFramework.SchemaBuilder
 	      }
 	      return factory;
 	    }
-
+		
+		/// <summary>
+		/// in order for the relations to work we need tagged value types "sourceAttribute and "sourceAssociation".
+		/// If they don't exists we add them
+		/// </summary>
+		/// <param name="model">the model</param>
+		public void checkTaggedValueTypes()
+		{
+			if (!this.EAModel.taggedValueTypeExists(sourceAttributeTagName))
+			{
+				string sourceAttributeTagDetail = 
+@"Type=RefGUID;
+Values=Attribute;
+AppliesTo=Attribute;";
+					this.EAModel.addTaggedValueType(sourceAttributeTagName,"is derived from this Attribute",sourceAttributeTagDetail);
+			}
+			if (!this.EAModel.taggedValueTypeExists(sourceAssociationTagName))
+			{
+				string sourceAssociationTagDetail = 
+@"Type=RefGUID;
+Values=Association,Aggregation;
+AppliesTo=Association,Aggregation;";
+					this.EAModel.addTaggedValueType(sourceAssociationTagName,"is derived from this Association",sourceAssociationTagDetail);
+			}
+		}
+		
 	    /// returns the singleton instance for a new model
 	    public static new EASchemaBuilderFactory getInstance()
 	    {
@@ -65,5 +93,6 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			return new EASchemaAssociation(this.EAModel,(EASchemaElement) owner, (EA.SchemaProperty) objectToWrap);
 		}
+		
 	}
 }

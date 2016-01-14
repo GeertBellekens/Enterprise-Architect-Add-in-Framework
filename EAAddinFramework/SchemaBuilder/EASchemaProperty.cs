@@ -47,10 +47,14 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
 			this.subSetProperty.type = this.sourceProperty.type;
-			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;			
+			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
+			this.subSetProperty.lower = this.sourceProperty.lower;
+			this.subSetProperty.upper = this.sourceProperty.upper;
 			((UTF_EA.Element) this.subSetProperty).save();
 			//copy tagged values
 			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
+			//add tagged value with reference to source association
+			((UTF_EA.Element)this.subSetProperty).addTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName,((UTF_EA.Element)this.sourceProperty).guid);
 			return this.subSetProperty;
 		}
 		/// <summary>

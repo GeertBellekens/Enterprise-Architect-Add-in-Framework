@@ -146,10 +146,16 @@ namespace EAAddinFramework.SchemaBuilder
 					string relatedElementName = relatedElement.name;	
 				}
 			}
+			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();
 			//copy tagged values
 			((UTF_EA.Element) this.subsetElement).copyTaggedValues((UTF_EA.Element)this.sourceElement);
-
+			//add a trace relation from the subset element to the source element
+			UTF_EA.ConnectorWrapper trace = (UTF_EA.ConnectorWrapper)this.model.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.subsetElement, string.Empty);
+			trace.addStereotype(this.model.factory.createStereotype(trace, "trace"));
+			trace.target = this.sourceElement;
+			trace.save();
+			//return the new element
 			return this.subsetElement;
 		}		
 		

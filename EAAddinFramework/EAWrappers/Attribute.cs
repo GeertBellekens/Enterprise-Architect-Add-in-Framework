@@ -196,14 +196,46 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public UML.Classes.Kernel.UnlimitedNatural upper {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+	public UML.Classes.Kernel.UnlimitedNatural upper 
+    {
+      get {return this.multiplicity.upper;}
+      set 
+      { 
+      	this.WrappedAttribute.UpperBound = value.ToString();
+      }
     }
-    
-    public uint lower {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+
+    public uint lower 
+    {
+      get { return this.multiplicity.lower ;}
+      set 
+      { 
+      	this.WrappedAttribute.LowerBound = value.ToString();
+      }
+    }
+    public Multiplicity multiplicity 
+    {
+    	get
+    	{
+    		//default for attributes is 1..1
+    		string lowerString = "1";
+    		string upperString = "1";
+    		if (this.WrappedAttribute.LowerBound.Length > 0)
+    		{
+    			lowerString = this.WrappedAttribute.LowerBound;
+    		}
+    		if (this.WrappedAttribute.UpperBound.Length > 0)
+    		{
+    			upperString = this.WrappedAttribute.UpperBound;
+    		}
+
+    		return new Multiplicity(lowerString, upperString);
+    	}
+    	set
+    	{
+    		this.WrappedAttribute.LowerBound = value.lower.ToString();
+    		this.WrappedAttribute.UpperBound = value.upper.ToString();
+    	}
     }
     
     public UML.Classes.Kernel.ValueSpecification upperValue {

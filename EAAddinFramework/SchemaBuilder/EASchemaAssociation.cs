@@ -89,20 +89,23 @@ namespace EAAddinFramework.SchemaBuilder
 					//copy association properties
 					this.subsetAssociation.name = this.sourceAssociation.name;
 					this.subsetAssociation.stereotypes = this.sourceAssociation.stereotypes;
+					//save all changes
+					this.subsetAssociation.save();
 					//copy the association end properties
 					//find the source associations ends that correspond with the subset association source and end
 					UTF_EA.AssociationEnd sourceAssociationSourceEnd = null;
 					UTF_EA.AssociationEnd sourceAssociationTargetEnd = null; 
-					foreach (UML.Classes.Kernel.Property memberEnd in this.sourceAssociation.memberEnds)
+
+					int sourceID = ((UTF_EA.ElementWrapper)((UTF_EA.Association) this.sourceAssociation).source).id;
+					if (this.wrappedProperty.Parent == sourceID)
 					{
-						if (this.owner.sourceElement.Equals(memberEnd.type))
-						{
-							sourceAssociationSourceEnd = (UTF_EA.AssociationEnd) memberEnd;
-						}
-						else
-						{
-							sourceAssociationTargetEnd = (UTF_EA.AssociationEnd) memberEnd;
-						}
+						sourceAssociationSourceEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
+						sourceAssociationTargetEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).targetEnd;
+					}
+					else
+					{
+						sourceAssociationSourceEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).targetEnd;
+						sourceAssociationTargetEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
 					}
 					//copy source end properties
 					this.copyAssociationEndProperties(sourceAssociationSourceEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
@@ -112,6 +115,8 @@ namespace EAAddinFramework.SchemaBuilder
 					this.subsetAssociation.save();
 					//copy tagged values
 					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
+					//add tagged value with reference to source association
+					((UTF_EA.Association)this.subsetAssociation).addTaggedValue(EASchemaBuilderFactory.sourceAssociationTagName,((UTF_EA.Association)this.sourceAssociation).guid);
 					
 				}
 			}
@@ -122,9 +127,7 @@ namespace EAAddinFramework.SchemaBuilder
 			target.name = source.name;
 			target.multiplicity = source.multiplicity;
 			target._isNavigable = source._isNavigable;
-			target.isComposite = source.isComposite;
-			//target.save(); (should be included in the association save
-			
+			target.aggregation = source.aggregation;
 		}			
 	}
 }

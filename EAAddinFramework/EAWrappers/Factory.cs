@@ -197,7 +197,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       (global::EA.Connector connector)
     {
       switch (connector.Type) {
-        case "Generalization":
+    	case "Abstraction":
+    	  return new Abstraction(this.model as Model, connector);
+    	case "Generalization":
           return new Generalization(this.model as Model, connector);
         case "Association":
           return new Association(this.model as Model, connector);
@@ -666,11 +668,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     internal bool isEAConnector(System.Type type){
       return type.Name == "Dependency"
-          || type.Name == "Realization"
-          || type.Name == "Generalization"
-          || type.Name == "Association"
-          || type.Name == "InterfaceRealization"
-          || type.Name == "Message";
+	      || type.Name == "Realization"
+	      || type.Name == "Generalization"
+	      || type.Name == "Association"
+	      || type.Name == "InterfaceRealization"
+	      || type.Name == "Message"
+	      || type.Name == "Substitution"
+	      || type.Name == "Usage"
+	      || type.Name == "ElementImport"
+	      || type.Name == "PackageImport"
+	      || type.Name == "PackageMerge"
+      	  || type.Name == "Abstraction";
+      
     }
     
     public override UML.Diagrams.DiagramElement createNewDiagramElement

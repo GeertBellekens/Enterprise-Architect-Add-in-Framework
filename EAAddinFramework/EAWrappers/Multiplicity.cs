@@ -28,12 +28,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			set
 			{
 				string[] parts = value.Split(new string[]{delimiter},StringSplitOptions.None);
-				if (parts.Length >= 2)
+				if (value.Length > 0 && parts.Length >= 2)
 				{
 					this.lower = uint.Parse(parts[0]);
 					this.upper = new UnlimitedNatural(parts[1]);
 				}
-				else if (parts.Length == 1)
+				else if (value.Length > 0 && parts.Length == 1)
 				{
 					if (parts[0] == UnlimitedNatural.unlimited)
 					{	//[*] means [0..*]
@@ -57,6 +57,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public Multiplicity(string cardinality)
 		{
 			this.EACardinality = cardinality;			
+		}
+		public Multiplicity(string lowerString, string upperString)
+		{
+			if (lowerString.Length > 0 && upperString.Length > 0)
+		    {
+		    	this.EACardinality = lowerString + ".." + upperString;
+		    }
+			else
+			{
+				this.EACardinality = lowerString+upperString;
+			}
 		}
 		
 	}

@@ -1369,5 +1369,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		int EAElementID = this.wrappedModel.InvokeConstructPicker("IncludedTypes=Package");
 		return this.getElementWrapperByID(EAElementID) as UML.Classes.Kernel.Package;
 	}
+  	/// <summary>
+  	/// checks if a tagged value type with the given name exists in the current model
+  	/// </summary>
+  	/// <param name="tagName">the name of the tagged value type</param>
+  	/// <returns>true if it exists</returns>
+	public bool taggedValueTypeExists(string tagName)
+	{
+		foreach (global::EA.PropertyType taggedValueType in this.wrappedModel.PropertyTypes)
+		{
+			if (taggedValueType.Tag == tagName)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+  	
+	public void addTaggedValueType(string tagName, string tagDescription, string tagDetail)
+	{
+		global::EA.PropertyType taggedValueType = (global::EA.PropertyType)this.wrappedModel.PropertyTypes.AddNew(tagName,"");
+		taggedValueType.Description = tagDescription;
+		taggedValueType.Detail = tagDetail;
+		taggedValueType.Update();
+	}
   }
 }

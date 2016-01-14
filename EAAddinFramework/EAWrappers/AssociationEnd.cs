@@ -273,7 +273,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	get
     	{
-    		return new Multiplicity(this.wrappedAssociationEnd.Cardinality);
+    		if (this.wrappedAssociationEnd.Cardinality.Length > 0)
+    		{
+    			return new Multiplicity(this.wrappedAssociationEnd.Cardinality);
+    		}
+    		else
+    		{
+    			return new Multiplicity("0..1");
+    		}
     	}
     	set
     	{
@@ -300,7 +307,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 	}
   	
-	public override string guid {
+	public override string guid 
+	{
 		get 
 		{	//association ends don't have their own guid, so the closes thing is the guid of the association
 			return ((Association)this.owningAssociation).guid;

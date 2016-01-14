@@ -1301,11 +1301,6 @@
             deletes the workingset from the database
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
-            <summary>
-            Description of Action.
-            </summary>
-        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getOwner``1">
             returns the owner of the given type
             This operation will keep on looking upwards through the owners until 
@@ -1367,6 +1362,50 @@
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.taggedValues">
             <summary>
             default empty implementation
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.save">
+            <summary>
+            Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
+            If not then the aggregationkind of the other set is reset to none.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
+            <summary>
+            adding both the start and the end element to the diagram will automatically add the connector to the diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addRelatedElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds a related element to this connector.
+            This operation checks if the source or target is empty and then adds the related element to the empty spot.
+            If none of the two are empty then the target is being replaced
+            </summary>
+            <param name="relatedElement"></param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
+            <summary>
+            not fully correct, but we will return the element at the source of the relation
+            TODO: fix this so it uses the actual ownership as prescribed by UML
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
+            the stereotypes defined on this Relationship
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
+            returns the related elements.
+            In EA the Connectoris a binary relationship. So only two Elements will 
+            ever be returned.
+            If there is a linked feature then the linked feature will be returned instead of the EA.Element.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
+            Each end represents participation of instances of the classifier 
+            connected to the end in links of the association. This is
+            an ordered association. Subsets Namespace::member.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
+            <summary>
+            Description of Action.
             </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
@@ -1568,39 +1607,6 @@
             <summary>
             The elements that have this diagram as composite diagram
             </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
-            <summary>
-            adding both the start and the end element to the diagram will automatically add the connector to the diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addRelatedElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            adds a related element to this connector.
-            This operation checks if the source or target is empty and then adds the related element to the empty spot.
-            If none of the two are empty then the target is being replaced
-            </summary>
-            <param name="relatedElement"></param>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
-            <summary>
-            not fully correct, but we will return the element at the source of the relation
-            TODO: fix this so it uses the actual ownership as prescribed by UML
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
-            the stereotypes defined on this Relationship
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
-            returns the related elements.
-            In EA the Connectoris a binary relationship. So only two Elements will 
-            ever be returned.
-            If there is a linked feature then the linked feature will be returned instead of the EA.Element.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
-            Each end represents participation of instances of the classifier 
-            connected to the end in links of the association. This is
-            an ordered association. Subsets Namespace::member.
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
             isStatic is not supported by AssociationEnd in EA
@@ -2257,6 +2263,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.taggedValueTypeExists(System.String)">
+            <summary>
+            checks if a tagged value type with the given name exists in the current model
+            </summary>
+            <param name="tagName">the name of the tagged value type</param>
+            <returns>true if it exists</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
             <summary>
             returns the full path of the running ea.exe
@@ -2471,6 +2484,13 @@
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance(TSF.UmlToolingFramework.UML.UMLModel)">
             returns the singleton instance for the given model.
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.checkTaggedValueTypes">
+            <summary>
+            in order for the relations to work we need tagged value types "sourceAttribute and "sourceAssociation".
+            If they don't exists we add them
+            </summary>
+            <param name="model">the model</param>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance">
             returns the singleton instance for a new model

@@ -93,7 +93,7 @@ namespace EAAddinFramework.SchemaBuilder
 					schemaElement.createSubsetElement(destinationPackage);
 				}
 			}
-			//TODO: then loop them again to create the associations
+			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
 				//only create subset elements for classes, not for datatypes
@@ -101,10 +101,10 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					schemaElement.createSubsetAssociations();
 				}
+				// and to resolve the attributes types to subset types if required
 				schemaElement.resolveAttributetypes(this.schemaElements);
 			}
-			// and to resolve the attributes types to subset types if required
-			
+
 		}
 	}
 }
