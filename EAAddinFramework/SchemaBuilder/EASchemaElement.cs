@@ -181,5 +181,15 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaProperty.resolveAttributeType(schemaElements);
 			}
 		}
+		/// <summary>
+		/// adds a dependency from the attributes owner to the type of the attributes
+		/// </summary>
+		public void addAttributeTypeDependencies()
+		{
+			foreach (EASchemaProperty schemaProperty in this.schemaProperties) 
+			{
+				schemaProperty.addAttributeTypeDependency();
+			}
+		}
 	}
 }

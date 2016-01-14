@@ -103,6 +103,8 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 				// and to resolve the attributes types to subset types if required
 				schemaElement.resolveAttributetypes(this.schemaElements);
+				//and add a dependency from the schemaElement to the type of the attributes
+				schemaElement.addAttributeTypeDependencies();
 			}
 
 		}

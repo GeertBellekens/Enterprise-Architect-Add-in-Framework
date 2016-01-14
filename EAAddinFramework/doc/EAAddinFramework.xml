@@ -2548,6 +2548,11 @@
             </summary>
             <param name="schemaElements"></param>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addAttributeTypeDependencies">
+            <summary>
+            adds a dependency from the attributes owner to the type of the attributes
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">
             <summary>
             Description of EASchemaProperty.
@@ -2573,6 +2578,11 @@
             If it finds a match the type is set to the subset elemnt of this schema element
             </summary>
             <param name="schemaElements">the list of schema elements in the schema</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.addAttributeTypeDependency">
+            <summary>
+            adds a dependency from the attributes owner to the type of the attributes
+            </summary>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.sourceProperty">
             <summary>

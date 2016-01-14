@@ -77,5 +77,31 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 		}
+		/// <summary>
+		/// adds a dependency from the attributes owner to the type of the attributes
+		/// </summary>
+		public void addAttributeTypeDependency()
+		{
+			bool dependencyFound = false;
+			//check if a dependency to the type already exists
+			if (this.owner.subsetElement != null && this.subSetProperty != null)
+			{
+				foreach (UTF_EA.Dependency dependency in this.owner.subsetElement.getRelationships<UTF_EA.Dependency>()) 
+				{
+					if (dependency.target.Equals(this.subSetProperty.type))
+					{
+						dependencyFound = true;
+						break;
+					}
+				}
+				if (!dependencyFound)
+				{
+					//no dependency exists yet. Create a new one.
+					UTF_EA.Dependency dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,"AttributeType");
+					dependency.addRelatedElement(this.subSetProperty.type);
+					dependency.save();
+				}
+			}
+		}
 	}
 }
