@@ -16,6 +16,8 @@ namespace EAAddinFramework.SchemaBuilder
 		private UTF_EA.Model model;
 		private EASchema ownerSchema;
 		private HashSet<SBF.SchemaProperty> _schemaProperties;
+		private UTF_EA.ElementWrapper _sourceElement;
+		private HashSet<SBF.SchemaAssociation> _schemaAssociations;
 		
 		public EASchemaElement(UTF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
 		{
@@ -24,11 +26,15 @@ namespace EAAddinFramework.SchemaBuilder
 			this.wrappedSchemaType = objectToWrap;
 		}
 		
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier sourceElement 
+		public UML.Classes.Kernel.Classifier sourceElement 
 		{
 			get 
 			{
-				return this.model.getElementWrapperByID(this.wrappedSchemaType.TypeID) as UML.Classes.Kernel.Classifier;
+				if (_sourceElement == null)
+				{
+					this._sourceElement = this.model.getElementWrapperByID(this.wrappedSchemaType.TypeID);
+				}
+				return this._sourceElement as UML.Classes.Kernel.Classifier;
 			}
 			set 
 			{
@@ -104,15 +110,18 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				HashSet<SBF.SchemaAssociation> associations = new HashSet<SBF.SchemaAssociation>();
-				foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
+				if (this._schemaAssociations == null)
 				{
-					if (wrapper is EASchemaAssociation)
+					this._schemaAssociations = new HashSet<SBF.SchemaAssociation>();
+					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
 					{
-						associations.Add((SBF.SchemaAssociation)wrapper );
+						if (wrapper is EASchemaAssociation)
+						{
+							this._schemaAssociations.Add((SBF.SchemaAssociation)wrapper );
+						}
 					}
 				}
-				return associations;				
+				return this._schemaAssociations;			
 			}
 			set 
 			{
