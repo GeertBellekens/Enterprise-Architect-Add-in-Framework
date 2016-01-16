@@ -21,10 +21,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
     
-    public override HashSet<UML.Classes.Kernel.Comment> ownedComments {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get { throw new NotImplementedException(); }

@@ -12,6 +12,8 @@ namespace EAAddinFramework.SchemaBuilder
 	/// </summary>
 	public class EASchemaAssociation : EASchemaPropertyWrapper, SBF.SchemaAssociation
 	{
+		private List<SBF.SchemaElement> _relatedElements;
+		private UTF_EA.Association _sourceAssociation;
 
 		public EASchemaAssociation(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap)
 		{
@@ -20,7 +22,11 @@ namespace EAAddinFramework.SchemaBuilder
 		public UML.Classes.Kernel.Association sourceAssociation {
 			get 
 			{
-				return this.model.getRelationByGUID(this.wrappedProperty.GUID) as UML.Classes.Kernel.Association;
+				if (this._sourceAssociation == null)
+				{
+					this._sourceAssociation = (UTF_EA.Association)this.model.getRelationByGUID(this.wrappedProperty.GUID);
+				}
+				return this._sourceAssociation;
 			}
 			set {
 				throw new NotImplementedException();
@@ -28,19 +34,23 @@ namespace EAAddinFramework.SchemaBuilder
 		}
 		public UML.Classes.Kernel.Association subsetAssociation {get;set;}
 		
-		public List<SBF.SchemaElement> relatedElements {
+		public List<SBF.SchemaElement> relatedElements 
+		{
 			get 
 			{
-				List<SBF.SchemaElement> elements = new List<SchemaBuilderFramework.SchemaElement>();
-				foreach (UML.Classes.Kernel.Element element in this.sourceAssociation.relatedElements)
+				if (this._relatedElements == null)
 				{
-					SBF.SchemaElement relatedSchemaElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(element);
-					if (relatedSchemaElement != null)
+					this._relatedElements= new List<SchemaBuilderFramework.SchemaElement>();
+					foreach (UML.Classes.Kernel.Element element in this.sourceAssociation.relatedElements)
 					{
-						elements.Add(relatedSchemaElement);
+						SBF.SchemaElement relatedSchemaElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(element);
+						if (relatedSchemaElement != null)
+						{
+							this._relatedElements.Add(relatedSchemaElement);
+						}
 					}
 				}
-				return elements;
+				return this._relatedElements;
 			}
 			set 
 			{

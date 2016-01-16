@@ -253,10 +253,6 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
 
-    public override HashSet<UML.Classes.Kernel.Comment> ownedComments {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
     
     public override UML.Classes.Kernel.Element owner {
       get { return this.model.getElementWrapperByID(this.wrappedAttribute.ParentID);}

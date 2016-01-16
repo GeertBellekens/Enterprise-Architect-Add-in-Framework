@@ -21,10 +21,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { /* do nothing */  }
     }
 
-    public override HashSet<UML.Classes.Kernel.Comment> ownedComments {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
 
     public override UML.Classes.Kernel.Element owner {
       get { throw new NotImplementedException(); }

@@ -12,6 +12,7 @@ namespace EAAddinFramework.SchemaBuilder
 	/// </summary>
 	public class EASchemaProperty: EASchemaPropertyWrapper, SBF.SchemaProperty
 	{
+		private UTF_EA.Attribute _sourceProperty;
 		/// <summary>
 		/// constructor. Nothing specific, just calling base constructor
 		/// </summary>
@@ -27,7 +28,11 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				return this.model.getAttributeByGUID(this.wrappedProperty.GUID);
+				if (this._sourceProperty == null)
+				{
+					this._sourceProperty = this.model.getAttributeByGUID(this.wrappedProperty.GUID);
+				}
+				return this._sourceProperty;
 			}
 			set 
 			{

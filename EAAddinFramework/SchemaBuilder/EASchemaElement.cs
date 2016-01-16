@@ -135,6 +135,8 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.sourceElement.name);
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
+			//notes
+			this.subsetElement.ownedComments = this.sourceElement.ownedComments;
 			//loop the properties
 			foreach (EASchemaProperty property in this.schemaProperties) 
 			{

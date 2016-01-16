@@ -802,6 +802,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return new ParameterTag((Model)this.model,objectToWrap);
 	}
+	public DescriptionComment createDescriptionComment(Element owner)
+	{
+		return new DescriptionComment((Model)this.model,owner);
+	}
 	public EAAddinFramework.EASpecific.User createUser(string login, string firstname, string lastname)
 	{
 		return new EAAddinFramework.EASpecific.User((Model)this.model,login,firstname,lastname);

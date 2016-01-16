@@ -14,11 +14,11 @@ namespace EAAddinFramework.SchemaBuilder
 	{
 		protected UTF_EA.Model model;
 		protected EA.SchemaProperty wrappedProperty;
-		protected EASchemaElement ownerSchemaElement;
+		protected EASchemaElement _owner;
 		
 		public EASchemaPropertyWrapper(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap)
 		{
-			this.ownerSchemaElement = owner;
+			this._owner = owner;
 			this.model = model;
 			this.wrappedProperty = objectToWrap;
 		}
@@ -27,11 +27,11 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				return this.ownerSchemaElement;
+				return this._owner;
 			}
 			set 
 			{
-				this.ownerSchemaElement = (EASchemaElement) value;
+				this._owner = (EASchemaElement) value;
 			}
 		}
 

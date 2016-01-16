@@ -31,10 +31,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       set { throw new NotImplementedException(); }
     }
 
-    public override HashSet<UML.Classes.Kernel.Comment> ownedComments {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
-    }
     /// <summary>
     /// not fully correct, but we will return the element at the source of the relation
     /// TODO: fix this so it uses the actual ownership as prescribed by UML

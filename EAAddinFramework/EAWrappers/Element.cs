@@ -14,8 +14,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public abstract String notes { get; set; }
     public abstract HashSet<UML.Classes.Kernel.Element> ownedElements 
       { get; set; }
-    public abstract HashSet<UML.Classes.Kernel.Comment> ownedComments 
-      { get; set; }
+    
+    public virtual HashSet<UML.Classes.Kernel.Comment> ownedComments
+      { 
+    	get
+    	{
+    		HashSet<UML.Classes.Kernel.Comment> comments = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Comment>();
+    		comments.Add(((Factory)this.model.factory).createDescriptionComment(this));
+    		return comments;
+    	}
+    	set
+    	{
+    		//first clear the notes
+    		string newNotes = string.Empty;
+    		foreach (DescriptionComment comment in value) 
+    		{
+    			newNotes += comment.body;
+    		}
+    		this.notes = newNotes;
+    	}
+    }
     public abstract UML.Classes.Kernel.Element owner 
       { get; set; }
     public abstract HashSet<UML.Profiles.Stereotype> stereotypes 
