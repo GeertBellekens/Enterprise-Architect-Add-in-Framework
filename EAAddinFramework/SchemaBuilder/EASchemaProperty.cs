@@ -55,6 +55,7 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 			this.subSetProperty.lower = this.sourceProperty.lower;
 			this.subSetProperty.upper = this.sourceProperty.upper;
+			this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
 			((UTF_EA.Element) this.subSetProperty).save();
 			//copy tagged values
 			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
@@ -88,24 +89,11 @@ namespace EAAddinFramework.SchemaBuilder
 		public void addAttributeTypeDependency()
 		{
 			bool dependencyFound = false;
-			//check if a dependency to the type already exists
 			if (this.owner.subsetElement != null && this.subSetProperty != null)
 			{
-				foreach (UTF_EA.Dependency dependency in this.owner.subsetElement.getRelationships<UTF_EA.Dependency>()) 
-				{
-					if (dependency.target.Equals(this.subSetProperty.type))
-					{
-						dependencyFound = true;
-						break;
-					}
-				}
-				if (!dependencyFound)
-				{
-					//no dependency exists yet. Create a new one.
-					UTF_EA.Dependency dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,"AttributeType");
-					dependency.addRelatedElement(this.subSetProperty.type);
-					dependency.save();
-				}
+				UTF_EA.Dependency dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
+				dependency.addRelatedElement(this.subSetProperty.type);
+				dependency.save();
 			}
 		}
 	}

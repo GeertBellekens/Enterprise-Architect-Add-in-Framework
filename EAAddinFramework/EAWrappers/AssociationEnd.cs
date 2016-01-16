@@ -6,7 +6,6 @@ using UML=TSF.UmlToolingFramework.UML;
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class AssociationEnd : Element , UML.Classes.Kernel.Property {
     internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
-
     private ConnectorWrapper _association { get; set; }
 
     public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
@@ -181,10 +180,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// The type of an associationend is stored in the EA.Association class
     /// itself in the fields ClientID and SupplierID
     public UML.Classes.Kernel.Type type {
-      get {
-        if( this.wrappedAssociationEnd.End == "Supplier" ) {
+      get 
+      {
+        if( this.wrappedAssociationEnd.End == "Supplier" ) 
+        {
           return this._association.target as UML.Classes.Kernel.Type;
-        } else {
+        } 
+        else 
+        {
           return this._association.source as UML.Classes.Kernel.Type;
         }
       }

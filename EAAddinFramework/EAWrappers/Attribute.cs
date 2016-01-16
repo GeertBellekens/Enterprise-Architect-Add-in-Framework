@@ -6,7 +6,8 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Attribute : Element, UML.Classes.Kernel.Property {
-    internal global::EA.Attribute wrappedAttribute { get; set; }
+    private UML.Classes.Kernel.Type _type;
+	internal global::EA.Attribute wrappedAttribute { get; set; }
     public int id
     {
     	get{return this.wrappedAttribute.AttributeID;}
@@ -164,26 +165,32 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public UML.Classes.Kernel.Type type {
-      get {
-        UML.Classes.Kernel.Type type = this.model.getElementWrapperByID
-          ( this.wrappedAttribute.ClassifierID ) as UML.Classes.Kernel.Type;
-        // check if the type is defined as an element in the model.
-        if( type == null ) {
-          // no element, create primitive type based on the name of the type
-          type = this.model.factory.createPrimitiveType
-            (this.wrappedAttribute.Type);
-        }
-        return type;
-      }
-      set {
-    		//set classifier if needed
-        if( value is ElementWrapper ) {
-          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
-        }
-    		//always set type field
-          this.wrappedAttribute.Type = value.name;
-      }
+    public UML.Classes.Kernel.Type type 
+    {
+      	get 
+      	{
+    		if (this._type == null)
+    		{
+		        this._type = this.model.getElementWrapperByID( this.wrappedAttribute.ClassifierID ) as UML.Classes.Kernel.Type;
+		        // check if the type is defined as an element in the model.
+		        if(this.type == null ) 
+		        {
+		          // no element, create primitive type based on the name of the type
+		          type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
+		        }
+    		}
+        	return this._type;
+      	}
+      	set 
+      	{
+      		this._type = value;
+	    	//set classifier if needed
+	        if( value is ElementWrapper ) {
+	          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
+	        }
+	    	//always set type field
+	        this.wrappedAttribute.Type = value.name;
+      	}
     }
     
     public bool isOrdered {

@@ -9,6 +9,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
   {
     internal global::EA.Connector wrappedConnector { get; set; }    
     private UML.Classes.Kernel.Element _owner;
+    private UML.Classes.Kernel.Element _source;
+    private UML.Classes.Kernel.Element _target;
+    private AssociationEnd _sourceEnd;
+    private AssociationEnd _targetEnd;
     public int id
     {
     	get{return this.wrappedConnector.ConnectorID;}
@@ -66,29 +70,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get 
       {
         List<UML.Classes.Kernel.Element> returnedElements =  new List<UML.Classes.Kernel.Element>();
-        
-        //add client element
-        //check first if there is a linked feature
-        UML.Classes.Kernel.Element linkedClientFeature = this.getLinkedFeature(true) as UML.Classes.Kernel.Element;
-        if (linkedClientFeature != null)
-        {
-        	returnedElements.Add(linkedClientFeature);
-        }
-        else
-        {
-        	returnedElements.Add(this.model.getElementWrapperByID(this.wrappedConnector.ClientID));
-        }
-        //add supplier element
-        //check first if there is a linked feature
-        UML.Classes.Kernel.Element linkedSupplierFeature = this.getLinkedFeature(false) as UML.Classes.Kernel.Element;
-                if (linkedSupplierFeature != null)
-        {
-        	returnedElements.Add(linkedSupplierFeature);
-        }
-        else
-        {
-        	returnedElements.Add(this.model.getElementWrapperByID(this.wrappedConnector.SupplierID));
-        }
+        returnedElements.Add(this.source);
+        returnedElements.Add(this.target);
         return returnedElements;
       }
       set { throw new NotImplementedException(); }
@@ -115,9 +98,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	return linkedFeature;
     }
     public UML.Classes.Kernel.Element target {
-      get {
-        return this.model.getElementWrapperByID
-          ( this.wrappedConnector.SupplierID );
+      get 
+      {
+      	if (this._target == null)
+      	{
+	     	 UML.Classes.Kernel.Element linkedSupplierFeature = this.getLinkedFeature(false) as UML.Classes.Kernel.Element;
+	        if (linkedSupplierFeature != null)
+	        {
+	        	this._target =linkedSupplierFeature;
+	        }
+	        else
+	        {
+	        	this._target = this.model.getElementWrapperByID(this.wrappedConnector.SupplierID);
+	        }
+      	}
+      	return this._target;
       }
       set 
       {
@@ -134,9 +129,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
     
     public UML.Classes.Kernel.Element source {
-      get {
-        return this.model.getElementWrapperByID
-          ( this.wrappedConnector.ClientID );
+      get 
+      {
+      	if (this._source == null)
+      	{
+	        //check first if there is a linked feature
+	        UML.Classes.Kernel.Element linkedClientFeature = this.getLinkedFeature(true) as UML.Classes.Kernel.Element;
+	        if (linkedClientFeature != null)
+	        {
+	        	this._source = linkedClientFeature;
+	        }
+	        else
+	        {
+	        	this._source = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
+	        }
+      	}
+      	return this._source;
       }
       set
      {
@@ -197,14 +205,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
     	get
     	{
-    		return ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd) ;
+    		if (this._sourceEnd == null)
+    		{
+    			this._sourceEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd) ;
+    		}
+    		return this._sourceEnd;
     	}
     }
     public AssociationEnd targetEnd
     {
     	get
     	{
-    		return ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd);
+    		if (this._targetEnd == null)
+    		{
+    			this._targetEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd); 
+    		}
+    		return this._targetEnd;
     	}
     }
     public bool isAbstract {

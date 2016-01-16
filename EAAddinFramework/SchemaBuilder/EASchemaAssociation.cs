@@ -98,6 +98,7 @@ namespace EAAddinFramework.SchemaBuilder
 					this.subsetAssociation.addRelatedElement(associationTarget);
 					//copy association properties
 					this.subsetAssociation.name = this.sourceAssociation.name;
+					this.subsetAssociation.ownedComments = this.sourceAssociation.ownedComments;
 					this.subsetAssociation.stereotypes = this.sourceAssociation.stereotypes;
 					//save all changes
 					this.subsetAssociation.save();
@@ -130,7 +131,7 @@ namespace EAAddinFramework.SchemaBuilder
 					
 				}
 			}
-			return this.subsetAssociation as UML.Classes.Kernel.Association;
+			return this.subsetAssociation;
 		}
 		private void copyAssociationEndProperties(UTF_EA.AssociationEnd source, UTF_EA.AssociationEnd target)
 		{
@@ -138,6 +139,7 @@ namespace EAAddinFramework.SchemaBuilder
 			target.multiplicity = source.multiplicity;
 			target._isNavigable = source._isNavigable;
 			target.aggregation = source.aggregation;
+			target.ownedComments = source.ownedComments;
 		}			
 	}
 }

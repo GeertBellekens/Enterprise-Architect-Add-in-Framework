@@ -92,10 +92,10 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
 				{
 					schemaElement.createSubsetElement(destinationPackage);
-					Logger.log("after EASchema::creating single subset element");
+					//Logger.log("after EASchema::creating single subset element");
 				}
 			}
-			Logger.log("after EASchema::creating subsetelements");
+			//Logger.log("after EASchema::creating subsetelements");
 			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
@@ -103,14 +103,14 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
 				{
 					schemaElement.createSubsetAssociations();
-					Logger.log("after EASchema::creating single subset association");
+					//Logger.log("after EASchema::creating single subset association");
 				}
 				// and to resolve the attributes types to subset types if required
 				schemaElement.resolveAttributetypes(this.schemaElements);
-				Logger.log("after EASchema::resolving attributes");
+				//Logger.log("after EASchema::resolving attributes");
 				//and add a dependency from the schemaElement to the type of the attributes
 				schemaElement.addAttributeTypeDependencies();
-				Logger.log("after EASchema::adding attribuetypeDependencies");
+				//Logger.log("after EASchema::adding attribuetypeDependencies");
 			}
 
 		}
