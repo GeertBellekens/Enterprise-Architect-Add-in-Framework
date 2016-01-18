@@ -176,7 +176,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 		        if(this.type == null ) 
 		        {
 		          // no element, create primitive type based on the name of the type
-		          type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
+		          this._type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
 		        }
     		}
         	return this._type;
