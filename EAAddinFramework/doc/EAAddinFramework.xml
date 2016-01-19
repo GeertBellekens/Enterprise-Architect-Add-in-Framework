@@ -1033,14 +1033,6 @@
             @Name1#Class1%m_Name</param>
             <returns>Return a non-zero value to indicate that the Add-In has processed the request. Returning a zero value results in Enterprise Architect employing the standard viewing process which is to launch the associated source file.</returns>
         </member>
-        <member name="M:EAAddinFramework.EAAddinBase.EA_IsSchemaExporter(EA.Repository,System.String@)">
-            <summary>
-            The Add-in must implement this function to be listed in the Schema Composer.
-            </summary>
-            <param name="Repository">the repository object</param>
-            <param name="displayName">the name that will be displayed</param>
-            <returns>true if this addin is a schema composer add-in</returns>
-        </member>
         <member name="M:EAAddinFramework.EAAddinBase.EA_GetProfileInfo(EA.Repository,EA.SchemaProfile)">
             <summary>
             The Add-in can optionally implement this function.

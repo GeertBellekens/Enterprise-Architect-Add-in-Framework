@@ -1237,7 +1237,8 @@ namespace EAAddinFramework
 		/// <param name="Repository">the repository object</param>
 		/// <param name="displayName">the name that will be displayed</param>
 		/// <returns>true if this addin is a schema composer add-in</returns>
-		public virtual bool EA_IsSchemaExporter (EA.Repository Repository, ref string displayName) {return false;}
+		//public virtual bool EA_IsSchemaExporter (EA.Repository Repository, ref string displayName) {return false;} 
+		//currently disabled because of a bug in EA (v12.1.1226). If any of the loaded addins returns false then none of the schema composer addins will work.
 		
 		/// <summary>
 		/// The Add-in can optionally implement this function.
