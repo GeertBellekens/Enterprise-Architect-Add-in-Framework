@@ -88,9 +88,12 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void addAttributeTypeDependency()
 		{
-			bool dependencyFound = false;
-			if (this.owner.subsetElement != null && this.subSetProperty != null)
+			if (this.owner.subsetElement != null 
+			    && this.subSetProperty != null 
+			    && this.subSetProperty.type != null 
+			    && !(this.subSetProperty.type is UML.Classes.Kernel.PrimitiveType))
 			{
+
 				UTF_EA.Dependency dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
 				dependency.addRelatedElement(this.subSetProperty.type);
 				dependency.save();

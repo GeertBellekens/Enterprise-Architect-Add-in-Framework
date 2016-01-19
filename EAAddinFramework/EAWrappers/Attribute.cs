@@ -173,7 +173,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     		{
 		        this._type = this.model.getElementWrapperByID( this.wrappedAttribute.ClassifierID ) as UML.Classes.Kernel.Type;
 		        // check if the type is defined as an element in the model.
-		        if(this.type == null ) 
+		        if(this._type == null ) 
 		        {
 		          // no element, create primitive type based on the name of the type
 		          this._type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
@@ -184,12 +184,18 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       	set 
       	{
       		this._type = value;
-	    	//set classifier if needed
-	        if( value is ElementWrapper ) {
-	          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
-	        }
-	    	//always set type field
-	        this.wrappedAttribute.Type = value.name;
+	    	if (value != null)
+	    	{
+	    		//set classifier if needed
+	    		ElementWrapper elementWrapper = value as ElementWrapper;
+		    	if( elementWrapper != null) 
+	    		{
+		          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
+		        }
+	    	   	//always set type field
+		        this.wrappedAttribute.Type = value.name;
+	    	}
+
       	}
     }
     

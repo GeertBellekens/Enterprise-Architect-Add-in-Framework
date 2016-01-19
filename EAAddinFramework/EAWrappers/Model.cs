@@ -1376,8 +1376,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <returns>true if it exists</returns>
 	public bool taggedValueTypeExists(string tagName)
 	{
+		this.wrappedModel.PropertyTypes.Refresh();
 		foreach (global::EA.PropertyType taggedValueType in this.wrappedModel.PropertyTypes)
 		{
+			string tagTypeName = taggedValueType.Tag;
 			if (taggedValueType.Tag == tagName)
 			{
 				return true;
