@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinFramework
 {
@@ -10,7 +11,6 @@ namespace EAAddinFramework
 	/// </summary>
 	public abstract class EAAddinBase
 	{
-		//TODO: figure out how to get this global exception catching thing to work.
 		public EAAddinBase()
 		{
 			AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -34,18 +34,25 @@ namespace EAAddinFramework
 		
 		static void catchAllUnhandledExceptions(object sender, UnhandledExceptionEventArgs args)
    		{
-	      Exception e = (Exception) args.ExceptionObject;
-	      MessageBox.Show("An unhandled exception has occured." + Environment.NewLine
-	                     +"Error Message: " + e.Message + Environment.NewLine
-	                     +"Stacktrace: " + e.StackTrace,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
+			processException((Exception) args.ExceptionObject);
    		}
 		static void catchUIThreadException(object sender, ThreadExceptionEventArgs args)
 		{
-		  Exception e =  args.Exception;
-	      MessageBox.Show("An unhandled thread exception has occured." + Environment.NewLine
-	                     +"Error Message: " + e.Message + Environment.NewLine
-	                     +"Stacktrace: " + e.StackTrace,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
+		  processException(args.Exception);
 		}
+		/// <summary>
+		/// Process the given exception by logging it to the log and showing a message box to the user
+		/// </summary>
+		/// <param name="e">the exception</param>
+		static void processException(Exception e)
+		{
+			string exceptionInfo = "An unhandled exception has occured." + Environment.NewLine
+	                     +"Error Message: " + e.Message + Environment.NewLine
+	      				+"Stacktrace: " + e.StackTrace;
+			Logger.logError(exceptionInfo);
+	      	MessageBox.Show(exceptionInfo,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
+		}
+
 
  	    // define menu constants
 //        private string _menuHeader = "-&MenuHeader";

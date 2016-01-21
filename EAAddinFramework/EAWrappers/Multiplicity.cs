@@ -69,6 +69,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				this.EACardinality = lowerString+upperString;
 			}
 		}
+		#region Equals and GetHashCode implementation
+		public override bool Equals(object obj)
+		{
+			Multiplicity other = obj as Multiplicity;
+				if (other == null)
+					return false;
+						return this.EACardinality == other.EACardinality;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = 0;
+			unchecked {
+				hashCode += 1000000007 * lower.GetHashCode();
+				if (upper != null)
+					hashCode += 1000000009 * upper.GetHashCode();
+			}
+			return hashCode;
+		}
+
+		public static bool operator ==(Multiplicity lhs, Multiplicity rhs) {
+			if (ReferenceEquals(lhs, rhs))
+				return true;
+			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+				return false;
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(Multiplicity lhs, Multiplicity rhs) {
+			return !(lhs == rhs);
+		}
+
+		#endregion
 		
 	}
 }

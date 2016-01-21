@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using TSF.UmlToolingFramework.UML;
+using TSF.UmlToolingFramework.Wrappers.EA;
 using SBF = SchemaBuilderFramework;
 using UML = TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -14,6 +14,9 @@ namespace EAAddinFramework.SchemaBuilder
 	{
 		private List<SBF.SchemaElement> _relatedElements;
 		private UTF_EA.Association _sourceAssociation;
+		private UTF_EA.AssociationEnd _thisEnd;
+		private UTF_EA.AssociationEnd _otherEnd;
+		private EASchemaElement _otherElement;
 
 		public EASchemaAssociation(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap)
 		{
@@ -34,21 +37,111 @@ namespace EAAddinFramework.SchemaBuilder
 		}
 		public UML.Classes.Kernel.Association subsetAssociation {get;set;}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		public SBF.SchemaElement otherElement 
+		{
+			get 
+			{
+				if (this._otherElement == null)
+				{
+					this._otherElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(this.otherEnd.type);
+				}
+				return this._otherElement;
+			}
+			set 
+			{
+				this._otherElement = (EASchemaElement)value;
+			}
+		}
+		public UML.Classes.Kernel.Property thisEnd {
+			get 
+			{
+				if (this._thisEnd == null)
+				{
+					this.setEnds();
+				}
+				return this._thisEnd;
+			}
+			set 
+			{
+				this._thisEnd = value as UTF_EA.AssociationEnd;
+			}
+		}
+		public UML.Classes.Kernel.Property otherEnd {
+			get 
+			{
+				if (this._otherEnd == null)
+				{
+					this.setEnds();
+				}
+				return this._otherEnd;
+			}
+			set 
+			{
+				this._otherEnd = value as UTF_EA.AssociationEnd;
+			}
+		}		
+		
+		private void setEnds()
+		{
+			UTF_EA.AssociationEnd sourceEnd = ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
+			UTF_EA.AssociationEnd targetEnd = ((UTF_EA.Association)this.sourceAssociation).targetEnd;	
+			//check the source end
+			var endType = sourceEnd.type as UTF_EA.ElementWrapper;
+			//check if the source end is linked to the element with the parent ID of the wrappedProperty
+			if (endType != null 
+			    && endType.id == this.wrappedProperty.Parent)
+			{
+				//check if the other end is linked to the same element
+				if (endType.Equals(targetEnd.type))
+				{
+					//the association is linked to the same element on both sides
+					//check the other properties to figure out which one we need as this end
+					if (sourceEnd.name == this.wrappedProperty.Name
+					    && sourceEnd.multiplicity == new Multiplicity(this.wrappedProperty.Cardinality.Length > 0 ? this.wrappedProperty.Cardinality : AssociationEnd.defaultMultiplicity) 
+					    && AggregationKind.getEAAggregationKind(sourceEnd.aggregation) == this.wrappedProperty.Aggregation)
+					{
+						//the source end properties corresponds with the wrappedProperty properties
+						this._thisEnd = sourceEnd;
+						this._otherEnd = targetEnd;
+					}
+					else
+					{
+						//source end properties don't correspond, so we assume the targetEnd to be this end
+						this._thisEnd = targetEnd;
+						this._otherEnd = sourceEnd;
+					}
+				}else
+				{
+					//both sides are different
+					this._thisEnd = sourceEnd;
+					this._otherEnd = targetEnd;
+				}
+			}	
+			else
+			{
+				//this end doesn't correspond with sourceEnd, so we assume the targetEnd to be this end
+				this._thisEnd = targetEnd;
+				this._otherEnd = sourceEnd;
+			}
+		}
+		
+		/// <summary>
+		/// the related elements are the owner element and the element on the other side
+		/// </summary>
 		public List<SBF.SchemaElement> relatedElements 
 		{
 			get 
 			{
 				if (this._relatedElements == null)
 				{
-					this._relatedElements= new List<SchemaBuilderFramework.SchemaElement>();
-					foreach (UML.Classes.Kernel.Element element in this.sourceAssociation.relatedElements)
-					{
-						SBF.SchemaElement relatedSchemaElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(element);
-						if (relatedSchemaElement != null)
-						{
-							this._relatedElements.Add(relatedSchemaElement);
-						}
-					}
+					this._relatedElements = new List<SBF.SchemaElement>();
+					//first add the owner
+					this._relatedElements.Add(this.owner);
+					//then add the other side
+					this._relatedElements.Add(this.otherElement);
 				}
 				return this._relatedElements;
 			}
@@ -65,33 +158,25 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <returns>the new subset association</returns>
 		public UML.Classes.Kernel.Association createSubsetAssociation()
 		{
-			EASchemaElement otherElement = null;
 			this.subsetAssociation = null;
 			//find the other schemaElement
-			foreach (EASchemaElement schemaElement in this.relatedElements) 
-			{
-				if (!schemaElement.sourceElement.Equals(this.owner.sourceElement))
-				{
-					otherElement = schemaElement;
-					break;
-				}
-			}
-			if (otherElement != null)
+
+			if (this.otherElement != null)
 			{
 				//found the other element
 				//if this schemaElement has a subsetElement 
 				if (this.owner.subsetElement != null)
 				{
 					UML.Classes.Kernel.Classifier associationTarget;
-					if (otherElement.subsetElement != null)
+					if (this.otherElement.subsetElement != null)
 					{
 						//and the otherElement has a subsetElement we create an association from this subsetElement to the other element subsetElement
-						associationTarget = otherElement.subsetElement;
+						associationTarget = this.otherElement.subsetElement;
 					}
 					else
 					{
 						//if the other elemnt doesn't have a subset element then we create an association to the source element
-						associationTarget = otherElement.sourceElement;
+						associationTarget = this.otherElement.sourceElement;
 					}
 					//create the association
 					this.subsetAssociation = this.model.factory.createNewElement<UML.Classes.Kernel.Association>(this.owner.subsetElement,this.sourceAssociation.name);
@@ -103,32 +188,16 @@ namespace EAAddinFramework.SchemaBuilder
 					//save all changes
 					this.subsetAssociation.save();
 					//copy the association end properties
-					//find the source associations ends that correspond with the subset association source and end
-					UTF_EA.AssociationEnd sourceAssociationSourceEnd = null;
-					UTF_EA.AssociationEnd sourceAssociationTargetEnd = null; 
-
-					int sourceID = ((UTF_EA.ElementWrapper)((UTF_EA.Association) this.sourceAssociation).source).id;
-					if (this.wrappedProperty.Parent == sourceID)
-					{
-						sourceAssociationSourceEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
-						sourceAssociationTargetEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).targetEnd;
-					}
-					else
-					{
-						sourceAssociationSourceEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).targetEnd;
-						sourceAssociationTargetEnd = (UTF_EA.AssociationEnd) ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
-					}
 					//copy source end properties
-					this.copyAssociationEndProperties(sourceAssociationSourceEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
+					this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.thisEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
 					//copy target end properties
-					this.copyAssociationEndProperties(sourceAssociationTargetEnd,((UTF_EA.Association) this.subsetAssociation).targetEnd);
+					this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.otherEnd,((UTF_EA.Association) this.subsetAssociation).targetEnd);
 					//save all changes
 					this.subsetAssociation.save();
 					//copy tagged values
 					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
 					//add tagged value with reference to source association
 					((UTF_EA.Association)this.subsetAssociation).addTaggedValue(EASchemaBuilderFactory.sourceAssociationTagName,((UTF_EA.Association)this.sourceAssociation).guid);
-					
 				}
 			}
 			return this.subsetAssociation;

@@ -33,21 +33,23 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="model">the model</param>
 		public void checkTaggedValueTypes()
 		{
-			if (!this.EAModel.taggedValueTypeExists(sourceAttributeTagName))
+			if (this.EAModel != null)
 			{
-				string sourceAttributeTagDetail = 
-@"Type=RefGUID;
-Values=Attribute;
-AppliesTo=Attribute;";
-					this.EAModel.addTaggedValueType(sourceAttributeTagName,"is derived from this Attribute",sourceAttributeTagDetail);
-			}
-			if (!this.EAModel.taggedValueTypeExists(sourceAssociationTagName))
-			{
-				string sourceAssociationTagDetail = 
-@"Type=RefGUID;
-Values=Association,Aggregation;
-AppliesTo=Association,Aggregation;";
-					this.EAModel.addTaggedValueType(sourceAssociationTagName,"is derived from this Association",sourceAssociationTagDetail);
+				if (!this.EAModel.taggedValueTypeExists(sourceAttributeTagName))
+				{
+					string sourceAttributeTagDetail = 
+	@"Type=RefGUID;
+	Values=Attribute;
+	AppliesTo=Attribute;";
+						this.EAModel.addTaggedValueType(sourceAttributeTagName,"is derived from this Attribute",sourceAttributeTagDetail);
+				}
+				if (!this.EAModel.taggedValueTypeExists(sourceAssociationTagName))
+				{
+					string sourceAssociationTagDetail = 
+	@"Type=String;
+	AppliesTo=Association,Aggregation;";
+						this.EAModel.addTaggedValueType(sourceAssociationTagName,"is derived from this Association",sourceAssociationTagDetail);
+				}
 			}
 		}
 		

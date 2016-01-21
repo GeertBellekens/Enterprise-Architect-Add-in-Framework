@@ -10,6 +10,12 @@
             It contains all supported operations for EA v 11.1.1112
             </summary>
         </member>
+        <member name="M:EAAddinFramework.EAAddinBase.processException(System.Exception)">
+            <summary>
+            Process the given exception by logging it to the log and showing a message box to the user
+            </summary>
+            <param name="e">the exception</param>
+        </member>
         <member name="M:EAAddinFramework.EAAddinBase.IsProjectOpen(EA.Repository)">
             <summary>
             returns true if a project is currently opened
@@ -1600,6 +1606,11 @@
             The elements that have this diagram as composite diagram
             </summary>
         </member>
+        <member name="F:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.defaultMultiplicity">
+            <summary>
+            the default for multiplicities on associationEnds is 0..1
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
             isStatic is not supported by AssociationEnd in EA
         </member>
@@ -2468,6 +2479,16 @@
             Creates the association in the subset. This is a copy of the source association but now between the subsetelements
             </summary>
             <returns>the new subset association</returns>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaAssociation.otherElement">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaAssociation.relatedElements">
+            <summary>
+            the related elements are the owner element and the element on the other side
+            </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory">
             <summary>

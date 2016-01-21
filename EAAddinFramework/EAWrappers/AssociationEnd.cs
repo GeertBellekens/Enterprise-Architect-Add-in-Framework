@@ -4,10 +4,15 @@ using System.Collections.Generic;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class AssociationEnd : Element , UML.Classes.Kernel.Property {
-    internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
+  public class AssociationEnd : Element , UML.Classes.Kernel.Property 
+  {
+    	/// <summary>
+    	/// the default for multiplicities on associationEnds is 0..1
+    	/// </summary>
+		public const string defaultMultiplicity = "0..1";
+	internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
     private ConnectorWrapper _association { get; set; }
-
+	
     public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
                           global::EA.ConnectorEnd associationEnd ):base(model)
     {
@@ -278,7 +283,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		}
     		else
     		{
-    			return new Multiplicity("0..1");
+    			return new Multiplicity(defaultMultiplicity);
     		}
     	}
     	set

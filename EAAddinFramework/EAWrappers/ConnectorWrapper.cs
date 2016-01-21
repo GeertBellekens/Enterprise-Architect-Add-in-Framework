@@ -69,7 +69,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public List<UML.Classes.Kernel.Element> relatedElements {
       get 
       {
-        List<UML.Classes.Kernel.Element> returnedElements =  new List<UML.Classes.Kernel.Element>();
+        var returnedElements =  new List<UML.Classes.Kernel.Element>();
         returnedElements.Add(this.source);
         returnedElements.Add(this.target);
         return returnedElements;
@@ -81,14 +81,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	string styleEx = this.wrappedConnector.StyleEx;
     	string key;
     	UML.UMLItem linkedFeature = null;
-    	
-   		if (start)
-   		{
-    		key = "LFSP=";
-   		}else
-   		{
-   			key = "LFEP=";
-   		}
+    	//determine start or end keyword
+		key = start ? "LFSP=" : "LFEP=";
    		int guidStart = styleEx.IndexOf(key) + key.Length ;
    		if (guidStart >= key.Length)
     	{
@@ -118,6 +112,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       {
 		if (value is ElementWrapper)
 		{
+			this._target = value;
 			this.WrappedConnector.SupplierID = ((ElementWrapper)value).id;
 		}
 		else
@@ -150,6 +145,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
      {
 		if (value is ElementWrapper)
 		{
+			this._source = value;
 			this.WrappedConnector.ClientID = ((ElementWrapper)value).id;
 		}
 		else
@@ -178,8 +174,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     
     public List<UML.Classes.Kernel.Type> endTypes {
       get {
-        List<UML.Classes.Kernel.Type> returnTypes =
-          new List<UML.Classes.Kernel.Type>();
+        var returnTypes =new List<UML.Classes.Kernel.Type>();
         foreach( UML.Classes.Kernel.Property end in memberEnds ) {
           returnTypes.Add(end.type);
         }
@@ -194,7 +189,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public List<UML.Classes.Kernel.Property> memberEnds 
     {
       get {
-        List<UML.Classes.Kernel.Property> returnedMembers = new List<UML.Classes.Kernel.Property>();
+        var returnedMembers = new List<UML.Classes.Kernel.Property>();
         returnedMembers.Add(this.sourceEnd as UML.Classes.Kernel.Property) ;
         returnedMembers.Add(this.targetEnd as UML.Classes.Kernel.Property);
         return returnedMembers;
