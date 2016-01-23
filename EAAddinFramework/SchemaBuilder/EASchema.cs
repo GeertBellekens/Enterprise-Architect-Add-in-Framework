@@ -80,6 +80,32 @@ namespace EAAddinFramework.SchemaBuilder
 			return result;
 		}
 		/// <summary>
+		/// finds the Schema Element for which the given element could be the subset element
+		/// </summary>
+		/// <param name="subsetElement">the element to search a match for</param>
+		/// <returns>the corresponding SchemaElement</returns>
+		internal EASchemaElement getSchemaElementSubsetElement(UML.Classes.Kernel.Class subsetElement)
+		{
+			EASchemaElement result = null;
+			foreach (EASchemaElement schemaElement in this.elements) 
+			{
+				if (schemaElement.name == subsetElement.name)
+				{
+					//check if the subset element has a dependency to the source element of the schema
+					foreach (var dependency in subsetElement.clientDependencies) 
+					{
+						if (schemaElement.sourceElement.Equals(dependency.supplier))
+						{
+							result = schemaElement;
+							break;
+						}
+					}
+					
+				}
+			}
+			return result;
+		}
+		/// <summary>
 		/// creates a subset of the source model with only the properties and associations used in this schema
 		/// </summary>
 		/// <param name="destinationPackage">the package to create the subset in</param>
@@ -113,6 +139,71 @@ namespace EAAddinFramework.SchemaBuilder
 				//Logger.log("after EASchema::adding attribuetypeDependencies");
 			}
 
+		}
+		/// <summary>
+		/// updates the subset model linked to given messageElement
+		/// </summary>
+		/// <param name="messageElement">The message element that is the root for the message subset model</param>
+		public void updateSubsetModel(UML.Classes.Kernel.Class messageElement)
+		{
+			HashSet<UML.Classes.Kernel.Class> subsetElements = this.getSubsetElementsfromMessage(messageElement);
+			//we need to follow the associations from the message element to classes and try to math these classes to Schema Elements
+			foreach (UML.Classes.Kernel.Class subsetElement in subsetElements) 
+			{
+				//get the corrsponding schema element
+				EASchemaElement schemaElement = this.getSchemaElementSubsetElement(subsetElement);
+				//found a corresponding schema element
+				if (schemaElement != null)
+				{
+					schemaElement.subsetElement = subsetElement;
+				}
+			}
+		}
+		/// <summary>
+		/// gets all the subset elements for a given message element
+		/// </summary>
+		/// <param name="messageElement">the message element</param>
+		/// <returns>all subset elements in the subset model for this message element</returns>
+		private HashSet<UML.Classes.Kernel.Class> getSubsetElementsfromMessage(UML.Classes.Kernel.Class messageElement)
+		{
+			var subsetElements = new HashSet<UML.Classes.Kernel.Class>();
+			this.addRelatedSubsetElements(messageElement,subsetElements);
+			return subsetElements;
+		}
+		/// <summary>
+		/// adds all the related subset elements to the list recursively
+		/// </summary>
+		/// <param name="element">the element to start from </param>
+		/// <param name="subsetElements">the HashSet of subset element to add to</param>
+		private void addRelatedSubsetElements(UML.Classes.Kernel.Class element, HashSet<UML.Classes.Kernel.Class> subsetElements)
+		{
+			//follow the associations
+			foreach (UTF_EA.Association association in element.getRelationships<UML.Classes.Kernel.Association>()) 
+			{
+				addToSubsetElements(association.target as UML.Classes.Kernel.Class, subsetElements);
+			}
+			//follow the attribute types
+			foreach (UTF_EA.Attribute attribute in element.ownedAttributes) 
+			{
+				addToSubsetElements(attribute.type as UML.Classes.Kernel.Class, subsetElements);
+			}
+			
+		}
+		/// <summary>
+		/// adds the given class to the list of subset elements and then adds all related
+		/// </summary>
+		/// <param name="element">the Class to add</param>
+		/// <param name="subsetElements">the list of subset elements</param>
+		private void addToSubsetElements(UML.Classes.Kernel.Class element, HashSet<UML.Classes.Kernel.Class> subsetElements)
+		{
+			//add element is not already in the list
+			if (element != null 
+			    && !subsetElements.Contains(element)) 
+			{
+				subsetElements.Add(element);
+				//add related elements for this element
+				this.addRelatedSubsetElements(element, subsetElements);
+			}
 		}
 	}
 }

@@ -2266,6 +2266,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedElement(System.Collections.Generic.List{System.String})">
+            <summary>
+            Lets the user select an element from the model and return that
+            </summary>
+            <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
+            <returns>the selected element</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.taggedValueTypeExists(System.String)">
             <summary>
             checks if a tagged value type with the given name exists in the current model
@@ -2533,11 +2540,45 @@
             <param name="umlElement">the source UMLElement</param>
             <returns></returns>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+            <summary>
+            finds the Schema Element for which the given element could be the subset element
+            </summary>
+            <param name="subsetElement">the element to search a match for</param>
+            <returns>the corresponding SchemaElement</returns>
+        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package)">
             <summary>
             creates a subset of the source model with only the properties and associations used in this schema
             </summary>
             <param name="destinationPackage">the package to create the subset in</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+            <summary>
+            updates the subset model linked to given messageElement
+            </summary>
+            <param name="messageElement">The message element that is the root for the message subset model</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSubsetElementsfromMessage(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+            <summary>
+            gets all the subset elements for a given message element
+            </summary>
+            <param name="messageElement">the message element</param>
+            <returns>all subset elements in the subset model for this message element</returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addRelatedSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Class})">
+            <summary>
+            adds all the related subset elements to the list recursively
+            </summary>
+            <param name="element">the element to start from </param>
+            <param name="subsetElements">the HashSet of subset element to add to</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addToSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Class})">
+            <summary>
+            adds the given class to the list of subset elements and then adds all related
+            </summary>
+            <param name="element">the Class to add</param>
+            <param name="subsetElements">the list of subset elements</param>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
             <summary>
@@ -2564,6 +2605,11 @@
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addAttributeTypeDependencies">
             <summary>
             adds a dependency from the attributes owner to the type of the attributes
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaElement.name">
+            <summary>
+            the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">

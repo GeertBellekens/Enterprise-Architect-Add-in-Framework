@@ -25,7 +25,19 @@ namespace EAAddinFramework.SchemaBuilder
 			this.ownerSchema = owner;
 			this.wrappedSchemaType = objectToWrap;
 		}
-		
+		/// <summary>
+		/// the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
+		/// </summary>
+		public string name 
+		{
+			get 
+			{
+				return this.wrappedSchemaType.TypeName;
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		public UML.Classes.Kernel.Classifier sourceElement 
 		{
 			get 
@@ -132,7 +144,7 @@ namespace EAAddinFramework.SchemaBuilder
 		public UML.Classes.Kernel.Classifier createSubsetElement(UML.Classes.Kernel.Package destinationPackage)
 		{
 			//first create the element in the destination Package
-			this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.sourceElement.name);
+			this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//notes
@@ -143,19 +155,6 @@ namespace EAAddinFramework.SchemaBuilder
 				property.createSubsetProperty();
 				UML.Classes.Kernel.Property sourceProperty = property.sourceProperty;
 				string propertyName = sourceProperty.name;
-			}
-			//loop the associations
-			foreach (EASchemaAssociation schemaAssociation in this.schemaAssociations) 
-			{
-				foreach (EASchemaElement relatedSchemaElement in schemaAssociation.relatedElements) 
-				{
-					string relatedSchemaElementName = relatedSchemaElement.sourceElement.name;
-				}
-				UML.Classes.Kernel.Association association = schemaAssociation.sourceAssociation;
-				foreach (UML.Classes.Kernel.Element relatedElement in association.relatedElements) 
-				{
-					string relatedElementName = relatedElement.name;	
-				}
 			}
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();

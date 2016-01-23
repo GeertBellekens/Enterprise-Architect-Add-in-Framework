@@ -17,7 +17,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
     private static string _applicationFullPath;
-    
+
+
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>
@@ -1366,8 +1367,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <returns></returns>
 	public UML.Classes.Kernel.Package getUserSelectedPackage()
 	{
-		int EAElementID = this.wrappedModel.InvokeConstructPicker("IncludedTypes=Package");
-		return this.getElementWrapperByID(EAElementID) as UML.Classes.Kernel.Package;
+		var allowedtypes = new List<string>();
+		allowedtypes.Add("Package");
+		return this.getUserSelectedElement(allowedtypes) as  UML.Classes.Kernel.Package;
+	}
+    /// <summary>
+    /// Lets the user select an element from the model and return that
+    /// </summary>
+    /// <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
+    /// <returns>the selected element</returns>
+	public UML.Classes.Kernel.Element getUserSelectedElement(List<string> allowedTypes)
+	{
+		//construct the include string
+		string includeString = "IncludedTypes=";
+		var eaTypeNames = new List<string>();
+		foreach (var allowedType in allowedTypes) 
+		{
+			eaTypeNames.Add(((Factory)this.factory).translateTypeName(allowedType));
+		}
+		includeString += string.Join(",",allowedTypes);
+		//currenlty only supported for ElementWrappers
+		int EAElementID = this.wrappedModel.InvokeConstructPicker(includeString);
+		return this.getElementWrapperByID(EAElementID);
 	}
   	/// <summary>
   	/// checks if a tagged value type with the given name exists in the current model
