@@ -241,24 +241,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// <returns>the relations of type T</returns>
     public override List<T> getRelationships<T>() 
     {
-      List<UML.Classes.Kernel.Relationship> allRelationships = 
-      	this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
-      List<T> returnedRelationships = new List<T>();
-      // we still need to filter out those relationships that are there because of linked features
-      foreach (UML.Classes.Kernel.Relationship relationship in allRelationships) 
-      {
-        if (relationship is T) 
-        {
-        	foreach (UML.Classes.Kernel.Element relatedElement in relationship.relatedElements) 
-        	{
-        		if (this.Equals(relatedElement))
-        		{
-        			returnedRelationships.Add((T)relationship);
-        		}
-        	}
-        }
-      }
-      return returnedRelationships;
+    	//to make sure the connectors collection is still accurate we do a refresh first
+    	this.WrappedElement.Connectors.Refresh();
+		List<UML.Classes.Kernel.Relationship> allRelationships = this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
+		List<T> returnedRelationships = new List<T>();
+		// we still need to filter out those relationships that are there because of linked features
+		foreach (UML.Classes.Kernel.Relationship relationship in allRelationships) 
+		{
+			if (relationship is T) 
+			{
+				foreach (UML.Classes.Kernel.Element relatedElement in relationship.relatedElements) 
+				{
+					if (this.Equals(relatedElement))
+					{
+						returnedRelationships.Add((T)relationship);
+					}
+				}
+			}
+		}
+		return returnedRelationships;
     }
     
     public override List<UML.Classes.Kernel.Relationship> relationships {
@@ -612,5 +613,58 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.WrappedElement.ElementGUID;
 		}
 	}
+
+	/// <summary>
+	/// deletes an element owned by this element
+	/// </summary>
+	/// <param name="ownedElement">the owned element to delete</param>
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		if (ownedElement is ElementWrapper)
+		{
+			for (short i = 0; i< this.WrappedElement.Elements.Count; i++)
+			{
+				var eaElement = this.WrappedElement.Elements.GetAt(i) as global::EA.Element;
+				if (eaElement.ElementGUID == ownedElement.guid)
+				{   
+					this.WrappedElement.Elements.Delete(i);
+					this.WrappedElement.Elements.Refresh();
+					break;
+				}
+			}
+		}
+		else if (ownedElement is Attribute)
+		{
+			for (short i = 0; i< this.WrappedElement.Attributes.Count; i++)
+			{
+				var eaAttribute = this.WrappedElement.Attributes.GetAt(i) as global::EA.Attribute;
+				if (eaAttribute.AttributeGUID == ownedElement.guid)
+				{   
+					this.WrappedElement.Attributes.Delete(i);
+					this.WrappedElement.Attributes.Refresh();
+					break;
+				}
+			}
+		}
+		else if (ownedElement is ConnectorWrapper)
+		{
+			for (short i = 0; i< this.WrappedElement.Connectors.Count; i++)
+			{
+				var eaConnector = this.WrappedElement.Connectors.GetAt(i) as global::EA.Connector;
+				if (eaConnector.ConnectorGUID == ownedElement.guid)
+				{   
+					this.WrappedElement.Connectors.Delete(i);
+					this.WrappedElement.Connectors.Refresh();
+					break;
+				}
+			}
+		}
+		else
+		{
+			//type not supported (yet)
+			throw new NotImplementedException();
+		}
+	}
+
   }
 }

@@ -441,5 +441,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		//save the diagram
 		this.reFresh();
 	}
+
+		public void delete()
+		{
+			throw new NotImplementedException();
+		}
   }
 }

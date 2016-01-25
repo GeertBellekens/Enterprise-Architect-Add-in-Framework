@@ -144,7 +144,10 @@ namespace EAAddinFramework.SchemaBuilder
 		public UML.Classes.Kernel.Classifier createSubsetElement(UML.Classes.Kernel.Package destinationPackage)
 		{
 			//first create the element in the destination Package
-			this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
+			if (this.subsetElement == null)
+			{
+				this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
+			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//notes
@@ -152,9 +155,8 @@ namespace EAAddinFramework.SchemaBuilder
 			//loop the properties
 			foreach (EASchemaProperty property in this.schemaProperties) 
 			{
+				//create the subset property
 				property.createSubsetProperty();
-				UML.Classes.Kernel.Property sourceProperty = property.sourceProperty;
-				string propertyName = sourceProperty.name;
 			}
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();
@@ -200,6 +202,122 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				schemaProperty.addAttributeTypeDependency();
 			}
+		}
+		/// <summary>
+		/// matches the given subset element with the schema element, matching attributes and association
+		/// all attributes or associations that do not exist in the schema are deleted
+		/// </summary>
+		/// <param name="subsetElement">the subset element to match</param>
+		public void matchSubsetElement(UML.Classes.Kernel.Class subsetElement)
+		{
+			//set the subset element
+			this.subsetElement = subsetElement;
+		}
+		/// <summary>
+		/// checks all attributes of the subset element and tries to match it with a SchemaProperty.
+		/// It it can't be matches te subset attribute is deleted.
+		/// </summary>
+		public void matchSubsetAttributes()
+		{
+			if (this.subsetElement != null)
+			{
+				foreach (UTF_EA.Attribute attribute in this.subsetElement.attributes) 
+				{
+					EASchemaProperty matchingProperty = this.getMatchingSchemaProperty(attribute);
+					if (matchingProperty != null)
+					{
+						//found a match
+						matchingProperty.subSetProperty = attribute;
+					}
+					else
+					{
+						//no match, delete the attribute
+						attribute.delete();
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// finds the corresponding Schema property for the given attribut
+		/// </summary>
+		/// <param name="attribute">attribute</param>
+		/// <returns>the corresponding Schema property if one is found. Else null</returns>
+		public EASchemaProperty getMatchingSchemaProperty(UTF_EA.Attribute attribute)
+		{
+			EASchemaProperty result = null;
+			var sourceAttributeTag = attribute.getTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName);
+			if (sourceAttributeTag != null)
+			{
+				string tagReference = sourceAttributeTag.eaStringValue;
+			
+				foreach (EASchemaProperty property in this.schemaProperties) 
+				{
+					//we have the same attribute if the given attribute has a tagged value 
+					//called sourceAttribute that refences the source attribute of the schema Property
+					if (((UTF_EA.Attribute)property.sourceProperty).guid == tagReference)
+					{
+						result = property;
+						break;
+					}
+				}
+			}
+			return result;
+		}
+		
+		/// <summary>
+		/// matches the association of the subset element with the schema associations.
+		/// If an association cannot be matched, it is deleted.
+		/// </summary>
+		public void matchSubsetAssociations()
+		{
+			if (this.subsetElement != null)
+			{
+				foreach (UTF_EA.Association association in this.subsetElement.getRelationships<UML.Classes.Kernel.Association>()) 
+				{
+					//we are only interested in the outgoing associations
+					if (this.subsetElement.Equals(association.source))
+					{
+						EASchemaAssociation matchingAssociation = this.getMatchingSchemaAssociation(association);
+						if (matchingAssociation != null)
+						{
+							//found a match
+							matchingAssociation.subsetAssociation = association;
+						}
+						else
+						{
+							//no match, delete the association
+							association.delete();
+						}
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// returns the matching SchemaAssociation for the given Association.
+		/// the match is made based on the tagged value sourceAssociation on the subset assocation, which references the source association fo the SchemaAssociation
+		/// </summary>
+		/// <param name="association">the association to match</param>
+		/// <returns>the matching SchemaAssociation</returns>
+		public EASchemaAssociation getMatchingSchemaAssociation(UTF_EA.Association association)
+		{
+			EASchemaAssociation result = null;
+			var sourceAssociationTag = association.getTaggedValue(EASchemaBuilderFactory.sourceAssociationTagName);
+			if (sourceAssociationTag != null)
+			{
+				string tagReference = sourceAssociationTag.eaStringValue;
+			
+				foreach (EASchemaAssociation schemaAssociation in this.schemaAssociations) 
+				{
+					//we have the same attribute if the given attribute has a tagged value 
+					//called sourceAssociation that refences the source association of the schema Association
+					if (((UTF_EA.Association)schemaAssociation.sourceAssociation).guid == tagReference)
+					{
+						result = schemaAssociation;
+						break;
+					}
+				}
+			}
+			return result;
 		}
 	}
 }

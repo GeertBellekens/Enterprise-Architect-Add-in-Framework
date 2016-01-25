@@ -69,5 +69,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

@@ -396,5 +396,14 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 			return this.WrappedOperation.MethodGUID;
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

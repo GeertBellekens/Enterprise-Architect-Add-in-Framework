@@ -416,5 +416,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.WrappedConnector.ConnectorGUID;
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

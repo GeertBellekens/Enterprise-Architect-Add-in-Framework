@@ -241,6 +241,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		return null;
 	}
-
+	/// <summary>
+	/// deletes this element from the model
+	/// In Enterprise Architect we can only delete an element by removing it from its parents collection.
+	/// </summary>
+	public virtual void delete()
+	{
+		((Element)this.owner).deleteOwnedElement(this);
+	}
+	public abstract void deleteOwnedElement(Element ownedElement);
   }
 }

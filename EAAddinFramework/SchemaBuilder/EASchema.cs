@@ -146,19 +146,49 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="messageElement">The message element that is the root for the message subset model</param>
 		public void updateSubsetModel(UML.Classes.Kernel.Class messageElement)
 		{
+			//match the subset existing subset elements
+			matchSubsetElements(messageElement);
+			
+			foreach (EASchemaElement schemaElement in this.schemaElements) 
+			{
+				//match the attributes
+				schemaElement.matchSubsetAttributes();
+				//match the associations
+				schemaElement.matchSubsetAssociations();
+			}
+			//create missing subset elements
+			//synchronize attributes
+			//synchronize associations
+		}
+		/// <summary>
+		/// Finds all subset elements linked to the given message element and links those to the schema elements.
+		/// If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
+		/// </summary>
+		/// <param name="messageElement">the message element to start from</param>
+		void matchSubsetElements(UML.Classes.Kernel.Class messageElement)
+		{
 			HashSet<UML.Classes.Kernel.Class> subsetElements = this.getSubsetElementsfromMessage(messageElement);
-			//we need to follow the associations from the message element to classes and try to math these classes to Schema Elements
+			//match each subset element to a schema element
 			foreach (UML.Classes.Kernel.Class subsetElement in subsetElements) 
 			{
 				//get the corrsponding schema element
 				EASchemaElement schemaElement = this.getSchemaElementSubsetElement(subsetElement);
 				//found a corresponding schema element
-				if (schemaElement != null)
+				if (schemaElement != null) 
 				{
-					schemaElement.subsetElement = subsetElement;
+					schemaElement.matchSubsetElement(subsetElement);
+				} else 
+				{
+					//if it doesn't correspond with a schema element we delete it?
+					//only if the subset element is located in the same folder as the message element
+					if (subsetElement.owner.Equals(messageElement.owner)) 
+					{
+						subsetElement.delete();
+					}
 				}
 			}
 		}
+
 		/// <summary>
 		/// gets all the subset elements for a given message element
 		/// </summary>

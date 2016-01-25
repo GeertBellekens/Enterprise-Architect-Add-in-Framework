@@ -318,5 +318,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return ((Association)this.owningAssociation).guid;
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

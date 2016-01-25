@@ -370,5 +370,14 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 			return this.WrappedAttribute.AttributeGUID;
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

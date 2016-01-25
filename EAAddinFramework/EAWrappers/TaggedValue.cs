@@ -128,5 +128,10 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 	}
 	
 	public abstract void save();
+
+		public void delete()
+		{
+			throw new NotImplementedException();
+		}
 }
 }

@@ -144,5 +144,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+
+		#region implemented abstract members of Element
+
+	public override void deleteOwnedElement(Element ownedElement)
+	{
+		//do nothing, primitive types cannot be deleted as they don't really exist in the model
+	}
+
+	#endregion
   }
 }

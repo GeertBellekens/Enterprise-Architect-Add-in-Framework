@@ -1353,6 +1353,12 @@
             </summary>
             <param name="sourceElement">the element to copy the tagged values from</param>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.delete">
+            <summary>
+            deletes this element from the model
+            In Enterprise Architect we can only delete an element by removing it from its parents collection.
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.
@@ -1464,6 +1470,12 @@
             </summary>
             <param name="relativePath">the "." separated path</param>
             <returns>the item with the given path</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            deletes an element owned by this element
+            </summary>
+            <param name="ownedElement">the owned element to delete</param>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
             indicates whether this element is abstract.
@@ -2380,6 +2392,12 @@
             <param name="name">the name of the new diagram</param>
             <returns>the new diagram</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            deletes an element owned by this Package
+            </summary>
+            <param name="ownedElement">the owned element to delete</param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>
             
@@ -2559,6 +2577,13 @@
             </summary>
             <param name="messageElement">The message element that is the root for the message subset model</param>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+            <summary>
+            Finds all subset elements linked to the given message element and links those to the schema elements.
+            If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
+            </summary>
+            <param name="messageElement">the message element to start from</param>
+        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSubsetElementsfromMessage(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
             <summary>
             gets all the subset elements for a given message element
@@ -2606,6 +2631,40 @@
             <summary>
             adds a dependency from the attributes owner to the type of the attributes
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+            <summary>
+            matches the given subset element with the schema element, matching attributes and association
+            all attributes or associations that do not exist in the schema are deleted
+            </summary>
+            <param name="subsetElement">the subset element to match</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetAttributes">
+            <summary>
+            checks all attributes of the subset element and tries to match it with a SchemaProperty.
+            It it can't be matches te subset attribute is deleted.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.getMatchingSchemaProperty(TSF.UmlToolingFramework.Wrappers.EA.Attribute)">
+            <summary>
+            finds the corresponding Schema property for the given attribut
+            </summary>
+            <param name="attribute">attribute</param>
+            <returns>the corresponding Schema property if one is found. Else null</returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetAssociations">
+            <summary>
+            matches the association of the subset element with the schema associations.
+            If an association cannot be matched, it is deleted.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.getMatchingSchemaAssociation(TSF.UmlToolingFramework.Wrappers.EA.Association)">
+            <summary>
+            returns the matching SchemaAssociation for the given Association.
+            the match is made based on the tagged value sourceAssociation on the subset assocation, which references the source association fo the SchemaAssociation
+            </summary>
+            <param name="association">the association to match</param>
+            <returns>the matching SchemaAssociation</returns>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaElement.name">
             <summary>

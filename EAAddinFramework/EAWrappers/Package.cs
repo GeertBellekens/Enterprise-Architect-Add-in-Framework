@@ -176,5 +176,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedPackage.Diagrams,name);
 		}
+		/// <summary>
+		/// deletes an element owned by this Package
+		/// </summary>
+		/// <param name="ownedElement">the owned element to delete</param>
+		public override void deleteOwnedElement(Element ownedElement)
+		{
+			if (ownedElement is ElementWrapper)
+			{
+				for (short i = 0; i< this.WrappedPackage.Elements.Count; i++)
+				{
+					var eaElement = this.WrappedPackage.Elements.GetAt(i) as global::EA.Element;
+					if (eaElement.ElementGUID == ownedElement.guid)
+					{   
+						this.WrappedPackage.Elements.Delete(i);
+						this.WrappedPackage.Elements.Refresh();
+						break;
+					}
+				}
+			}
+			else
+			{
+				//currently only deleting elements is supported
+				throw new NotImplementedException();
+			}
+		}
 	}
 }
