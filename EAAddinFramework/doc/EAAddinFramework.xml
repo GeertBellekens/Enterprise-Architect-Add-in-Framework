@@ -1346,12 +1346,30 @@
             </summary>
             <returns>the name as ToString</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.Boolean)">
+            <summary>
+            adds a new tagged value to the element with the given name and value
+            if a tagged value with that name already exists the value of the existing tagged value is updated./
+            </summary>
+            <param name="name">the name fo the tagged value to add</param>
+            <param name="tagValue">the value of the tagged value</param>
+            <param name = "addDuplicate"></param>
+            <returns>the added (or updated) tagged value</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element)">
             <summary>
             copies the tagged values from the source as tagged values of this element
             if a tagged value already exists the value is copied. Else a new tagged value is created
             </summary>
             <param name="sourceElement">the element to copy the tagged values from</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getTaggedValue(System.String)">
+            <summary>
+            returns the tagged value with the given name
+            if a tagged valeu with the given name doesn't exist null is returned
+            </summary>
+            <param name="name">the name of the taggev value to return</param>
+            <returns>the tagged value with the given name</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.delete">
             <summary>

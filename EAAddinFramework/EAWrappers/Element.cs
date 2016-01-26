@@ -199,9 +199,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return this.name;
 	}
-	public virtual TaggedValue addTaggedValue(string name, string tagValue)
+	/// <summary>
+	/// adds a new tagged value to the element with the given name and value
+	/// if a tagged value with that name already exists the value of the existing tagged value is updated./
+	/// </summary>
+	/// <param name="name">the name fo the tagged value to add</param>
+	/// <param name="tagValue">the value of the tagged value</param>
+	/// <param name = "addDuplicate"></param>
+	/// <returns>the added (or updated) tagged value</returns>
+		
+	public virtual TaggedValue addTaggedValue(string name, string tagValue, bool addDuplicate = false)
 	{
-		TaggedValue newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
+		TaggedValue newTaggedValue = null;
+		if (! addDuplicate)
+		{
+			//we don't wan't any duplicates so we get the existing one
+			newTaggedValue = this.getTaggedValue(name);
+		}
+		if (newTaggedValue == null) 
+		{
+			//no existing tagged value found, or we need to create duplicates
+			newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
+		}
 		newTaggedValue.tagValue = tagValue;
 		newTaggedValue.save();
 		return newTaggedValue;
@@ -215,21 +234,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		foreach (TaggedValue taggedValue in sourceElement.taggedValues) 
 		{
-			//first check if the tagged value exists 
-			TaggedValue existingTaggedValue = this.getTaggedValue(taggedValue.name);
-			if (existingTaggedValue != null)
-			{
-				//if it exists then we copy the value and save it
-				existingTaggedValue.eaStringValue = taggedValue.eaStringValue;
-				existingTaggedValue.save();
-			}
-			else
-			{
-				// if it doesn't exist we create a new one 
-				TaggedValue newTaggedValue = this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
-			}
+			this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
 		}
 	}
+	/// <summary>
+	/// returns the tagged value with the given name
+	/// if a tagged valeu with the given name doesn't exist null is returned
+	/// </summary>
+	/// <param name="name">the name of the taggev value to return</param>
+	/// <returns>the tagged value with the given name</returns>
 	public virtual TaggedValue getTaggedValue(string name)
 	{
 		foreach (TaggedValue taggedValue in this.taggedValues) 
@@ -250,5 +263,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		((Element)this.owner).deleteOwnedElement(this);
 	}
 	public abstract void deleteOwnedElement(Element ownedElement);
+	public UML.Classes.Kernel.Package owningPackage 
+	{
+		get
+		{
+			var ownerPackage = this.owner as Package;
+			return ownerPackage ?? ownerPackage.owningPackage;
+				
+		}
+		set
+		{
+			throw new NotImplementedException();
+		}
+	}
   }
 }

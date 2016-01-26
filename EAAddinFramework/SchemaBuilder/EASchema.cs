@@ -111,7 +111,8 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="destinationPackage">the package to create the subset in</param>
 		public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage)
 		{
-			//loop the elemets to create the subSetElements
+
+			//loop the elements to create the subSetElements
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
 				//only create subset elements for classes, not for datatypes
@@ -156,6 +157,7 @@ namespace EAAddinFramework.SchemaBuilder
 				//match the associations
 				schemaElement.matchSubsetAssociations();
 			}
+			this.createSubsetModel(messageElement.owningPackage);
 			//create missing subset elements
 			//synchronize attributes
 			//synchronize associations
@@ -198,6 +200,13 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			var subsetElements = new HashSet<UML.Classes.Kernel.Class>();
 			this.addRelatedSubsetElements(messageElement,subsetElements);
+			//we also add all classes in the package of the subset element
+			foreach (var element in messageElement.owningPackage.ownedElements) 
+			{
+				//we only do classes
+				var classElement = element as UTF_EA.Class;
+				this.addToSubsetElements(classElement, subsetElements);
+			}
 			return subsetElements;
 		}
 		/// <summary>

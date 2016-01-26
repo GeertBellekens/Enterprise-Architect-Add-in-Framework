@@ -50,7 +50,10 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <returns>the new property</returns>
 		public UML.Classes.Kernel.Property createSubsetProperty()
 		{
-			this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
+			if (this.subSetProperty == null)
+			{
+				this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
+			}
 			this.subSetProperty.type = this.sourceProperty.type;
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 			this.subSetProperty.lower = this.sourceProperty.lower;

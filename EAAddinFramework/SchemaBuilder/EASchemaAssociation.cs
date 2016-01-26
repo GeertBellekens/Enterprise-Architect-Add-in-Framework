@@ -158,7 +158,6 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <returns>the new subset association</returns>
 		public UML.Classes.Kernel.Association createSubsetAssociation()
 		{
-			this.subsetAssociation = null;
 			//find the other schemaElement
 
 			if (this.otherElement != null)
@@ -179,8 +178,11 @@ namespace EAAddinFramework.SchemaBuilder
 						associationTarget = this.otherElement.sourceElement;
 					}
 					//create the association
-					this.subsetAssociation = this.model.factory.createNewElement<UML.Classes.Kernel.Association>(this.owner.subsetElement,this.sourceAssociation.name);
-					this.subsetAssociation.addRelatedElement(associationTarget);
+					if (this.subsetAssociation == null)
+					{
+						this.subsetAssociation = this.model.factory.createNewElement<UML.Classes.Kernel.Association>(this.owner.subsetElement,this.sourceAssociation.name);
+						this.subsetAssociation.addRelatedElement(associationTarget);
+					}
 					//copy association properties
 					this.subsetAssociation.name = this.sourceAssociation.name;
 					this.subsetAssociation.ownedComments = this.sourceAssociation.ownedComments;
