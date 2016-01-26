@@ -5,6 +5,7 @@ using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.Utilities;
+using System.Linq;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -16,6 +17,17 @@ namespace EAAddinFramework.SchemaBuilder
 		private UTF_EA.Model model;
 		private EA.SchemaComposer wrappedComposer;
 		private HashSet<SBF.SchemaElement> schemaElements = null;
+
+		/// <summary>
+		/// list of tagged value names to ignore when updating tagged values
+		/// </summary>
+		public List<string> ignoredStereotypes{get;set;}
+		/// <summary>
+		/// list of stereotypes of elements to ignore when updating a subset model
+		/// </summary>
+		public List<string> ignoredTaggedValues{get;set;}
+
+
 		/// <summary>
 		/// Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
 		/// </summary>
@@ -183,7 +195,9 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//if it doesn't correspond with a schema element we delete it?
 					//only if the subset element is located in the same folder as the message element
-					if (subsetElement.owner.Equals(messageElement.owner)) 
+					//and it doesn't have one of stereotypes to be ignored
+					if (subsetElement.owner.Equals(messageElement.owner)
+					    && ! this.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any())
 					{
 						subsetElement.delete();
 					}

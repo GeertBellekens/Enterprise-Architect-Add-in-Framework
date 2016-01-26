@@ -46,6 +46,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         this.stereotypes = newStereotypes;
       }
     }
+    public List<string> stereotypeNames 
+    {
+    	get
+    	{
+    		var returnedNames = new List<string>();
+    		foreach (UML.Profiles.Stereotype stereotype in this.stereotypes) 
+    		{
+    			returnedNames.Add(stereotype.name);
+    		}
+    		return returnedNames;
+    	}
+    }
     public abstract string guid {get;}
     /// returns the owner of the given type
     /// This operation will keep on looking upwards through the owners until 

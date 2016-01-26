@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using System.Linq;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -161,12 +162,34 @@ namespace EAAddinFramework.SchemaBuilder
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();
 			//copy tagged values
-			((UTF_EA.Element) this.subsetElement).copyTaggedValues((UTF_EA.Element)this.sourceElement);
+			foreach (UTF_EA.TaggedValue sourceTaggedValue in sourceElement.taggedValues) 
+			{
+				bool updateTaggedValue = true;
+				if (this.owner.ignoredTaggedValues.Contains(sourceTaggedValue.name))
+				{
+					UTF_EA.TaggedValue targetTaggedValue = ((UTF_EA.Element) this.subsetElement).getTaggedValue(sourceTaggedValue.name);
+					if (targetTaggedValue.eaStringValue != string.Empty)
+					{
+						//don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
+						updateTaggedValue = false;
+					}
+				}
+				if (updateTaggedValue)
+				{
+					((UTF_EA.Element) this.subsetElement).addTaggedValue(sourceTaggedValue.name, sourceTaggedValue.eaStringValue);
+				}
+			}
 			//add a trace relation from the subset element to the source element
-			UTF_EA.ConnectorWrapper trace = (UTF_EA.ConnectorWrapper)this.model.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.subsetElement, string.Empty);
-			trace.addStereotype(this.model.factory.createStereotype(trace, "trace"));
-			trace.target = this.sourceElement;
-			trace.save();
+			// check if trace already exists?
+			var trace = this.subsetElement.getRelationships<UML.Classes.Dependencies.Abstraction>()
+						.FirstOrDefault(x => this.sourceElement.Equals(x.supplier)) as UML.Classes.Dependencies.Abstraction;
+			if (trace == null)
+			{
+				trace = this.model.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.subsetElement, string.Empty);
+				trace.addStereotype(this.model.factory.createStereotype(trace, "trace"));
+				trace.target = this.sourceElement;
+				trace.save();
+			}
 			//return the new element
 			return this.subsetElement;
 		}		

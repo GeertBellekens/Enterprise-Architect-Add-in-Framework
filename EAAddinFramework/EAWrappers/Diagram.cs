@@ -328,26 +328,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		public UML.Diagrams.DiagramElement addToDiagram(UML.Classes.Kernel.Element element)
 		{
 			UML.Diagrams.DiagramElement diagramElement = null;
-			//first check whether this element is not already added to this diagram
-			diagramElement = this.diagramObjectWrappers.FirstOrDefault(x=> x.element.Equals(element));
-			if (diagramElement == null)
+			if (element != null)
 			{
-				if (element is EA.ElementWrapper)
+				//first check whether this element is not already added to this diagram
+				diagramElement = this.getDiagramElement(element);
+				if (diagramElement == null)
 				{
-					//first save the diagram to make sure we don't loos any unsaved changes
-					this.model.saveOpenedDiagram(this);
-					global::EA.DiagramObject newDiagramObject = this.wrappedDiagram.DiagramObjects.AddNew("","") as global::EA.DiagramObject;
-					diagramElement = ((Factory)this.model.factory).createDiagramElement(newDiagramObject) ;
-					diagramElement.element = element;
-					//save the element diagramObject
-					((DiagramObjectWrapper)diagramElement).save();
-					// now refresh to make sure we see the new element on the diagram
-					this.reFresh();
-				}
-
-				else if (!(element.owner is UML.Classes.Kernel.Package))
-				{
-					diagramElement = this.addToDiagram(element.owner);
+					if (element is EA.ElementWrapper)
+					{
+						//first save the diagram to make sure we don't lose any unsaved changes
+						this.model.saveOpenedDiagram(this);
+						global::EA.DiagramObject newDiagramObject = this.wrappedDiagram.DiagramObjects.AddNew("","") as global::EA.DiagramObject;
+						diagramElement = ((Factory)this.model.factory).createDiagramElement(newDiagramObject) ;
+						diagramElement.element = element;
+						//save the element diagramObject
+						((DiagramObjectWrapper)diagramElement).save();
+						// now refresh to make sure we see the new element on the diagram
+						this.reFresh();
+					}
+	
+					else if (!(element.owner is UML.Classes.Kernel.Package))
+					{
+						diagramElement = this.addToDiagram(element.owner);
+					}
 				}
 			}
 			return diagramElement;
@@ -413,38 +416,69 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   		/// <summary>
   		/// The elements that have this diagram as composite diagram
   		/// </summary>
-		public HashSet<UML.Classes.Kernel.Element> compositeElements {
-		get 
+		public HashSet<UML.Classes.Kernel.Element> compositeElements 
 		{
-			HashSet<UML.Classes.Kernel.Element> results = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Element>();
-			string sqlGet = " select o.Object_ID from t_object o                          " +
-							" where o.PDATA1 = '"+this.DiagramID.ToString() +"'           " +
-							" and o.Object_Type <> 'Package'                              " +
-							" union                                                       " +
-							" select o.Object_ID from t_object o                          " +
-							" inner join t_xref x on o.ea_guid = x.Client                 " +
-							" where x.Supplier = '"+ this.diagramGUID + "'                ";
-			foreach (ElementWrapper element in this.model.getElementWrappersByQuery(sqlGet))
+			get 
 			{
-				results.Add(element);
+				HashSet<UML.Classes.Kernel.Element> results = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Element>();
+				string sqlGet = " select o.Object_ID from t_object o                          " +
+								" where o.PDATA1 = '"+this.DiagramID.ToString() +"'           " +
+								" and o.Object_Type <> 'Package'                              " +
+								" union                                                       " +
+								" select o.Object_ID from t_object o                          " +
+								" inner join t_xref x on o.ea_guid = x.Client                 " +
+								" where x.Supplier = '"+ this.diagramGUID + "'                ";
+				foreach (ElementWrapper element in this.model.getElementWrappersByQuery(sqlGet))
+				{
+					results.Add(element);
+				}
+				return results;
 			}
-			return results;
 		}
-	}
-  	
-	public void autoLayout()
-	{
-		//get the xml variant of the diagrams GUID
-		string XMLdiagramID = this.model.getWrappedModel().GetProjectInterface().GUIDtoXML(this.wrappedDiagram.DiagramGUID);
-		//layout the diagram
-		this.model.getWrappedModel().GetProjectInterface().LayoutDiagramEx(XMLdiagramID, global::EA.ConstLayoutStyles.lsDiagramDefault, 4,20,20,false);
-		//save the diagram
-		this.reFresh();
-	}
+	  	
+		public void autoLayout()
+		{
+			//get the xml variant of the diagrams GUID
+			string XMLdiagramID = this.model.getWrappedModel().GetProjectInterface().GUIDtoXML(this.wrappedDiagram.DiagramGUID);
+			//layout the diagram
+			this.model.getWrappedModel().GetProjectInterface().LayoutDiagramEx(XMLdiagramID, global::EA.ConstLayoutStyles.lsDiagramDefault, 4,20,20,false);
+			//save the diagram
+			this.reFresh();
+		}
 
 		public void delete()
 		{
 			throw new NotImplementedException();
+		}
+		 /// <summary>
+        /// indicates if the given element is shown on this diagram
+        /// </summary>
+        /// <param name="element">the element to look for</param>
+        /// <returns>true if the given element is shown on this diagram, false otherwise</returns>
+		public bool contains(UML.Classes.Kernel.Element element)
+		{
+			return this.getDiagramElement(element) != null;
+		}
+		/// <summary>
+		/// returns the DiagramElement for the given element.
+		/// Returns null if the element is not shown on this diagram
+		/// </summary>
+		/// <param name="element">the element that is used on this diagram</param>
+		/// <returns>the diagramElement that represents the element shown on this diagram</returns>
+		public UML.Diagrams.DiagramElement getDiagramElement(UML.Classes.Kernel.Element element)
+		{
+			if (element is ElementWrapper)
+			{
+				return this.diagramObjectWrappers.FirstOrDefault(x=> x.element.Equals(element));
+			}
+			else  if (element is ConnectorWrapper)
+			{
+				return this.diagramLinkWrappers.FirstOrDefault(x => x.element.Equals(element));
+			}
+			else
+			{
+				return null;
+			}
 		}
   }
 }

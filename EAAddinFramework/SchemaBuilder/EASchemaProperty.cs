@@ -1,4 +1,4 @@
-﻿
+﻿using System.Linq;
 using System;
 using System.Collections.Generic;
 using SBF=SchemaBuilderFramework;
@@ -96,10 +96,16 @@ namespace EAAddinFramework.SchemaBuilder
 			    && this.subSetProperty.type != null 
 			    && !(this.subSetProperty.type is UML.Classes.Kernel.PrimitiveType))
 			{
-
-				UTF_EA.Dependency dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
-				dependency.addRelatedElement(this.subSetProperty.type);
-				dependency.save();
+				//add a trace relation from the subset element to the source element
+				//check if trace already exists?
+				var dependency = this.owner.subsetElement.getRelationships<UTF_EA.Dependency>()
+							.FirstOrDefault(x => this.subSetProperty.type.Equals(x.supplier) && x.name == this.subSetProperty.name) ;
+				if (dependency == null)
+				{
+					dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
+					dependency.addRelatedElement(this.subSetProperty.type);
+					dependency.save();
+				}
 			}
 		}
 	}

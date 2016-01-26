@@ -22,12 +22,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     public int xPosition {
       get { return this.wrappedDiagramObject.left;  }
-      set { this.wrappedDiagramObject.left = value; }
+      set 
+      {
+      	if (wrappedDiagramObject.right ==0)
+  	    {
+      		wrappedDiagramObject.right = wrappedDiagramObject.left + 20;
+  	    }
+      	//move the right the same amount as the left
+      	this.wrappedDiagramObject.right += value - this.wrappedDiagramObject.left;
+      	this.wrappedDiagramObject.left = value;
+      }
     }
     
     public int yPosition {
       get { return this.wrappedDiagramObject.top * -1;  }
-      set { this.wrappedDiagramObject.top = value * -1; }
+      set 
+      { 
+      	if (wrappedDiagramObject.bottom ==0)
+  	    {
+      		wrappedDiagramObject.bottom = wrappedDiagramObject.top + -20;
+  	    }
+      	//move the top the same amount
+      	this.wrappedDiagramObject.bottom += this.wrappedDiagramObject.top + (value *-1);
+      	this.wrappedDiagramObject.top = value * -1; }
     }
     
     public UML.Classes.Kernel.Element element 
@@ -50,5 +67,62 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	this.wrappedDiagramObject.Update();
     }
+
+		public void select()
+		{
+			throw new NotImplementedException();
+		}
+
+	public void open()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void openProperties()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void addToCurrentDiagram()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void selectInCurrentDiagram()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void delete()
+	{
+		throw new NotImplementedException();
+	}
+
+	public string name {
+		get {
+			throw new NotImplementedException();
+		}
+	}
+
+	public UML.Classes.Kernel.Element owner {
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
+	public string fqn {
+		get {
+			throw new NotImplementedException();
+		}
+	}
+
+	public HashSet<UML.Profiles.Stereotype> stereotypes {
+		get {
+			throw new NotImplementedException();
+		}
+	}
   }
 }

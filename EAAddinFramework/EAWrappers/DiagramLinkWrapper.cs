@@ -65,5 +65,62 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	this.diagram.open();
     	this.diagram.wrappedDiagram.SelectedConnector = this.relation.wrappedConnector;
     }
+
+	public void open()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void openProperties()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void addToCurrentDiagram()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void selectInCurrentDiagram()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void delete()
+	{
+		throw new NotImplementedException();
+	}
+
+	public string name {
+		get {
+			throw new NotImplementedException();
+		}
+	}
+
+	public UML.Classes.Kernel.Element owner {
+		get {
+			throw new NotImplementedException();
+		}
+		set {
+			throw new NotImplementedException();
+		}
+	}
+
+	public string fqn {
+		get {
+			throw new NotImplementedException();
+		}
+	}
+
+	public HashSet<UML.Profiles.Stereotype> stereotypes {
+		get {
+			throw new NotImplementedException();
+		}
+	}
+
+	public void save()
+	{
+		this.wrappedDiagramLink.Update();
+	}
   }
 }

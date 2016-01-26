@@ -1416,5 +1416,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		taggedValueType.Detail = tagDetail;
 		taggedValueType.Update();
 	}
+	/// <summary>
+	/// reload the open diagrams
+	/// </summary>
+	public void reloadDiagrams()
+	{
+		this.wrappedModel.RefreshOpenDiagrams(true);
+	}
   }
 }

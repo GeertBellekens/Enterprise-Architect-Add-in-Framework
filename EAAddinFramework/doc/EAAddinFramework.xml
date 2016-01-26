@@ -1627,6 +1627,21 @@
             </summary>
             <returns>the name as ToString</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.contains(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            indicates if the given element is shown on this diagram
+            </summary>
+            <param name="element">the element to look for</param>
+            <returns>true if the given element is shown on this diagram, false otherwise</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            returns the DiagramElement for the given element.
+            Returns null if the element is not shown on this diagram
+            </summary>
+            <param name="element">the element that is used on this diagram</param>
+            <returns>the diagramElement that represents the element shown on this diagram</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
             all elements shown on this diagram.
             Currently only diagramObjectWrappers and relations
@@ -2310,6 +2325,11 @@
             <param name="tagName">the name of the tagged value type</param>
             <returns>true if it exists</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.reloadDiagrams">
+            <summary>
+            reload the open diagrams
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
             <summary>
             returns the full path of the running ea.exe
@@ -2622,6 +2642,16 @@
             </summary>
             <param name="element">the Class to add</param>
             <param name="subsetElements">the list of subset elements</param>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredStereotypes">
+            <summary>
+            list of tagged value names to ignore when updating tagged values
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredTaggedValues">
+            <summary>
+            list of stereotypes of elements to ignore when updating a subset model
+            </summary>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
             <summary>

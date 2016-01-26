@@ -197,7 +197,25 @@ namespace EAAddinFramework.SchemaBuilder
 					//save all changes
 					this.subsetAssociation.save();
 					//copy tagged values
-					((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
+					foreach (UTF_EA.TaggedValue sourceTaggedValue in this.sourceAssociation.taggedValues) 
+					{
+						bool updateTaggedValue = true;
+						if (this.owner.owner.ignoredTaggedValues.Contains(sourceTaggedValue.name))
+						{
+							UTF_EA.TaggedValue targetTaggedValue = ((UTF_EA.Element) this.subsetAssociation).getTaggedValue(sourceTaggedValue.name);
+							if (targetTaggedValue.eaStringValue != string.Empty)
+							{
+								//don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
+								updateTaggedValue = false;
+							}
+						}
+						if (updateTaggedValue)
+						{
+							((UTF_EA.Element) this.subsetAssociation).addTaggedValue(sourceTaggedValue.name, sourceTaggedValue.eaStringValue);
+						}
+					}
+					
+					//((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
 					//add tagged value with reference to source association
 					((UTF_EA.Association)this.subsetAssociation).addTaggedValue(EASchemaBuilderFactory.sourceAssociationTagName,((UTF_EA.Association)this.sourceAssociation).guid);
 				}
