@@ -2537,6 +2537,14 @@
             Description of EASchemaProperty.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper.parseRestriction(System.String)">
+            <summary>
+            restriction string have a form like "byRef=0;inline=0;minOccurs=1;maxOccurs=7;"
+            So we split by ";" and then by "=" to get the individual key-value pairs in a dictionary
+            </summary>
+            <param name="restriction">the restriction string</param>
+            <returns>a dictionary with the individual key-value pairs</returns>
+        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaAssociation.createSubsetAssociation">
             <summary>
             Creates the association in the subset. This is a copy of the source association but now between the subsetelements
@@ -2668,12 +2676,11 @@
             duplicates the asociations in the schema to associations between schema elements
             </summary>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.resolveAttributetypes(System.Collections.Generic.HashSet{SchemaBuilderFramework.SchemaElement})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.createSubsetAttributes">
             <summary>
             Checks if the attribute type is present as the source element of one of the schema elements
             If it finds a match the type is set to the subset elemnt of this schema element
             </summary>
-            <param name="schemaElements"></param>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addAttributeTypeDependencies">
             <summary>
@@ -2734,16 +2741,9 @@
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.createSubsetProperty">
             <summary>
-            Creates the subset property in the subsetElement of the owning SchemaElement
-            </summary>
-            <returns>the new property</returns>
-        </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.resolveAttributeType(System.Collections.Generic.HashSet{SchemaBuilderFramework.SchemaElement})">
-            <summary>
             Checks if the attribute type is present as the source element of one of the schema elements
             If it finds a match the type is set to the subset elemnt of this schema element
             </summary>
-            <param name="schemaElements">the list of schema elements in the schema</param>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.addAttributeTypeDependency">
             <summary>

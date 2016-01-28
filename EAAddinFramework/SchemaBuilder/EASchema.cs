@@ -84,7 +84,8 @@ namespace EAAddinFramework.SchemaBuilder
 			EASchemaElement result = null;
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
-				if (schemaElement.sourceElement.Equals(umlElement))
+				if (schemaElement.sourceElement != null
+					&& schemaElement.sourceElement.Equals(umlElement))
 				{
 					result = schemaElement;
 				}
@@ -143,13 +144,14 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					schemaElement.createSubsetAssociations();
 					//Logger.log("after EASchema::creating single subset association");
-				}
+				
 				// and to resolve the attributes types to subset types if required
-				schemaElement.resolveAttributetypes(this.schemaElements);
+				schemaElement.createSubsetAttributes();
 				//Logger.log("after EASchema::resolving attributes");
 				//and add a dependency from the schemaElement to the type of the attributes
 				schemaElement.addAttributeTypeDependencies();
 				//Logger.log("after EASchema::adding attribuetypeDependencies");
+				}
 			}
 
 		}

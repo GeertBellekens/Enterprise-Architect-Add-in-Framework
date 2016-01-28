@@ -1386,6 +1386,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			eaTypeNames.Add(((Factory)this.factory).translateTypeName(allowedType));
 		}
 		includeString += string.Join(",",allowedTypes);
+		//close section
+		includeString += ";";
+		//get the currently selected package
+		includeString += "Selection=" + this.wrappedModel.GetTreeSelectedPackage().PackageGUID;
+		//close section
+		includeString += ";";
 		//currenlty only supported for ElementWrappers
 		int EAElementID = this.wrappedModel.InvokeConstructPicker(includeString);
 		return this.getElementWrapperByID(EAElementID);

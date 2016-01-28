@@ -45,35 +45,26 @@ namespace EAAddinFramework.SchemaBuilder
 		public UML.Classes.Kernel.Property subSetProperty {get;set;}
 
 		/// <summary>
-		/// Creates the subset property in the subsetElement of the owning SchemaElement
+		/// Checks if the attribute type is present as the source element of one of the schema elements
+		/// If it finds a match the type is set to the subset elemnt of this schema element
 		/// </summary>
-		/// <returns>the new property</returns>
-		public UML.Classes.Kernel.Property createSubsetProperty()
+		public void createSubsetProperty()
 		{
+			HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 			if (this.subSetProperty == null)
 			{
 				this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
 			}
 			this.subSetProperty.type = this.sourceProperty.type;
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
-			this.subSetProperty.lower = this.sourceProperty.lower;
-			this.subSetProperty.upper = this.sourceProperty.upper;
+			((UTF_EA.Attribute)this.subSetProperty).multiplicity = this.multiplicity;
 			this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
-			((UTF_EA.Element) this.subSetProperty).save();
 			//copy tagged values
 			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
 			//add tagged value with reference to source association
 			((UTF_EA.Element)this.subSetProperty).addTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName,((UTF_EA.Element)this.sourceProperty).guid);
-			return this.subSetProperty;
-		}
-		/// <summary>
-		/// Checks if the attribute type is present as the source element of one of the schema elements
-		/// If it finds a match the type is set to the subset elemnt of this schema element
-		/// </summary>
-		/// <param name="schemaElements">the list of schema elements in the schema</param>
-		public void resolveAttributeType(HashSet<SBF.SchemaElement> schemaElements)
-		{
-			foreach (EASchemaElement element in schemaElements) 
+			//resolve the type
+			foreach (EASchemaElement element in schemaElements)
 			{
 				if (element.sourceElement != null && 
 				    element.subsetElement != null &&
@@ -82,9 +73,9 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//replace the type if it matches the source element
 					this.subSetProperty.type = element.subsetElement;
-					((UTF_EA.Attribute)this.subSetProperty).save();
 				}
 			}
+			((UTF_EA.Element) this.subSetProperty).save();
 		}
 		/// <summary>
 		/// adds a dependency from the attributes owner to the type of the attributes

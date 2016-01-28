@@ -13,7 +13,7 @@ namespace EAAddinFramework.SchemaBuilder
 	/// </summary>
 	public class EASchemaElement : SBF.SchemaElement
 	{
-		private EA.SchemaType wrappedSchemaType;
+		internal EA.SchemaType wrappedSchemaType;
 		private UTF_EA.Model model;
 		private EASchema ownerSchema;
 		private HashSet<SBF.SchemaProperty> _schemaProperties;
@@ -153,12 +153,6 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//notes
 			this.subsetElement.ownedComments = this.sourceElement.ownedComments;
-			//loop the properties
-			foreach (EASchemaProperty property in this.schemaProperties) 
-			{
-				//create the subset property
-				property.createSubsetProperty();
-			}
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();
 			//copy tagged values
@@ -168,7 +162,8 @@ namespace EAAddinFramework.SchemaBuilder
 				if (this.owner.ignoredTaggedValues.Contains(sourceTaggedValue.name))
 				{
 					UTF_EA.TaggedValue targetTaggedValue = ((UTF_EA.Element) this.subsetElement).getTaggedValue(sourceTaggedValue.name);
-					if (targetTaggedValue.eaStringValue != string.Empty)
+					if (targetTaggedValue != null
+						&& targetTaggedValue.eaStringValue != string.Empty)
 					{
 						//don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
 						updateTaggedValue = false;
@@ -208,12 +203,11 @@ namespace EAAddinFramework.SchemaBuilder
 		/// Checks if the attribute type is present as the source element of one of the schema elements
 		/// If it finds a match the type is set to the subset elemnt of this schema element
 		/// </summary>
-		/// <param name="schemaElements"></param>
-		public void resolveAttributetypes(HashSet<SBF.SchemaElement> schemaElements)
+		public void createSubsetAttributes()
 		{
 			foreach (EASchemaProperty schemaProperty in this.schemaProperties) 
 			{
-				schemaProperty.resolveAttributeType(schemaElements);
+				schemaProperty.createSubsetProperty();
 			}
 		}
 		/// <summary>

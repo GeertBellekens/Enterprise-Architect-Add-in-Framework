@@ -194,6 +194,8 @@ namespace EAAddinFramework.SchemaBuilder
 					this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.thisEnd,((UTF_EA.Association) this.subsetAssociation).sourceEnd);
 					//copy target end properties
 					this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.otherEnd,((UTF_EA.Association) this.subsetAssociation).targetEnd);
+					//set the target multiplicity to a possible redefined multiplicity from the schema
+					((UTF_EA.Association) this.subsetAssociation).targetEnd.multiplicity = this.multiplicity;
 					//save all changes
 					this.subsetAssociation.save();
 					//copy tagged values
