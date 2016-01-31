@@ -20,7 +20,16 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="owner">the owner Schema Element</param>
 		/// <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
 		public EASchemaProperty(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap){}
-		
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+		protected override UTF_EA.Multiplicity defaultMultiplicity 
+		{
+			get 
+			{
+				return new UTF_EA.Multiplicity("1..1");
+			}
+		}
+		#endregion		
 		/// <summary>
 		/// The property int he model where this Schema property was derived from
 		/// </summary>
@@ -59,10 +68,6 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 			((UTF_EA.Attribute)this.subSetProperty).multiplicity = this.multiplicity;
 			this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
-			//copy tagged values
-			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
-			//add tagged value with reference to source association
-			((UTF_EA.Element)this.subSetProperty).addTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName,((UTF_EA.Element)this.sourceProperty).guid);
 			//resolve the type
 			foreach (EASchemaElement element in schemaElements)
 			{
@@ -76,6 +81,11 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 			((UTF_EA.Element) this.subSetProperty).save();
+			//copy tagged values
+			((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
+			//add tagged value with reference to source association
+			((UTF_EA.Element)this.subSetProperty).addTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName,((UTF_EA.Element)this.sourceProperty).guid);
+
 		}
 		/// <summary>
 		/// adds a dependency from the attributes owner to the type of the attributes

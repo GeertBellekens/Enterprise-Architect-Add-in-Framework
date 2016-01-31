@@ -58,12 +58,21 @@ namespace EAAddinFramework.SchemaBuilder
 					if (this._multiplicity == null)
 					{
 						//no restriction on multiplicity, use standard cardinality
-						this._multiplicity = new UTF_EA.Multiplicity(this.wrappedProperty.Cardinality.Replace("...",".."));
+						try
+						{
+							this._multiplicity = new UTF_EA.Multiplicity(this.wrappedProperty.Cardinality.Replace("...",".."));
+						}
+						catch(ArgumentException)
+						{
+							//if fro some reason the cardinality is invalid we return the default multiplicity
+							this._multiplicity = this.defaultMultiplicity;
+						}
 					}
 				}
 				return this._multiplicity;
 			}
 		}
+		protected abstract UTF_EA.Multiplicity defaultMultiplicity {get;}
 		/// <summary>
 		/// restriction string have a form like "byRef=0;inline=0;minOccurs=1;maxOccurs=7;"
 		/// So we split by ";" and then by "=" to get the individual key-value pairs in a dictionary

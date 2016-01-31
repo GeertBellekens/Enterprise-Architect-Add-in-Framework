@@ -8,6 +8,7 @@ namespace EAAddinFramework.Utilities
     public static class Logger
     {
         private static string _logFileName = System.IO.Path.GetTempPath() + @"\EAAddinFramework.log";
+        private static DateTime lastTimeStamp = System.DateTime.Now;
         /// <summary>
         /// the logfile full pathname
         /// </summary>
@@ -37,7 +38,9 @@ namespace EAAddinFramework.Utilities
         public static void log(string logmessage)
         { 
             System.IO.StreamWriter logfile = new System.IO.StreamWriter(_logFileName,true);
-            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " " + logmessage);
+            double diff = (System.DateTime.Now - lastTimeStamp).TotalMilliseconds;
+            lastTimeStamp = System.DateTime.Now;
+            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " diff: "+ diff.ToString() + " ms " + logmessage);
             logfile.Close();
         }
         /// <summary>

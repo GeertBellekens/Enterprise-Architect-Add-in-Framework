@@ -894,6 +894,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		 	{
 		 		item = this.selectedDiagram;
 		 	}
+		 	//get the owner in this thread
+		 	if (item != null)
+		 	{
+		 		var owner = item.owner;
+		 	}
 		 	return item;
 		}
 		set 

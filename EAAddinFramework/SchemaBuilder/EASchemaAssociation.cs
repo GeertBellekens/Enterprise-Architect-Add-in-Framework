@@ -21,7 +21,16 @@ namespace EAAddinFramework.SchemaBuilder
 		public EASchemaAssociation(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap)
 		{
 		}
-		
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+		protected override Multiplicity defaultMultiplicity 
+		{
+			get 
+			{
+				return new Multiplicity("0..*");
+			}
+		}
+		#endregion		
 		public UML.Classes.Kernel.Association sourceAssociation {
 			get 
 			{

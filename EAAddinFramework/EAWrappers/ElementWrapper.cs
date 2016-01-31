@@ -11,6 +11,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
   {
     internal global::EA.Element wrappedElement {get; set; }
     private UML.Classes.Kernel.Element _owner;
+    private HashSet<UML.Classes.Kernel.Property> _attributes;
+    private List<UML.Classes.Kernel.Relationship> _allRelationships;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -137,11 +139,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
 
     public HashSet<UML.Classes.Kernel.Property> attributes {
-      get {
-        return new HashSet<UML.Classes.Kernel.Property>
-        (Factory.getInstance().createElements
-          ( this.wrappedElement.Attributes)
-          .Cast<UML.Classes.Kernel.Property>());
+      get 
+      {
+      	if (this._attributes == null)
+      	{
+      		this._attributes = new HashSet<UML.Classes.Kernel.Property>(Factory.getInstance()
+      		                   .createElements( this.wrappedElement.Attributes).Cast<UML.Classes.Kernel.Property>());
+      	}
+        return this._attributes;
       }
       set { throw new NotImplementedException(); }
     }
@@ -241,12 +246,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// <returns>the relations of type T</returns>
     public override List<T> getRelationships<T>() 
     {
-    	//to make sure the connectors collection is still accurate we do a refresh first
-    	this.WrappedElement.Connectors.Refresh();
-		List<UML.Classes.Kernel.Relationship> allRelationships = this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
+    	if (this._allRelationships == null)
+    	{
+	    	//to make sure the connectors collection is still accurate we do a refresh first
+	    	this.WrappedElement.Connectors.Refresh();
+			this._allRelationships = this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
+    	}
 		List<T> returnedRelationships = new List<T>();
 		// we still need to filter out those relationships that are there because of linked features
-		foreach (UML.Classes.Kernel.Relationship relationship in allRelationships) 
+		foreach (UML.Classes.Kernel.Relationship relationship in this._allRelationships) 
 		{
 			if (relationship is T) 
 			{
@@ -262,7 +270,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		return returnedRelationships;
     }
     
-    public override List<UML.Classes.Kernel.Relationship> relationships {
+    public override List<UML.Classes.Kernel.Relationship> relationships 
+    {
       get { return this.getRelationships<UML.Classes.Kernel.Relationship>(); }
       set { throw new NotImplementedException(); }
     }
