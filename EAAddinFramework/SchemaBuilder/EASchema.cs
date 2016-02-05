@@ -132,10 +132,10 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
 				{
 					schemaElement.createSubsetElement(destinationPackage);
-					Logger.log("after EASchema::creating single subset element");
+					//Logger.log("after EASchema::creating single subset element");
 				}
 			}
-			Logger.log("after EASchema::creating subsetelements");
+			//Logger.log("after EASchema::creating subsetelements");
 			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
@@ -143,14 +143,14 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
 				{
 					schemaElement.createSubsetAssociations();
-					Logger.log("after EASchema::creating single subset association");
+					//Logger.log("after EASchema::creating single subset association");
 				
 					// and to resolve the attributes types to subset types if required
 					schemaElement.createSubsetAttributes();
-					Logger.log("after EASchema::createSubsetAttributes ");
+					//Logger.log("after EASchema::createSubsetAttributes ");
 					//and add a dependency from the schemaElement to the type of the attributes
 					schemaElement.addAttributeTypeDependencies();
-					Logger.log("after EASchema::addAttributeTypeDependencies");
+					//Logger.log("after EASchema::addAttributeTypeDependencies");
 				}
 			}
 
@@ -162,21 +162,21 @@ namespace EAAddinFramework.SchemaBuilder
 		public void updateSubsetModel(UML.Classes.Kernel.Class messageElement)
 		{
 			//match the subset existing subset elements
-			Logger.log("starting EASchema::updateSubsetModel");
+			//Logger.log("starting EASchema::updateSubsetModel");
 			matchSubsetElements(messageElement);
-			Logger.log("after EASchema::matchSubsetElements");
+			//Logger.log("after EASchema::matchSubsetElements");
 			
 			foreach (EASchemaElement schemaElement in this.schemaElements) 
 			{
 				//match the attributes
 				schemaElement.matchSubsetAttributes();
-				Logger.log("after EASchema::matchSubsetAttributes");
+				//Logger.log("after EASchema::matchSubsetAttributes");
 				//match the associations
 				schemaElement.matchSubsetAssociations();
-				Logger.log("after EASchema::matchSubsetAssociations");
+				//Logger.log("after EASchema::matchSubsetAssociations");
 			}
 			this.createSubsetModel(messageElement.owningPackage);
-			Logger.log("after EASchema::createSubsetModel");
+			//Logger.log("after EASchema::createSubsetModel");
 		}
 		/// <summary>
 		/// Finds all subset elements linked to the given message element and links those to the schema elements.

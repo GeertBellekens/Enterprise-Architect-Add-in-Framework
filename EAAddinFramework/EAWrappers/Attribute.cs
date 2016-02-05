@@ -17,6 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       : base(model)
     {
       this.wrappedAttribute = wrappedAttribute;
+      var dummy = this.type; //make sure we get the type here to avoid multithreading errors
     }
 
     public global::EA.Attribute WrappedAttribute
