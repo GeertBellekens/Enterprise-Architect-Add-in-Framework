@@ -93,6 +93,7 @@
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
     <Compile Include="EAWrappers\AttributeTag.cs" />
+    <Compile Include="EAWrappers\AttributeWrapper.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\Event.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\FinalState.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\PseudoState.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
+    <Compile Include="EAWrappers\EnumerationLiteral.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
     <Compile Include="EAWrappers\RepositoryType.cs" />
     <Compile Include="EAWrappers\DeploymentDiagram.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
     <Compile Include="SchemaBuilder\EASchema.cs" />
     <Compile Include="SchemaBuilder\EASchemaElement.cs" />
+    <Compile Include="SchemaBuilder\EASchemaLiteral.cs" />
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs" />

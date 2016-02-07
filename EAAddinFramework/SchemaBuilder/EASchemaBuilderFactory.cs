@@ -74,7 +74,16 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (objectToWrap.UMLType == "Attribute")
 			{
-				return (EASchemaProperty) this.createSchemaProperty(owner, objectToWrap);
+				var sourceObject = this.EAModel.getElementByGUID(objectToWrap.GUID);
+				if (sourceObject is UTF_EA.EnumerationLiteral)
+				{
+					return (EASchemaLiteral) this.createSchemaLiteral(owner, objectToWrap);
+				}
+				else
+				{
+					return (EASchemaProperty) this.createSchemaProperty(owner, objectToWrap);
+				}
+					
 			}
 			else
 			{
@@ -94,6 +103,11 @@ namespace EAAddinFramework.SchemaBuilder
 		public override SBF.SchemaAssociation createSchemaAssociation(SBF.SchemaElement owner, object objectToWrap)
 		{
 			return new EASchemaAssociation(this.EAModel,(EASchemaElement) owner, (EA.SchemaProperty) objectToWrap);
+		}
+		
+		public override SBF.SchemaLiteral createSchemaLiteral(SBF.SchemaElement owner, object objectToWrap)
+		{
+			return new EASchemaLiteral(this.EAModel,(EASchemaElement) owner, (EA.SchemaProperty) objectToWrap);
 		}
 		
 	}

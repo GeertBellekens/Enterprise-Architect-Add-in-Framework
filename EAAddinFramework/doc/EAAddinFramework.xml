@@ -1663,6 +1663,11 @@
             The type of an associationend is stored in the EA.Association class
             itself in the fields ClientID and SupplierID
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.AttributeWrapper">
+            <summary>
+            Description of AttributeWrapper.
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Attribute.isStatic">
             the isStatic property defines context of the attribute.
             If true then the context is the class
@@ -2022,6 +2027,11 @@
             Description of DataType.
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral">
+            <summary>
+            Description of EnumerationLiteral.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">
             <summary>
             Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
@@ -2110,7 +2120,7 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAConnectorWrapper(EA.Connector)">
             creates a new EAConnectorWrapper wrapping the given EA.Connector
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAAttribute(EA.Attribute)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAAttributeWrapper(EA.Attribute)">
             creates a new EAAttribute based on the given EA.Attribute
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAElementWrapper(EA.Element)">
@@ -2204,7 +2214,7 @@
             <param name="diagrams">indicates whether diagrams should be selected</param>
             <returns></returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByGUID(System.String)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeWrapperByGUID(System.String)">
             <summary>
             gets the Attribute with the given GUID
             </summary>
@@ -2604,7 +2614,7 @@
             <param name="umlElement">the source UMLElement</param>
             <returns></returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             finds the Schema Element for which the given element could be the subset element
             </summary>
@@ -2617,34 +2627,34 @@
             </summary>
             <param name="destinationPackage">the package to create the subset in</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             updates the subset model linked to given messageElement
             </summary>
             <param name="messageElement">The message element that is the root for the message subset model</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             Finds all subset elements linked to the given message element and links those to the schema elements.
             If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
             </summary>
             <param name="messageElement">the message element to start from</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSubsetElementsfromMessage(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSubsetElementsfromMessage(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             gets all the subset elements for a given message element
             </summary>
             <param name="messageElement">the message element</param>
             <returns>all subset elements in the subset model for this message element</returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addRelatedSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Class})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addRelatedSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier})">
             <summary>
             adds all the related subset elements to the list recursively
             </summary>
             <param name="element">the element to start from </param>
             <param name="subsetElements">the HashSet of subset element to add to</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addToSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Class,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Class})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.addToSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Collections.Generic.HashSet{TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier})">
             <summary>
             adds the given class to the list of subset elements and then adds all related
             </summary>
@@ -2678,8 +2688,12 @@
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.createSubsetAttributes">
             <summary>
-            Checks if the attribute type is present as the source element of one of the schema elements
-            If it finds a match the type is set to the subset elemnt of this schema element
+            duplicates the attributes in the schema as attributes in the subset element
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.createSubsetLiterals">
+            <summary>
+            
             </summary>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addAttributeTypeDependencies">
@@ -2687,7 +2701,7 @@
             adds a dependency from the attributes owner to the type of the attributes
             </summary>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Class)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             matches the given subset element with the schema element, matching attributes and association
             all attributes or associations that do not exist in the schema are deleted
@@ -2699,6 +2713,13 @@
             checks all attributes of the subset element and tries to match it with a SchemaProperty.
             It it can't be matches te subset attribute is deleted.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.getMatchingSchemaLiteral(TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral)">
+            <summary>
+            gets the SchemaLiteral that corresponds with the given literal value
+            </summary>
+            <param name="literal">the literal to match</param>
+            <returns>the corresponding SchemaLiteral</returns>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.getMatchingSchemaProperty(TSF.UmlToolingFramework.Wrappers.EA.Attribute)">
             <summary>
@@ -2724,6 +2745,35 @@
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaElement.name">
             <summary>
             the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaLiteral">
+            <summary>
+            Description of EASchemaProperty.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaLiteral.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EAAddinFramework.SchemaBuilder.EASchemaElement,EA.SchemaProperty)">
+            <summary>
+            constructor. Nothing specific, just calling base constructor
+            </summary>
+            <param name="model">the model</param>
+            <param name="owner">the owner Schema Element</param>
+            <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaLiteral.createSubsetLiteral">
+            <summary>
+            Checks if the attribute type is present as the source element of one of the schema elements
+            If it finds a match the type is set to the subset elemnt of this schema element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaLiteral.sourceLiteral">
+            <summary>
+            The property int he model where this Schema property was derived from
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaLiteral.subSetLiteral">
+            <summary>
+            the property in the subset model generated from this property
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">

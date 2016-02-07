@@ -148,7 +148,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       } 
       else if( objectToWrap is global::EA.Attribute )  
       {
-        return this.createEAAttribute(objectToWrap as global::EA.Attribute);
+        return this.createEAAttributeWrapper(objectToWrap as global::EA.Attribute);
       }
       else if( objectToWrap is global::EA.Connector )  
       {
@@ -233,9 +233,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     /// creates a new EAAttribute based on the given EA.Attribute
-    internal Attribute createEAAttribute(global::EA.Attribute attributeToWrap) 
+    internal AttributeWrapper createEAAttributeWrapper(global::EA.Attribute attributeToWrap) 
     {
-      return new Attribute(this.model as Model, attributeToWrap);
+    	if (EnumerationLiteral.isLiteralValue(this.model as Model, attributeToWrap))
+    	{
+    		return new EnumerationLiteral(this.model as Model, attributeToWrap);
+    	}
+    	else
+    	{
+      		return new Attribute(this.model as Model, attributeToWrap);
+    	}
     }
 
     /// creates a new EAElementWrapper based on the given EA.Element
@@ -638,7 +645,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                                             string name,string EAType) 
       where T : class, UML.Classes.Kernel.Element
     {
-      return this.model.factory.createElement(collection.AddNew( name, this.translateTypeName(EAType))) as T;
+    	//creating an enumeration is a bit special because EA thinks its just an attribute
+    	if (typeof(T).Name == "EnumerationLiteral")
+    	{
+    		return new EnumerationLiteral((Model)this.model, (global::EA.Attribute)collection.AddNew( name, this.translateTypeName(EAType))) as T;
+    	}
+    	else
+    	{
+      		return this.model.factory.createElement(collection.AddNew( name, this.translateTypeName(EAType))) as T;
+    	}
     }
     
     internal T addElementToEACollection<T>( global::EA.Collection collection,
@@ -652,14 +667,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     internal String translateTypeName(String typeName){
       switch(typeName) {
         case "Property":
+    	case "EnumerationLiteral":
           return "Attribute";
         default:
           return typeName;
       }
     }
     
-    internal bool isEAAtttribute(System.Type type){
-      return type.Name == "Property";
+    internal bool isEAAtttribute(System.Type type)
+    {
+    	return (type.Name == "Property" || type.Name == "EnumerationLiteral");
     }
 
     internal bool isEAOperation(System.Type type){

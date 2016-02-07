@@ -97,7 +97,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="subsetElement">the element to search a match for</param>
 		/// <returns>the corresponding SchemaElement</returns>
-		internal EASchemaElement getSchemaElementSubsetElement(UML.Classes.Kernel.Class subsetElement)
+		internal EASchemaElement getSchemaElementSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
 		{
 			EASchemaElement result = null;
 			foreach (EASchemaElement schemaElement in this.elements) 
@@ -129,7 +129,8 @@ namespace EAAddinFramework.SchemaBuilder
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
 				//only create subset elements for classes, not for datatypes
-				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
+				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
+				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
 				{
 					schemaElement.createSubsetElement(destinationPackage);
 					//Logger.log("after EASchema::creating single subset element");
@@ -139,19 +140,21 @@ namespace EAAddinFramework.SchemaBuilder
 			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
-				//only create subset elements for classes, not for datatypes
-				if (schemaElement.sourceElement is UML.Classes.Kernel.Class)
+				//only create subset elements for classes and enumerations, not for datatypes
+				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
+				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
 				{
 					schemaElement.createSubsetAssociations();
 					//Logger.log("after EASchema::creating single subset association");
-				
 					// and to resolve the attributes types to subset types if required
 					schemaElement.createSubsetAttributes();
 					//Logger.log("after EASchema::createSubsetAttributes ");
+					schemaElement.createSubsetLiterals();
 					//and add a dependency from the schemaElement to the type of the attributes
 					schemaElement.addAttributeTypeDependencies();
 					//Logger.log("after EASchema::addAttributeTypeDependencies");
 				}
+
 			}
 
 		}
@@ -159,7 +162,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// updates the subset model linked to given messageElement
 		/// </summary>
 		/// <param name="messageElement">The message element that is the root for the message subset model</param>
-		public void updateSubsetModel(UML.Classes.Kernel.Class messageElement)
+		public void updateSubsetModel(UML.Classes.Kernel.Classifier messageElement)
 		{
 			//match the subset existing subset elements
 			//Logger.log("starting EASchema::updateSubsetModel");
@@ -171,6 +174,7 @@ namespace EAAddinFramework.SchemaBuilder
 				//match the attributes
 				schemaElement.matchSubsetAttributes();
 				//Logger.log("after EASchema::matchSubsetAttributes");
+				schemaElement.matchSubsetLiterals();
 				//match the associations
 				schemaElement.matchSubsetAssociations();
 				//Logger.log("after EASchema::matchSubsetAssociations");
@@ -183,11 +187,11 @@ namespace EAAddinFramework.SchemaBuilder
 		/// If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
 		/// </summary>
 		/// <param name="messageElement">the message element to start from</param>
-		void matchSubsetElements(UML.Classes.Kernel.Class messageElement)
+		void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement)
 		{
-			HashSet<UML.Classes.Kernel.Class> subsetElements = this.getSubsetElementsfromMessage(messageElement);
+			HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
 			//match each subset element to a schema element
-			foreach (UML.Classes.Kernel.Class subsetElement in subsetElements) 
+			foreach (UML.Classes.Kernel.Classifier subsetElement in subsetElements) 
 			{
 				//get the corrsponding schema element
 				EASchemaElement schemaElement = this.getSchemaElementSubsetElement(subsetElement);
@@ -214,15 +218,16 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="messageElement">the message element</param>
 		/// <returns>all subset elements in the subset model for this message element</returns>
-		private HashSet<UML.Classes.Kernel.Class> getSubsetElementsfromMessage(UML.Classes.Kernel.Class messageElement)
+		private HashSet<UML.Classes.Kernel.Classifier> getSubsetElementsfromMessage(UML.Classes.Kernel.Classifier messageElement)
 		{
-			var subsetElements = new HashSet<UML.Classes.Kernel.Class>();
+			var subsetElements = new HashSet<UML.Classes.Kernel.Classifier>();
 			this.addRelatedSubsetElements(messageElement,subsetElements);
 			//we also add all classes in the package of the subset element
 			foreach (var element in messageElement.owningPackage.ownedElements) 
 			{
-				//we only do classes
-				var classElement = element as UTF_EA.Class;
+				//we only do classes or enumerations
+				var classElement = element as UML.Classes.Kernel.Classifier;
+				
 				this.addToSubsetElements(classElement, subsetElements);
 			}
 			return subsetElements;
@@ -232,17 +237,17 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="element">the element to start from </param>
 		/// <param name="subsetElements">the HashSet of subset element to add to</param>
-		private void addRelatedSubsetElements(UML.Classes.Kernel.Class element, HashSet<UML.Classes.Kernel.Class> subsetElements)
+		private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
 		{
 			//follow the associations
 			foreach (UTF_EA.Association association in element.getRelationships<UML.Classes.Kernel.Association>()) 
 			{
-				addToSubsetElements(association.target as UML.Classes.Kernel.Class, subsetElements);
+				addToSubsetElements(association.target as UML.Classes.Kernel.Classifier, subsetElements);
 			}
 			//follow the attribute types
-			foreach (UTF_EA.Attribute attribute in element.ownedAttributes) 
+			foreach (UTF_EA.Attribute attribute in element.attributes) 
 			{
-				addToSubsetElements(attribute.type as UML.Classes.Kernel.Class, subsetElements);
+				addToSubsetElements(attribute.type as UML.Classes.Kernel.Classifier, subsetElements);
 			}
 			
 		}
@@ -251,10 +256,11 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="element">the Class to add</param>
 		/// <param name="subsetElements">the list of subset elements</param>
-		private void addToSubsetElements(UML.Classes.Kernel.Class element, HashSet<UML.Classes.Kernel.Class> subsetElements)
+		private void addToSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
 		{
 			//add element is not already in the list
 			if (element != null 
+			    && (element is UML.Classes.Kernel.Class || element is UML.Classes.Kernel.Enumeration)
 			    && !subsetElements.Contains(element)) 
 			{
 				subsetElements.Add(element);

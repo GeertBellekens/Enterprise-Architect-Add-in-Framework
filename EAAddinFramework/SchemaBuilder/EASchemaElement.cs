@@ -19,6 +19,7 @@ namespace EAAddinFramework.SchemaBuilder
 		private HashSet<SBF.SchemaProperty> _schemaProperties;
 		private UTF_EA.ElementWrapper _sourceElement;
 		private HashSet<SBF.SchemaAssociation> _schemaAssociations;
+		private HashSet<SBF.SchemaLiteral> _schemaLiterals;
 		
 		public EASchemaElement(UTF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
 		{
@@ -119,6 +120,25 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 		}
 		
+		public HashSet<SBF.SchemaLiteral> schemaLiterals 
+		{
+			get 
+			{
+				if (this._schemaLiterals == null)
+				{
+					this._schemaLiterals = new HashSet<SBF.SchemaLiteral>();
+					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
+					{
+						if (wrapper is EASchemaLiteral)
+						{
+							this._schemaLiterals.Add((SBF.SchemaLiteral)wrapper );
+						}
+					}
+				}
+				return this._schemaLiterals;
+			}
+			set {throw new NotImplementedException();}
+		}
 		public HashSet<SBF.SchemaAssociation> schemaAssociations 
 		{
 			get 
@@ -147,7 +167,14 @@ namespace EAAddinFramework.SchemaBuilder
 			//first create the element in the destination Package
 			if (this.subsetElement == null)
 			{
-				this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
+				if (this.sourceElement is UML.Classes.Kernel.Enumeration)
+				{
+					this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Enumeration>(destinationPackage, this.wrappedSchemaType.TypeName);
+				}
+				else if (this.sourceElement is UML.Classes.Kernel.Class)
+				{
+					this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
+				}
 			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
@@ -200,8 +227,7 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 		}
 		/// <summary>
-		/// Checks if the attribute type is present as the source element of one of the schema elements
-		/// If it finds a match the type is set to the subset elemnt of this schema element
+		/// duplicates the attributes in the schema as attributes in the subset element
 		/// </summary>
 		public void createSubsetAttributes()
 		{
@@ -210,6 +236,17 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaProperty.createSubsetProperty();
 			}
 		}
+		/// <summary>
+		/// 
+		/// </summary>
+		public void createSubsetLiterals()
+		{
+			foreach (EASchemaLiteral schemaLiteral in this.schemaLiterals) 
+			{
+				schemaLiteral.createSubsetLiteral();
+			}
+		}
+
 		/// <summary>
 		/// adds a dependency from the attributes owner to the type of the attributes
 		/// </summary>
@@ -225,7 +262,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// all attributes or associations that do not exist in the schema are deleted
 		/// </summary>
 		/// <param name="subsetElement">the subset element to match</param>
-		public void matchSubsetElement(UML.Classes.Kernel.Class subsetElement)
+		public void matchSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
 		{
 			//set the subset element
 			this.subsetElement = subsetElement;
@@ -253,6 +290,57 @@ namespace EAAddinFramework.SchemaBuilder
 					}
 				}
 			}
+		}
+
+		public void matchSubsetLiterals()
+		{
+			if (this.subsetElement != null)
+			{
+				var subsetEnumeration = this.subsetElement as UTF_EA.Enumeration;
+				if (subsetEnumeration != null)
+				{
+					foreach (UTF_EA.EnumerationLiteral literal in subsetEnumeration.ownedLiterals) 
+					{
+						EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
+						if (matchingLiteral != null)
+						{
+							//found a match
+							matchingLiteral.subSetLiteral = literal;
+						}
+						else
+						{
+							//no match, delete the literal
+							literal.delete();
+						}
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// gets the SchemaLiteral that corresponds with the given literal value
+		/// </summary>
+		/// <param name="literal">the literal to match</param>
+		/// <returns>the corresponding SchemaLiteral</returns>
+		EASchemaLiteral getMatchingSchemaLiteral(UTF_EA.EnumerationLiteral literal)
+		{
+			EASchemaLiteral result = null;
+			var sourceAttributeTag = literal.getTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName);
+			if (sourceAttributeTag != null)
+			{
+				string tagReference = sourceAttributeTag.eaStringValue;
+			
+				foreach (EASchemaLiteral schemaLiteral in this.schemaLiterals) 
+				{
+					//we have the same attribute if the given attribute has a tagged value 
+					//called sourceAttribute that refences the source attribute of the schema Property
+					if (((UTF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral).guid == tagReference)
+					{
+						result = schemaLiteral;
+						break;
+					}
+				}
+			}
+			return result;
 		}
 		/// <summary>
 		/// finds the corresponding Schema property for the given attribut
@@ -336,5 +424,6 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			return result;
 		}
+
 	}
 }

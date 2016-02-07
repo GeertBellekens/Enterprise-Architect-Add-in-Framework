@@ -13,6 +13,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private UML.Classes.Kernel.Element _owner;
     private HashSet<UML.Classes.Kernel.Property> _attributes;
     private List<UML.Classes.Kernel.Relationship> _allRelationships;
+    private HashSet<AttributeWrapper> _attributeWrappers;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -143,13 +144,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       {
       	if (this._attributes == null)
       	{
-      		this._attributes = new HashSet<UML.Classes.Kernel.Property>(Factory.getInstance()
-      		                   .createElements( this.wrappedElement.Attributes).Cast<UML.Classes.Kernel.Property>());
+      		this._attributes = new HashSet<UML.Classes.Kernel.Property>(this.attributeWrappers.OfType<UML.Classes.Kernel.Property>());
       	}
         return this._attributes;
       }
       set { throw new NotImplementedException(); }
     }
+    
+    public HashSet<AttributeWrapper> attributeWrappers
+    {
+    	get
+    	{
+    		if (this._attributeWrappers == null)
+    		{
+    			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance()
+      		                   .createElements( this.wrappedElement.Attributes).Cast<AttributeWrapper>());
+    		}
+    		return this._attributeWrappers;
+    	}
+    }
+    
+
 
     /// represents the internal EA's elementID
     public int id {
@@ -361,18 +376,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       System.Type type = typeof(T);
       T newElement;
 
-      if(((Factory)this.model.factory).isEAAtttribute(type)) {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Attributes, name, EAType  );
-      } else if(((Factory)this.model.factory).isEAOperation(type)) {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Methods, name, EAType  );
-      } else if (((Factory)this.model.factory).isEAConnector(type)) {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Connectors, name, EAType  );
-      } else {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
-          ( this.wrappedElement.Elements, name, EAType );
+      if(((Factory)this.model.factory).isEAAtttribute(type)) 
+      {
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Attributes, name, string.Empty  );
+      } 
+      else if(((Factory)this.model.factory).isEAOperation(type))
+      {
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Methods, name, EAType  );
+      }
+      else if (((Factory)this.model.factory).isEAConnector(type))
+      {
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
+      } 
+      else
+      {
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Elements, name, EAType );
       }
       return newElement;
     }
@@ -642,7 +660,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				}
 			}
 		}
-		else if (ownedElement is Attribute)
+		else if (ownedElement is AttributeWrapper)
 		{
 			for (short i = 0; i< this.WrappedElement.Attributes.Count; i++)
 			{

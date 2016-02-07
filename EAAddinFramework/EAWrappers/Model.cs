@@ -188,7 +188,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	//then try Attribute
     	if (foundElement == null)
     	{
-    		foundElement = this.getAttributeByGUID(GUIDstring);
+    		foundElement = this.getAttributeWrapperByGUID(GUIDstring);
     	}
     	//then try Operation
     	if (foundElement == null)
@@ -305,11 +305,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
     /// <param name="GUID">the attribute's GUID</param>
     /// <returns>the Attribute with the given GUID</returns>
-    public Attribute getAttributeByGUID (string GUID)
+    public AttributeWrapper getAttributeWrapperByGUID (string GUID)
     {
     	try
     	{
-    		return this.factory.createElement(this.wrappedModel.GetAttributeByGuid(GUID)) as Attribute;
+    		return this.factory.createElement(this.wrappedModel.GetAttributeByGuid(GUID)) as AttributeWrapper;
     	}catch (Exception)
     	{
     		// attribute not found, return null
@@ -417,7 +417,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       
       foreach( XmlNode attributeIDNode in attributeIDNodes ) 
       {
-        Attribute attribute = this.getAttributeByGUID(attributeIDNode.InnerText);
+        Attribute attribute = this.getAttributeWrapperByGUID(attributeIDNode.InnerText) as Attribute;
         if (attribute != null)
         {
         	attributes.Add(attribute);
@@ -823,7 +823,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   		UML.UMLItem foundItem = null;
   		foundItem = this.getElementByGUID(guidString);
   		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
-  		if (foundItem == null) foundItem = this.getAttributeByGUID(guidString);
+  		if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
   		if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
   		if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
   		return foundItem;
@@ -1394,9 +1394,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		//close section
 		includeString += ";";
 		//get the currently selected package
-		includeString += "Selection=" + this.wrappedModel.GetTreeSelectedPackage().PackageGUID;
-		//close section
-		includeString += ";";
+		var treeSelectedPackage = this.wrappedModel.GetTreeSelectedPackage();
+		if (treeSelectedPackage != null)
+		{
+			includeString += "Selection=" + treeSelectedPackage.PackageGUID;
+			//close section
+			includeString += ";";
+		}
 		//currenlty only supported for ElementWrappers
 		int EAElementID = this.wrappedModel.InvokeConstructPicker(includeString);
 		return this.getElementWrapperByID(EAElementID);

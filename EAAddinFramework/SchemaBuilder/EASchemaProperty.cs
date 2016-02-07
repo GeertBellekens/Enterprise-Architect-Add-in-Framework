@@ -39,7 +39,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._sourceProperty == null)
 				{
-					this._sourceProperty = this.model.getAttributeByGUID(this.wrappedProperty.GUID);
+					this._sourceProperty = this.model.getAttributeWrapperByGUID(this.wrappedProperty.GUID) as UTF_EA.Attribute;
 				}
 				return this._sourceProperty;
 			}

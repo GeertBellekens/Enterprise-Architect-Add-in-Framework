@@ -5,25 +5,12 @@ using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class Attribute : Element, UML.Classes.Kernel.Property {
-    private UML.Classes.Kernel.Type _type;
-	internal global::EA.Attribute wrappedAttribute { get; set; }
-    public int id
-    {
-    	get{return this.wrappedAttribute.AttributeID;}
-    }
+  public class Attribute : AttributeWrapper, UML.Classes.Kernel.Property {
+
 
     public Attribute(Model model, global::EA.Attribute wrappedAttribute) 
-      : base(model)
-    {
-      this.wrappedAttribute = wrappedAttribute;
-      var dummy = this.type; //make sure we get the type here to avoid multithreading errors
-    }
-
-    public global::EA.Attribute WrappedAttribute
-    {
-    	get { return wrappedAttribute; }
-    }
+      : base(model, wrappedAttribute)
+    {}
     
 	public override List<UML.Classes.Kernel.Relationship> relationships {
 		get 
@@ -140,10 +127,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
 
-    public override string name {
-      get { return this.wrappedAttribute.Name;  }
-      set { this.wrappedAttribute.Name = value; }
-    }
+
     public UML.Classes.Kernel.VisibilityKind visibility {
       get {
         return VisibilityKind.getUMLVisibilityKind
@@ -166,39 +150,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public UML.Classes.Kernel.Type type 
-    {
-      	get 
-      	{
-    		if (this._type == null)
-    		{
-		        this._type = this.model.getElementWrapperByID( this.wrappedAttribute.ClassifierID ) as UML.Classes.Kernel.Type;
-		        // check if the type is defined as an element in the model.
-		        if(this._type == null ) 
-		        {
-		          // no element, create primitive type based on the name of the type
-		          this._type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
-		        }
-    		}
-        	return this._type;
-      	}
-      	set 
-      	{
-      		this._type = value;
-	    	if (value != null)
-	    	{
-	    		//set classifier if needed
-	    		ElementWrapper elementWrapper = value as ElementWrapper;
-		    	if( elementWrapper != null) 
-	    		{
-		          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
-		        }
-	    	   	//always set type field
-		        this.wrappedAttribute.Type = value.name;
-	    	}
-
-      	}
-    }
+    
     
     public bool isOrdered {
       get { throw new NotImplementedException(); }
@@ -262,27 +214,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public override HashSet<UML.Classes.Kernel.Element> ownedElements {
-      get { return new HashSet<UML.Classes.Kernel.Element>(); }
-      set { throw new NotImplementedException(); }
-    }
-
-    
-    public override UML.Classes.Kernel.Element owner {
-      get { return this.model.getElementWrapperByID(this.wrappedAttribute.ParentID);}
-      set { throw new NotImplementedException(); }
-    }
-    
-    public override HashSet<UML.Profiles.Stereotype> stereotypes {
-      get {
-        return ((Factory)this.model.factory).createStereotypes
-          ( this, this.wrappedAttribute.StereotypeEx );
-      }
-      set 
-      {
-      	this.wrappedAttribute.StereotypeEx = Stereotype.getStereotypeEx(value);
-      }
-    }
+   
     
     public bool isNavigable(){ throw new NotImplementedException(); }
     
@@ -296,14 +228,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
 
-    internal override void saveElement(){
-      this.wrappedAttribute.Update();
-    }
-
-    public override String notes {
-      get { return this.wrappedAttribute.Notes;  }
-      set { this.wrappedAttribute.Notes = value; }
-    }
+   
     
     public bool _isNavigable {
       get { return true; }
@@ -311,74 +236,6 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     }
 
   	
-	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
-	{
-		UML.UMLItem item = null;
-		List<string> filteredPath = new List<string>(relativePath);
-		if (ElementWrapper.filterName( filteredPath,this.name))
-		{
-	    	if (filteredPath.Count ==1)
-	    	{
-	    		item = this;
-	    	}
-		}
-		return item; 
-	}
-	
-	public override HashSet<UML.Profiles.TaggedValue> taggedValues
-	{
-		get 
-		{
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedAttribute.TaggedValues));
-		}
-		set { throw new NotImplementedException();}
-	}
-	public override HashSet<TSF.UmlToolingFramework.UML.Profiles.TaggedValue> getReferencingTaggedValues()
-	{
-		return this.model.getTaggedValuesWithValue(this.wrappedAttribute.AttributeGUID);
-	}
-	
-	#region Equals and GetHashCode implementation
-	public override bool Equals(object obj)
-	{
-		Attribute other = obj as Attribute;
-		if (other != null)
-		{
-			if (other.wrappedAttribute.AttributeGUID == this.wrappedAttribute.AttributeGUID)
-			{
-				return true;	
-			}
-		}
-		return false;
-	}
-	
-	public override int GetHashCode()
-	{
-		return new Guid(this.wrappedAttribute.AttributeGUID).GetHashCode();
-	}
-	#endregion
 
-  	
-	internal override global::EA.Collection eaTaggedValuesCollection {
-		get {
-			return this.WrappedAttribute.TaggedValues;
-		}
-	}
-  	
-	public override string guid {
-		get 
-		{
-			return this.WrappedAttribute.AttributeGUID;
-		}
-	}
-
-		#region implemented abstract members of Element
-
-	public override void deleteOwnedElement(Element ownedElement)
-	{
-		throw new NotImplementedException();
-	}
-
-	#endregion
   }
 }
