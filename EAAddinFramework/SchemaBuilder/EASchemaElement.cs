@@ -212,9 +212,49 @@ namespace EAAddinFramework.SchemaBuilder
 				trace.target = this.sourceElement;
 				trace.save();
 			}
+			//copy the generatlizations for enumerations
+			if (this.sourceElement is UML.Classes.Kernel.Enumeration)
+			{
+				this.copyGeneralizations();
+			}
 			//return the new element
 			return this.subsetElement;
-		}		
+		}
+		/// <summary>
+		/// copy the generalizations from the source elemnt to the subset element, 
+		/// removing the generalizations that are not present in the source element
+		/// </summary>
+		private void copyGeneralizations()
+		{
+			if (this.sourceElement != null && this.subsetElement != null)
+			{
+				var sourceGeneralizations = this.sourceElement.getRelationships<UML.Classes.Kernel.Generalization>()
+					.Where(x => x.source.Equals(this.sourceElement));
+				var subsetGeneralizations = this.subsetElement.getRelationships<UML.Classes.Kernel.Generalization>()
+					.Where(x => x.source.Equals(this.subsetElement));
+				//remove generalizations that shouldn't be there
+				foreach ( var subsetGeneralization in subsetGeneralizations)
+				{
+					if (! sourceGeneralizations.Any(x => x.target.Equals(subsetGeneralization.target)))
+				    {
+						//if it doesn't exist in the set of source generalizations then we delete the generalization
+						subsetGeneralization.delete();
+				    }
+				}
+				//add the generalizations that don't exist at the subset yet
+				foreach (var sourceGeneralization in sourceGeneralizations) 
+				{
+					if (! subsetGeneralizations.Any(x => x.target.Equals(sourceGeneralization.target)))
+					{
+						//generalization doesn't exist yet. Add it
+						var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+						newGeneralization.addRelatedElement(sourceGeneralization.target);
+						newGeneralization.save();
+					}
+				}
+			}
+			
+		}
 		
 		/// <summary>
 		/// duplicates the asociations in the schema to associations between schema elements

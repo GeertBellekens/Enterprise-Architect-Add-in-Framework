@@ -2681,6 +2681,12 @@
             Description of EASchemaElement.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.copyGeneralizations">
+            <summary>
+            copy the generalizations from the source elemnt to the subset element, 
+            removing the generalizations that are not present in the source element
+            </summary>
+        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.createSubsetAssociations">
             <summary>
             duplicates the asociations in the schema to associations between schema elements
