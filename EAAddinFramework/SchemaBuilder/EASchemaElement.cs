@@ -430,8 +430,12 @@ namespace EAAddinFramework.SchemaBuilder
 						}
 						else
 						{
-							//no match, delete the association
-							association.delete();
+							//only delete if the target does not have a stereotype in the list of ignored stereotypes
+							if (association.target.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0) 
+							{
+								//no match, delete the association
+								association.delete();
+							}
 						}
 					}
 				}
