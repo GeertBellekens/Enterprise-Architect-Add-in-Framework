@@ -16,6 +16,9 @@ namespace EAAddinFramework.SchemaBuilder
 		protected EA.SchemaProperty wrappedProperty;
 		protected EASchemaElement _owner;
 		protected UTF_EA.Multiplicity _multiplicity;
+		private Dictionary<string,string> _restriction;
+		private List<EASchemaElement> _choiceElements;
+		List<UML.Classes.Kernel.Classifier> _choiceTypes;
 		
 		public EASchemaPropertyWrapper(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap)
 		{
@@ -35,26 +38,56 @@ namespace EAAddinFramework.SchemaBuilder
 				this._owner = (EASchemaElement) value;
 			}
 		}
+		public List<EASchemaElement> choiceElements
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+		public List<UML.Classes.Kernel.Classifier> choiceTypes
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+		protected Dictionary<string,string> restriction
+		{
+			get
+			{
+				if (this._restriction == null)
+				{
+					string restrictionString = this._owner.wrappedSchemaType.GetRestriction(this.wrappedProperty.GUID);
+					//only use restriction if not empty string
+					if ( restrictionString != string.Empty)
+					{
+						this._restriction = this.parseRestriction(restrictionString);
+					}
+					else
+					{
+						//no restriction found, set empty dictionary
+						this._restriction = new Dictionary<string, string>();
+					}
+				}
+				return this._restriction;
+			}
+		}
 		public UTF_EA.Multiplicity multiplicity
 		{
 			get
 			{
 				if (this._multiplicity == null)
 				{
-					string restriction = this._owner.wrappedSchemaType.GetRestriction(this.wrappedProperty.GUID);
-					//only use restriction if not empty string
-					if ( restriction != string.Empty)
+					string lower;
+					string upper;
+
+					if (this.restriction.TryGetValue("minOccurs",out lower)
+					    && this.restriction.TryGetValue("maxOccurs",out upper))
 					{
-						Dictionary<string,string> parsedRestriction = this.parseRestriction(restriction);
-						string lower;
-						string upper;
-						
-						if (parsedRestriction.TryGetValue("minOccurs",out lower)
-						    && parsedRestriction.TryGetValue("maxOccurs",out upper))
-						{
-							this._multiplicity = new UTF_EA.Multiplicity(lower, upper);
-						}
+						this._multiplicity = new UTF_EA.Multiplicity(lower, upper);
 					}
+				
 					if (this._multiplicity == null)
 					{
 						//no restriction on multiplicity, use standard cardinality
