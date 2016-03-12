@@ -67,7 +67,11 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subSetProperty.type = this.sourceProperty.type;
 			this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 			((UTF_EA.Attribute)this.subSetProperty).multiplicity = this.multiplicity;
-			this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
+			//notes only update them if they are empty
+			if (this.subSetProperty.ownedComments.Count == 0 || ! this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
+			{
+				this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
+			}
 			//resolve the type
 			foreach (EASchemaElement element in schemaElements)
 			{

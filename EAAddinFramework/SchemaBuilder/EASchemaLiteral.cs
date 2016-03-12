@@ -65,8 +65,11 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetLiteral = this.model.factory.createNewElement<UML.Classes.Kernel.EnumerationLiteral>(this.owner.subsetElement,this.sourceLiteral.name);
 			}
 			this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;
-			this.subSetLiteral.ownedComments = this.sourceLiteral.ownedComments;
-
+			//notes only update them if they are empty
+			if (this.subSetLiteral.ownedComments.Count == 0 || ! this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
+			{
+				this.subSetLiteral.ownedComments = this.sourceLiteral.ownedComments;
+			}
 			((UTF_EA.Element)this.subSetLiteral).save();
 			//copy tagged values
 			((UTF_EA.Element)this.subSetLiteral).copyTaggedValues((UTF_EA.Element)this.sourceLiteral);

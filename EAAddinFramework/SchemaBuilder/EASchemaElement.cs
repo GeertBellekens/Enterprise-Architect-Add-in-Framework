@@ -178,8 +178,11 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
-			//notes
-			this.subsetElement.ownedComments = this.sourceElement.ownedComments;
+			//notes only update them if they are empty
+			if (this.subsetElement.ownedComments.Count == 0 || ! this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
+			{
+				this.subsetElement.ownedComments = this.sourceElement.ownedComments;
+			}
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();
 			//copy tagged values

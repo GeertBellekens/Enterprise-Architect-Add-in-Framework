@@ -4,6 +4,7 @@ using TSF.UmlToolingFramework.Wrappers.EA;
 using SBF = SchemaBuilderFramework;
 using UML = TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using System.Linq;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -194,7 +195,12 @@ namespace EAAddinFramework.SchemaBuilder
 					}
 					//copy association properties
 					this.subsetAssociation.name = this.sourceAssociation.name;
-					this.subsetAssociation.ownedComments = this.sourceAssociation.ownedComments;
+					//notes only update them if they are empty
+					if (this.subsetAssociation.ownedComments.Count == 0 || ! this.subsetAssociation.ownedComments.Any(x => x.body.Length > 0))
+					{
+						this.subsetAssociation.ownedComments = this.sourceAssociation.ownedComments;
+					}
+					//stereotype
 					this.subsetAssociation.stereotypes = this.sourceAssociation.stereotypes;
 					//save all changes
 					this.subsetAssociation.save();
