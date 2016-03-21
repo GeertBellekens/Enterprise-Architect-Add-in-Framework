@@ -6,6 +6,7 @@ using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.Utilities;
 using System.Linq;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -118,11 +119,13 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			return result;
 		}
-		/// <summary>
-		/// creates a subset of the source model with only the properties and associations used in this schema
-		/// </summary>
-		/// <param name="destinationPackage">the package to create the subset in</param>
-		public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage)
+
+	    /// <summary>
+	    /// creates a subset of the source model with only the properties and associations used in this schema
+	    /// </summary>
+	    /// <param name="destinationPackage">the package to create the subset in</param>
+	    /// <param name="copyDatatype"></param>
+	    public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage,bool copyDatatype)
 		{
 
 			//loop the elements to create the subSetElements
@@ -132,17 +135,22 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
 				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
 				{
-					schemaElement.createSubsetElement(destinationPackage);
-					//Logger.log("after EASchema::creating single subset element");
-				}
+                    schemaElement.createSubsetElement(destinationPackage);
+                    //Logger.log("after EASchema::creating single subset element");
+                }
+                else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && copyDatatype)
+                {
+                    schemaElement.createSubsetElement(destinationPackage);
+                }
 			}
 			//Logger.log("after EASchema::creating subsetelements");
 			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
-				//only create subset elements for classes and enumerations, not for datatypes
+				//only create subset elements for classes and enumerations and datatypes
 				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
-				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
+				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
+                    || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
 				{
 					schemaElement.createSubsetAssociations();
 					//Logger.log("after EASchema::creating single subset association");
@@ -158,11 +166,13 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 
 		}
-		/// <summary>
-		/// updates the subset model linked to given messageElement
-		/// </summary>
-		/// <param name="messageElement">The message element that is the root for the message subset model</param>
-		public void updateSubsetModel(UML.Classes.Kernel.Classifier messageElement)
+
+	    /// <summary>
+	    /// updates the subset model linked to given messageElement
+	    /// </summary>
+	    /// <param name="messageElement">The message element that is the root for the message subset model</param>
+	    /// <param name="copyDataType"></param>
+	    public void updateSubsetModel(Classifier messageElement, bool copyDataType)
 		{
 			//match the subset existing subset elements
 			//Logger.log("starting EASchema::updateSubsetModel");
@@ -179,7 +189,7 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaElement.matchSubsetAssociations();
 				//Logger.log("after EASchema::matchSubsetAssociations");
 			}
-			this.createSubsetModel(messageElement.owningPackage);
+			this.createSubsetModel(messageElement.owningPackage, copyDataType);
 			//Logger.log("after EASchema::createSubsetModel");
 		}
 		/// <summary>
@@ -260,7 +270,7 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			//add element is not already in the list
 			if (element != null 
-			    && (element is UML.Classes.Kernel.Class || element is UML.Classes.Kernel.Enumeration)
+			    && (element is Class || element is Enumeration|| (element is DataType && !(element is PrimitiveType)))
 			    && !subsetElements.Contains(element)) 
 			{
 				subsetElements.Add(element);
