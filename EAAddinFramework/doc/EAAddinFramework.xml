@@ -16,18 +16,6 @@
             </summary>
             <param name="e">the exception</param>
         </member>
-        <member name="P:EAAddinFramework.EAAddinBase.menuHeader">
-            <summary>
-            the name of the menu. 
-            Set this name in the constructor of the derived add-in class
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.EAAddinBase.menuOptions">
-            <summary>
-            the different options of the menu.
-            Set these options in the constructor of the derived add-in class
-            </summary>
-        </member>
         <member name="M:EAAddinFramework.EAAddinBase.IsProjectOpen(EA.Repository)">
             <summary>
             returns true if a project is currently opened
@@ -1067,6 +1055,18 @@
             <param name="Repository"></param>
             <param name="composer"></param>
         </member>
+        <member name="P:EAAddinFramework.EAAddinBase.menuHeader">
+            <summary>
+            the name of the menu. 
+            Set this name in the constructor of the derived add-in class
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.EAAddinBase.menuOptions">
+            <summary>
+            the different options of the menu.
+            Set these options in the constructor of the derived add-in class
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.EAAddin">
             <summary>
             Description of EAAddin.
@@ -1094,6 +1094,11 @@
             Description of JavaScriptLanguageBase.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.EASpecific.ScriptLanguage">
+            <summary>
+            Description of ScriptLanguage.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.JScriptLanguage">
             <summary>
             Description of JScriptLanguage.
@@ -1102,12 +1107,6 @@
         <member name="T:EAAddinFramework.EASpecific.Script">
             <summary>
             Description of Script.
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.EASpecific.Script.includableScripts">
-            <summary>
-            A dictionary with all the includable script.
-            The key is the complete !INC statement, the value is the code
             </summary>
         </member>
         <member name="M:EAAddinFramework.EASpecific.Script.#ctor(System.String,System.String,System.String,System.String,System.String,TSF.UmlToolingFramework.Wrappers.EA.Model)">
@@ -1245,6 +1244,12 @@
             </summary>
             <param name="functionCode">the code to be added</param>
         </member>
+        <member name="P:EAAddinFramework.EASpecific.Script.includableScripts">
+            <summary>
+            A dictionary with all the includable script.
+            The key is the complete !INC statement, the value is the code
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EASpecific.ScriptFunction">
             <summary>
             Description of ScriptFunction.
@@ -1256,11 +1261,6 @@
             </summary>
             <param name="parameters">the parameters needed by this function</param>
             <returns>whatever gets returned by the the actual script function</returns>
-        </member>
-        <member name="T:EAAddinFramework.EASpecific.ScriptLanguage">
-            <summary>
-            Description of ScriptLanguage.
-            </summary>
         </member>
         <member name="T:EAAddinFramework.EASpecific.User">
             <summary>
@@ -1299,10 +1299,1255 @@
             deletes the workingset from the database
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getOwner``1">
+            returns the owner of the given type
+            This operation will keep on looking upwards through the owners until 
+            it finds one with the given type.
+            NON UML
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getRelationships``1">
+            default implementation returns an empty list because there is only one
+            subclass that can actually implement this operation: EAElementWrapper.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.select">
+            <summary>
+            selects the element. 
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.open">
+            <summary>
+            opens the element. 
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getReferencingTaggedValues">
+            <summary>
+            default empty implementation
+            </summary>
+            <returns>empty set</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addToCurrentDiagram">
+            <summary>
+            adds this element to the currently opened diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.selectInCurrentDiagram">
+            <summary>
+            selects this element in the current diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.ToString">
+            <summary>
+            returns the name as ToString
+            </summary>
+            <returns>the name as ToString</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.Boolean)">
+            <summary>
+            adds a new tagged value to the element with the given name and value
+            if a tagged value with that name already exists the value of the existing tagged value is updated./
+            </summary>
+            <param name="name">the name fo the tagged value to add</param>
+            <param name="tagValue">the value of the tagged value</param>
+            <param name = "addDuplicate"></param>
+            <returns>the added (or updated) tagged value</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            copies the tagged values from the source as tagged values of this element
+            if a tagged value already exists the value is copied. Else a new tagged value is created
+            </summary>
+            <param name="sourceElement">the element to copy the tagged values from</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getTaggedValue(System.String)">
+            <summary>
+            returns the tagged value with the given name
+            if a tagged valeu with the given name doesn't exist null is returned
+            </summary>
+            <param name="name">the name of the taggev value to return</param>
+            <returns>the tagged value with the given name</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.delete">
+            <summary>
+            deletes this element from the model
+            In Enterprise Architect we can only delete an element by removing it from its parents collection.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
+            default implementation returns an empty list because there is only one
+            subclass that can actually implement this operation: ElementWrapper.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.taggedValues">
+            <summary>
+            default empty implementation
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.save">
+            <summary>
+            Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
+            If not then the aggregationkind of the other set is reset to none.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
+            <summary>
+            adding both the start and the end element to the diagram will automatically add the connector to the diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addRelatedElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds a related element to this connector.
+            This operation checks if the source or target is empty and then adds the related element to the empty spot.
+            If none of the two are empty then the target is being replaced
+            </summary>
+            <param name="relatedElement"></param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
+            <summary>
+            not fully correct, but we will return the element at the source of the relation
+            TODO: fix this so it uses the actual ownership as prescribed by UML
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
+            the stereotypes defined on this Relationship
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
+            returns the related elements.
+            In EA the Connectoris a binary relationship. So only two Elements will 
+            ever be returned.
+            If there is a linked feature then the linked feature will be returned instead of the EA.Element.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
+            Each end represents participation of instances of the classifier 
+            connected to the end in links of the association. This is
+            an ordered association. Subsets Namespace::member.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
+            <summary>
+            Description of Action.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
+            <summary>
+            returns the Relationships with the given type T
+            </summary>
+            <returns>the relations of type T</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.Equals(System.Object)">
+            two elementwrappers represent the same object 
+            if their ea.guid are the same
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.GetHashCode">
+            return the hashcode based on the elements guid
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedDiagram``1(System.String)">
+            <summary>
+            creates a new diagram under this element
+            </summary>
+            <param name="name">the name of the new diagram</param>
+            <returns>the new diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String)">
+            creates a new element of the given type as an owned element of this 
+            element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String,System.String)">
+            creates a new element of the given type as an owned element of this 
+            element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingAttributes">
+            <summary>
+            returns the attributes that use this Element as type
+            </summary>
+            <returns>the attributes that use this Element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getDependentTypedElements``1">
+            <summary>
+            gets the TypedElements of the given type that use this element as type
+            </summary>
+            <returns>the TypedElements that use this element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingParameters">
+            <summary>
+            returns the parameters having use this Element as type
+            </summary>
+            <returns>the parameters that use this element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getOperationsWithMeAsReturntype">
+            <summary>
+            returns the operations that have this element as return type
+            </summary>
+            <returns>the operations that have this element as return type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
+            <summary>
+            gets the item from the given relative path.
+            </summary>
+            <param name="relativePath">the "." separated path</param>
+            <returns>the item with the given path</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            deletes an element owned by this element
+            </summary>
+            <param name="ownedElement">the owned element to delete</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
+            indicates whether this element is abstract.
+            In the EA API this is stored as a string with the values "0" or "1"
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.visibility">
+            the visibility indicates the scope of the element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedAttributes">
+            returns the attributes owned by this class
+            This seems to be a subset of the classifiers attributes property, but 
+            is is unclear what exactly the difference is.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.id">
+            represents the internal EA's elementID
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.superClasses">
+            EA provides a shortcut tot the superclasses through its 
+            element.BaseClasses
+            Normally we would get those via the element.generalizations.general
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.generalizations">
+            the generalisations (inheritance relations) of this element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedOperations">
+            the operations owned by this element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.clientDependencies">
+            from Dependencies.Named Element.
+            contains the dependencies that have this element as client
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.supplierDependencies">
+            from Dependencies.Named Element.
+            contains the dependencies that have this element as supplier
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.context">
+            <summary>
+            The classifier that owns the behavior of which this action is a part.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.input">
+            <summary>
+            The ordered set of input pins connected to the Action. These are among the total set of inputs. {Specializes
+            Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.output">
+             <summary>
+            The ordered set of output pins connected to the Action. The action places its results onto pins in this set.
+            {Specializes Element::ownedElement}
+             </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Activity">
+            <summary>
+            Description of Activity.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Activity.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ActivityDiagram">
+            <summary>
+            Description of ActivityDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
+            find the diagramlink object (if any) that represents the given 
+            relation
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getRelations">
+            <summary>
+            the relations on a diagram in EA are sometimes expressed as 
+            DiagramLink but not always.
+            We are looking for all relations that have both their ends displayed 
+            on the diagram.
+            To make this a bit faster the list of id's is retrieved using an sql 
+            query
+            </summary>
+            <returns>all reations ont he diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
+            <summary>
+            searches downward for the item with the given relative path
+            This relative path includes the own name
+            </summary>
+            <param name="relativePath">list of names inlcuding the own name</param>
+            <returns>the item matching the path</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getCalledOperations">
+            <summary>
+            returns all operations called in this sequence diagram
+            </summary>
+            <returns>all operations called in this sequence diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            adds an element to the diagram
+            </summary>
+            <param name="element">the element to add</param>
+            <returns>the new diagramElement</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.reFresh">
+            <summary>
+            reloads the diagram. Looses any unsaved changes.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
+            <summary>
+            add the given diagram to this diagram
+            </summary>
+            <param name="diagram">the diagram to add</param>
+            <returns>the diagramElement representing the diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.selectInCurrentDiagram">
+            <summary>
+            select this diagram in the current diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.ToString">
+            <summary>
+            returns the name as ToString
+            </summary>
+            <returns>the name as ToString</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.contains(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            indicates if the given element is shown on this diagram
+            </summary>
+            <param name="element">the element to look for</param>
+            <returns>true if the given element is shown on this diagram, false otherwise</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
+            <summary>
+            returns the DiagramElement for the given element.
+            Returns null if the element is not shown on this diagram
+            </summary>
+            <param name="element">the element that is used on this diagram</param>
+            <returns>the diagramElement that represents the element shown on this diagram</returns>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
+            all elements shown on this diagram.
+            Currently only diagramObjectWrappers and relations
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.compositeElements">
+            <summary>
+            The elements that have this diagram as composite diagram
+            </summary>
+        </member>
+        <member name="F:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.defaultMultiplicity">
+            <summary>
+            the default for multiplicities on associationEnds is 0..1
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
+            isStatic is not supported by AssociationEnd in EA
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.type">
+            The type of an associationend is stored in the EA.Association class
+            itself in the fields ClientID and SupplierID
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.AttributeWrapper">
+            <summary>
+            Description of AttributeWrapper.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Attribute.isStatic">
+            the isStatic property defines context of the attribute.
+            If true then the context is the class
+            If false then the context is the instance.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
+            <summary>
+            opens the properties dialog in EA. 
+            For tagged values the properties dialog of the owner will be opened
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.addToCurrentDiagram">
+            <summary>
+            add the owner of the tagged value to the current diagram
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.selectInCurrentDiagram">
+            <summary>
+            select the owner of this tagged value in the current diagram
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Event">
+            <summary>
+            Description of Event.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.FinalState">
+            <summary>
+            Description of FinalState.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State">
+            <summary>
+            Description of State.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex">
+            <summary>
+            Description of Vertex.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.outgoings">
+            <summary>
+            Specifies the transitions departing from this vertex. Derived in the following way:
+            context Vertex::outgoing derive:
+            Transition.allInstances() -> select(t | t.source = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.incomings">
+            <summary>
+            Specifies the transitions entering this vertex. Derived in the following way:
+            context Vertex::incoming derive:
+            Transition.allInstances() -> select(t | t.target = self)
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.container">
+            <summary>
+            The region that contains this vertex. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isComposite">
+            <summary>
+            A state with isComposite=true is said to be a composite state. A composite state is a state that contains at least one
+            region. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isOrthogonal">
+            <summary>
+            A state with isOrthogonal=true is said to be an orthogonal composite state. An orthogonal composite state contains
+            two or more regions. Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSimple">
+            <summary>
+            A state with isSimple=true is said to be a simple state. A simple state does not have any regions and it does not refer
+            to any submachine state machine. Default value is true.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSubmachineState">
+            <summary>
+            A state with isSubmachineState=true is said to be a submachine state. Such a state refers to a state machine
+            (submachine). Default value is false.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connections">
+            <summary>
+            The entry and exit connection points used in conjunction with this (submachine) state, i.e., as targets and sources,
+            respectively, in the region with the submachine state. A connection point reference references the corresponding
+            definition of a connection point pseudostate in the statemachine referenced by the submachinestate. {Subsets
+            Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connectionPoints">
+            <summary>
+            The entry and exit pseudostates of a composite state. These can only be entry or exit Pseudostates, and they must have
+            different names. They can only be defined for composite states. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.deferrableTriggers">
+            <summary>
+            A list of triggers that are candidates to be retained by the state machine if they trigger no transitions out of the state (not
+            consumed). A deferred trigger is retained until the state machine reaches a state configuration where it is no longer
+            deferred.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.doActvity">
+            <summary>
+            An optional behavior that is executed while being in the state. The execution starts when this state is entered, and stops
+            either by itself or when the state is exited whichever comes first. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.entry">
+            <summary>
+            An optional behavior that is executed whenever this state is entered regardless of the transition taken to reach the state. If
+            defined, entry actions are always executed to completion prior to any internal behavior or transitions performed within the
+            state. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.exit">
+            <summary>
+            An optional behavior that is executed whenever this state is exited regardless of which transition was taken out of the
+            state. If defined, exit actions are always executed to completion only after all internal activities and transition actions have
+            completed execution. {Subsets Element::ownedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinedState">
+            <summary>
+            The state of which this state is a redefinition. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.regions">
+            <summary>
+            The regions owned directly by the state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.submachine">
+            <summary>
+            The state machine that is to be inserted in place of the (submachine) state.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.stateInvariant">
+            <summary>
+            Specifies conditions that are always true when this state is the current state. In protocol state machines, state invariants are
+            additional conditions to the preconditions of the outgoing transitions, and to the postcondition of the incoming transitions.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState">
+            <summary>
+            Description of PseudoState.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.kind">
+            <summary>
+            Determines the precise type of the Pseudostate. Default value is initial.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.statemachine">
+            <summary>
+            The StateMachine in which this Pseudostate is defined. This only applies to Pseudostates of the kind entryPoint or
+            exitPoint. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.state">
+            <summary>
+            State that owns the Pseudostate. {Subsets Element::owner}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region">
+            <summary>
+            Description of Region.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.stateMachine">
+            <summary>
+            The StateMachine that owns the Region. If a Region is owned by a StateMachine, then it cannot also be owned by a
+            State. {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.state">
+            <summary>
+            The State that owns the Region. If a Region is owned by a State, then it cannot also be owned by a StateMachine.
+            {Subsets NamedElement::namespace}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.transitions">
+            <summary>
+            The set of transitions owned by the region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.subvertices">
+            <summary>
+            The set of vertices that are owned by this region. {Subsets Namespace::ownedMember}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.extendedRegion">
+            <summary>
+            The region of which this region is an extension. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine">
+            <summary>
+            Description of StateMachine.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition">
+            <summary>
+            Description of Transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.kind">
+            <summary>
+            See definition of TransitionKind. Default value is external.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.triggers">
+            <summary>
+            Specifies the triggers that may fire the transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.guard">
+            <summary>
+            A guard is a constraint that provides a fine-grained control over the firing of the transition. The guard is evaluated
+            when an event occurrence is dispatched by the state machine. If the guard is true at that time, the transition may be
+            enabled; otherwise, it is disabled. Guards should be pure expressions without side effects. Guard expressions with
+            side effects are ill-formed. {Subsets Namespace::ownedRule}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.effect">
+            <summary>
+            Specifies an optional behavior to be performed when the transition fires.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.source">
+            <summary>
+            Designates the originating vertex (state or pseudostate) of the transition.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.target">
+            <summary>
+            Designates the target vertex that is reached when the transition is taken.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinedTransition">
+            <summary>
+            The transition of which this is a replacement. {Subsets RedefinableElement::redefinedElement}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinitionContext">
+            <summary>
+            References the classifier in which context this element may be redefined. {Redefines
+            RedefinableElement::redefinitionContext}
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.container">
+            <summary>
+            Designates the region that owns this transition. (Subsets Namespace.namespace)
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Trigger">
+            <summary>
+            Description of Transition.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
+            <summary>
+            CallOperationAction is an action that transmits an operation call request to the target object, where it may cause the
+            invocation of associated behavior. The argument values of the action are available to the execution of the invoked
+            behavior. If the action is marked synchronous, the execution of the call operation action waits until the execution of the
+            invoked behavior completes and a reply transmission is returned to the caller; otherwise, execution of the action is
+            complete when the invocation of the operation is established and the execution of the invoked operation proceeds
+            concurrently with the execution of the calling behavior. Any values returned as part of the reply transmission are put on
+            the result output pins of the call operation action. Upon receipt of the reply transmission, execution of the call operation
+            action is complete.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            constructor, no special treatment
+            </summary>
+            <param name="model">the model</param>
+            <param name="wrappedElement">the EA.Element to wrap</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.operation">
+            <summary>
+            The operation to be invoked by the action execution.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.target">
+            <summary>
+            The target object to which the request is sent. The classifier of the target object is used to dynamically determine a
+            behavior to invoke. This object constitutes the context of the execution of the operation. {Subsets Action::input} 
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.isSynchronous">
+            <summary>
+            If true, the call is synchronous and the caller waits for completion of the invoked behavior. If false, the call is
+            asynchronous and the caller proceeds immediately and does not expect a return value.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.result">
+            <summary>
+            A list of output pins where the results of performing the invocation are placed. {Subsets Action::input} 
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.arguments">
+            <summary>
+            Specification of the ordered set of argument values that appear during execution. 
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ClassDiagram">
+            <summary>
+            Description of ClassDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram">
+            <summary>
+            Description of CommunicationDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram.getRelations">
+            <summary>
+            gets all relations that are specific to this sequence diagram.
+            </summary>
+            <returns>all messages and other relations of the diagram</returns>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ComponentDiagram">
+            <summary>
+            Description of ComponentDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CompositeStructureDiagram">
+            <summary>
+            Description of CompositeStructureDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
+            <summary>
+            Description of DataType.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral">
+            <summary>
+            Description of EnumerationLiteral.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">
+            <summary>
+            Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
+            it is usually represented as [lower limit]..[upper limit] e.g. 0..1, 1..1, 0..*
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RepositoryType">
+            <summary>
+            List of databses supported as backend for an EA repository
+            0 - MYSQL
+            1 - SQLSVR
+            2 - ADOJET
+            3 - ORACLE
+            4 - POSTGRES
+            5 - ASA
+            7 - OPENEDGE
+            8 - ACCESS2007
+            9 - FireBird
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DeploymentDiagram">
+            <summary>
+            Description of DeploymentDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Enumeration">
+            <summary>
+            Description of Enumeration.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.InteractionOverviewDiagram">
+            <summary>
+            Description of InteractionOverviewDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ObjectDiagram">
+            <summary>
+            Description of ObjectDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.PackageDiagram">
+            <summary>
+            Description of PackageDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ProfileDiagram">
+            <summary>
+            Description of ProfileDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper">
+            A diagramElement that wraps the EA.DiagramLink class.
+            This is the representation of a Relationship on a diagram.
+            For some strange reason EA doesn't create a DiagramLink for each 
+            relation shown on the diagram.
+            Only the relations that have their visualisation altered on the diagram 
+            have a DiagramLink object.
+            (this was in version 7.5.850, it might change in version 8.0)
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper.isHidden">
+            In EA relations can be hidden from a diagram. They still have a 
+            DiagramLink object, but it is set to hidden.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance(TSF.UmlToolingFramework.Wrappers.EA.Model)">
+            returns the singleton instance for the given model.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance">
+            returns the singleton instance for a new model
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createDiagram(System.Object)">
+            <summary>
+            creates a diagram based on the given EA.Diagram object
+            </summary>
+            <param name="diagramToWrap">the EA.Diagram object to wrap</param>
+            <returns>a diagram wrapping the given EA.Diagram object</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createElement(System.Object)">
+            creates a new UML element based on the given object to wrap
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createParameter(EA.Parameter)">
+            returns a new EAParameter based on the given EA.Parameter
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createOperation(EA.Method)">
+            returns a new EAOperatation wrapping the given EA.Method
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAConnectorWrapper(EA.Connector)">
+            creates a new EAConnectorWrapper wrapping the given EA.Connector
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAAttributeWrapper(EA.Attribute)">
+            creates a new EAAttribute based on the given EA.Attribute
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAElementWrapper(EA.Element)">
+            creates a new EAElementWrapper based on the given EA.Element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createPrimitiveType(System.Object)">
+            creates a new primitive type based on the given typename
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAParameterReturnType(TSF.UmlToolingFramework.Wrappers.EA.Operation)">
+            creates a new EAParameterReturnType based on the given operation
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotype(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
+            returns a new stereotype based on the given name and attached to the 
+            given element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotype(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
+            returns a new stereotype based on the given name and attached to the 
+            given diagram
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
+            creates a set of stereotypes based on the comma seperated names string
+            and attaches it to the given element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
+            creates a set of stereotypes based on the comma separated names string
+            and attaches it to the given Diagram
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createNewElement``1(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
+            create a new element as owned element of the given owner
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.translateTypeName(System.String)">
+            translates the UML type name to the EA equivalent
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Interaction">
+            <summary>
+            Description of InterAction.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Interaction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
+            <summary>
+            default constructor, calls parent constructor
+            </summary>
+            <param name="model">the model containing the element</param>
+            <param name="wrappedElement">the EA.Element to be wrapped</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Message.addToCurrentDiagram">
+            <summary>
+            does nothing
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor">
+            Creates a model connecting to the first running instance of EA
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.initialize(EA.Repository)">
+            <summary>
+            (re)initialises this model with the given ea repository object
+            </summary>
+            <param name="eaRepository">the ea repository object</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor(EA.Repository)">
+            constructor creates EAModel based on the given repository
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByID(System.Int32)">
+            Finds the EA.Element with the given id and returns an EAElementwrapper 
+            wrapping this element.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByGUID(System.String)">
+            <summary>
+            Finds the EA.Element with the given GUID and returns an EAElementwrapper 
+            wrapping this element.
+            </summary>
+            <param name="GUID">the GUID of the element</param>
+            <returns>the element with the given GUID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrappersByQuery(System.String)">
+            <summary>
+            returns the elementwrappers that are identified by the Object_ID's returned by the given query
+            </summary>
+            <param name="sqlQuery">query returning the Object_ID's</param>
+            <returns>elementwrappers returned by the query</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getQuickSearchResults(System.String,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            returns the first [maxresults] items who's name starts with the given searchText
+            </summary>
+            <param name="searchText">the first part of the name to match</param>
+            <param name="maxResults">the number of results required</param>
+            <param name="elements">indicates whether elements should be selected</param>
+            <param name="operations">indicates whether operations should be selected</param>
+            <param name="attributes">indicates whether attributes should be selected</param>
+            <param name="diagrams">indicates whether diagrams should be selected</param>
+            <returns></returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeWrapperByGUID(System.String)">
+            <summary>
+            gets the Attribute with the given GUID
+            </summary>
+            <param name="GUID">the attribute's GUID</param>
+            <returns>the Attribute with the given GUID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByID(System.Int32)">
+            <summary>
+            gets the Attribute with the given ID
+            </summary>
+            <param name="attributID">the attribute's ID</param>
+            <returns>the Attribute with the given ID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getParameterByGUID(System.String)">
+            <summary>
+            gets the parameter by its GUID.
+            This is a tricky one since EA doesn't provide a getParameterByGUID operation
+            we have to first get the operation, then loop the pamarameters to find the one
+            with the GUID
+            </summary>
+            <param name="GUID">the parameter's GUID</param>
+            <returns>the Parameter with the given GUID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatXPath(System.String)">
+            <summary>
+            formats an xpath accordign to the type of database.
+            For Oracle and Firebird it should be ALL CAPS
+            </summary>
+            <param name="xpath">the xpath to format</param>
+            <returns>the formatted xpath</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.escapeSQLString(System.String)">
+            <summary>
+            escapes a literal string so it can be inserted using sql
+            </summary>
+            <param name="sqlString">the string to be escaped</param>
+            <returns>the escaped string</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
+            generic query operation on the model.
+            Returns results in an xml format
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQL(System.String)">
+            <summary>
+            sets the correct wildcards depending on the database type.
+            changes '%' into '*' if on ms access
+            and _ into ? on msAccess
+            </summary>
+            <param name="sqlQuery">the original query</param>
+            <returns>the fixed query</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLFunctions(System.String)">
+            <summary>
+            Operation to translate SQL functions in there equivalents in different sql syntaxes
+            supported functions:
+            
+            - lcase -> lower in T-SQL (SQLSVR and ASA)
+            </summary>
+            <param name="sqlQuery">the query to format</param>
+            <returns>a query with traslated functions</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
+            <summary>
+            replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
+            </summary>
+            <param name="sqlQuery">the sql string to edit</param>
+            <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getRepositoryType">
+            <summary>
+            Gets the Repository type for this model
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.saveOpenedDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
+            <summary>
+            saves unsaved changes to an opened diagram
+            </summary>
+            <param name="diagram">the diagram that is currently opened</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
+            <summary>
+            finds the item with the given guid
+            </summary>
+            <param name="guidString">the string with the guid</param>
+            <returns>the item that is identified by the given GUID</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
+            <summary>
+            opens the properties dialog for this item
+            </summary>
+            <param name="item">the item to open the properties dialog for</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getWrappedModel">
+            <summary>
+            returns the repository object
+            </summary>
+            <returns>the wrapped repository object</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedPackage">
+            <summary>
+            Show a dialog to the user that allows him to select a package from the model
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedElement(System.Collections.Generic.List{System.String})">
+            <summary>
+            Lets the user select an element from the model and return that
+            </summary>
+            <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
+            <returns>the selected element</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.taggedValueTypeExists(System.String)">
+            <summary>
+            checks if a tagged value type with the given name exists in the current model
+            </summary>
+            <param name="tagName">the name of the tagged value type</param>
+            <returns>true if it exists</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.reloadDiagrams">
+            <summary>
+            reload the open diagrams
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
+            <summary>
+            returns the full path of the running ea.exe
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.repositoryType">
+            <summary>
+            returns the type of repository backend.
+            This is mostly needed to adjust to sql to the specific sql dialect
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.mainEAWindow">
+            <summary>
+            the main EA window to use when opening properties dialogs
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.selectedElement">
+            the Element currently selected in EA
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.factory">
+            returns the correct type of factory for this model
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.users">
+            <summary>
+            all users defined in this model
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.currentUser">
+            <summary>
+            Contains the currently logged in user.
+            Returns null is security not enabled.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.workingSets">
+            <summary>
+            The working sets defined in this model
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.isSecurityEnabled">
+            <summary>
+            returns true if security is enabled in this model
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">
+            A comment is a textual annotation that can be attached to a set of 
+            elements. This class wraps notes that can be made visible on a diagram.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.NoteComment.body">
+            Specifies a string that is the comment.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.NoteComment.annotatedElements">
+            References the Element(s) being commented.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Operation">
+            The EAoperation wraps the EA.Method and is both an operation from Kernel 
+            as an Operation from Interfaces
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getDependentCallOperationActions">
+            <summary>
+            returns all CallOperationActions that call this operation
+            </summary>
+            <returns>all CallOperationActions that call this operation</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getUsingDiagrams``1">
+            <summary>
+            returns all diagrams that somehow use this operation
+            </summary>
+            <returns>all diagrams that use this operation</returns>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Operation.methods">
+            <summary>
+            A behavioral description that implements the behavioral feature. There may be at most one behavior for a particular
+            pairing of a classifier (as owner of the behavior) and a behavioral feature (as specification of the behavior).
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Package">
+            <summary>
+            Description of Package.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.getFQN(System.String,System.Int32)">
+            <summary>
+            gets the FQN without the need of instantiating all the owners up to the root element.
+            From a package we are sure that only packages are the owners so its safe to check only t_package.
+            </summary>
+            <param name="fqnString">the fqn string so far</param>
+            <param name="parentID">the id of the package</param>
+            <returns>the fqn of the package</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedElement``1(System.String,System.String)">
+            creates a new element of the given type as an owned element of this 
+            element
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedDiagram``1(System.String)">
+            <summary>
+            creates a new diagram under this package
+            </summary>
+            <param name="name">the name of the new diagram</param>
+            <returns>the new diagram</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            deletes an element owned by this Package
+            </summary>
+            <param name="ownedElement">the owned element to delete</param>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Parameter.openProperties">
+            <summary>
+            opens the (standard) properties dialog in EA
+            For parameters the properties of the owner (operation) will be opened
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
+            saves the parameter to the case tool.
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RootPackage">
+            <summary>
+            Description of rootPackage.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.GetHashCode">
+            <summary>
+            return the hashcode based on the elements guid
+            </summary>
+            <returns>hashcode based on the elements guid</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.getRelationships``1">
+            <summary>
+            Rootpackages don't have relationships
+            </summary>
+            <returns>an empty list</returns>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram">
+            <summary>
+            Description of SequenceDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getRelations">
+            <summary>
+            gets all relations that are specific to this sequence diagram.
+            </summary>
+            <returns>all messages and other relations of the diagram</returns>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachineDiagram">
+            <summary>
+            Description of StateMachineDiagram.
+            </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
+            if the owning element is a namespace then this is returned.
+            If not then the owning namespace of the owner is returned
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.TimingDiagram">
+            <summary>
+            Description of TimingDiagram.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UnlimitedNatural">
+            <summary>
+            Description of UnlimitedNatural.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UseCaseDiagram">
+            <summary>
+            Description of UseCaseDiagram.
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.VisibilityKind.getEAVisibility(TSF.UmlToolingFramework.UML.Classes.Kernel.VisibilityKind)">
+            translates the UML VisibilityKind to the string used in EA
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.VisibilityKind.getUMLVisibilityKind(System.String,TSF.UmlToolingFramework.UML.Classes.Kernel.VisibilityKind)">
+            translates the EA visibilityString to the UML VisibilityKind.
+            If the proper translation cannot be found the defaultVisibility will 
+            be returned
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
+            <summary>
+            Wrapper needed to be able to open properties dialog in EA
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaAssociation">
             <summary>
             Description of EASchemaAssociation.
             </summary>
+        </member>
+        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper">
+            <summary>
+            Description of EASchemaProperty.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper.parseRestriction(System.String)">
+            <summary>
+            restriction string have a form like "byRef=0;inline=0;minOccurs=1;maxOccurs=7;"
+            So we split by ";" and then by "=" to get the individual key-value pairs in a dictionary
+            </summary>
+            <param name="restriction">the restriction string</param>
+            <returns>a dictionary with the individual key-value pairs</returns>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaAssociation.createSubsetAssociation">
+            <summary>
+            Creates the association in the subset. This is a copy of the source association but now between the subsetelements
+            </summary>
+            <returns>the new subset association</returns>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaAssociation.otherElement">
             <summary>
@@ -1313,12 +2558,6 @@
             <summary>
             the related elements are the owner element and the element on the other side
             </summary>
-        </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaAssociation.createSubsetAssociation">
-            <summary>
-            Creates the association in the subset. This is a copy of the source association but now between the subsetelements
-            </summary>
-            <returns>the new subset association</returns>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory">
             <summary>
@@ -1343,27 +2582,12 @@
             The EA Specific implementation of the Schema, wrapping the EA.SchemaComposer object
             </summary>
         </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredStereotypes">
-            <summary>
-            list of tagged value names to ignore when updating tagged values
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredTaggedValues">
-            <summary>
-            list of stereotypes of elements to ignore when updating a subset model
-            </summary>
-        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchema.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.SchemaComposer)">
             <summary>
             Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
             </summary>
             <param name="model">The model containing this Scheam</param>
             <param name="composer">The EA.SchemaComposer object to be wrapped</param>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
-            <summary>
-            the SchemaElements owned by this Schema
-            </summary>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaTypes">
             <summary>
@@ -1427,14 +2651,24 @@
             <param name="element">the Class to add</param>
             <param name="subsetElements">the list of subset elements</param>
         </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredStereotypes">
+            <summary>
+            list of tagged value names to ignore when updating tagged values
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredTaggedValues">
+            <summary>
+            list of stereotypes of elements to ignore when updating a subset model
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
+            <summary>
+            the SchemaElements owned by this Schema
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaElement">
             <summary>
             Description of EASchemaElement.
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaElement.name">
-            <summary>
-            the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
             </summary>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.copyGeneralizations">
@@ -1504,6 +2738,11 @@
             <param name="association">the association to match</param>
             <returns>the matching SchemaAssociation</returns>
         </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaElement.name">
+            <summary>
+            the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaLiteral">
             <summary>
             Description of EASchemaProperty.
@@ -1517,6 +2756,12 @@
             <param name="owner">the owner Schema Element</param>
             <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaLiteral.createSubsetLiteral">
+            <summary>
+            Checks if the attribute type is present as the source element of one of the schema elements
+            If it finds a match the type is set to the subset elemnt of this schema element
+            </summary>
+        </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaLiteral.sourceLiteral">
             <summary>
             The property int he model where this Schema property was derived from
@@ -1525,12 +2770,6 @@
         <member name="P:EAAddinFramework.SchemaBuilder.EASchemaLiteral.subSetLiteral">
             <summary>
             the property in the subset model generated from this property
-            </summary>
-        </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaLiteral.createSubsetLiteral">
-            <summary>
-            Checks if the attribute type is present as the source element of one of the schema elements
-            If it finds a match the type is set to the subset elemnt of this schema element
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaProperty">
@@ -1546,16 +2785,6 @@
             <param name="owner">the owner Schema Element</param>
             <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
         </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.sourceProperty">
-            <summary>
-            The property int he model where this Schema property was derived from
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.subSetProperty">
-            <summary>
-            the property in the subset model generated from this property
-            </summary>
-        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaProperty.createSubsetProperty">
             <summary>
             Checks if the attribute type is present as the source element of one of the schema elements
@@ -1567,28 +2796,20 @@
             adds a dependency from the attributes owner to the type of the attributes
             </summary>
         </member>
-        <member name="T:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper">
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.sourceProperty">
             <summary>
-            Description of EASchemaProperty.
+            The property int he model where this Schema property was derived from
             </summary>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaPropertyWrapper.parseRestriction(System.String)">
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaProperty.subSetProperty">
             <summary>
-            restriction string have a form like "byRef=0;inline=0;minOccurs=1;maxOccurs=7;"
-            So we split by ";" and then by "=" to get the individual key-value pairs in a dictionary
+            the property in the subset model generated from this property
             </summary>
-            <param name="restriction">the restriction string</param>
-            <returns>a dictionary with the individual key-value pairs</returns>
         </member>
         <member name="T:EAAddinFramework.Utilities.AbortableBackgroundWorker">
             <summary>
             Description of AbortableBackgroundWorker.
             borrowed from http://stackoverflow.com/questions/800767/how-to-kill-background-worker-completely 
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.Utilities.Logger.logFileName">
-            <summary>
-            the logfile full pathname
             </summary>
         </member>
         <member name="M:EAAddinFramework.Utilities.Logger.setLogFileName(System.String)">
@@ -1614,6 +2835,11 @@
             log a warning
             </summary>
             <param name="logmessage">the warning message</param>
+        </member>
+        <member name="P:EAAddinFramework.Utilities.Logger.logFileName">
+            <summary>
+            the logfile full pathname
+            </summary>
         </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
@@ -2025,1232 +3251,6 @@
             </summary>
             <param name="umlItem"></param>
             <returns>The TransformationILWriter instance for use in concatenated output.</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Action">
-            <summary>
-            Description of Action.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.context">
-            <summary>
-            The classifier that owns the behavior of which this action is a part.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.input">
-            <summary>
-            The ordered set of input pins connected to the Action. These are among the total set of inputs. {Specializes
-            Element::ownedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.output">
-             <summary>
-            The ordered set of output pins connected to the Action. The action places its results onto pins in this set.
-            {Specializes Element::ownedElement}
-             </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Activity">
-            <summary>
-            Description of Activity.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Activity.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            default constructor, calls parent constructor
-            </summary>
-            <param name="model">the model containing the element</param>
-            <param name="wrappedElement">the EA.Element to be wrapped</param>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ActivityDiagram">
-            <summary>
-            Description of ActivityDiagram.
-            </summary>
-        </member>
-        <member name="F:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.defaultMultiplicity">
-            <summary>
-            the default for multiplicities on associationEnds is 0..1
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.isStatic">
-            isStatic is not supported by AssociationEnd in EA
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.type">
-            The type of an associationend is stored in the EA.Association class
-            itself in the fields ClientID and SupplierID
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Attribute.isStatic">
-            the isStatic property defines context of the attribute.
-            If true then the context is the class
-            If false then the context is the instance.
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.AttributeWrapper">
-            <summary>
-            Description of AttributeWrapper.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Event">
-            <summary>
-            Description of Event.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.FinalState">
-            <summary>
-            Description of FinalState.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState">
-            <summary>
-            Description of PseudoState.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.kind">
-            <summary>
-            Determines the precise type of the Pseudostate. Default value is initial.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.statemachine">
-            <summary>
-            The StateMachine in which this Pseudostate is defined. This only applies to Pseudostates of the kind entryPoint or
-            exitPoint. {Subsets NamedElement::namespace}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.PseudoState.state">
-            <summary>
-            State that owns the Pseudostate. {Subsets Element::owner}
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region">
-            <summary>
-            Description of Region.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.stateMachine">
-            <summary>
-            The StateMachine that owns the Region. If a Region is owned by a StateMachine, then it cannot also be owned by a
-            State. {Subsets NamedElement::namespace}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.state">
-            <summary>
-            The State that owns the Region. If a Region is owned by a State, then it cannot also be owned by a StateMachine.
-            {Subsets NamedElement::namespace}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.transitions">
-            <summary>
-            The set of transitions owned by the region. {Subsets Namespace::ownedMember}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.subvertices">
-            <summary>
-            The set of vertices that are owned by this region. {Subsets Namespace::ownedMember}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.extendedRegion">
-            <summary>
-            The region of which this region is an extension. {Subsets RedefinableElement::redefinedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Region.redefinitionContext">
-            <summary>
-            References the classifier in which context this element may be redefined. {Redefines
-            RedefinableElement::redefinitionContext}
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State">
-            <summary>
-            Description of State.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isComposite">
-            <summary>
-            A state with isComposite=true is said to be a composite state. A composite state is a state that contains at least one
-            region. Default value is false.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isOrthogonal">
-            <summary>
-            A state with isOrthogonal=true is said to be an orthogonal composite state. An orthogonal composite state contains
-            two or more regions. Default value is false.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSimple">
-            <summary>
-            A state with isSimple=true is said to be a simple state. A simple state does not have any regions and it does not refer
-            to any submachine state machine. Default value is true.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.isSubmachineState">
-            <summary>
-            A state with isSubmachineState=true is said to be a submachine state. Such a state refers to a state machine
-            (submachine). Default value is false.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connections">
-            <summary>
-            The entry and exit connection points used in conjunction with this (submachine) state, i.e., as targets and sources,
-            respectively, in the region with the submachine state. A connection point reference references the corresponding
-            definition of a connection point pseudostate in the statemachine referenced by the submachinestate. {Subsets
-            Namespace::ownedMember}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connectionPoints">
-            <summary>
-            The entry and exit pseudostates of a composite state. These can only be entry or exit Pseudostates, and they must have
-            different names. They can only be defined for composite states. {Subsets Namespace::ownedMember}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.deferrableTriggers">
-            <summary>
-            A list of triggers that are candidates to be retained by the state machine if they trigger no transitions out of the state (not
-            consumed). A deferred trigger is retained until the state machine reaches a state configuration where it is no longer
-            deferred.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.doActvity">
-            <summary>
-            An optional behavior that is executed while being in the state. The execution starts when this state is entered, and stops
-            either by itself or when the state is exited whichever comes first. {Subsets Element::ownedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.entry">
-            <summary>
-            An optional behavior that is executed whenever this state is entered regardless of the transition taken to reach the state. If
-            defined, entry actions are always executed to completion prior to any internal behavior or transitions performed within the
-            state. {Subsets Element::ownedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.exit">
-            <summary>
-            An optional behavior that is executed whenever this state is exited regardless of which transition was taken out of the
-            state. If defined, exit actions are always executed to completion only after all internal activities and transition actions have
-            completed execution. {Subsets Element::ownedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinedState">
-            <summary>
-            The state of which this state is a redefinition. {Subsets RedefinableElement::redefinedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.regions">
-            <summary>
-            The regions owned directly by the state.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.submachine">
-            <summary>
-            The state machine that is to be inserted in place of the (submachine) state.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.stateInvariant">
-            <summary>
-            Specifies conditions that are always true when this state is the current state. In protocol state machines, state invariants are
-            additional conditions to the preconditions of the outgoing transitions, and to the postcondition of the incoming transitions.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.redefinitionContext">
-            <summary>
-            References the classifier in which context this element may be redefined. {Redefines
-            RedefinableElement::redefinitionContext}
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine">
-            <summary>
-            Description of StateMachine.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            default constructor, calls parent constructor
-            </summary>
-            <param name="model">the model containing the element</param>
-            <param name="wrappedElement">the EA.Element to be wrapped</param>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition">
-            <summary>
-            Description of Transition.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.kind">
-            <summary>
-            See definition of TransitionKind. Default value is external.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.triggers">
-            <summary>
-            Specifies the triggers that may fire the transition.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.guard">
-            <summary>
-            A guard is a constraint that provides a fine-grained control over the firing of the transition. The guard is evaluated
-            when an event occurrence is dispatched by the state machine. If the guard is true at that time, the transition may be
-            enabled; otherwise, it is disabled. Guards should be pure expressions without side effects. Guard expressions with
-            side effects are ill-formed. {Subsets Namespace::ownedRule}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.effect">
-            <summary>
-            Specifies an optional behavior to be performed when the transition fires.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.source">
-            <summary>
-            Designates the originating vertex (state or pseudostate) of the transition.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.target">
-            <summary>
-            Designates the target vertex that is reached when the transition is taken.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinedTransition">
-            <summary>
-            The transition of which this is a replacement. {Subsets RedefinableElement::redefinedElement}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.redefinitionContext">
-            <summary>
-            References the classifier in which context this element may be redefined. {Redefines
-            RedefinableElement::redefinitionContext}
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Transition.container">
-            <summary>
-            Designates the region that owns this transition. (Subsets Namespace.namespace)
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Trigger">
-            <summary>
-            Description of Transition.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex">
-            <summary>
-            Description of Vertex.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.outgoings">
-            <summary>
-            Specifies the transitions departing from this vertex. Derived in the following way:
-            context Vertex::outgoing derive:
-            Transition.allInstances() -> select(t | t.source = self)
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.incomings">
-            <summary>
-            Specifies the transitions entering this vertex. Derived in the following way:
-            context Vertex::incoming derive:
-            Transition.allInstances() -> select(t | t.target = self)
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.Vertex.container">
-            <summary>
-            The region that contains this vertex. {Subsets Element::owner}
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction">
-            <summary>
-            CallOperationAction is an action that transmits an operation call request to the target object, where it may cause the
-            invocation of associated behavior. The argument values of the action are available to the execution of the invoked
-            behavior. If the action is marked synchronous, the execution of the call operation action waits until the execution of the
-            invoked behavior completes and a reply transmission is returned to the caller; otherwise, execution of the action is
-            complete when the invocation of the operation is established and the execution of the invoked operation proceeds
-            concurrently with the execution of the calling behavior. Any values returned as part of the reply transmission are put on
-            the result output pins of the call operation action. Upon receipt of the reply transmission, execution of the call operation
-            action is complete.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            constructor, no special treatment
-            </summary>
-            <param name="model">the model</param>
-            <param name="wrappedElement">the EA.Element to wrap</param>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.operation">
-            <summary>
-            The operation to be invoked by the action execution.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.target">
-            <summary>
-            The target object to which the request is sent. The classifier of the target object is used to dynamically determine a
-            behavior to invoke. This object constitutes the context of the execution of the operation. {Subsets Action::input} 
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.isSynchronous">
-            <summary>
-            If true, the call is synchronous and the caller waits for completion of the invoked behavior. If false, the call is
-            asynchronous and the caller proceeds immediately and does not expect a return value.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.result">
-            <summary>
-            A list of output pins where the results of performing the invocation are placed. {Subsets Action::input} 
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.CallOperationAction.arguments">
-            <summary>
-            Specification of the ordered set of argument values that appear during execution. 
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ClassDiagram">
-            <summary>
-            Description of ClassDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram">
-            <summary>
-            Description of CommunicationDiagram.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram.getRelations">
-            <summary>
-            gets all relations that are specific to this sequence diagram.
-            </summary>
-            <returns>all messages and other relations of the diagram</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ComponentDiagram">
-            <summary>
-            Description of ComponentDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CompositeStructureDiagram">
-            <summary>
-            Description of CompositeStructureDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
-            <summary>
-            Description of DataType.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral">
-            <summary>
-            Description of EnumerationLiteral.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">
-            <summary>
-            Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
-            it is usually represented as [lower limit]..[upper limit] e.g. 0..1, 1..1, 0..*
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RepositoryType">
-            <summary>
-            List of databses supported as backend for an EA repository
-            0 - MYSQL
-            1 - SQLSVR
-            2 - ADOJET
-            3 - ORACLE
-            4 - POSTGRES
-            5 - ASA
-            7 - OPENEDGE
-            8 - ACCESS2007
-            9 - FireBird
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DeploymentDiagram">
-            <summary>
-            Description of DeploymentDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Enumeration">
-            <summary>
-            Description of Enumeration.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.InteractionOverviewDiagram">
-            <summary>
-            Description of InteractionOverviewDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ObjectDiagram">
-            <summary>
-            Description of ObjectDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.PackageDiagram">
-            <summary>
-            Description of PackageDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ProfileDiagram">
-            <summary>
-            Description of ProfileDiagram.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.owner">
-            <summary>
-            not fully correct, but we will return the element at the source of the relation
-            TODO: fix this so it uses the actual ownership as prescribed by UML
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.stereotypes">
-            the stereotypes defined on this Relationship
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.relatedElements">
-            returns the related elements.
-            In EA the Connectoris a binary relationship. So only two Elements will 
-            ever be returned.
-            If there is a linked feature then the linked feature will be returned instead of the EA.Element.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.memberEnds">
-            Each end represents participation of instances of the classifier 
-            connected to the end in links of the association. This is
-            an ordered association. Subsets Namespace::member.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.save">
-            <summary>
-            Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
-            If not then the aggregationkind of the other set is reset to none.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addToCurrentDiagram">
-            <summary>
-            adding both the start and the end element to the diagram will automatically add the connector to the diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.addRelatedElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            adds a related element to this connector.
-            This operation checks if the source or target is empty and then adds the related element to the empty spot.
-            If none of the two are empty then the target is being replaced
-            </summary>
-            <param name="relatedElement"></param>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.diagramElements">
-            all elements shown on this diagram.
-            Currently only diagramObjectWrappers and relations
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
-            find the diagramlink object (if any) that represents the given 
-            relation
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getRelations">
-            <summary>
-            the relations on a diagram in EA are sometimes expressed as 
-            DiagramLink but not always.
-            We are looking for all relations that have both their ends displayed 
-            on the diagram.
-            To make this a bit faster the list of id's is retrieved using an sql 
-            query
-            </summary>
-            <returns>all reations ont he diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
-            <summary>
-            searches downward for the item with the given relative path
-            This relative path includes the own name
-            </summary>
-            <param name="relativePath">list of names inlcuding the own name</param>
-            <returns>the item matching the path</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getCalledOperations">
-            <summary>
-            returns all operations called in this sequence diagram
-            </summary>
-            <returns>all operations called in this sequence diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.openProperties">
-            <summary>
-            opens the (standard) properties dialog in EA
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            adds an element to the diagram
-            </summary>
-            <param name="element">the element to add</param>
-            <returns>the new diagramElement</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.reFresh">
-            <summary>
-            reloads the diagram. Looses any unsaved changes.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.addToDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
-            <summary>
-            add the given diagram to this diagram
-            </summary>
-            <param name="diagram">the diagram to add</param>
-            <returns>the diagramElement representing the diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.selectInCurrentDiagram">
-            <summary>
-            select this diagram in the current diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.ToString">
-            <summary>
-            returns the name as ToString
-            </summary>
-            <returns>the name as ToString</returns>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.compositeElements">
-            <summary>
-            The elements that have this diagram as composite diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.contains(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            indicates if the given element is shown on this diagram
-            </summary>
-            <param name="element">the element to look for</param>
-            <returns>true if the given element is shown on this diagram, false otherwise</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Element)">
-            <summary>
-            returns the DiagramElement for the given element.
-            Returns null if the element is not shown on this diagram
-            </summary>
-            <param name="element">the element that is used on this diagram</param>
-            <returns>the diagramElement that represents the element shown on this diagram</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper">
-            A diagramElement that wraps the EA.DiagramLink class.
-            This is the representation of a Relationship on a diagram.
-            For some strange reason EA doesn't create a DiagramLink for each 
-            relation shown on the diagram.
-            Only the relations that have their visualisation altered on the diagram 
-            have a DiagramLink object.
-            (this was in version 7.5.850, it might change in version 8.0)
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper.isHidden">
-            In EA relations can be hidden from a diagram. They still have a 
-            DiagramLink object, but it is set to hidden.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getOwner``1">
-            returns the owner of the given type
-            This operation will keep on looking upwards through the owners until 
-            it finds one with the given type.
-            NON UML
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
-            default implementation returns an empty list because there is only one
-            subclass that can actually implement this operation: ElementWrapper.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getRelationships``1">
-            default implementation returns an empty list because there is only one
-            subclass that can actually implement this operation: EAElementWrapper.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.select">
-            <summary>
-            selects the element. 
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.open">
-            <summary>
-            opens the element. 
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.taggedValues">
-            <summary>
-            default empty implementation
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getReferencingTaggedValues">
-            <summary>
-            default empty implementation
-            </summary>
-            <returns>empty set</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.openProperties">
-            <summary>
-            opens the (standard) properties dialog in EA
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addToCurrentDiagram">
-            <summary>
-            adds this element to the currently opened diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.selectInCurrentDiagram">
-            <summary>
-            selects this element in the current diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.ToString">
-            <summary>
-            returns the name as ToString
-            </summary>
-            <returns>the name as ToString</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.Boolean)">
-            <summary>
-            adds a new tagged value to the element with the given name and value
-            if a tagged value with that name already exists the value of the existing tagged value is updated./
-            </summary>
-            <param name="name">the name fo the tagged value to add</param>
-            <param name="tagValue">the value of the tagged value</param>
-            <param name = "addDuplicate"></param>
-            <returns>the added (or updated) tagged value</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element)">
-            <summary>
-            copies the tagged values from the source as tagged values of this element
-            if a tagged value already exists the value is copied. Else a new tagged value is created
-            </summary>
-            <param name="sourceElement">the element to copy the tagged values from</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getTaggedValue(System.String)">
-            <summary>
-            returns the tagged value with the given name
-            if a tagged valeu with the given name doesn't exist null is returned
-            </summary>
-            <param name="name">the name of the taggev value to return</param>
-            <returns>the tagged value with the given name</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.delete">
-            <summary>
-            deletes this element from the model
-            In Enterprise Architect we can only delete an element by removing it from its parents collection.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
-            indicates whether this element is abstract.
-            In the EA API this is stored as a string with the values "0" or "1"
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.visibility">
-            the visibility indicates the scope of the element
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedAttributes">
-            returns the attributes owned by this class
-            This seems to be a subset of the classifiers attributes property, but 
-            is is unclear what exactly the difference is.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.id">
-            represents the internal EA's elementID
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.superClasses">
-            EA provides a shortcut tot the superclasses through its 
-            element.BaseClasses
-            Normally we would get those via the element.generalizations.general
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.generalizations">
-            the generalisations (inheritance relations) of this element
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedOperations">
-            the operations owned by this element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelationships``1">
-            <summary>
-            returns the Relationships with the given type T
-            </summary>
-            <returns>the relations of type T</returns>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.clientDependencies">
-            from Dependencies.Named Element.
-            contains the dependencies that have this element as client
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.supplierDependencies">
-            from Dependencies.Named Element.
-            contains the dependencies that have this element as supplier
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.Equals(System.Object)">
-            two elementwrappers represent the same object 
-            if their ea.guid are the same
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.GetHashCode">
-            return the hashcode based on the elements guid
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedDiagram``1(System.String)">
-            <summary>
-            creates a new diagram under this element
-            </summary>
-            <param name="name">the name of the new diagram</param>
-            <returns>the new diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String)">
-            creates a new element of the given type as an owned element of this 
-            element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.addOwnedElement``1(System.String,System.String)">
-            creates a new element of the given type as an owned element of this 
-            element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingAttributes">
-            <summary>
-            returns the attributes that use this Element as type
-            </summary>
-            <returns>the attributes that use this Element as type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getDependentTypedElements``1">
-            <summary>
-            gets the TypedElements of the given type that use this element as type
-            </summary>
-            <returns>the TypedElements that use this element as type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingParameters">
-            <summary>
-            returns the parameters having use this Element as type
-            </summary>
-            <returns>the parameters that use this element as type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getOperationsWithMeAsReturntype">
-            <summary>
-            returns the operations that have this element as return type
-            </summary>
-            <returns>the operations that have this element as return type</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getItemFromRelativePath(System.Collections.Generic.List{System.String})">
-            <summary>
-            gets the item from the given relative path.
-            </summary>
-            <param name="relativePath">the "." separated path</param>
-            <returns>the item with the given path</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
-            <summary>
-            deletes an element owned by this element
-            </summary>
-            <param name="ownedElement">the owned element to delete</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance(TSF.UmlToolingFramework.Wrappers.EA.Model)">
-            returns the singleton instance for the given model.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance">
-            returns the singleton instance for a new model
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createDiagram(System.Object)">
-            <summary>
-            creates a diagram based on the given EA.Diagram object
-            </summary>
-            <param name="diagramToWrap">the EA.Diagram object to wrap</param>
-            <returns>a diagram wrapping the given EA.Diagram object</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createElement(System.Object)">
-            creates a new UML element based on the given object to wrap
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createParameter(EA.Parameter)">
-            returns a new EAParameter based on the given EA.Parameter
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createOperation(EA.Method)">
-            returns a new EAOperatation wrapping the given EA.Method
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAConnectorWrapper(EA.Connector)">
-            creates a new EAConnectorWrapper wrapping the given EA.Connector
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAAttributeWrapper(EA.Attribute)">
-            creates a new EAAttribute based on the given EA.Attribute
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAElementWrapper(EA.Element)">
-            creates a new EAElementWrapper based on the given EA.Element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createPrimitiveType(System.Object)">
-            creates a new primitive type based on the given typename
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAParameterReturnType(TSF.UmlToolingFramework.Wrappers.EA.Operation)">
-            creates a new EAParameterReturnType based on the given operation
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotype(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
-            returns a new stereotype based on the given name and attached to the 
-            given element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotype(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
-            returns a new stereotype based on the given name and attached to the 
-            given diagram
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
-            creates a set of stereotypes based on the comma seperated names string
-            and attaches it to the given element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createStereotypes(TSF.UmlToolingFramework.UML.Diagrams.Diagram,System.String)">
-            creates a set of stereotypes based on the comma separated names string
-            and attaches it to the given Diagram
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createNewElement``1(TSF.UmlToolingFramework.UML.Classes.Kernel.Element,System.String)">
-            create a new element as owned element of the given owner
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.translateTypeName(System.String)">
-            translates the UML type name to the EA equivalent
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Interaction">
-            <summary>
-            Description of InterAction.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Interaction.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
-            <summary>
-            default constructor, calls parent constructor
-            </summary>
-            <param name="model">the model containing the element</param>
-            <param name="wrappedElement">the EA.Element to be wrapped</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Message.addToCurrentDiagram">
-            <summary>
-            does nothing
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.applicationFullPath">
-            <summary>
-            returns the full path of the running ea.exe
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.repositoryType">
-            <summary>
-            returns the type of repository backend.
-            This is mostly needed to adjust to sql to the specific sql dialect
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.mainEAWindow">
-            <summary>
-            the main EA window to use when opening properties dialogs
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor">
-            Creates a model connecting to the first running instance of EA
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.initialize(EA.Repository)">
-            <summary>
-            (re)initialises this model with the given ea repository object
-            </summary>
-            <param name="eaRepository">the ea repository object</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.#ctor(EA.Repository)">
-            constructor creates EAModel based on the given repository
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.selectedElement">
-            the Element currently selected in EA
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.factory">
-            returns the correct type of factory for this model
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByID(System.Int32)">
-            Finds the EA.Element with the given id and returns an EAElementwrapper 
-            wrapping this element.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrapperByGUID(System.String)">
-            <summary>
-            Finds the EA.Element with the given GUID and returns an EAElementwrapper 
-            wrapping this element.
-            </summary>
-            <param name="GUID">the GUID of the element</param>
-            <returns>the element with the given GUID</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getElementWrappersByQuery(System.String)">
-            <summary>
-            returns the elementwrappers that are identified by the Object_ID's returned by the given query
-            </summary>
-            <param name="sqlQuery">query returning the Object_ID's</param>
-            <returns>elementwrappers returned by the query</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getQuickSearchResults(System.String,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
-            <summary>
-            returns the first [maxresults] items who's name starts with the given searchText
-            </summary>
-            <param name="searchText">the first part of the name to match</param>
-            <param name="maxResults">the number of results required</param>
-            <param name="elements">indicates whether elements should be selected</param>
-            <param name="operations">indicates whether operations should be selected</param>
-            <param name="attributes">indicates whether attributes should be selected</param>
-            <param name="diagrams">indicates whether diagrams should be selected</param>
-            <returns></returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeWrapperByGUID(System.String)">
-            <summary>
-            gets the Attribute with the given GUID
-            </summary>
-            <param name="GUID">the attribute's GUID</param>
-            <returns>the Attribute with the given GUID</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getAttributeByID(System.Int32)">
-            <summary>
-            gets the Attribute with the given ID
-            </summary>
-            <param name="attributID">the attribute's ID</param>
-            <returns>the Attribute with the given ID</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getParameterByGUID(System.String)">
-            <summary>
-            gets the parameter by its GUID.
-            This is a tricky one since EA doesn't provide a getParameterByGUID operation
-            we have to first get the operation, then loop the pamarameters to find the one
-            with the GUID
-            </summary>
-            <param name="GUID">the parameter's GUID</param>
-            <returns>the Parameter with the given GUID</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatXPath(System.String)">
-            <summary>
-            formats an xpath accordign to the type of database.
-            For Oracle and Firebird it should be ALL CAPS
-            </summary>
-            <param name="xpath">the xpath to format</param>
-            <returns>the formatted xpath</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.escapeSQLString(System.String)">
-            <summary>
-            escapes a literal string so it can be inserted using sql
-            </summary>
-            <param name="sqlString">the string to be escaped</param>
-            <returns>the escaped string</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.SQLQuery(System.String)">
-            generic query operation on the model.
-            Returns results in an xml format
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQL(System.String)">
-            <summary>
-            sets the correct wildcards depending on the database type.
-            changes '%' into '*' if on ms access
-            and _ into ? on msAccess
-            </summary>
-            <param name="sqlQuery">the original query</param>
-            <returns>the fixed query</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLFunctions(System.String)">
-            <summary>
-            Operation to translate SQL functions in there equivalents in different sql syntaxes
-            supported functions:
-            
-            - lcase -> lower in T-SQL (SQLSVR and ASA)
-            </summary>
-            <param name="sqlQuery">the query to format</param>
-            <returns>a query with traslated functions</returns>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:TSF.UmlToolingFramework.Wrappers.EA.Model.formatSQLTop(System.String)" -->
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.replaceSQLWildCards(System.String)">
-            <summary>
-            replace the wildcards in the given sql query string to match either MSAccess or ANSI syntax
-            </summary>
-            <param name="sqlQuery">the sql string to edit</param>
-            <returns>the same sql query, but with its wildcards replaced according to the required syntax</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getRepositoryType">
-            <summary>
-            Gets the Repository type for this model
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.saveOpenedDiagram(TSF.UmlToolingFramework.UML.Diagrams.Diagram)">
-            <summary>
-            saves unsaved changes to an opened diagram
-            </summary>
-            <param name="diagram">the diagram that is currently opened</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getItemFromGUID(System.String)">
-            <summary>
-            finds the item with the given guid
-            </summary>
-            <param name="guidString">the string with the guid</param>
-            <returns>the item that is identified by the given GUID</returns>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.users">
-            <summary>
-            all users defined in this model
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.currentUser">
-            <summary>
-            Contains the currently logged in user.
-            Returns null is security not enabled.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.workingSets">
-            <summary>
-            The working sets defined in this model
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.isSecurityEnabled">
-            <summary>
-            returns true if security is enabled in this model
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
-            <summary>
-            opens the properties dialog for this item
-            </summary>
-            <param name="item">the item to open the properties dialog for</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getWrappedModel">
-            <summary>
-            returns the repository object
-            </summary>
-            <returns>the wrapped repository object</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedPackage">
-            <summary>
-            Show a dialog to the user that allows him to select a package from the model
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedElement(System.Collections.Generic.List{System.String})">
-            <summary>
-            Lets the user select an element from the model and return that
-            </summary>
-            <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
-            <returns>the selected element</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.taggedValueTypeExists(System.String)">
-            <summary>
-            checks if a tagged value type with the given name exists in the current model
-            </summary>
-            <param name="tagName">the name of the tagged value type</param>
-            <returns>true if it exists</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.reloadDiagrams">
-            <summary>
-            reload the open diagrams
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">
-            A comment is a textual annotation that can be attached to a set of 
-            elements. This class wraps notes that can be made visible on a diagram.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.NoteComment.body">
-            Specifies a string that is the comment.
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.NoteComment.annotatedElements">
-            References the Element(s) being commented.
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Operation">
-            The EAoperation wraps the EA.Method and is both an operation from Kernel 
-            as an Operation from Interfaces
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Operation.methods">
-            <summary>
-            A behavioral description that implements the behavioral feature. There may be at most one behavior for a particular
-            pairing of a classifier (as owner of the behavior) and a behavioral feature (as specification of the behavior).
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getDependentCallOperationActions">
-            <summary>
-            returns all CallOperationActions that call this operation
-            </summary>
-            <returns>all CallOperationActions that call this operation</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Operation.getUsingDiagrams``1">
-            <summary>
-            returns all diagrams that somehow use this operation
-            </summary>
-            <returns>all diagrams that use this operation</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Package">
-            <summary>
-            Description of Package.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.getFQN(System.String,System.Int32)">
-            <summary>
-            gets the FQN without the need of instantiating all the owners up to the root element.
-            From a package we are sure that only packages are the owners so its safe to check only t_package.
-            </summary>
-            <param name="fqnString">the fqn string so far</param>
-            <param name="parentID">the id of the package</param>
-            <returns>the fqn of the package</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedElement``1(System.String,System.String)">
-            creates a new element of the given type as an owned element of this 
-            element
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.addOwnedDiagram``1(System.String)">
-            <summary>
-            creates a new diagram under this package
-            </summary>
-            <param name="name">the name of the new diagram</param>
-            <returns>the new diagram</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.deleteOwnedElement(TSF.UmlToolingFramework.Wrappers.EA.Element)">
-            <summary>
-            deletes an element owned by this Package
-            </summary>
-            <param name="ownedElement">the owned element to delete</param>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Parameter.openProperties">
-            <summary>
-            opens the (standard) properties dialog in EA
-            For parameters the properties of the owner (operation) will be opened
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ParameterWrapper.saveElement">
-            saves the parameter to the case tool.
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.RootPackage">
-            <summary>
-            Description of rootPackage.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.GetHashCode">
-            <summary>
-            return the hashcode based on the elements guid
-            </summary>
-            <returns>hashcode based on the elements guid</returns>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.getRelationships``1">
-            <summary>
-            Rootpackages don't have relationships
-            </summary>
-            <returns>an empty list</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram">
-            <summary>
-            Description of SequenceDiagram.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram.getRelations">
-            <summary>
-            gets all relations that are specific to this sequence diagram.
-            </summary>
-            <returns>all messages and other relations of the diagram</returns>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.StateMachineDiagram">
-            <summary>
-            Description of StateMachineDiagram.
-            </summary>
-        </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Stereotype.owningNamespace">
-            if the owning element is a namespace then this is returned.
-            If not then the owning namespace of the owner is returned
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
-            <summary>
-            opens the properties dialog in EA. 
-            For tagged values the properties dialog of the owner will be opened
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.addToCurrentDiagram">
-            <summary>
-            add the owner of the tagged value to the current diagram
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.selectInCurrentDiagram">
-            <summary>
-            select the owner of this tagged value in the current diagram
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.TimingDiagram">
-            <summary>
-            Description of TimingDiagram.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UnlimitedNatural">
-            <summary>
-            Description of UnlimitedNatural.
-            </summary>
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UseCaseDiagram">
-            <summary>
-            Description of UseCaseDiagram.
-            </summary>
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.VisibilityKind.getEAVisibility(TSF.UmlToolingFramework.UML.Classes.Kernel.VisibilityKind)">
-            translates the UML VisibilityKind to the string used in EA
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.VisibilityKind.getUMLVisibilityKind(System.String,TSF.UmlToolingFramework.UML.Classes.Kernel.VisibilityKind)">
-            translates the EA visibilityString to the UML VisibilityKind.
-            If the proper translation cannot be found the defaultVisibility will 
-            be returned
-        </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
-            <summary>
-            Wrapper needed to be able to open properties dialog in EA
-            </summary>
         </member>
     </members>
 </doc>
