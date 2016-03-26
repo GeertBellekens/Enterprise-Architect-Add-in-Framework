@@ -59,11 +59,23 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 		return Guid.TryParse(guidString,out dummy);
 	}
 	public abstract string eaStringValue { get;  set; }
-		
+			
 	
 	public abstract UML.Classes.Kernel.Element owner { get;  set; }
 	
-	
+	/// <summary>
+	/// returns a list of diagrams that show this item.
+	/// Default implementation on this level is an empty list.
+	/// To be overridden by concrete subclasses
+	/// </summary>
+	/// <returns>all diagrams that show this item</returns>
+	public virtual List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		return new List<UML.Diagrams.Diagram>();
+	}
+	/// <summary>
+	/// select the tagged value. Tagged values cannot be selected individually so we select its owner.
+	/// </summary>
 	public void select()
 	{
 		this.owner.select();

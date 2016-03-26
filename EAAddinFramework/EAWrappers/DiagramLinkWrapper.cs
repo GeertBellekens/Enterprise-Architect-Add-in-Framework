@@ -15,20 +15,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     internal global::EA.DiagramLink wrappedDiagramLink { get; set; }
     internal ConnectorWrapper relation { get; set; }
     internal Model model { get; set; }
-    internal Diagram diagram { get; set; }
+    private Diagram _diagram ;
     
     public DiagramLinkWrapper(Model model,global::EA.DiagramLink diagramlink){
       this.model = model;
       this.wrappedDiagramLink = diagramlink;
       this.relation = this.model.getRelationByID(this.wrappedDiagramLink.ConnectorID);
-      this.diagram = this.getDiagramForDiagramLink(diagramlink);
     }
     
     public DiagramLinkWrapper(Model model, ConnectorWrapper relation,
                               Diagram diagram){
       this.model = model;
       this.relation = relation;
-      this.diagram = diagram;
+      this._diagram = diagram;
       this.wrappedDiagramLink = diagram.getDiagramLinkForRelation(relation);
     }
     
@@ -60,10 +59,35 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { return 0; }
       set { throw new NotImplementedException(); }
     }
+    /// <summary>
+    /// returns the diagram where this diagramLink is shown
+    /// </summary>
+	public UML.Diagrams.Diagram diagram 
+	{
+		get 
+		{
+			if (_diagram == null)
+			{
+				_diagram = this.model.getDiagramByID(this.wrappedDiagramLink.DiagramID);
+			}
+			return _diagram;
+		}
+	}
+	/// <summary>
+	/// returns a list of diagrams that show this item.
+	/// DiagramObjects are specific for a single diagram, so the list will contain only one diagram
+	/// </summary>
+	/// <returns>all diagrams that show this item</returns>
+	public virtual List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		var dependentDiagrams = new List<UML.Diagrams.Diagram>();
+		dependentDiagrams.Add(this.diagram);
+		return dependentDiagrams;
+	}
     public void select()
     {
     	this.diagram.open();
-    	this.diagram.wrappedDiagram.SelectedConnector = this.relation.wrappedConnector;
+    	((EA.Diagram)this.diagram).wrappedDiagram.SelectedConnector = this.relation.wrappedConnector;
     }
 
 	public void open()

@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
     	get{return this.wrappedConnector.ConnectorID;}
     }
-
+	
     public ConnectorWrapper(Model model, global::EA.Connector connector)
       : base(model)
     {
@@ -34,7 +34,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { throw new NotImplementedException(); }
     }
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	public override List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		var dependentDiagrams = new List<UML.Diagrams.Diagram>();
+		string sqlQuery = "select dl.DiagramID as Diagram_ID from t_diagramlinks dl where dl.ConnectorID = " + this.id;
+		dependentDiagrams.AddRange(this.model.getDiagramsByQuery(sqlQuery));
+		return dependentDiagrams;
+	}
+		
     /// <summary>
     /// not fully correct, but we will return the element at the source of the relation
     /// TODO: fix this so it uses the actual ownership as prescribed by UML

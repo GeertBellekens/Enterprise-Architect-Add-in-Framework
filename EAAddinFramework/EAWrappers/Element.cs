@@ -59,6 +59,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	}
     }
     public abstract string guid {get;}
+	
+	/// <summary>
+	/// returns a list of diagrams that show this item.
+	/// Default implementation on this level is an empty list.
+	/// To be overridden by concrete subclasses
+	/// </summary>
+	/// <returns>all diagrams that show this item</returns>
+	public virtual List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		return new List<UML.Diagrams.Diagram>();
+	}
+
     /// returns the owner of the given type
     /// This operation will keep on looking upwards through the owners until 
     /// it finds one with the given type.

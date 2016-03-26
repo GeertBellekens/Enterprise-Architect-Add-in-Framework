@@ -1299,6 +1299,14 @@
             deletes the workingset from the database
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getDependentDiagrams">
+            <summary>
+            returns a list of diagrams that show this item.
+            Default implementation on this level is an empty list.
+            To be overridden by concrete subclasses
+            </summary>
+            <returns>all diagrams that show this item</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getOwner``1">
             returns the owner of the given type
             This operation will keep on looking upwards through the owners until 
@@ -1385,6 +1393,12 @@
             <summary>
             default empty implementation
             </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getDependentDiagrams">
+            <summary>
+            
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.save">
             <summary>
@@ -1563,6 +1577,12 @@
             Description of ActivityDiagram.
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDependentDiagrams">
+            <summary>
+            returns a list of diagrams that show this item.
+            </summary>
+            <returns>all diagrams that show this item</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getDiagramLinkForRelation(TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper)">
             find the diagramlink object (if any) that represents the given 
             relation
@@ -1672,6 +1692,19 @@
             the isStatic property defines context of the attribute.
             If true then the context is the class
             If false then the context is the instance.
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.getDependentDiagrams">
+            <summary>
+            returns a list of diagrams that show this item.
+            Default implementation on this level is an empty list.
+            To be overridden by concrete subclasses
+            </summary>
+            <returns>all diagrams that show this item</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.select">
+            <summary>
+            select the tagged value. Tagged values cannot be selected individually so we select its owner.
+            </summary>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
             <summary>
@@ -2091,9 +2124,28 @@
             have a DiagramLink object.
             (this was in version 7.5.850, it might change in version 8.0)
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper.getDependentDiagrams">
+            <summary>
+            returns a list of diagrams that show this item.
+            DiagramObjects are specific for a single diagram, so the list will contain only one diagram
+            </summary>
+            <returns>all diagrams that show this item</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper.isHidden">
             In EA relations can be hidden from a diagram. They still have a 
             DiagramLink object, but it is set to hidden.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.DiagramLinkWrapper.diagram">
+            <summary>
+            returns the diagram where this diagramLink is shown
+            </summary>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.DiagramObjectWrapper.getDependentDiagrams">
+            <summary>
+            returns a list of diagrams that show this item.
+            DiagramObjects are specific for a single diagram, so the list will contain only one diagram
+            </summary>
+            <returns>all diagrams that show this item</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance(TSF.UmlToolingFramework.Wrappers.EA.Model)">
             returns the singleton instance for the given model.

@@ -19,7 +19,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                                 Diagram diagram) 
       : this(model, diagram.getdiagramObjectForElement(element)) 
     {}
-    
+
+	public UML.Diagrams.Diagram diagram 
+	{
+		get 
+		{
+			return this.model.getDiagramByID(this.wrappedDiagramObject.DiagramID);
+		}
+	}
     public int xPosition {
       get { return this.wrappedDiagramObject.left;  }
       set 
@@ -67,7 +74,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	this.wrappedDiagramObject.Update();
     }
-
+	/// <summary>
+	/// returns a list of diagrams that show this item.
+	/// DiagramObjects are specific for a single diagram, so the list will contain only one diagram
+	/// </summary>
+	/// <returns>all diagrams that show this item</returns>
+	public virtual List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		var dependentDiagrams = new List<UML.Diagrams.Diagram>();
+		dependentDiagrams.Add(this.diagram);
+		return dependentDiagrams;
+	}
 		public void select()
 		{
 			throw new NotImplementedException();

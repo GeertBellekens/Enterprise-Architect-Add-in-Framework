@@ -33,7 +33,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+    /// <summary>
+	/// returns a list of diagrams that show this item.
+	/// </summary>
+	/// <returns>all diagrams that show this item</returns>
+	public virtual List<UML.Diagrams.Diagram> getDependentDiagrams()
+	{
+		//TODO: implement operation
+		return new List<UML.Diagrams.Diagram>();
+	}
     public HashSet<UML.Diagrams.DiagramElement> getDiagramElements<T>() 
       where T : UML.Classes.Kernel.Element 
     {
