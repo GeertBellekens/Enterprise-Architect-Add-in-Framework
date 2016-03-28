@@ -17,6 +17,7 @@ using System.Xml;
 using Microsoft.Win32;
 using MSScriptControl;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinFramework.EASpecific
 {
@@ -176,17 +177,28 @@ namespace EAAddinFramework.EASpecific
 		/// </summary>
 		private static void loadLocalScripts()
 		{
-			string scriptsDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\Scripts";
-			string[] scriptFiles = Directory.GetFiles(scriptsDirectory,"*.*",SearchOption.AllDirectories);
-			foreach(string scriptfile in scriptFiles)
+			try
 			{
-				string scriptcode = File.ReadAllText(scriptfile);
-				string scriptName = Path.GetFileNameWithoutExtension(scriptfile);
-				string scriptLanguage = getLanguageFromPath(scriptfile);
-				staticIncludableScripts.Add("!INC Local Scripts." + scriptName, scriptcode);
-				//also check if the script needs to be loaded as static EA-Matic script
-				loadStaticEAMaticScript(scriptName, "Local Scripts", scriptcode,scriptLanguage);
+				string scriptsDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\Scripts";
+				if (Directory.Exists(scriptsDirectory))
+				{
+					string[] scriptFiles = Directory.GetFiles(scriptsDirectory,"*.*",SearchOption.AllDirectories);
+					foreach(string scriptfile in scriptFiles)
+					{
+						string scriptcode = File.ReadAllText(scriptfile);
+						string scriptName = Path.GetFileNameWithoutExtension(scriptfile);
+						string scriptLanguage = getLanguageFromPath(scriptfile);
+						staticIncludableScripts.Add("!INC Local Scripts." + scriptName, scriptcode);
+						//also check if the script needs to be loaded as static EA-Matic script
+						loadStaticEAMaticScript(scriptName, "Local Scripts", scriptcode,scriptLanguage);
+					}
+				}
 			}
+			catch (Exception e)
+			{
+				Logger.logError(string.Format("Error occured: {0} stacktrace: {1}",e.Message, e.StackTrace));
+			}
+			
 		}
 		private static string getLanguageFromPath (string path)
 		{

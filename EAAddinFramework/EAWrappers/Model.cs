@@ -17,8 +17,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
     private static string _applicationFullPath;
+	
 
-
+    public Boolean isLiteEdition {get {return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite;}}
+    
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>
