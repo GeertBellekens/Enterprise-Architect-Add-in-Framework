@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get{return this.wrappedAttribute.AttributeID;}
 	    }
-	
+
 	    public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute) 
 	      : base(model)
 	    {
@@ -29,7 +29,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get { return wrappedAttribute; }
 	    }
-
+		/// <summary>
+	    /// return the unique ID of this element
+	    /// </summary>
+		public override string uniqueID 
+		{
+			get 
+			{
+				return this.wrappedAttribute.AttributeGUID;
+			}
+		}	
 		public override string name 
 		{
 	      	get { return this.wrappedAttribute.Name;  }

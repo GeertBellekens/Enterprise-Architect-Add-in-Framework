@@ -25,7 +25,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		return wrappedOperation;
     	}
     }
-    
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public override string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedOperation.MethodGUID;
+		}
+	}	    
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get {
         return new HashSet<UML.Classes.Kernel.Element>

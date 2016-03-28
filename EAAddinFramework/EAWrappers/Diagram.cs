@@ -14,7 +14,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.model = model;
       this.wrappedDiagram = wrappedDiagram;
     }
-    
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedDiagram.DiagramGUID;
+		}
+	}    
     /// all elements shown on this diagram.
     /// Currently only diagramObjectWrappers and relations
     public HashSet<UML.Diagrams.DiagramElement> diagramElements {

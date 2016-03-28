@@ -15,7 +15,11 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
       this.model = model;
     }
 
-	
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+    public abstract string uniqueID{get;}
+
 	public abstract string name { get;  set; }
 	public object tagValue
 	{
@@ -52,7 +56,7 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			}
 		}
 	}
-	
+
 	private bool isGUID(string guidString)
 	{
 		Guid dummy;

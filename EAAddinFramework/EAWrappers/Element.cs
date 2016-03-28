@@ -46,6 +46,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         this.stereotypes = newStereotypes;
       }
     }
+
+	public virtual string uniqueID 
+	{
+		get 
+		{
+			return null;
+		}
+	}
+
     public List<string> stereotypeNames 
     {
     	get

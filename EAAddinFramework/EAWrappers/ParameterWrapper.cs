@@ -12,7 +12,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       this.wrappedParameter = parameter;
     }
-    
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public override string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedParameter.ParameterGUID;
+		}
+	}	    
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { /* do nothing */ }

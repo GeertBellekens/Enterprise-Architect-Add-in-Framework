@@ -28,12 +28,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
 	public override void open()
 	{
-		this.owner.open();
+		var diagrams = this.getDependentDiagrams();
+		if (diagrams.Count > 0)
+		{
+			diagrams[0].open();
+			diagrams[0].selectItem(this);
+		}
+		else
+		{
+			this.owner.open();
+		}
 	}
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { throw new NotImplementedException(); }
     }
+	/// <summary>
+	/// 
+	/// </summary>
+	public override string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedConnector.ConnectorGUID;
+		}
+	}
 	/// <summary>
 	/// 
 	/// </summary>

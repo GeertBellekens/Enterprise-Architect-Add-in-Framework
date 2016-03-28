@@ -14,7 +14,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this.wrappedDiagramObject = diagramObject;
       this.model = model;
     }
-    
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedDiagramObject.InstanceGUID.ToString();
+		}
+	}    
     public DiagramObjectWrapper(Model model, ElementWrapper element,
                                 Diagram diagram) 
       : this(model, diagram.getdiagramObjectForElement(element)) 

@@ -30,7 +30,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       this._diagram = diagram;
       this.wrappedDiagramLink = diagram.getDiagramLinkForRelation(relation);
     }
-    
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public string uniqueID 
+	{
+		get 
+		{
+			return null;
+		}
+	}    
     private Diagram getDiagramForDiagramLink
       (global::EA.DiagramLink diagramLink)
     {

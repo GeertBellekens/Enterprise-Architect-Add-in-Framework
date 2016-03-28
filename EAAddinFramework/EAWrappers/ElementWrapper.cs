@@ -25,7 +25,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { return this.wrappedElement.Name;  }
       set { this.wrappedElement.Name = value; }
     }
-    
+    /// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public override string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedElement.ElementGUID;
+		}
+	}
     public string subType
     {
     	get 

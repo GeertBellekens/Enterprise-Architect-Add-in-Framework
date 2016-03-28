@@ -155,6 +155,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	        	Operation operation = (Operation)((Parameter)value).operation;
 	        	this.wrappedModel.ShowInProjectView(operation.wrappedOperation);
 	        }
+	        else if (value is ConnectorWrapper)
+	        {
+	        	var connector = (ConnectorWrapper) value;
+	        	var diagrams = connector.getDependentDiagrams();
+	        	if (diagrams.Count > 0)
+	        	{
+	        		diagrams[0].open();
+	        		diagrams[0].selectItem(connector);
+	        	}
+	        }
     	}
     }
     

@@ -14,7 +14,16 @@ public class ElementTag : TaggedValue
       this.wrappedTaggedValue = eaTag;
     }
 
-	
+	/// <summary>
+    /// return the unique ID of this element
+    /// </summary>
+	public override string uniqueID 
+	{
+		get 
+		{
+			return this.wrappedTaggedValue.PropertyGUID;
+		}
+	}	
 	public override string eaStringValue 
 	{
 		get 
