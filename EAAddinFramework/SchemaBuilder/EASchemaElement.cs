@@ -5,6 +5,7 @@ using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -40,6 +41,15 @@ namespace EAAddinFramework.SchemaBuilder
 				throw new NotImplementedException();
 			}
 		}
+
+	    public string TypeID
+	    {
+	        get { return this.wrappedSchemaType.GUID; }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
 		public UML.Classes.Kernel.Classifier sourceElement 
 		{
 			get 
@@ -432,8 +442,12 @@ namespace EAAddinFramework.SchemaBuilder
 						EASchemaAssociation matchingAssociation = this.getMatchingSchemaAssociation(association);
 						if (matchingAssociation != null)
 						{
-							//found a match
-							matchingAssociation.subsetAssociation = association;
+						    if (matchingAssociation.subsetAssociations == null)
+						    {
+                                matchingAssociation.subsetAssociations = new List<Association>();
+
+                            }
+						    matchingAssociation.subsetAssociations.Add(association);
 						}
 						else
 						{
