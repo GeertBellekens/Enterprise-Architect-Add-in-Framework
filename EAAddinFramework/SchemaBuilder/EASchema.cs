@@ -162,9 +162,23 @@ namespace EAAddinFramework.SchemaBuilder
 					schemaElement.addAttributeTypeDependencies();
 					//Logger.log("after EASchema::addAttributeTypeDependencies");
 				}
-
 			}
-
+			//then loop them the last time to remove those subset elements that don't have any attributes or associations
+			foreach (EASchemaElement schemaElement in this.elements) 
+			{
+				if (schemaElement.subsetElement != null)
+				{
+					//reload the element because otherwise the API does not return any attributes or associations
+			    	var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
+					if  (reloadedElement != null
+					   && reloadedElement.attributes.Count == 0
+					   && reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Count == 0
+					   && reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Count == 0)
+					{
+						schemaElement.subsetElement.delete();
+					}
+				 }
+			}
 		}
 
 	    /// <summary>

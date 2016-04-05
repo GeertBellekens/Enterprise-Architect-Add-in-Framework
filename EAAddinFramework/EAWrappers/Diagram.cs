@@ -486,11 +486,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			if (element is ElementWrapper)
 			{
-				return this.diagramObjectWrappers.FirstOrDefault(x=> x.element.Equals(element));
+				return this.diagramObjectWrappers.FirstOrDefault(x=> x.element != null && x.element.Equals(element));
 			}
 			else  if (element is ConnectorWrapper)
 			{
-				return this.diagramLinkWrappers.FirstOrDefault(x => x.element.Equals(element));
+				return this.diagramLinkWrappers.FirstOrDefault(x => x.element != null && x.element.Equals(element));
 			}
 			else
 			{
