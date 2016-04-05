@@ -342,8 +342,13 @@ namespace EAAddinFramework.SchemaBuilder
 					}
 					else
 					{
-						//no match, delete the attribute
-						attribute.delete();
+						//only delete if stereotype not in list of ignored stereotypes
+						
+						if (attribute.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
+						{
+							//no match, delete the attribute
+							attribute.delete();
+						}
 					}
 				}
 			}
@@ -366,8 +371,12 @@ namespace EAAddinFramework.SchemaBuilder
 						}
 						else
 						{
-							//no match, delete the literal
-							literal.delete();
+							//only delete if stereotype not in list of ignored stereotypes
+							if (literal.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
+							{
+								//no match, delete the literal
+								literal.delete();
+							}
 						}
 					}
 				}
@@ -451,8 +460,9 @@ namespace EAAddinFramework.SchemaBuilder
 						}
 						else
 						{
-							//only delete if the target does not have a stereotype in the list of ignored stereotypes
-							if (association.target.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0) 
+							//only delete if the target does not have a stereotype in the list of ignored stereotypes or if this association does not have an ignored stereotype
+							if (association.target.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0
+							    && association.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
 							{
 								//no match, delete the association
 								association.delete();
