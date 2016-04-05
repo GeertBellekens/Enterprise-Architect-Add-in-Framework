@@ -23,6 +23,7 @@ namespace EAAddinFramework.SchemaBuilder
 
         public EASchemaAssociation(UTF_EA.Model model, EASchemaElement owner, EA.SchemaProperty objectToWrap) : base(model, owner, objectToWrap)
         {
+        	this.subsetAssociations = new List<Association>();
         }
 
         #region implemented abstract members of EASchemaPropertyWrapper
@@ -179,10 +180,6 @@ namespace EAAddinFramework.SchemaBuilder
             //find the other schemaElement
             if (this.otherElement != null)
             {
-                if (null == subsetAssociations)
-                {
-                    this.subsetAssociations = new List<Association>();
-                }
                 //found the other element
                 //if this schemaElement has a subsetElement 
                 if (this.owner.subsetElement != null)
@@ -191,20 +188,18 @@ namespace EAAddinFramework.SchemaBuilder
 
                     if (this.choiceElements != null)
                     {
-                        foreach (EASchemaElement choiceElmement in this.choiceElements)
+                        foreach (EASchemaElement choiceElement in this.choiceElements)
                         {
-                            if (null != choiceElmement.subsetElement)
+                            if (null != choiceElement.subsetElement)
                             {
-                                associationTarget = choiceElmement.subsetElement;
+                                associationTarget = choiceElement.subsetElement;
                             }
                             else
                             {
-                                associationTarget = choiceElmement.sourceElement;
+                                associationTarget = choiceElement.sourceElement;
                             }
-                            Association subSetAssociation = CreateSubSetAssociation(associationTarget);
-
-                            this.subsetAssociations.Add(subSetAssociation);
-
+                            //add the actual subset association if needed
+                            addSubsetAssociation( associationTarget);
                         }
 
                     }
@@ -220,16 +215,27 @@ namespace EAAddinFramework.SchemaBuilder
                             //if the other elemnt doesn't have a subset element then we create an association to the source element
                             associationTarget = this.otherElement.sourceElement;
                         }
-                        Association subSetAssociation = CreateSubSetAssociation(associationTarget);
-                        this.subsetAssociations.Add(subSetAssociation);
+                        //add the actual subset association if needed
+                        addSubsetAssociation( associationTarget);
                     }
                 }
             }
         
         }
-
+        /// <summary>
+        /// add the subset association to the list if it does not exist
+        /// </summary>
+        /// <param name="associationTarget">the target for the association</param>
+        private void addSubsetAssociation(Classifier associationTarget)
+        {
+        	if (! this.subsetAssociations.Exists(x => ((UTF_EA.Association)x).target.Equals(associationTarget)))
+        	{
+        		this.subsetAssociations.Add(CreateSubSetAssociation(associationTarget));
+        	}
+        }
         private Association CreateSubSetAssociation(Classifier associationTarget)
         {
+        	
             Association subSetAssociation =
                 this.model.factory.createNewElement<UML.Classes.Kernel.Association>(this.owner.subsetElement,
                     this.sourceAssociation.name);

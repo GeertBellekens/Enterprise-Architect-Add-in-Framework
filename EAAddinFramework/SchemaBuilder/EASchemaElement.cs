@@ -482,8 +482,15 @@ namespace EAAddinFramework.SchemaBuilder
 					//called sourceAssociation that refences the source association of the schema Association
 					if (((UTF_EA.Association)schemaAssociation.sourceAssociation).guid == tagReference)
 					{
-						result = schemaAssociation;
-						break;
+						//if the schema association has choiceElements then the target of the association should match one of the choice elements
+						if ((schemaAssociation.choiceElements != null 
+						     && (schemaAssociation.choiceElements.Count == 0 
+						         || schemaAssociation.choiceElements.Exists(x => association.target.Equals(x.subsetElement))))
+						    || schemaAssociation.choiceElements == null)
+						{
+							result = schemaAssociation;
+							break;
+						}
 					}
 				}
 			}
