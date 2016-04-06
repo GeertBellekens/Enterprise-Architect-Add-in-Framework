@@ -18,6 +18,7 @@ namespace EAAddinFramework.SchemaBuilder
         protected EA.SchemaProperty wrappedProperty;
         protected EASchemaElement _owner;
         protected UTF_EA.Multiplicity _multiplicity;
+        private EASchemaElement _redefinedElement;
         private Dictionary<string, string> _restriction;
         private List<EASchemaElement> _choiceElements;
         List<UML.Classes.Kernel.Classifier> _choiceTypes;
@@ -39,6 +40,22 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 this._owner = (EASchemaElement)value;
             }
+        }
+        public EASchemaElement redefinedElement
+        {
+        	get
+        	{
+        		if (this._redefinedElement == null)
+        		{
+	        		string redefinedName;
+	        		if (this.restriction.TryGetValue("redefines", out redefinedName))
+	        		{
+	        			//redefinitions are defined by their name. The name has to be unique in the schema, so it is safe to use it to find the element.
+	        			this._redefinedElement = this.owner.owner.elements.FirstOrDefault(x => x.name == redefinedName) as EASchemaElement;
+	        		}
+	        	}
+        		return this._redefinedElement;
+        	}
         }
         /// <summary>
         /// choiceElements
@@ -70,10 +87,7 @@ namespace EAAddinFramework.SchemaBuilder
                             {
                                 _choiceElements.Add(element);
                             }
-                        }
-                       
-
-                      
+                        }                  
                     }
                 }
                 return _choiceElements;

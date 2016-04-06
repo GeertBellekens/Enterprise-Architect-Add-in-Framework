@@ -78,7 +78,14 @@ namespace EAAddinFramework.SchemaBuilder
 				//resolve the type
 				foreach (EASchemaElement element in schemaElements)
 				{
-					if (element.sourceElement != null && 
+					if (this.redefinedElement != null
+					   && this.redefinedElement.subsetElement != null
+					   && this.subSetProperty != null)
+					{
+						//replace the type by the subset element of the redefined type
+						this.subSetProperty.type = this.redefinedElement.subsetElement;
+					}
+					else if (element.sourceElement != null && 
 					    element.subsetElement != null &&
 					    this.subSetProperty != null &&
 					    element.sourceElement.Equals(this.subSetProperty.type))

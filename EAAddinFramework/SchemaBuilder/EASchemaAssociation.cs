@@ -62,7 +62,14 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._otherElement == null)
                 {
-                    this._otherElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(this.otherEnd.type);
+                	if (this.redefinedElement != null)
+                	{
+                		this._otherElement = this.redefinedElement;
+                	}
+                	else
+                	{
+                    	this._otherElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(this.otherEnd.type);
+                	}
                 }
                 return this._otherElement;
             }

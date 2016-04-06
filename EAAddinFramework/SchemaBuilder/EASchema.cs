@@ -88,7 +88,15 @@ namespace EAAddinFramework.SchemaBuilder
 				if (schemaElement.sourceElement != null
 					&& schemaElement.sourceElement.Equals(umlElement))
 				{
-					result = schemaElement;
+					if (result == null)
+					{
+						result = schemaElement;
+					}
+					else if (schemaElement.name == umlElement.name)
+					{
+						result = schemaElement;
+						break;
+					}
 				}
 			}
 			return result;
