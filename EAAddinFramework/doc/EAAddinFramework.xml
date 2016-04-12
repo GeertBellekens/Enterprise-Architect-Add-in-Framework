@@ -2735,28 +2735,28 @@
             <param name="umlElement">the source UMLElement</param>
             <returns></returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.getSchemaElementForSubsetElement(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             finds the Schema Element for which the given element could be the subset element
             </summary>
             <param name="subsetElement">the element to search a match for</param>
             <returns>the corresponding SchemaElement</returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package,System.Boolean)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
             creates a subset of the source model with only the properties and associations used in this schema
             </summary>
             <param name="destinationPackage">the package to create the subset in</param>
             <param name="copyDatatype"></param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Boolean)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
             updates the subset model linked to given messageElement
             </summary>
             <param name="messageElement">The message element that is the root for the message subset model</param>
-            <param name="copyDataType"></param>
+            <param name="copyDataType">List of names of datatypes to copy</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Boolean,System.Collections.Generic.List{System.String})">
             <summary>
             Finds all subset elements linked to the given message element and links those to the schema elements.
             If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted

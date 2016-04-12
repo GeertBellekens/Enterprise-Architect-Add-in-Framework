@@ -106,7 +106,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="subsetElement">the element to search a match for</param>
 		/// <returns>the corresponding SchemaElement</returns>
-		internal EASchemaElement getSchemaElementSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
+		internal EASchemaElement getSchemaElementForSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
 		{
 			EASchemaElement result = null;
 			foreach (EASchemaElement schemaElement in this.elements) 
@@ -133,7 +133,7 @@ namespace EAAddinFramework.SchemaBuilder
 	    /// </summary>
 	    /// <param name="destinationPackage">the package to create the subset in</param>
 	    /// <param name="copyDatatype"></param>
-	    public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage,bool copyDatatype)
+	    public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage,bool copyDatatype,List<string>datatypesToCopy)
 		{
 
 			//loop the elements to create the subSetElements
@@ -148,6 +148,10 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && copyDatatype)
                 {
+                	//if the list is null then we only take the copyDataType into Account.
+                	//else the datatype should be in the list to be copied.
+                	if (datatypesToCopy == null
+                	    || datatypesToCopy.Contains(schemaElement.sourceElement.name))
                     schemaElement.createSubsetElement(destinationPackage);
                 }
 			}
@@ -193,12 +197,12 @@ namespace EAAddinFramework.SchemaBuilder
 	    /// updates the subset model linked to given messageElement
 	    /// </summary>
 	    /// <param name="messageElement">The message element that is the root for the message subset model</param>
-	    /// <param name="copyDataType"></param>
-	    public void updateSubsetModel(Classifier messageElement, bool copyDataType)
+	    /// <param name="copyDataType">List of names of datatypes to copy</param>
+	    public void updateSubsetModel(Classifier messageElement, bool copyDataType,List<string> datatypesToCopy)
 		{
 			//match the subset existing subset elements
 			//Logger.log("starting EASchema::updateSubsetModel");
-			matchSubsetElements(messageElement);
+			matchSubsetElements(messageElement, copyDataType,datatypesToCopy);
 			//Logger.log("after EASchema::matchSubsetElements");
 			
 			foreach (EASchemaElement schemaElement in this.schemaElements) 
@@ -211,7 +215,7 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaElement.matchSubsetAssociations();
 				//Logger.log("after EASchema::matchSubsetAssociations");
 			}
-			this.createSubsetModel(messageElement.owningPackage, copyDataType);
+			this.createSubsetModel(messageElement.owningPackage, copyDataType, datatypesToCopy);
 			//Logger.log("after EASchema::createSubsetModel");
 		}
 		/// <summary>
@@ -219,19 +223,21 @@ namespace EAAddinFramework.SchemaBuilder
 		/// If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
 		/// </summary>
 		/// <param name="messageElement">the message element to start from</param>
-		void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement)
+		void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement,bool copyDataType, List<string> datatypesToCopy)
 		{
 			HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
 			//match each subset element to a schema element
 			foreach (UML.Classes.Kernel.Classifier subsetElement in subsetElements) 
 			{
 				//get the corrsponding schema element
-				EASchemaElement schemaElement = this.getSchemaElementSubsetElement(subsetElement);
+				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
 				//found a corresponding schema element
-				if (schemaElement != null) 
+				if (schemaElement != null 
+				    && shouldElementExistAsDatatype(subsetElement, copyDataType, datatypesToCopy))
 				{
 					schemaElement.matchSubsetElement(subsetElement);
-				} else 
+				} 
+				else
 				{
 					//if it doesn't correspond with a schema element we delete it?
 					//only if the subset element is located in the same folder as the message element
@@ -244,7 +250,34 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 		}
-
+		
+		private bool shouldElementExistAsDatatype(Classifier subsetElement, bool copyDataType, List<string> datatypesToCopy)
+		{
+			if (subsetElement is Class || subsetElement is Enumeration)
+			{
+				return true;
+			}
+			else
+			{
+				var datatype = subsetElement as DataType;
+				if (datatype != null && copyDataType)
+				{
+					if (datatypesToCopy == null
+					    || datatypesToCopy.Contains(datatype.name))
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
 		/// <summary>
 		/// gets all the subset elements for a given message element
 		/// </summary>
