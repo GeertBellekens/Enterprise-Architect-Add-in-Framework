@@ -235,22 +235,30 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="associationTarget">the target for the association</param>
         private void addSubsetAssociation(Classifier associationTarget)
         {
-        	if (! this.subsetAssociations.Exists(x => ((UTF_EA.Association)x).target.Equals(associationTarget)))
+        	Association existingAssociation = this.subsetAssociations.FirstOrDefault(x => ((UTF_EA.Association)x).target.Equals(associationTarget));
+        	Association subsetAssociation = CreateSubSetAssociation(associationTarget,existingAssociation);
+	        if (existingAssociation == null
+        	    && subsetAssociation != null)
         	{
-        		this.subsetAssociations.Add(CreateSubSetAssociation(associationTarget));
+        		this.subsetAssociations.Add(subsetAssociation);
         	}
-        }
-        private Association CreateSubSetAssociation(Classifier associationTarget)
-        {
         	
-            Association subSetAssociation =
-                this.model.factory.createNewElement<UML.Classes.Kernel.Association>(this.owner.subsetElement,
-                    this.sourceAssociation.name);
-            subSetAssociation.addRelatedElement(associationTarget);
-
+        }
+        private Association CreateSubSetAssociation(Classifier associationTarget, Association existingAssociation)
+        {
+        	Association subSetAssociation;
+        	if (existingAssociation == null)
+        	{
+           		subSetAssociation = this.model.factory.createNewElement<UML.Classes.Kernel.Association>
+           		 					(this.owner.subsetElement,this.sourceAssociation.name);
+           		subSetAssociation.addRelatedElement(associationTarget);
+        	}
+        	else
+        	{
+        		subSetAssociation = existingAssociation;
+        	}
+           	//update name
             subSetAssociation.name = this.sourceAssociation.name;
-
-
             //notes only update them if they are empty
             if (subSetAssociation.ownedComments.Count == 0 ||
                 !subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
@@ -273,26 +281,7 @@ namespace EAAddinFramework.SchemaBuilder
             //save all changes
             subSetAssociation.save();
             //copy tagged values
-            foreach (UTF_EA.TaggedValue sourceTaggedValue in this.sourceAssociation.taggedValues)
-            {
-                bool updateTaggedValue = true;
-                if (this.owner.owner.ignoredTaggedValues.Contains(sourceTaggedValue.name))
-                {
-                    UTF_EA.TaggedValue targetTaggedValue =
-                        ((UTF_EA.Element)subSetAssociation).getTaggedValue(sourceTaggedValue.name);
-                    if (targetTaggedValue.eaStringValue != string.Empty)
-                    {
-                        //don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
-                        updateTaggedValue = false;
-                    }
-                }
-                if (updateTaggedValue)
-                {
-                    ((UTF_EA.Element)subSetAssociation).addTaggedValue(sourceTaggedValue.name,
-                        sourceTaggedValue.eaStringValue);
-                }
-            }
-
+            ((EASchema) this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceAssociation,(UTF_EA.Element)subSetAssociation);
             //((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
             //add tagged value with reference to source association
             ((UTF_EA.Association)subSetAssociation).addTaggedValue(

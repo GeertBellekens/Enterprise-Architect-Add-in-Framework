@@ -96,8 +96,8 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 				((UTF_EA.Element) this.subSetProperty).save();
 				//copy tagged values
-				((UTF_EA.Element) this.subSetProperty).copyTaggedValues((UTF_EA.Element)this.sourceProperty);
-				//add tagged value with reference to source association
+				((EASchema) this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceProperty,(UTF_EA.Element)this.subSetProperty);
+				//add tagged value with reference to source attribute
 				((UTF_EA.Element)this.subSetProperty).addTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName,((UTF_EA.Element)this.sourceProperty).guid);
 			}
 		}

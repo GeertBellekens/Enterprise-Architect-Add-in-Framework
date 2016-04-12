@@ -300,5 +300,34 @@ namespace EAAddinFramework.SchemaBuilder
 				this.addRelatedSubsetElements(element, subsetElements);
 			}
 		}
+		/// <summary>
+		/// copies only the tagged values necesarry
+		/// </summary>
+		/// <param name="source">the source element</param>
+		/// <param name="target">the target element</param>
+		public void copyTaggedValues(UTF_EA.Element source, UTF_EA.Element target)
+        {
+        	 //copy tagged values
+            foreach (UTF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
+            {
+                bool updateTaggedValue = true;
+                if (this.ignoredTaggedValues.Contains(sourceTaggedValue.name))
+                {
+                    UTF_EA.TaggedValue targetTaggedValue =
+                        target.getTaggedValue(sourceTaggedValue.name);
+                    if (targetTaggedValue != null &&
+                        targetTaggedValue.eaStringValue != string.Empty)
+                    {
+                        //don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
+                        updateTaggedValue = false;
+                    }
+                }
+                if (updateTaggedValue)
+                {
+                    target.addTaggedValue(sourceTaggedValue.name,
+                        sourceTaggedValue.eaStringValue);
+                }
+            }
+        }
 	}
 }

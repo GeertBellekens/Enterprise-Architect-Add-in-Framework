@@ -2784,6 +2784,13 @@
             <param name="element">the Class to add</param>
             <param name="subsetElements">the list of subset elements</param>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.copyTaggedValues(TSF.UmlToolingFramework.Wrappers.EA.Element,TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            copies only the tagged values necesarry
+            </summary>
+            <param name="source">the source element</param>
+            <param name="target">the target element</param>
+        </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredStereotypes">
             <summary>
             list of tagged value names to ignore when updating tagged values

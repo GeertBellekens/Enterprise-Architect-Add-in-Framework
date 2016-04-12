@@ -29,7 +29,8 @@ namespace EAAddinFramework.SchemaBuilder
             this.model = model;
             this.wrappedProperty = objectToWrap;
         }
-
+		
+        
         public SBF.SchemaElement owner
         {
             get
@@ -179,6 +180,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
             return parsedRestriction;
         }
+
 
     }
 }
