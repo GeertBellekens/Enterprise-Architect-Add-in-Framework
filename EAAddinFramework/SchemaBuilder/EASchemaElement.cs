@@ -212,8 +212,9 @@ namespace EAAddinFramework.SchemaBuilder
 				trace.target = this.sourceElement;
 				trace.save();
 			}
-			//copy the generatlizations for enumerations
-			if (this.sourceElement is UML.Classes.Kernel.Enumeration)
+			//copy the generatlizations for enumerations and for datatypes if that setting is set
+			if (this.sourceElement is UML.Classes.Kernel.Enumeration
+			   || this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
 			{
 				this.copyGeneralizations();
 			}
@@ -327,7 +328,7 @@ namespace EAAddinFramework.SchemaBuilder
 					{
 						//only delete if stereotype not in list of ignored stereotypes
 						
-						if (attribute.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
+						if (attribute.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
 						{
 							//no match, delete the attribute
 							attribute.delete();
@@ -355,7 +356,7 @@ namespace EAAddinFramework.SchemaBuilder
 						else
 						{
 							//only delete if stereotype not in list of ignored stereotypes
-							if (literal.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
+							if (literal.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
 							{
 								//no match, delete the literal
 								literal.delete();
@@ -444,8 +445,8 @@ namespace EAAddinFramework.SchemaBuilder
 						else
 						{
 							//only delete if the target does not have a stereotype in the list of ignored stereotypes or if this association does not have an ignored stereotype
-							if (association.target.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0
-							    && association.stereotypes.Count(x => this.owner.ignoredStereotypes.Contains(x.name)) <= 0)
+							if (association.target.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0
+							    && association.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
 							{
 								//no match, delete the association
 								association.delete();

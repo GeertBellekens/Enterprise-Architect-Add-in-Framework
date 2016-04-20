@@ -64,9 +64,9 @@ namespace EAAddinFramework.SchemaBuilder
 			
 		}
 		
-		public override SBF.Schema createSchema(object objectToWrap)
+		public override SBF.Schema createSchema(object objectToWrap, SBF.SchemaSettings settings)
 		{
-			this.currentSchema = new EASchema( this.EAModel,(EA.SchemaComposer) objectToWrap);
+			this.currentSchema = new EASchema( this.EAModel,(EA.SchemaComposer) objectToWrap, settings);
 			return this.currentSchema;
 		}
 		

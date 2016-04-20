@@ -2715,7 +2715,7 @@
             The EA Specific implementation of the Schema, wrapping the EA.SchemaComposer object
             </summary>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.SchemaComposer)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.SchemaComposer,SchemaBuilderFramework.SchemaSettings)">
             <summary>
             Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
             </summary>
@@ -2742,21 +2742,20 @@
             <param name="subsetElement">the element to search a match for</param>
             <returns>the corresponding SchemaElement</returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package,System.Boolean,System.Collections.Generic.List{System.String})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.createSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package)">
             <summary>
             creates a subset of the source model with only the properties and associations used in this schema
             </summary>
             <param name="destinationPackage">the package to create the subset in</param>
             <param name="copyDatatype"></param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Boolean,System.Collections.Generic.List{System.String})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             updates the subset model linked to given messageElement
             </summary>
             <param name="messageElement">The message element that is the root for the message subset model</param>
-            <param name="copyDataType">List of names of datatypes to copy</param>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier,System.Boolean,System.Collections.Generic.List{System.String})">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>
             Finds all subset elements linked to the given message element and links those to the schema elements.
             If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
@@ -2790,16 +2789,6 @@
             </summary>
             <param name="source">the source element</param>
             <param name="target">the target element</param>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredStereotypes">
-            <summary>
-            list of tagged value names to ignore when updating tagged values
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.ignoredTaggedValues">
-            <summary>
-            list of stereotypes of elements to ignore when updating a subset model
-            </summary>
         </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
             <summary>

@@ -19,25 +19,18 @@ namespace EAAddinFramework.SchemaBuilder
 		private EA.SchemaComposer wrappedComposer;
 		private HashSet<SBF.SchemaElement> schemaElements = null;
 
-		/// <summary>
-		/// list of tagged value names to ignore when updating tagged values
-		/// </summary>
-		public List<string> ignoredStereotypes{get;set;}
-		/// <summary>
-		/// list of stereotypes of elements to ignore when updating a subset model
-		/// </summary>
-		public List<string> ignoredTaggedValues{get;set;}
-
+		public SBF.SchemaSettings settings {get;set;}
 
 		/// <summary>
 		/// Constructor of the EASchema. Only to be used by the EASchemaBuilderFactory
 		/// </summary>
 		/// <param name="model">The model containing this Scheam</param>
 		/// <param name="composer">The EA.SchemaComposer object to be wrapped</param>
-		internal EASchema(UTF_EA.Model model, EA.SchemaComposer composer)
+		internal EASchema(UTF_EA.Model model, EA.SchemaComposer composer, SBF.SchemaSettings settings)
 		{
 			this.model = model;
 			this.wrappedComposer = composer;
+			this.settings = settings;
 		}
 		/// <summary>
 		/// the SchemaElements owned by this Schema
@@ -133,7 +126,7 @@ namespace EAAddinFramework.SchemaBuilder
 	    /// </summary>
 	    /// <param name="destinationPackage">the package to create the subset in</param>
 	    /// <param name="copyDatatype"></param>
-	    public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage,bool copyDatatype,List<string>datatypesToCopy)
+	    public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage)
 		{
 
 			//loop the elements to create the subSetElements
@@ -146,12 +139,11 @@ namespace EAAddinFramework.SchemaBuilder
                     schemaElement.createSubsetElement(destinationPackage);
                     //Logger.log("after EASchema::creating single subset element");
                 }
-                else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && copyDatatype)
+                else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && this.settings.copyDataTypes)
                 {
-                	//if the list is null then we only take the copyDataType into Account.
-                	//else the datatype should be in the list to be copied.
-                	if (datatypesToCopy == null
-                	    || datatypesToCopy.Contains(schemaElement.sourceElement.name))
+                	//if the datatypes are limited then only the ones in the list should be copied
+                	if (!this.settings.limitDataTypes
+                	    || this.settings.dataTypesToCopy.Contains(schemaElement.sourceElement.name))
                     schemaElement.createSubsetElement(destinationPackage);
                 }
 			}
@@ -197,12 +189,11 @@ namespace EAAddinFramework.SchemaBuilder
 	    /// updates the subset model linked to given messageElement
 	    /// </summary>
 	    /// <param name="messageElement">The message element that is the root for the message subset model</param>
-	    /// <param name="copyDataType">List of names of datatypes to copy</param>
-	    public void updateSubsetModel(Classifier messageElement, bool copyDataType,List<string> datatypesToCopy)
+	    public void updateSubsetModel(Classifier messageElement)
 		{
 			//match the subset existing subset elements
 			//Logger.log("starting EASchema::updateSubsetModel");
-			matchSubsetElements(messageElement, copyDataType,datatypesToCopy);
+			matchSubsetElements(messageElement);
 			//Logger.log("after EASchema::matchSubsetElements");
 			
 			foreach (EASchemaElement schemaElement in this.schemaElements) 
@@ -215,7 +206,7 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaElement.matchSubsetAssociations();
 				//Logger.log("after EASchema::matchSubsetAssociations");
 			}
-			this.createSubsetModel(messageElement.owningPackage, copyDataType, datatypesToCopy);
+			this.createSubsetModel(messageElement.owningPackage);
 			//Logger.log("after EASchema::createSubsetModel");
 		}
 		/// <summary>
@@ -223,7 +214,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
 		/// </summary>
 		/// <param name="messageElement">the message element to start from</param>
-		void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement,bool copyDataType, List<string> datatypesToCopy)
+		void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement)
 		{
 			HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
 			//match each subset element to a schema element
@@ -233,7 +224,7 @@ namespace EAAddinFramework.SchemaBuilder
 				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
 				//found a corresponding schema element
 				if (schemaElement != null 
-				    && shouldElementExistAsDatatype(subsetElement, copyDataType, datatypesToCopy))
+				    && shouldElementExistAsDatatype(subsetElement))
 				{
 					schemaElement.matchSubsetElement(subsetElement);
 				} 
@@ -243,7 +234,7 @@ namespace EAAddinFramework.SchemaBuilder
 					//only if the subset element is located in the same folder as the message element
 					//and it doesn't have one of stereotypes to be ignored
 					if (subsetElement.owner.Equals(messageElement.owner)
-					    && ! this.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any())
+					    && ! this.settings.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any())
 					{
 						subsetElement.delete();
 					}
@@ -251,7 +242,7 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 		}
 		
-		private bool shouldElementExistAsDatatype(Classifier subsetElement, bool copyDataType, List<string> datatypesToCopy)
+		private bool shouldElementExistAsDatatype(Classifier subsetElement)
 		{
 			if (subsetElement is Class || subsetElement is Enumeration)
 			{
@@ -260,10 +251,10 @@ namespace EAAddinFramework.SchemaBuilder
 			else
 			{
 				var datatype = subsetElement as DataType;
-				if (datatype != null && copyDataType)
+				if (datatype != null && this.settings.copyDataTypes)
 				{
-					if (datatypesToCopy == null
-					    || datatypesToCopy.Contains(datatype.name))
+					if (!this.settings.limitDataTypes
+					    || this.settings.dataTypesToCopy.Contains(datatype.name))
 					{
 						return true;
 					}
@@ -344,7 +335,7 @@ namespace EAAddinFramework.SchemaBuilder
             foreach (UTF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
             {
                 bool updateTaggedValue = true;
-                if (this.ignoredTaggedValues.Contains(sourceTaggedValue.name))
+                if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name))
                 {
                     UTF_EA.TaggedValue targetTaggedValue =
                         target.getTaggedValue(sourceTaggedValue.name);
