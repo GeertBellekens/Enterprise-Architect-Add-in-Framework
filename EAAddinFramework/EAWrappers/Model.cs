@@ -1428,7 +1428,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		foreach (global::EA.PropertyType taggedValueType in this.wrappedModel.PropertyTypes)
 		{
 			string tagTypeName = taggedValueType.Tag;
-			if (taggedValueType.Tag == tagName)
+			//ignore case or EA will complain
+			if (taggedValueType.Tag.Equals(tagName,StringComparison.InvariantCultureIgnoreCase))
 			{
 				return true;
 			}
