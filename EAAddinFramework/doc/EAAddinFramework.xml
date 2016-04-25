@@ -2700,13 +2700,6 @@
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance(TSF.UmlToolingFramework.UML.UMLModel)">
             returns the singleton instance for the given model.
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.checkTaggedValueTypes">
-            <summary>
-            in order for the relations to work we need tagged value types "sourceAttribute and "sourceAssociation".
-            If they don't exists we add them
-            </summary>
-            <param name="model">the model</param>
-        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance">
             returns the singleton instance for a new model
         </member>
