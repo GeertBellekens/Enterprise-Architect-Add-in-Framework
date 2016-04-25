@@ -298,6 +298,7 @@ namespace EAAddinFramework.SchemaBuilder
             target._isNavigable = source._isNavigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
+            target.save();
         }
     }
 }
