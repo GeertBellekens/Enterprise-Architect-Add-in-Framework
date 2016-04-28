@@ -285,7 +285,7 @@ namespace EAAddinFramework.SchemaBuilder
             //((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
             //add tagged value with reference to source association
             ((UTF_EA.Association)subSetAssociation).addTaggedValue(
-                EASchemaBuilderFactory.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
+                this.owner.owner.settings.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
 
             subSetAssociation.save();
             return subSetAssociation;

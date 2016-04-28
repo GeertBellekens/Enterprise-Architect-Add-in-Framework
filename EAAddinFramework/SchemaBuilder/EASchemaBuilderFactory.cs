@@ -11,8 +11,6 @@ namespace EAAddinFramework.SchemaBuilder
 	/// </summary>
 	public class EASchemaBuilderFactory:SBF.SchemaBuilderFactory
 	{
-		public const string sourceAttributeTagName = "sourceAttribute";
-        public const string sourceAssociationTagName = "sourceAssociation";
         
 		private UTF_EA.Model EAModel {get {return (UTF_EA.Model)this.model;}}
 		private EASchema currentSchema;

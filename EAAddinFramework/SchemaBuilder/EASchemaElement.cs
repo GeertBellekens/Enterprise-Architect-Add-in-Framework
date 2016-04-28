@@ -374,7 +374,7 @@ namespace EAAddinFramework.SchemaBuilder
 		EASchemaLiteral getMatchingSchemaLiteral(UTF_EA.EnumerationLiteral literal)
 		{
 			EASchemaLiteral result = null;
-			var sourceAttributeTag = literal.getTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName);
+			var sourceAttributeTag = literal.getTaggedValue(this.owner.settings.sourceAttributeTagName);
 			if (sourceAttributeTag != null)
 			{
 				string tagReference = sourceAttributeTag.eaStringValue;
@@ -400,7 +400,7 @@ namespace EAAddinFramework.SchemaBuilder
 		public EASchemaProperty getMatchingSchemaProperty(UTF_EA.Attribute attribute)
 		{
 			EASchemaProperty result = null;
-			var sourceAttributeTag = attribute.getTaggedValue(EASchemaBuilderFactory.sourceAttributeTagName);
+			var sourceAttributeTag = attribute.getTaggedValue(this.owner.settings.sourceAttributeTagName);
 			if (sourceAttributeTag != null)
 			{
 				string tagReference = sourceAttributeTag.eaStringValue;
@@ -465,7 +465,7 @@ namespace EAAddinFramework.SchemaBuilder
 		public EASchemaAssociation getMatchingSchemaAssociation(UTF_EA.Association association)
 		{
 			EASchemaAssociation result = null;
-			var sourceAssociationTag = association.getTaggedValue(EASchemaBuilderFactory.sourceAssociationTagName);
+			var sourceAssociationTag = association.getTaggedValue(this.owner.settings.sourceAssociationTagName);
 			if (sourceAssociationTag != null)
 			{
 				string tagReference = sourceAssociationTag.eaStringValue;
