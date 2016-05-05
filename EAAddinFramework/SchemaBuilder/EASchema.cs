@@ -102,20 +102,22 @@ namespace EAAddinFramework.SchemaBuilder
 		internal EASchemaElement getSchemaElementForSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
 		{
 			EASchemaElement result = null;
-			foreach (EASchemaElement schemaElement in this.elements) 
+			if (subsetElement != null)
 			{
-				if (schemaElement.name == subsetElement.name)
+				foreach (EASchemaElement schemaElement in this.elements) 
 				{
-					//check if the subset element has a dependency to the source element of the schema
-					foreach (var dependency in subsetElement.clientDependencies) 
+					if (schemaElement.name == subsetElement.name)
 					{
-						if (schemaElement.sourceElement.Equals(dependency.supplier))
+						//check if the subset element has a dependency to the source element of the schema
+						foreach (var dependency in subsetElement.clientDependencies) 
 						{
-							result = schemaElement;
-							break;
+							if (schemaElement.sourceElement.Equals(dependency.supplier))
+							{
+								result = schemaElement;
+								break;
+							}
 						}
 					}
-					
 				}
 			}
 			return result;
@@ -165,6 +167,8 @@ namespace EAAddinFramework.SchemaBuilder
 					//and add a dependency from the schemaElement to the type of the attributes
 					schemaElement.addAttributeTypeDependencies();
 					//Logger.log("after EASchema::addAttributeTypeDependencies");
+					//add generalizations if both elements are in the subset
+					schemaElement.addGeneralizations();
 				}
 			}
 			//then loop them the last time to remove those subset elements that don't have any attributes or associations

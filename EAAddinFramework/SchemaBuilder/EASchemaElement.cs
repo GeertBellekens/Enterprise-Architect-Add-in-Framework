@@ -213,11 +213,11 @@ namespace EAAddinFramework.SchemaBuilder
 				trace.save();
 			}
 			//copy the generatlizations for enumerations and for datatypes if that setting is set
-			if (this.sourceElement is UML.Classes.Kernel.Enumeration
-			   || this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-			{
-				this.copyGeneralizations();
-			}
+//			if (this.sourceElement is UML.Classes.Kernel.Enumeration
+//			   || this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
+//			{
+//				this.copyGeneralizations();
+//			}
 			//return the new element
 			return this.subsetElement;
 		}
@@ -308,6 +308,89 @@ namespace EAAddinFramework.SchemaBuilder
 			//set the subset element
 			this.subsetElement = subsetElement;
 		}
+		/// <summary>
+		/// Adds generalizations if the parent of the generalization is in the subset elements as well
+		/// </summary>
+		public void addGeneralizations()
+		{
+			if (this.sourceElement != null && this.subsetElement != null)
+			{
+				var sourceGeneralizations = this.sourceElement.getRelationships<UML.Classes.Kernel.Generalization>()
+					.Where(x => x.source.Equals(this.sourceElement));
+				var subsetGeneralizations = this.subsetElement.getRelationships<UML.Classes.Kernel.Generalization>()
+					.Where(x => x.source.Equals(this.subsetElement));
+				//remove generalizations that shouldn't be there
+				foreach ( var subsetGeneralization in subsetGeneralizations)
+				{
+					var schemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier);
+					if (schemaParent == null) //the generalization does not target an element in the schema
+					{
+						schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(subsetGeneralization.target);
+						if (schemaParent != null
+						    && schemaParent.subsetElement != null)
+						{
+							//the generalization exists on the source, but there is a subset element for the target
+							// so we move the generalization to the element in the subset.
+							if (! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
+						    {
+								//if the generalization doesn't exist yet we move it tot he subset element
+						    	subsetGeneralization.target = schemaParent.subsetElement;
+								subsetGeneralization.save();
+						    }
+							else
+							{
+								//Enumerations should always keep their external Generalizations
+								//Datatypes should only keep their external Generalizatons if the settings is on
+								if (! (this.sourceElement is UML.Classes.Kernel.Enumeration)
+								    && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations))
+								//The generalization should not be there
+								subsetGeneralization.delete();
+							}
+						}
+					}
+					else //the generalization targets an element in the schema. Make sure the source element has an equivalent generalization.
+					{
+						if (! sourceGeneralizations.Any(x => x.target.Equals(schemaParent.sourceElement)))
+					    {
+							//the source doesn't have a generalization like this
+							subsetGeneralization.delete();
+					    }
+					}
+				}
+				//add the generalizations that don't exist at the subset yet
+				foreach (var sourceGeneralization in sourceGeneralizations) 
+				{
+					var schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(sourceGeneralization.target);
+					if (schemaParent != null)
+					{
+					    if ( schemaParent.subsetElement != null 
+					    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
+						{
+						//generalization doesn't exist yet. Add it
+						var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+						newGeneralization.addRelatedElement(schemaParent.subsetElement);
+						newGeneralization.save();
+						}
+					}
+					else
+					{
+						//the target is not in the schema.
+						//Enumerations should always get their external Generalizations
+						//Datatypes should only get their external Generalizatons if the settings is on
+						if ((this.sourceElement is UML.Classes.Kernel.Enumeration
+						    || (this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations))
+						&& ! subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target)))
+						{
+							//generalization doesn't exist yet. Add it
+							var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+							newGeneralization.addRelatedElement(sourceGeneralization.target);
+							newGeneralization.save();
+						}
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// checks all attributes of the subset element and tries to match it with a SchemaProperty.
 		/// It it can't be matches te subset attribute is deleted.

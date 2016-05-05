@@ -2826,6 +2826,11 @@
             </summary>
             <param name="subsetElement">the subset element to match</param>
         </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addGeneralizations">
+            <summary>
+            Adds generalizations if the parent of the generalization is in the subset elements as well
+            </summary>
+        </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetAttributes">
             <summary>
             checks all attributes of the subset element and tries to match it with a SchemaProperty.
