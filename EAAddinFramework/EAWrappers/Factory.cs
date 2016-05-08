@@ -259,7 +259,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			    }
     			else
     			{
-    				return new Class(this.model as Model, elementToWrap);
+    				//check if associationclass
+    				if (elementToWrap.IsAssociationClass())
+    				{
+    					return new AssociationClass(this.model as Model, elementToWrap);
+    				}
+    				else
+    				{
+    					//just a regular class
+    					return new Class(this.model as Model, elementToWrap);
+    				}
     			}
     	case "Enumeration":
 			// since version 10 there are also "real" enumerations Both are still supported
@@ -650,6 +659,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	{
     		return new EnumerationLiteral((Model)this.model, (global::EA.Attribute)collection.AddNew( name, this.translateTypeName(EAType))) as T;
     	}
+    	//Creating Associationclasses is a bit special too. It only becomes an associationclass according to EA once it is linked to an association
+    	else if (typeof(T).Name == "AssociationClass")
+    	{
+    		return new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew( name, this.translateTypeName(EAType))) as T;
+    	}
     	else
     	{
       		return this.model.factory.createElement(collection.AddNew( name, this.translateTypeName(EAType))) as T;
@@ -669,6 +683,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         case "Property":
     	case "EnumerationLiteral":
           return "Attribute";
+        case "AssociationClass":
+          return "Class";
         default:
           return typeName;
       }

@@ -176,6 +176,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (schemaElement.subsetElement != null)
 				{
+					//remove those subset elements that don't have any attributes or associations
 					//reload the element because otherwise the API does not return any attributes or associations
 			    	var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
 					if  (reloadedElement != null

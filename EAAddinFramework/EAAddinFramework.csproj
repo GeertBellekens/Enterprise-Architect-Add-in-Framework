@@ -87,6 +87,7 @@
     <Compile Include="EAWrappers\ActivityDiagram.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />
     <Compile Include="EAWrappers\Association.cs" />
+    <Compile Include="EAWrappers\AssociationClass.cs" />
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
     <Compile Include="EAWrappers\AttributeTag.cs" />

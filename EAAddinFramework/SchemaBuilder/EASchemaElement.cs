@@ -181,6 +181,10 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Enumeration>(destinationPackage, this.wrappedSchemaType.TypeName);
 				}
+				else if (this.sourceElement is UML.Classes.AssociationClasses.AssociationClass)
+				{
+					this.subsetElement = this.model.factory.createNewElement<UML.Classes.AssociationClasses.AssociationClass>(destinationPackage, this.wrappedSchemaType.TypeName);
+				}
 				else if (this.sourceElement is UML.Classes.Kernel.Class)
 				{
 					this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
@@ -220,6 +224,13 @@ namespace EAAddinFramework.SchemaBuilder
 //			}
 			//return the new element
 			return this.subsetElement;
+		}
+		
+		internal void setAssociationClassProperties()
+		{
+			//TODO
+			//create the link tot he association if the association is in the subset
+			//this.owner.
 		}
 		/// <summary>
 		/// copy the generalizations from the source elemnt to the subset element, 

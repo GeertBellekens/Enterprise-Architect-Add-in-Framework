@@ -1686,6 +1686,11 @@
             The elements that have this diagram as composite diagram
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.AssociationClass">
+            <summary>
+            Description of AssociationClass.
+            </summary>
+        </member>
         <member name="F:TSF.UmlToolingFramework.Wrappers.EA.AssociationEnd.defaultMultiplicity">
             <summary>
             the default for multiplicities on associationEnds is 0..1

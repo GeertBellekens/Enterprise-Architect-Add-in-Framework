@@ -242,7 +242,28 @@ namespace EAAddinFramework.SchemaBuilder
         	{
         		this.subsetAssociations.Add(subsetAssociation);
         	}
+        	//if the association is part of an associationclass then create the link
+        	this.setAssociationClassProperties();
         	
+        }
+        private void setAssociationClassProperties()
+        {
+        	AssociationClass sourceAssociationClass = ((UTF_EA.Association)this.sourceAssociation).associationClass;
+        	if (sourceAssociationClass != null)
+        	{
+        		//find subset association class
+        		EASchemaElement associationClassSchemaElement = ((EASchema) this.owner.owner).getSchemaElementForUMLElement(sourceAssociationClass);
+        		if (associationClassSchemaElement.subsetElement != null)
+        		{
+        			//link the corresponding subset associationclass to the subset associations
+		        	foreach (var subsetAssociation in this.subsetAssociations) 
+		        	{
+	        			((AssociationClass) associationClassSchemaElement.subsetElement).relatedAssociation = subsetAssociation as UTF_EA.Association;
+	        			associationClassSchemaElement.subsetElement.save();
+	        			break; //we can only link one association to the association class, so we break after the first one
+		        	}
+        		}
+        	}
         }
         private Association CreateSubSetAssociation(Classifier associationTarget, Association existingAssociation)
         {

@@ -33,5 +33,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+	private AssociationClass _associationClass = null;
+	public AssociationClass associationClass 
+	{
+		get
+		{
+			//TODO use the EA.Connector.AssociationClass property once fixed by Sparx
+			if (_associationClass == null)
+			{
+				int associationClassID;
+				if (int.TryParse(this.WrappedConnector.MiscData[0].ToString(),out associationClassID))
+				{
+					if (associationClassID > 0)
+					{
+						this._associationClass = this.model.getElementWrapperByID(associationClassID) as AssociationClass;
+					}
+				}
+			}
+			return _associationClass;
+		}
+	}
   }
 }
