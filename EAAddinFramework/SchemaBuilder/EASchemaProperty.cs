@@ -67,6 +67,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
 				}
+				this.subSetProperty.name = this.sourceProperty.name;
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				((UTF_EA.Attribute)this.subSetProperty).multiplicity = this.multiplicity;

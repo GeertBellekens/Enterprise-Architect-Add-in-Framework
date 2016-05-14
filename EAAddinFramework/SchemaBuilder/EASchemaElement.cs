@@ -340,9 +340,11 @@ namespace EAAddinFramework.SchemaBuilder
 						if (schemaParent != null
 						    && schemaParent.subsetElement != null)
 						{
+							//if the settings redirectGeneralizationsToSubset is set and
 							//the generalization exists on the source, but there is a subset element for the target
-							// so we move the generalization to the element in the subset.
-							if (! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
+							//we move the generalization to the element in the subset.
+							if (this.owner.settings.redirectGeneralizationsToSubset
+							    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
 						    {
 								//if the generalization doesn't exist yet we move it tot he subset element
 						    	subsetGeneralization.target = schemaParent.subsetElement;
@@ -359,9 +361,12 @@ namespace EAAddinFramework.SchemaBuilder
 							}
 						}
 					}
-					else //the generalization targets an element in the schema. Make sure the source element has an equivalent generalization.
+					else //the generalization targets an element in the schema. 
 					{
-						if (! sourceGeneralizations.Any(x => x.target.Equals(schemaParent.sourceElement)))
+						// Make sure the setting to redirect to the subset is on and
+						// and the source element has an equivalent generalization.
+						if (! this.owner.settings.redirectGeneralizationsToSubset
+							|| ! sourceGeneralizations.Any(x => x.target.Equals(schemaParent.sourceElement)))
 					    {
 							//the source doesn't have a generalization like this
 							subsetGeneralization.delete();
@@ -372,7 +377,8 @@ namespace EAAddinFramework.SchemaBuilder
 				foreach (var sourceGeneralization in sourceGeneralizations) 
 				{
 					var schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(sourceGeneralization.target);
-					if (schemaParent != null)
+					if (this.owner.settings.redirectGeneralizationsToSubset
+						&& schemaParent != null)
 					{
 					    if ( schemaParent.subsetElement != null 
 					    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
