@@ -493,7 +493,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 									inner join t_connector c on c.ea_guid like x.client)
 									where x.Name = 'MOFProps' 
 									and x.Behavior = 'conveyed'
-									and x.Description like '" + this.guid +"'";
+									and x.Description like '%" + this.guid +"%'";
 		foreach (var connector  in this.model.getRelationsByQuery(sqlGetInformationFlows)) 
 		{
 			InformationFlow informationFlow = connector as InformationFlow;

@@ -12,8 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public InformationFlow(Model model, global::EA.Connector connector)
 	  : base(model, connector){}
 	
-	private UML.Classes.Kernel.Classifier _conveyedClassifier = null;
-	private HashSet<UML.Classes.Kernel.Classifier> _conveyed = new HashSet<UML.Classes.Kernel.Classifier>();
+	private HashSet<UML.Classes.Kernel.Classifier> _conveyed = null;
 	private ConnectorWrapper _realization = null;
 	public HashSet<UML.Classes.Kernel.Relationship> _realizations  = new HashSet<UML.Classes.Kernel.Relationship>();
 	#region InformationFlow implementation
@@ -22,20 +21,36 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		get 
 		{
-			// in EA there will only be one classifier for each InformationFlow
-			if (_conveyedClassifier == null)
+			if (_conveyed == null)
 			{
-				// because access doesn't want to join on the description field (memo) we cannot use proper SQL join syntax
-				string sqlGetClassifier = @"select o.Object_ID 
-							from t_connector c, t_xref x, t_object o 
-							where c.ea_guid = x.client
-							and o.ea_guid like x.description
-							and c.ea_guid = '" + this.guid + "'";
-				_conveyedClassifier = this.model.getElementWrappersByQuery(sqlGetClassifier).FirstOrDefault() as UML.Classes.Kernel.Classifier;
-				if(_conveyedClassifier != null)
+				string getXrefDescription = @"select x.Description from t_xref x 
+											where x.Name = 'MOFProps'
+											and x.Behavior = 'conveyed'
+											and x.client = '" + this.guid + "'";
+				//xrefdescription contains the GUID's of the conveyed elements comma separated
+				var xrefDescription = this.model.SQLQuery(getXrefDescription).SelectSingleNode(this.model.formatXPath("//Description"));
+				if (xrefDescription != null)
 				{
-					_conveyed.Add(_conveyedClassifier);
+					foreach (string conveyedGUID in xrefDescription.InnerText.Split(','))
+					{
+						var conveyedElement = this.model.getElementWrapperByGUID(conveyedGUID) as UML.Classes.Kernel.Classifier;
+						if (conveyedElement != null)
+						{
+							//initialize if needed
+							if (_conveyed == null)
+							{
+								_conveyed = new HashSet<UML.Classes.Kernel.Classifier>();
+							}
+							//add the element
+							_conveyed.Add(conveyedElement);
+						}
+					}
 				}
+			}
+			//nothing found, return empty list.
+			if (_conveyed == null)
+			{
+				_conveyed = new HashSet<UML.Classes.Kernel.Classifier>();
 			}
 			return _conveyed;
 		}
@@ -44,6 +59,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 	}
+		public override HashSet<UML.InfomationFlows.InformationFlow> getInformationFlows()
+		{
+			var informationFlows = new HashSet<UML.InfomationFlows.InformationFlow>();
+			informationFlows.Add(this);
+			return informationFlows;
+		}
 	
 	public HashSet<UML.Classes.Kernel.Relationship> realizations 
 	{

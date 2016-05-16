@@ -335,7 +335,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// convenience method to return the information flows that realize this Relationship
     /// </summary>
     /// <returns>the information flows that realize this Relationship</returns>
-	public HashSet<UML.InfomationFlows.InformationFlow> getInformationFlows()
+	public virtual HashSet<UML.InfomationFlows.InformationFlow> getInformationFlows()
 	{
 		HashSet<UML.InfomationFlows.InformationFlow> informationFlows = new HashSet<UML.InfomationFlows.InformationFlow>();
 		string sqlGetInformationFlowIDs = @"select x.description
