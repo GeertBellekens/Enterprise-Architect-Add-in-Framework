@@ -151,6 +151,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		//do nothing, primitive types cannot be deleted as they don't really exist in the model
 	}
+	
+	public HashSet<UML.InfomationFlows.InformationFlow> getConveyingFlows()
+	{
+		//primitive types cannot be conveyed in EA.
+		return new HashSet<UML.InfomationFlows.InformationFlow>();
+	}
 
 	#endregion
   }

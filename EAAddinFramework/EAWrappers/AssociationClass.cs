@@ -105,5 +105,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 		}
 		#endregion
+		
+		public HashSet<UML.InfomationFlows.InformationFlow> getInformationFlows()
+		{
+			return this.relatedAssociation.getInformationFlows();
+		}
 	}
 }

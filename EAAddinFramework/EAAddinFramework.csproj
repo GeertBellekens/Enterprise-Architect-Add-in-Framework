@@ -109,6 +109,8 @@
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
     <Compile Include="EAWrappers\EnumerationLiteral.cs" />
+    <Compile Include="EAWrappers\InformationFlow.cs" />
+    <Compile Include="EAWrappers\InformationItem.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
     <Compile Include="EAWrappers\RepositoryType.cs" />
     <Compile Include="EAWrappers\DeploymentDiagram.cs" />

@@ -331,6 +331,33 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
+	/// <summary>
+    /// convenience method to return the information flows that realize this Relationship
+    /// </summary>
+    /// <returns>the information flows that realize this Relationship</returns>
+	public HashSet<UML.InfomationFlows.InformationFlow> getInformationFlows()
+	{
+		HashSet<UML.InfomationFlows.InformationFlow> informationFlows = new HashSet<UML.InfomationFlows.InformationFlow>();
+		string sqlGetInformationFlowIDs = @"select x.description
+			from (t_connector c
+			inner join t_xref x on (x.client = c.ea_guid and x.Name = 'MOFProps'))
+			where c.ea_guid = '" + this.guid + "'";
+		var queryResult = this.model.SQLQuery(sqlGetInformationFlowIDs);
+		var descriptionNode = queryResult.SelectSingleNode(this.model.formatXPath("//description"));
+		if (descriptionNode != null)
+		{
+			foreach (string ifGUID in descriptionNode.InnerText.Split(','))
+			{
+				var informationFlow = this.model.getRelationByGUID(ifGUID) as UML.InfomationFlows.InformationFlow;
+				if (informationFlow != null )
+				{
+					informationFlows.Add(informationFlow);
+				}
+			}
+		}
+		return informationFlows;
+	}
+
     /// <summary>
     /// Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
     /// If not then the aggregationkind of the other set is reset to none.

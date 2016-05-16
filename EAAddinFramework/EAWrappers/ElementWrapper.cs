@@ -482,6 +482,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	return dependentTypedElements;
     }
     /// <summary>
+    /// convenience method to return the Information flows that convey this classifier
+    /// </summary>
+    /// <returns>all InformationFlows that convey this classifier</returns>
+	public HashSet<UML.InfomationFlows.InformationFlow> getConveyingFlows()
+	{
+		var conveyingFlows = new HashSet<UML.InfomationFlows.InformationFlow>();
+		string sqlGetInformationFlows =  @"select c.Connector_ID
+									from ( t_xref x 
+									inner join t_connector c on c.ea_guid like x.client)
+									where x.Name = 'MOFProps' 
+									and x.Behavior = 'conveyed'
+									and x.Description like '" + this.guid +"'";
+		foreach (var connector  in this.model.getRelationsByQuery(sqlGetInformationFlows)) 
+		{
+			InformationFlow informationFlow = connector as InformationFlow;
+			if (informationFlow != null)
+			{
+				conveyingFlows.Add(informationFlow);
+			}
+		}
+		return conveyingFlows;
+	}
+
+
+
+    /// <summary>
     /// returns the parameters having use this Element as type
     /// </summary>
     /// <returns>the parameters that use this element as type</returns>

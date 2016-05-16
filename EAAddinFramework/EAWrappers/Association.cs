@@ -53,5 +53,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return _associationClass;
 		}
 	}
+
+	public HashSet<UML.InfomationFlows.InformationFlow> getConveyingFlows()
+	{
+		//associations cannot be conveyed in EA.
+		return new HashSet<UML.InfomationFlows.InformationFlow>();
+	}
   }
 }

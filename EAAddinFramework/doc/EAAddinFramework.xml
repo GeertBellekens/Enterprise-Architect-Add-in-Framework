@@ -1400,6 +1400,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getInformationFlows">
+            <summary>
+            convenience method to return the information flows that realize this Relationship
+            </summary>
+            <returns>the information flows that realize this Relationship</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.save">
             <summary>
             Due to a bug in EA we first need to save the end with aggregation kind none, and then the other end.
@@ -1488,6 +1494,12 @@
             gets the TypedElements of the given type that use this element as type
             </summary>
             <returns>the TypedElements that use this element as type</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getConveyingFlows">
+            <summary>
+            convenience method to return the Information flows that convey this classifier
+            </summary>
+            <returns>all InformationFlows that convey this classifier</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getUsingParameters">
             <summary>
@@ -2098,6 +2110,11 @@
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral">
             <summary>
             Description of EnumerationLiteral.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.InformationItem">
+            <summary>
+            Description of Action.
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">

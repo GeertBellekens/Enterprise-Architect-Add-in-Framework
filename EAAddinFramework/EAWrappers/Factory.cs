@@ -196,26 +196,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private ConnectorWrapper createEAConnectorWrapper
       (global::EA.Connector connector)
     {
-      switch (connector.Type) {
-    	case "Abstraction":
-    	  return new Abstraction(this.model as Model, connector);
-    	case "Generalization":
-          return new Generalization(this.model as Model, connector);
-        case "Association":
-          return new Association(this.model as Model, connector);
-        case "Dependency":
-          return new Dependency(this.model as Model, connector);
-        case "Sequence":
-        case "Collaboration":
-          return new Message(this.model as Model, connector);
-        case "Realization":
-        case "Realisation":
-          return createEARealization(connector);
-        case "StateFlow":
-          return new BehaviorStateMachines.Transition(this.model as Model,connector);
-        default:
-          return new ConnectorWrapper(this.model as Model, connector);
-      }
+		switch (connector.Type) 
+		{
+			case "Abstraction":
+				return new Abstraction(this.model as Model, connector);
+			case "Generalization":
+				return new Generalization(this.model as Model, connector);
+			case "Association":
+				return new Association(this.model as Model, connector);
+			case "Dependency":
+				return new Dependency(this.model as Model, connector);
+			case "Sequence":
+			case "Collaboration":
+				return new Message(this.model as Model, connector);
+			case "Realization":
+			case "Realisation":
+				return createEARealization(connector);
+			case "StateFlow":
+				return new BehaviorStateMachines.Transition(this.model as Model,connector);
+			case "InformationFlow":
+				return new InformationFlow(this.model as Model, connector);
+			default:
+				return new ConnectorWrapper(this.model as Model, connector);
+		}
     }
     
     private Realization createEARealization(global::EA.Connector connector) {
@@ -325,6 +328,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 		case "DataType":
 			return new DataType(this.model as Model, elementToWrap);
+		case "InformationItem":
+			return new InformationItem(this.model as Model, elementToWrap);			
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }
