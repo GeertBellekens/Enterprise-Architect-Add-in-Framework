@@ -20,7 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
     
-	public HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
+	public virtual HashSet<T> getDependentTypedElements<T>() where T:UML.Classes.Kernel.TypedElement
     {
 		throw new NotImplementedException();
     }

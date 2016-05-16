@@ -14,7 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public AssociationClass(Model model, global::EA.Element elementToWrap)
       : base(model, elementToWrap){}
 		
-		internal Association relatedAssociation
+		public Association relatedAssociation
 		{
 			get
 			{
@@ -47,10 +47,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{
 				this.relatedAssociation.relatedElements = value;
 			}
-		}
-		HashSet<T> UML.Classes.Kernel.Type.getDependentTypedElements<T>()
-		{
-			return this.relatedAssociation.getDependentTypedElements<T>();
 		}
 		public bool isDerived {
 			get 
@@ -103,6 +99,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{
 				this.relatedAssociation.memberEnds = value;
 			}
+		}
+		public override List<UML.Diagrams.Diagram> getDependentDiagrams()
+		{
+			return this.relatedAssociation.getDependentDiagrams();
 		}
 		#endregion
 		
