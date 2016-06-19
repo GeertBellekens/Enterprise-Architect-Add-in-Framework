@@ -148,9 +148,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	        {
 	            this.wrappedModel.ShowInProjectView(((Operation)value).wrappedOperation);
 	        }
-	        else if (value is Attribute)
+	        else if (value is AttributeWrapper)
 	        {
-	            this.wrappedModel.ShowInProjectView(((Attribute)value).wrappedAttribute);
+	            this.wrappedModel.ShowInProjectView(((AttributeWrapper)value).wrappedAttribute);
 	        }
 	        else if (value is Parameter)
 	        {
