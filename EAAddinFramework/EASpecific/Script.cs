@@ -350,16 +350,27 @@ namespace EAAddinFramework.EASpecific
 		/// </summary>
 		/// <param name="code">the code containing the include parameters</param>
 		/// <returns>the code including the included code</returns>
-		private string IncludeScripts(string code,string parentIncludeStatement = null)
+		private string IncludeScripts(string code,List<string> includedScripts = null)
 		{
 			string includedCode = code;
+			if (includedScripts == null)
+			{
+				includedScripts = new List<string>();
+				
+			}
 			//find all lines starting with !INC
 			foreach (string includeString in this.getIncludes(code)) 
 			{
-				if (includeString != parentIncludeStatement) //prevent eternal loop
+				if (!includedScripts.Contains(includeString)) //prevent including code twice
 				{
+					includedScripts.Add(includeString);
 					//then replace with the contents of the included script
-					includedCode = includedCode.Replace(includeString,this.IncludeScripts(this.getIncludedcode(includeString),includeString));
+					includedCode = includedCode.Replace(includeString,this.IncludeScripts(this.getIncludedcode(includeString),includedScripts));
+				}
+				else
+				{
+					//remove the included string because the script was already included
+					includedCode = includedCode.Replace(includeString,string.Empty);
 				}
 			}
 			

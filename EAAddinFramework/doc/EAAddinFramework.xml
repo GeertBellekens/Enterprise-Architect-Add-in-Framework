@@ -1177,7 +1177,7 @@
             </summary>
             <param name="mdgXmlContent">the string content of the mdg file</param>
         </member>
-        <member name="M:EAAddinFramework.EASpecific.Script.IncludeScripts(System.String,System.String)">
+        <member name="M:EAAddinFramework.EASpecific.Script.IncludeScripts(System.String,System.Collections.Generic.List{System.String})">
             <summary>
             replaces the !INC  statements with the actual code of the local script.
             The local scripts are located in the "ea program files"\scripts (so usually C:\Program Files (x86)\Sparx Systems\EA\Scripts or C:\Program Files\Sparx Systems\EA\Scripts)
