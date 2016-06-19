@@ -29,7 +29,7 @@ namespace EAAddinFramework.EASpecific
 		static string scriptLanguageIndicator = "Language=\"";
 		static string scriptNameIndicator = "Script Name=\"";
 		private static int scriptHash;
-		private static List<Script> allScripts = new List<Script>();
+		private static List<Script> allEAMaticScripts = new List<Script>();
 		private static Dictionary<string,string> _includableScripts ;
 		private static Dictionary<string,string> staticIncludableScripts ;
 		private static List<Script> staticEAMaticScripts = new List<Script>();
@@ -365,12 +365,12 @@ namespace EAAddinFramework.EASpecific
 				{
 					includedScripts.Add(includeString);
 					//then replace with the contents of the included script
-					includedCode = includedCode.Replace(includeString,this.IncludeScripts(this.getIncludedcode(includeString),includedScripts));
+					includedCode = includedCode.Replace(includeString + Environment.NewLine,this.IncludeScripts(this.getIncludedcode(includeString),includedScripts));
 				}
 				else
 				{
 					//remove the included string because the script was already included
-					includedCode = includedCode.Replace(includeString,string.Empty);
+					includedCode = includedCode.Replace(includeString + Environment.NewLine,string.Empty);
 				}
 			}
 			
@@ -438,7 +438,7 @@ namespace EAAddinFramework.EASpecific
 			{
 			 XmlDocument xmlScripts = model.SQLQuery(@"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES from t_script s
 													   inner join t_script ps on s.ScriptAuthor = ps.ScriptName
-													   where s.Script like '%EA-Matic%'");
+														where s.Script like '%EA-Matic%'");
 			 //check the hash before continuing
 			 int newHash = xmlScripts.InnerXml.GetHashCode();
 			 //only create the scripts of the hash is different
@@ -448,7 +448,7 @@ namespace EAAddinFramework.EASpecific
 			  //set the new hashcode
 			  scriptHash = newHash;
 			  //reset scripts
-		 	  allScripts = new List<Script>();
+		 	  allEAMaticScripts = new List<Script>();
 		 	  
 		 	  //set flag to reload scripts in includableScripts
 		 	  reloadModelIncludableScripts = true;
@@ -482,30 +482,30 @@ namespace EAAddinFramework.EASpecific
 						{
 							scriptCode = string.Empty;
 						}
-						Script script = new Script(ScriptID,scriptName,groupName,scriptCode, language,model); 
 						//and create the script if both code and language are found
-						allScripts.Add(script);
+						Script script = new Script(ScriptID,scriptName,groupName,scriptCode, language,model); 
+						allEAMaticScripts.Add(script);
 						//also add the script to the include dictionary
 						modelIncludableScripts.Add("!INC "+ script.groupName + "." + script.name,script._code);
 					}
           	    }
               }
-              //Add the static EA-Matic scripts to allScripts
+              //Add the static EA-Matic scripts to allEAMaticScripts
               foreach (Script staticScript in staticEAMaticScripts)
               {
               	//add the model to the static script first
               	staticScript.model = model;
               	//then add the static scrip to all scripts
-              	allScripts.Add(staticScript);
+              	allEAMaticScripts.Add(staticScript);
 			  }              
 			  //load the code of the scripts (because a script can include another script we can only load the code after all scripts have been created)
-			  foreach (Script script in allScripts) 
+			  foreach (Script script in allEAMaticScripts) 
 			  {
 			  	script.reloadCode();
 			  }			  
 			 }
 			}
-			return allScripts;
+			return allEAMaticScripts;
 		}
 		/// <summary>
 		/// gets the value from the content of the notes.
