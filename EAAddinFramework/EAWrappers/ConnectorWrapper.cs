@@ -232,7 +232,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._sourceEnd == null)
     		{
-    			this._sourceEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd) ;
+    			this._sourceEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd,false) ;
     		}
     		return this._sourceEnd;
     	}
@@ -243,7 +243,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._targetEnd == null)
     		{
-    			this._targetEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd); 
+    			this._targetEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd,true); 
     		}
     		return this._targetEnd;
     	}

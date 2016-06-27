@@ -216,7 +216,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     
    
     
-    public bool isNavigable(){ throw new NotImplementedException(); }
+    public bool getIsNavigable(){ throw new NotImplementedException(); }
     
     public List<UML.Classes.Dependencies.Dependency> clientDependencies {
       get { throw new NotImplementedException(); }
@@ -230,7 +230,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 
    
     
-    public bool _isNavigable {
+    public bool isNavigable {
       get { return true; }
       set { /* do nothing */ }
     }

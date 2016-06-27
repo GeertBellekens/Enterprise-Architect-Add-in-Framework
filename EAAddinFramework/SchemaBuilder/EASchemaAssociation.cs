@@ -281,11 +281,19 @@ namespace EAAddinFramework.SchemaBuilder
            	//update name
             subSetAssociation.name = this.sourceAssociation.name;
             //notes only update them if they are empty
-            if (subSetAssociation.ownedComments.Count == 0 ||
-                !subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
-            {
-                subSetAssociation.ownedComments = this.sourceAssociation.ownedComments;
-            }
+			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
+			{
+				subSetAssociation.ownedComments = this.sourceAssociation.ownedComments;
+				if (this.owner.owner.settings.prefixNotes
+				    && this.owner.owner.settings.prefixNotesText.Length > 0
+				    && subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
+				{
+					foreach (var comment in subSetAssociation.ownedComments) 
+					{
+						comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+					}	
+				}
+			}
             //stereotype
             subSetAssociation.stereotypes = this.sourceAssociation.stereotypes;
             //save all changes
@@ -316,7 +324,7 @@ namespace EAAddinFramework.SchemaBuilder
         {
             target.name = source.name;
             target.multiplicity = source.multiplicity;
-            target._isNavigable = source._isNavigable;
+            target.isNavigable = source.isNavigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
             target.save();

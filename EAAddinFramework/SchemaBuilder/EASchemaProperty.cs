@@ -75,6 +75,15 @@ namespace EAAddinFramework.SchemaBuilder
 				if (this.subSetProperty.ownedComments.Count == 0 || ! this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
 				{
 					this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
+					if (this.owner.owner.settings.prefixNotes
+					    && this.owner.owner.settings.prefixNotesText.Length > 0
+					    && this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
+					{
+						foreach (var comment in subSetProperty.ownedComments) 
+						{
+							comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+						}	
+					}
 				}
 				//resolve the type
 				foreach (EASchemaElement element in schemaElements)

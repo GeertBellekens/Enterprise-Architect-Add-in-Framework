@@ -70,6 +70,15 @@ namespace EAAddinFramework.SchemaBuilder
 			if (this.subSetLiteral.ownedComments.Count == 0 || ! this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
 			{
 				this.subSetLiteral.ownedComments = this.sourceLiteral.ownedComments;
+				if (this.owner.owner.settings.prefixNotes
+				    && this.owner.owner.settings.prefixNotesText.Length > 0
+				    && this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
+				{
+					foreach (var comment in subSetLiteral.ownedComments) 
+					{
+						comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+					}	
+				}
 			}
 			((UTF_EA.Element)this.subSetLiteral).save();
 			//copy tagged values

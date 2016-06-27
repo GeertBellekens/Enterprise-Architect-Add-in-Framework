@@ -625,11 +625,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return null;
     }
     
-    internal AssociationEnd createAssociationEnd
-      ( ConnectorWrapper connector, global::EA.ConnectorEnd associationEnd )
+    internal AssociationEnd createAssociationEnd(ConnectorWrapper connector, global::EA.ConnectorEnd associationEnd, bool isTarget )
     {
-      return new AssociationEnd( this.model as Model, connector,
-                                 associationEnd );
+      return new AssociationEnd( this.model as Model, connector,associationEnd,isTarget );
     }
 	public override UML.Profiles.TaggedValue createNewTaggedValue(UML.Classes.Kernel.Element owner, string name)
 	{

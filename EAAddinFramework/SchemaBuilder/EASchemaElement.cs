@@ -200,6 +200,16 @@ namespace EAAddinFramework.SchemaBuilder
 			if (this.subsetElement.ownedComments.Count == 0 || ! this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
 			{
 				this.subsetElement.ownedComments = this.sourceElement.ownedComments;
+				if (this.owner.settings.prefixNotes
+				    && this.owner.settings.prefixNotesText.Length > 0
+				    && this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
+				{
+					foreach (var comment in subsetElement.ownedComments) 
+					{
+						comment.body = this.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+					}	
+				}
+				
 			}
 			//save the new subset element
 			((UTF_EA.Element) this.subsetElement).save();

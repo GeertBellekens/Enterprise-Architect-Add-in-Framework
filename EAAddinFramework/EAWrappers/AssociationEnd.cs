@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using System.Runtime.CompilerServices;
+using System.Xml;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -14,11 +16,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private ConnectorWrapper _association { get; set; }
 	
     public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
-                          global::EA.ConnectorEnd associationEnd ):base(model)
+                          global::EA.ConnectorEnd associationEnd, bool isTarget ):base(model)
     {
       this.wrappedAssociationEnd = associationEnd;
       this._association = linkedAssocation;
+      this.isTarget = isTarget;
     }
+    public bool isTarget {get;private set;}
+    public bool isSource {
+    	get
+    	{
+    		return !this.isTarget;
+    	}
+    }
+    
 
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
@@ -241,7 +252,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
 
-    public bool isNavigable(){
+    public bool getIsNavigable(){
       return this.wrappedAssociationEnd.Navigable == "Navigable";
     }
     public List<UML.Classes.Dependencies.Dependency> clientDependencies {
@@ -263,16 +274,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { this.wrappedAssociationEnd.RoleNote = value; }
     }
     
-    public bool _isNavigable {
-      get { return this.wrappedAssociationEnd.Navigable == "Navigable"; }
+    public bool isNavigable {
+      get { 
+    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
+    		string sqlGetNavigability = "select c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
+    			+ this._association.uniqueID +"'";
+    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
+    		XmlNode navigableNode;
+    		XmlNode styleNode;
+    		if (this.isTarget)
+    		{
+    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
+    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
+    		}else
+    		{
+    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
+    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+    		}
+    		if (navigableNode != null && navigableNode.InnerText == "1")
+    		{
+    			return true;
+    		}
+    		if (styleNode != null && styleNode.InnerText.Contains("Navigable=Navigable"))
+		    {
+    			return true;
+		    }
+    		//end of workaround
+    		return this.wrappedAssociationEnd.Navigable == "Navigable"
+    			|| this.wrappedAssociationEnd.IsNavigable; }
       set {
         if (value) {
-          this.wrappedAssociationEnd.Navigable = "Navigable";
+    		this.wrappedAssociationEnd.Navigable = "Navigable";
+          	this.wrappedAssociationEnd.IsNavigable = true;
         }else {
           this.wrappedAssociationEnd.Navigable = "Non-Navigable";
+          this.wrappedAssociationEnd.IsNavigable = false;
         }
       }
     }
+    
     public Multiplicity multiplicity 
     {
     	get
