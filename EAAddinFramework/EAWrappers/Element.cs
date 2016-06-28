@@ -281,7 +281,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		foreach (TaggedValue taggedValue in this.taggedValues) 
 		{
-			if (taggedValue.name == name)
+			if (taggedValue.name.Equals(name,StringComparison.InvariantCultureIgnoreCase))
 			{
 				return taggedValue;
 			}
