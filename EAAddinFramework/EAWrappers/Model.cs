@@ -31,9 +31,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		if  (string.IsNullOrEmpty(_applicationFullPath))
     		{
     			Process[] processes = Process.GetProcessesByName("EA");
-    			if(processes.Length > 0)
+    			foreach (var process in processes) 
     			{
-    				_applicationFullPath = processes[0].MainModule.FileName;
+    				try
+    				{
+    					_applicationFullPath = process.MainModule.FileName;
+    					break;
+    				}
+    				catch (Exception)
+    				{
+    					//swallow exception because of access denied
+    					//this can happen in case of terminal services solution where there are processes started by other users.
+    					//we just have to find the process belonging to this user.
+    				}
     			}
     		}
     		return _applicationFullPath;
