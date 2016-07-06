@@ -57,6 +57,7 @@
       <HintPath>..\..\..\..\..\..\..\Program Files %28x86%29\Sparx Systems\EA\Interop.EA.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -167,6 +168,7 @@
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
+    <Compile Include="Utilities\AddinSettings.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
   </ItemGroup>

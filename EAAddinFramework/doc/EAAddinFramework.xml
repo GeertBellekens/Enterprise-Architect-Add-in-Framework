@@ -2961,6 +2961,26 @@
             borrowed from http://stackoverflow.com/questions/800767/how-to-kill-background-worker-completely 
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Utilities.AddinSettings">
+            <summary>
+            Description of AddinSettings.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.AddinSettings.getDefaultSettings">
+            <summary>
+            gets the default settings config.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.AddinSettings.mergeDefaultSettings">
+            <summary>
+            merge the default settings with the current config.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.AddinSettings.save">
+            <summary>
+            saves the settings to the config file
+            </summary>
+        </member>
         <member name="M:EAAddinFramework.Utilities.Logger.setLogFileName(System.String)">
             <summary>
             set the log file name
