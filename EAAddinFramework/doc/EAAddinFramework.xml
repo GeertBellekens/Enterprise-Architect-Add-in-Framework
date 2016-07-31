@@ -2585,6 +2585,12 @@
             </summary>
             <param name="ownedElement">the owned element to delete</param>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.exportToXMI(System.String)">
+            <summary>
+            export this package to xmi in the default format
+            </summary>
+            <param name="filePath">the filepath to save the xmi file to</param>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Package.ownedElements">
             <summary>
             

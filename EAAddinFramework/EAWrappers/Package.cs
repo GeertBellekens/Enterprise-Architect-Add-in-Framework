@@ -201,5 +201,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				throw new NotImplementedException();
 			}
 		}
+		/// <summary>
+		/// export this package to xmi in the default format
+		/// </summary>
+		/// <param name="filePath">the filepath to save the xmi file to</param>
+		public void exportToXMI(string filePath)
+		{
+			var projectInterface = this.model.getWrappedModel().GetProjectInterface();
+			string xmlGUID = projectInterface.GUIDtoXML(this.guid);
+			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,0,0,filePath);
+		}
 	}
 }

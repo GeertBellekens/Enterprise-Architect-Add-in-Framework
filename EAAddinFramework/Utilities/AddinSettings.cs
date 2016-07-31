@@ -71,6 +71,14 @@ namespace EAAddinFramework.Utilities
 			// save the configuration
 			currentConfig.Save();
 		}
+		protected string getValue(string key)
+		{
+			return this.currentConfig.AppSettings.Settings[key].Value;
+		}
+		protected void setValue(string key, string value)
+		{
+			this.currentConfig.AppSettings.Settings[key].Value = value;
+		}
 		/// <summary>
 		/// saves the settings to the config file
 		/// </summary>
