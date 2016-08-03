@@ -70,6 +70,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Databases\BaseDataType.cs" />
+    <Compile Include="Databases\Column.cs" />
+    <Compile Include="Databases\Constraint.cs" />
+    <Compile Include="Databases\Database.cs" />
+    <Compile Include="Databases\DatabaseFactory.cs" />
+    <Compile Include="Databases\DataType.cs" />
+    <Compile Include="Databases\ForeignKey.cs" />
+    <Compile Include="Databases\PrimaryKey.cs" />
+    <Compile Include="Databases\Table.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
@@ -177,6 +186,7 @@
     <Folder Include="EASpecific" />
     <Folder Include="EAWrappers\BehaviorStateMachines" />
     <Folder Include="Licensing" />
+    <Folder Include="Databases" />
     <Folder Include="SchemaBuilder" />
     <Folder Include="Utilities" />
   </ItemGroup>
@@ -184,6 +194,10 @@
     <None Include="EAWrappers\README" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\UML-Tooling-Framework\DatabaseFramework\DatabaseFramework.csproj">
+      <Project>{033c0df8-5bb0-496f-b024-4443b9fcf2dc}</Project>
+      <Name>DatabaseFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\SchemaBuilderFramework\SchemaBuilderFramework.csproj">
       <Project>{5C63DAE8-2567-4270-8F7C-CEB8396B73D3}</Project>
       <Name>SchemaBuilderFramework</Name>

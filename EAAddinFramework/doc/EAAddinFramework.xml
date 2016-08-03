@@ -4,6 +4,58 @@
         <name>EAAddinFramework</name>
     </assembly>
     <members>
+        <member name="T:EAAddinFramework.Databases.BaseDataType">
+            <summary>
+            Description of BaseDataType.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Column">
+            <summary>
+            Description of Column.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Constraint">
+            <summary>
+            Description of Constraint.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Database">
+            <summary>
+            Description of Database.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.DatabaseFactory">
+            <summary>
+            Description of DatabaseFactory.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.DatabaseFactory.addFactory(System.String,System.Collections.Generic.List{EAAddinFramework.Databases.BaseDataType})">
+            <summary>
+            adds a factory to the list of possible database factories
+            </summary>
+            <param name="type">the type of the factory</param>
+            <param name="datatypes">the base datatypes for this factory</param>
+        </member>
+        <member name="T:EAAddinFramework.Databases.DataType">
+            <summary>
+            Description of DataType.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.ForeignKey">
+            <summary>
+            Description of ForeignKey.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.PrimaryKey">
+            <summary>
+            Description of PrimaryKey.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Table">
+            <summary>
+            Description of Table.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EAAddinBase">
             <summary>
             This abstract class can be used as a base class for creating add-ins for Enterprise Architec

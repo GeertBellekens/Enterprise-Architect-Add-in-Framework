@@ -11,7 +11,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Attribute(Model model, global::EA.Attribute wrappedAttribute) 
       : base(model, wrappedAttribute)
     {}
-    
+    public bool allowDuplicates
+    {
+    	get {return this.wrappedAttribute.AllowDuplicates;}
+    	set {this.wrappedAttribute.AllowDuplicates = value;}
+    }
 	public override List<UML.Classes.Kernel.Relationship> relationships {
 		get 
 		{
@@ -227,7 +231,45 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-
+	public int length
+	{
+		get
+		{
+			int returnedLenght  = 0;
+			int.TryParse(this.wrappedAttribute.Length,out returnedLenght);
+			return returnedLenght;
+		}
+		set
+		{
+			this.wrappedAttribute.Length = value.ToString();
+		}
+	}
+	public int precision
+	{
+		get
+		{
+			int returnedPrecision  = 0;
+			int.TryParse(this.wrappedAttribute.Precision,out returnedPrecision);
+			return returnedPrecision;
+		}
+		set
+		{
+			this.wrappedAttribute.Precision = value.ToString();
+		}
+	}
+	public int scale
+	{
+		get
+		{
+			int returnedScale  = 0;
+			int.TryParse(this.wrappedAttribute.Scale,out returnedScale);
+			return returnedScale;
+		}
+		set
+		{
+			this.wrappedAttribute.Scale = value.ToString();
+		}
+	}
    
     
     public bool isNavigable {
