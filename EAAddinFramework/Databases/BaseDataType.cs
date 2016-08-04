@@ -24,6 +24,14 @@ namespace EAAddinFramework.Databases
 
 		public bool hasPrecision {get;set;}
 
+		public string itemType 
+		{
+			get {return "BaseDatatype";}
+		}
+		public string properties 
+		{
+			get { return this.name;}
+		}
 
 		#endregion
 	}

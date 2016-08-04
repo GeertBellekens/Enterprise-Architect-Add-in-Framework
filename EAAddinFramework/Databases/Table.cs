@@ -13,23 +13,54 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public class Table:DB.Table
 	{
-		private Class _wrappedClass;
-		private Database _owner;
-		private List<Column> _columns;
-		private List<Constraint> _constraints;
+		internal Class _wrappedClass;
+		internal Database _owner;
+		internal List<Column> _columns;
+		internal List<Constraint> _constraints;
+		private string _name;
 		public Table(Database owner,Class wrappedClass)
 		{
 			this._wrappedClass = wrappedClass;
 			this._owner = owner;
+		}
+		public Table(Database owner, string name)
+		{
+			this._name = name;
+			this._owner = owner;
+			this.owner.addTable(this);
 		}
 
 		#region Table implementation
 
 		public string name 
 		{
-			get { return this._wrappedClass.name;}
-			set {this._wrappedClass.name = value;}
+			get 
+			{
+				if (this._wrappedClass != null) this._name = this._wrappedClass.name;
+				return this._name;
+			}
+			set 
+			{
+				this._name = value;
+				if (this._wrappedClass != null) this._wrappedClass.name = this._name;
+			}
 		}
+
+		public void addColumn(DB.Column column)
+		{
+			//initialise columns
+			int columnCount = this.columns.Count;
+			this._columns.Add(column as Column);
+		}
+		public string itemType {
+			get {return "Table";}
+		}
+
+
+		public string properties {
+			get { return string.Empty;}
+		}
+
 		public DB.Database owner 
 		{
 			get {return this._owner;}
@@ -57,17 +88,20 @@ namespace EAAddinFramework.Databases
 				if (_constraints == null)
 				{
 					_constraints = new List<Constraint>();
-					foreach (var operation in this._wrappedClass.ownedOperations)
+					if (this._wrappedClass != null)
 					{
-						if (operation.stereotypes.Any(x=> x.name.Equals("PK",StringComparison.InvariantCultureIgnoreCase)))
+						foreach (var operation in this._wrappedClass.ownedOperations)
 						{
-							_constraints.Add(new PrimaryKey(this,(Operation) operation));
+							if (operation.stereotypes.Any(x=> x.name.Equals("PK",StringComparison.InvariantCultureIgnoreCase)))
+							{
+								_constraints.Add(new PrimaryKey(this,(Operation) operation));
+							}
+							else if (operation.stereotypes.Any(x=> x.name.Equals("FK",StringComparison.InvariantCultureIgnoreCase)))
+							{
+								_constraints.Add(new ForeignKey(this, (Operation) operation));
+							}
+							
 						}
-						else if (operation.stereotypes.Any(x=> x.name.Equals("FK",StringComparison.InvariantCultureIgnoreCase)))
-						{
-							_constraints.Add(new ForeignKey(this, (Operation) operation));
-						}
-						
 					}
 				}
 				return _constraints.Cast<DB.Constraint>().ToList();
@@ -77,17 +111,42 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public DB.PrimaryKey primaryKey 
+		{
+			get 
+			{
+				return this.constraints.FirstOrDefault(x => x is PrimaryKey) as PrimaryKey;
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+		public List<DB.ForeignKey> foreignKeys 
+		{
+			get 
+			{
+				return this.constraints.OfType<ForeignKey>().Cast<DB.ForeignKey>().ToList();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		#endregion
 		private void getColumnsFromAttributes()
 		{
 			_columns = new List<Column>();
-			foreach (TSF_EA.Attribute attribute in this._wrappedClass.attributes) 
+			if( this._wrappedClass != null)
 			{
-				if (attribute.stereotypes.Any( x => x.name.Equals("column", StringComparison.CurrentCultureIgnoreCase)))
-			    {
-					_columns.Add( new Column(this,attribute));
-			    }
+				foreach (TSF_EA.Attribute attribute in this._wrappedClass.attributes) 
+				{
+					if (attribute.stereotypes.Any( x => x.name.Equals("column", StringComparison.CurrentCultureIgnoreCase)))
+				    {
+						_columns.Add( new Column(this,attribute));
+				    }
+				}
 			}
 		}
+
+
 	}
 }

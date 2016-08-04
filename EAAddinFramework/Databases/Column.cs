@@ -15,10 +15,18 @@ namespace EAAddinFramework.Databases
 		internal Table _owner;
 		internal TSF_EA.Attribute _wrappedattribute;
 		internal DataType _type;
+		private string _name;
+		private bool _isNotNullable;
 		public Column(Table owner, TSF_EA.Attribute attribute)
 		{
 			this._owner = owner;
 			this._wrappedattribute = attribute;
+		}
+		public Column(Table owner, string name)
+		{
+			this._owner = owner;
+			this.name = name;
+			this.owner.addColumn(this);
 		}
 
 		#region Column implementation
@@ -28,9 +36,33 @@ namespace EAAddinFramework.Databases
 			set {this._owner = (Table)value;}
 		}
 
+		public string itemType {
+			get {return "Column";}
+		}
+		public string properties {
+			get 
+			{
+				
+				string _properties = string.Empty;
+				if (this.type != null ) _properties += this.type.properties;
+				if (this.isNotNullable)
+				{
+					_properties += " Not Null";
+				}
+				return _properties;
+			}
+		}
 		public string name {
-			get {return this._wrappedattribute.name;}
-			set {this._wrappedattribute.name = value;}
+			get 
+			{
+				if(_wrappedattribute != null) _name = _wrappedattribute.name;
+				return _name;
+			}
+			set 
+			{
+				_name = value;
+				if (_wrappedattribute != null) this._wrappedattribute.name = _name;
+			}
 		}
 
 		public DB.DataType type 
@@ -50,22 +82,34 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public bool isNotNullable {
-			get { return this._wrappedattribute.allowDuplicates;}
-			set {this._wrappedattribute.allowDuplicates = value;}
+		public bool isNotNullable 
+		{
+			get 
+			{
+				if(_wrappedattribute != null) _isNotNullable = _wrappedattribute.allowDuplicates;
+				return _isNotNullable;
+			}
+			set 
+			{
+				_isNotNullable = value;
+				if (_wrappedattribute != null) this._wrappedattribute.allowDuplicates = _isNotNullable;
+			}
 		}
 		private DataType getDataType()
 		{
-			var basetype = this.owner.owner.factory.baseDataTypes.FirstOrDefault(x => x.name == this._wrappedattribute.type.name);
-			if (basetype != null)
+			if (this._wrappedattribute != null)
 			{
-				if (basetype.hasPrecision)
+				var basetype = this.owner.owner.factory.baseDataTypes.FirstOrDefault(x => x.name == this._wrappedattribute.type.name);
+				if (basetype != null)
 				{
-					return  new DataType((BaseDataType)basetype, this._wrappedattribute.precision, this._wrappedattribute.scale);
-				}
-				else
-				{
-					return  new DataType((BaseDataType)basetype, this._wrappedattribute.length, 0);
+					if (basetype.hasPrecision)
+					{
+						return  new DataType((BaseDataType)basetype, this._wrappedattribute.precision, this._wrappedattribute.scale);
+					}
+					else
+					{
+						return  new DataType((BaseDataType)basetype, this._wrappedattribute.length, 0);
+					}
 				}
 			}
 			return null;
@@ -89,5 +133,6 @@ namespace EAAddinFramework.Databases
 		}
 
 		#endregion
+
 	}
 }

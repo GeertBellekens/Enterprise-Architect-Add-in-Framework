@@ -16,26 +16,52 @@ namespace EAAddinFramework.Databases
 		internal Package _wrappedPackage;
 		internal DatabaseFactory _factory;
 		internal List<Table> _tables;
+		private string _name;
 		public Database(Package package,DatabaseFactory factory)
 		{
 			this._wrappedPackage = package;
 			this._factory = factory;
 		}
+		public Database(string name,DatabaseFactory factory)
+		{
+			this._name = name;
+			this._factory = factory;
+		}
 
+		public void addTable(DB.Table table)
+		{
+			//initialize 
+			int nbrOfTable = this.tables.Count;
+			this._tables.Add(table as Table);
+		}
 		#region Database implementation
 
 		public string name 
 		{
 			get 
 			{
-				return this._wrappedPackage.name;
+				if (this._wrappedPackage != null)
+				{
+					this._name = this._wrappedPackage.name;
+				}
+				return this._name;
 			}
 			set 
 			{
-				this._wrappedPackage.name = value;
+				this._name = value;
+				if (this._wrappedPackage != null)
+				{
+					this._wrappedPackage.name = _name;
+				}
 			}
 		}
 
+		public string itemType {
+			get {return "Database";}
+		}
+		public string properties {
+			get {return this._factory.type;}
+		}
 		public DB.DataBaseFactory factory 
 		{
 			get 
@@ -86,17 +112,20 @@ namespace EAAddinFramework.Databases
 		{
 			
 			var foundTables = new List<Table>();
-			var ownedElements = package.ownedElements;
-			foreach( Class tableElement in ownedElements
-								.Where(x => x is Class
-			                    && x.stereotypes.Any( y => y.name.Equals("table", StringComparison.CurrentCultureIgnoreCase))))
+			if (package != null)
 			{
-				foundTables.Add(new Table(this, tableElement));
-			}
-			//also check subPackages
-			foreach (Package ownedPackage in ownedElements.OfType<Package>()) 
-			{
-				foundTables.AddRange(getTablesFromPackage(ownedPackage));
+				var ownedElements = package.ownedElements;
+				foreach( Class tableElement in ownedElements
+									.Where(x => x is Class
+				                    && x.stereotypes.Any( y => y.name.Equals("table", StringComparison.CurrentCultureIgnoreCase))))
+				{
+					foundTables.Add(new Table(this, tableElement));
+				}
+				//also check subPackages
+				foreach (Package ownedPackage in ownedElements.OfType<Package>()) 
+				{
+					foundTables.AddRange(getTablesFromPackage(ownedPackage));
+				}
 			}
 			return foundTables;
 		}

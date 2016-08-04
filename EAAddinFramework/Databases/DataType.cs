@@ -20,13 +20,36 @@ namespace EAAddinFramework.Databases
 
 		public DB.BaseDataType type {get;set;}
 
+		public string itemType {
+			get {return "DataType";}
+		}
+		public string properties {
+			get 
+			{
+				string _properties = this.type.properties;
+				if (this.type.hasLength)
+				{
+					_properties += " (" + this.length;
+					if (this.type.hasPrecision)
+					{
+						_properties += "," + this.precision;
+					}
+					_properties += ")";
+				}
+				return _properties;
+			}
+		}
 		public string name {
 			get {return this.type.name;}
+			set {throw new NotImplementedException();}
 		}
 		public int length {get;set;}
 
 		public int precision {get;set;}
+		
+
 
 		#endregion
+
 	}
 }

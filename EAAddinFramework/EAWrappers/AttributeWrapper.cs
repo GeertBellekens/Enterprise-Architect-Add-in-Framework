@@ -29,6 +29,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get { return wrappedAttribute; }
 	    }
+	   	public string alias
+		{
+			get{return this.wrappedAttribute.Alias;}
+			set{this.wrappedAttribute.Alias = value;}
+		}
+	    	
 		/// <summary>
 	    /// return the unique ID of this element
 	    /// </summary>

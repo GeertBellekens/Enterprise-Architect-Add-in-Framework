@@ -58,11 +58,33 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public virtual string itemType 
+		{
+			get {return "Constraint";}
+		}
+
+
+		public virtual string properties 
+		{
+			get 
+			{
+				string _properties = string.Empty;
+				if (this.involvedColumns.Count > 0)
+				{
+					_properties += " (" 
+						+ string.Join(", ",this.involvedColumns.Select( x => x.name).ToArray())
+						+ ")";
+				}
+				return _properties;
+			}
+		}
+
 		public List<DB.Column> involvedColumns 
 		{
 			get 
 			{
-				if (_involvedColumns != null)
+				if (_involvedColumns == null)
 				{
 					this.getInvolvedColumns();
 				}
@@ -100,5 +122,6 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#endregion
+
 	}
 }

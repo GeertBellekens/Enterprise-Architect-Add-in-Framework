@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
+using System.Linq;
 
 namespace EAAddinFramework.Databases
 {
@@ -63,6 +64,45 @@ namespace EAAddinFramework.Databases
 		public Database createDataBase(Package package)
 		{
 			return new Database(package, this);
+		}
+		public Database createDatabase(string name)
+		{
+			return new Database(name, this);
+		}
+		public DataType createDataType(string compositeName)
+		{
+			string baseTypeName;
+			int length = 0;
+			int precision = 0;
+			if (compositeName.Contains("("))
+			{
+				baseTypeName = compositeName.Substring(0,compositeName.IndexOf("("));
+				string scaleString = compositeName.Substring(compositeName.IndexOf("(") +1);
+				if (scaleString.Contains(","))
+				{
+					int.TryParse(scaleString.Substring(0,scaleString.IndexOf(",")),out length );
+					string precisionString = scaleString.Substring(scaleString.IndexOf(",") +1 ,scaleString.Length-scaleString.IndexOf(",") -2);
+					int.TryParse(precisionString,out precision);
+				}
+				else
+				{
+					int.TryParse(scaleString.Substring(0, scaleString.Length -1),out length);
+				}
+			}
+			else
+			{
+				baseTypeName = compositeName;
+			}
+			BaseDataType basetype = this.baseDataTypes.FirstOrDefault(x => x.name == baseTypeName) as BaseDataType;
+			if (basetype != null)
+			{
+				return new DataType(basetype,length,precision);
+			}
+			else
+			{
+				return null;
+			}
+			 
 		}
 	}
 }
