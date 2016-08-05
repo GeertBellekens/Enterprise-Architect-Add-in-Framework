@@ -51,7 +51,8 @@ namespace EAAddinFramework.EASpecific
 		/// <returns>whatever gets returned by the the actual script function</returns>
 		public object execute(object[] parameters)
 		{
-			if (this.procedure.NumArgs == parameters.Length)
+			if (parameters != null 
+				&& this.procedure.NumArgs == parameters.Length)
 			{
 				return this.owner.executeFunction(this.name, parameters);
 			}
@@ -59,9 +60,13 @@ namespace EAAddinFramework.EASpecific
 			{
 				return this.owner.executeFunction(this.name);
 			}
-			else
+			else if (parameters != null )
 			{
 				throw new ArgumentException ("wrong number of arguments. Script has "+this.procedure.NumArgs+" argument where the call has " + parameters.Length + " parameters");
+			}
+			else
+			{
+				throw new ArgumentException ("wrong number of arguments. Script has "+this.procedure.NumArgs+" argument where the call has 0 parameters");
 			}
 		}
 	}
