@@ -27,7 +27,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public global::EA.Package WrappedPackage {
 			get { return this.wrappedPackage; }
 		}
-		
+		/// <summary>
+		/// returns the package at the root of this model branch
+		/// </summary>
+		/// <returns>package at the root of this model branch</returns>
+		public UML.Classes.Kernel.Package getRootPackage()
+		{
+			var ownerPackage = this.owner as Package;
+			if (ownerPackage != null)
+			{
+				return ownerPackage.getRootPackage();
+			}
+			else
+			{
+				return this;
+			}
+		}
 		public TSF.UmlToolingFramework.UML.Classes.Kernel.PackageableElement ownedMembers {
 			get {
 				throw new NotImplementedException();
@@ -110,6 +125,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 					this._fqn = this.getFQN(string.Empty, this.packageID);
 				}
 				return this._fqn;
+			}
+		}
+		public override string guid 
+		{
+			get 
+			{
+				return this.wrappedPackage.PackageGUID;
 			}
 		}
 		/// <summary>

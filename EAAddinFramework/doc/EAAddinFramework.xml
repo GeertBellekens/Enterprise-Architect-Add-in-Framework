@@ -2611,6 +2611,12 @@
             Description of Package.
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.getRootPackage">
+            <summary>
+            returns the package at the root of this model branch
+            </summary>
+            <returns>package at the root of this model branch</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Package.getFQN(System.String,System.Int32)">
             <summary>
             gets the FQN without the need of instantiating all the owners up to the root element.

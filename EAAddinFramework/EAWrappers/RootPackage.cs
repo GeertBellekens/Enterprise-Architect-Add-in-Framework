@@ -28,6 +28,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      get { return this.wrappedPackage.Name;  }
 	      set { this.wrappedPackage.Name = value; }
 	    }
+
 	    public override HashSet<UML.Diagrams.Diagram> ownedDiagrams 
 	    {
 			get 
