@@ -232,7 +232,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			this.model.getWrappedModel().SuppressEADialogs = true;
 			var projectInterface = this.model.getWrappedModel().GetProjectInterface();
 			string xmlGUID = projectInterface.GUIDtoXML(this.guid);
-			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,0,0,filePath);
+			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,1,0,filePath);
 			this.model.getWrappedModel().SuppressEADialogs = false;
 		}
 	}

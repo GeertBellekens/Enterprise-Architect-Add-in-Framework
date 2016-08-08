@@ -37,11 +37,19 @@ namespace EAAddinFramework.Utilities
         /// <param name="logmessage">the message to be logged</param>
         public static void log(string logmessage)
         { 
-            System.IO.StreamWriter logfile = new System.IO.StreamWriter(_logFileName,true);
-            double diff = (System.DateTime.Now - lastTimeStamp).TotalMilliseconds;
-            lastTimeStamp = System.DateTime.Now;
-            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " diff: "+ diff.ToString() + " ms " + logmessage);
-            logfile.Close();
+        	try {
+	        	System.IO.StreamWriter logfile = new System.IO.StreamWriter(_logFileName,true);
+	            double diff = (System.DateTime.Now - lastTimeStamp).TotalMilliseconds;
+	            lastTimeStamp = System.DateTime.Now;
+	            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " diff: "+ diff.ToString() + " ms " + logmessage);
+	            logfile.Close();
+        		
+        	} catch (Exception) 
+        	{
+        		
+        		// do nothing. If the logging fails we don't want to log anything to avoid eternal loops
+        	}
+
         }
         /// <summary>
         /// log an error
