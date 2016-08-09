@@ -201,9 +201,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
     /// <param name="relativePath">list of names inlcuding the own name</param>
     /// <returns>the item matching the path</returns>
-	public TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	public TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
-		UML.UMLItem item = null;
+		UML.Extended.UMLItem item = null;
 		List<string> filteredPath = new List<string>(relativePath);
 		if (ElementWrapper.filterName( filteredPath,this.name))
 		{
@@ -263,7 +263,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		this.model.openProperties(this);
 	}
   	
-	public void selectItem(UML.UMLItem itemToSelect)
+	public void selectItem(UML.Extended.UMLItem itemToSelect)
 	{
 		if (itemToSelect is Operation)
 		{

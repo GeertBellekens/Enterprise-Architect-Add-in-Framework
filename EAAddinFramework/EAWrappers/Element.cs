@@ -145,7 +145,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 
   	
-	public abstract TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath);
+	public abstract TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath);
 	
 	public virtual string name 
 	{

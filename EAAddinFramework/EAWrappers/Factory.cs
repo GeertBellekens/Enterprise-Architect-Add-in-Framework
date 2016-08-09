@@ -8,7 +8,7 @@ using UML_SM = TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class Factory : UML.UMLFactory {
+  public class Factory : UML.Extended.UMLFactory {
 
 	private Dictionary<UML_SM.StateMachine, HashSet<Trigger>> stateMachineTriggersMap;
 	
@@ -20,7 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     /// returns the singleton instance for the given model.
     public static Factory getInstance(Model model){
-      Factory factory = UML.UMLFactory.getFactory(model) as Factory;
+      Factory factory = UML.Extended.UMLFactory.getFactory(model) as Factory;
       if( factory == null ) {
         factory = new Factory(model);
       }
@@ -582,7 +582,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return triggers;
     }
     
-    public UML_SM.StateMachine getContainingStateMachine(UML.UMLItem umlItem)
+    public UML_SM.StateMachine getContainingStateMachine(UML.Extended.UMLItem umlItem)
     {
     	if(umlItem != null) {
 	    	if(umlItem.owner is UML_SM.StateMachine) {

@@ -112,9 +112,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      get { return this.wrappedAttribute.Notes;  }
 	      set { this.wrappedAttribute.Notes = value; }
 	    }
-		public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+		public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 		{
-			UML.UMLItem item = null;
+			UML.Extended.UMLItem item = null;
 			List<string> filteredPath = new List<string>(relativePath);
 			if (ElementWrapper.filterName( filteredPath,this.name))
 			{

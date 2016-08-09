@@ -553,9 +553,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
   	/// </summary>
   	/// <param name="relativePath">the "." separated path</param>
   	/// <returns>the item with the given path</returns>
-	public override UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	public override UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
-		UML.UMLItem item = null;
+		UML.Extended.UMLItem item = null;
 		List<string> filteredPath = new List<string>(relativePath);
 		if (filterName( filteredPath,this.name))
 		{

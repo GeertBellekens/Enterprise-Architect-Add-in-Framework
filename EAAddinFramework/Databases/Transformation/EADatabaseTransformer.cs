@@ -29,7 +29,7 @@ namespace EAAddinFramework.Databases.Transformation
 			get {return this._logicalPackage;}
 			set {this._logicalPackage = (UTF_EA.Package)value;}
 		}
-		public List<DB.Transformation> tableTransformers {
+		public List<DB.Transformation.TableTransformer> tableTransformers {
 			get {
 				throw new NotImplementedException();
 			}

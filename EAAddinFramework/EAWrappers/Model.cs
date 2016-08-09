@@ -11,7 +11,7 @@ using EAAddinFramework.EASpecific;
 using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public class Model : UML.UMLModel 
+  public class Model : UML.Extended.UMLModel 
   {
     private global::EA.Repository wrappedModel;
     private IWin32Window _mainEAWindow;
@@ -189,7 +189,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     /// returns the correct type of factory for this model
-    public UML.UMLFactory factory {
+    public UML.Extended.UMLFactory factory {
       get { return Factory.getInstance(this); }
     }
 
@@ -284,16 +284,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <param name="attributes">indicates whether attributes should be selected</param>
     /// <param name="diagrams">indicates whether diagrams should be selected</param>
     /// <returns></returns>
-    public List<UML.UMLItem> getQuickSearchResults(string searchText,int maxResults,bool elements, bool operations, bool attributes, bool diagrams)
+    public List<UML.Extended.UMLItem> getQuickSearchResults(string searchText,int maxResults,bool elements, bool operations, bool attributes, bool diagrams)
     {
-    List<UML.UMLItem> results = new List<UML.UMLItem>();
+    List<UML.Extended.UMLItem> results = new List<UML.Extended.UMLItem>();
     	if (elements)
 	    {
 	    	// get elements
 	 		string SQLSelectElements = @"select top "+maxResults + @" o.Object_ID from t_object o 
 								where lcase(o.Name) like lcase('" +searchText +@"%')
 								order by o.Name, o.Object_ID";
-	 		results.AddRange(this.getElementWrappersByQuery(SQLSelectElements).Cast<UML.UMLItem>().ToList());
+	 		results.AddRange(this.getElementWrappersByQuery(SQLSelectElements).Cast<UML.Extended.UMLItem>().ToList());
     	}
     	if (operations)
     	{
@@ -301,7 +301,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	 		string SQLSelectOperations = @"select top "+maxResults + @" o.OperationID from t_operation o 
 								where lcase(o.Name) like lcase('" +searchText +@"%')
 								order by o.Name, o.OperationID";
-	 		results.AddRange(this.getOperationsByQuery(SQLSelectOperations).Cast<UML.UMLItem>().ToList());
+	 		results.AddRange(this.getOperationsByQuery(SQLSelectOperations).Cast<UML.Extended.UMLItem>().ToList());
     	}
     	if (attributes)
     	{
@@ -309,7 +309,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		 	string SQLSelectAttributes = @"select top "+maxResults + @" a.ea_guid from t_attribute a 
 							where lcase(a.Name) like lcase('" +searchText +@"%')
 							order by a.Name, a.ea_guid";
-	 		results.AddRange(this.getAttributesByQuery(SQLSelectAttributes).Cast<UML.UMLItem>().ToList());
+	 		results.AddRange(this.getAttributesByQuery(SQLSelectAttributes).Cast<UML.Extended.UMLItem>().ToList());
     	}
     	if (diagrams)
     	{
@@ -317,7 +317,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	 		string SQLSelectDiagrams = @"select top "+maxResults + @" d.Diagram_ID from t_diagram d 
 							where  lcase(d.Name) like lcase('" +searchText +@"%')
 							order by d.Name, d.Diagram_ID";
-	 		results.AddRange(this.getDiagramsByQuery(SQLSelectDiagrams).Cast<UML.UMLItem>().ToList());
+	 		results.AddRange(this.getDiagramsByQuery(SQLSelectDiagrams).Cast<UML.Extended.UMLItem>().ToList());
     	}
  		
  		//sort alphabetically by name
@@ -846,11 +846,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	/// <param name="guidString">the string with the guid</param>
 	/// <returns>the item that is identified by the given GUID</returns>
-  	public UML.UMLItem getItemFromGUID(string guidString)
+  	public UML.Extended.UMLItem getItemFromGUID(string guidString)
   	{
   		try
   		{
-  		UML.UMLItem foundItem = null;
+  		UML.Extended.UMLItem foundItem = null;
   		foundItem = this.getElementByGUID(guidString);
   		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
   		if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
@@ -871,10 +871,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   		}
   	}
   	
-	public UML.UMLItem getItemFromFQN(string FQN)
+	public UML.Extended.UMLItem getItemFromFQN(string FQN)
 	{
 		//split the FQN in the different parts
-		UML.UMLItem foundItem = null;
+		UML.Extended.UMLItem foundItem = null;
 		foreach(UML.Classes.Kernel.Package package in  this.rootPackages)
 		{
 			
@@ -917,9 +917,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			
 		}
 	}
-	public  TSF.UmlToolingFramework.UML.UMLItem selectedItem {
+	public  TSF.UmlToolingFramework.UML.Extended.UMLItem selectedItem {
 		get {
-		 	UML.UMLItem item = this.selectedElement;
+		 	UML.Extended.UMLItem item = this.selectedElement;
 		 	if (item == null)
 		 	{
 		 		item = this.selectedDiagram;
@@ -1341,7 +1341,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// opens the properties dialog for this item
 	/// </summary>
 	/// <param name="item">the item to open the properties dialog for</param>
-	public void openProperties(UML.UMLItem item)
+	public void openProperties(UML.Extended.UMLItem item)
 	{
 		//get the type string
 		string typeString = string.Empty;

@@ -621,7 +621,7 @@ namespace EAAddinFramework.Utilities
 		/// </summary>
 		/// <param name="umlItem"></param>
 		/// <returns>The TransformationILWriter instance for use in concatenated output.</returns>
-		public TransformationILWriter GenerateClassProperties(UML.UMLItem umlItem)
+		public TransformationILWriter GenerateClassProperties(UML.Extended.UMLItem umlItem)
 		{
 			WriteILProperty("name",umlItem.name);
 			//WriteILProperty(levelIndent,"language","C++");

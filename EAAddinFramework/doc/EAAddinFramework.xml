@@ -56,6 +56,26 @@
             Description of Table.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer">
+            <summary>
+            Description of DB2DatabaseTransformer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.EADatabaseTransformer">
+            <summary>
+            Description of EADatabaseTransformer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer">
+            <summary>
+            Description of DB2TableTransformer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.EATableTransformer">
+            <summary>
+            Description of EATableTransformer.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.EAAddinBase">
             <summary>
             This abstract class can be used as a base class for creating add-ins for Enterprise Architec
@@ -2484,7 +2504,7 @@
             <param name="guidString">the string with the guid</param>
             <returns>the item that is identified by the given GUID</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.UMLItem)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.openProperties(TSF.UmlToolingFramework.UML.Extended.UMLItem)">
             <summary>
             opens the properties dialog for this item
             </summary>
@@ -2783,7 +2803,7 @@
             Description of EASchemaBuilderFactory.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance(TSF.UmlToolingFramework.UML.UMLModel)">
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance(TSF.UmlToolingFramework.UML.Extended.UMLModel)">
             returns the singleton instance for the given model.
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaBuilderFactory.getInstance">
@@ -3043,6 +3063,11 @@
         <member name="M:EAAddinFramework.Utilities.AddinSettings.save">
             <summary>
             saves the settings to the config file
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Utilities.EASearchOutput">
+            <summary>
+            Description of EASearchOutput.
             </summary>
         </member>
         <member name="M:EAAddinFramework.Utilities.Logger.setLogFileName(System.String)">
@@ -3478,7 +3503,7 @@
             <param name="connectorWrapper"></param>
             <returns>The TransformationILWriter instance for use in concatenated output.</returns>
         </member>
-        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateClassProperties(TSF.UmlToolingFramework.UML.UMLItem)">
+        <member name="M:EAAddinFramework.Utilities.TransformationILWriter.GenerateClassProperties(TSF.UmlToolingFramework.UML.Extended.UMLItem)">
             <summary>
             Writes the standard IL 'Class' properties at the current indentation level.
             </summary>

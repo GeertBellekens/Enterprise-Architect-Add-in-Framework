@@ -349,9 +349,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		this.wrappedAssociationEnd.Cardinality = value.EACardinality;
     	}
     }
-	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
-		UML.UMLItem item = null;
+		UML.Extended.UMLItem item = null;
 		if (ElementWrapper.filterName(relativePath,this.name))
 		{
 	    	if (relativePath.Count ==1)

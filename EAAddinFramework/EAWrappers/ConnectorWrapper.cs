@@ -106,11 +106,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       }
       set { throw new NotImplementedException(); }
     }
-    private UML.UMLItem getLinkedFeature(bool start)
+    private UML.Extended.UMLItem getLinkedFeature(bool start)
     {
     	string styleEx = this.wrappedConnector.StyleEx;
     	string key;
-    	UML.UMLItem linkedFeature = null;
+    	UML.Extended.UMLItem linkedFeature = null;
     	//determine start or end keyword
 		key = start ? "LFSP=" : "LFEP=";
    		int guidStart = styleEx.IndexOf(key) + key.Length ;
@@ -387,9 +387,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
 
   	
-	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
-		UML.UMLItem item = null;
+		UML.Extended.UMLItem item = null;
 		if (ElementWrapper.filterName(relativePath,this.name))
 		{
 	    	if (relativePath.Count ==1)

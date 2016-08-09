@@ -16,7 +16,7 @@ namespace EAAddinFramework.SchemaBuilder
 		private EASchema currentSchema;
 		
 		/// returns the singleton instance for the given model.
-	    public static new EASchemaBuilderFactory getInstance(UML.UMLModel model){
+	    public static new EASchemaBuilderFactory getInstance(UML.Extended.UMLModel model){
 	      EASchemaBuilderFactory factory = SBF.SchemaBuilderFactory.getInstance(model) as EASchemaBuilderFactory;
 	      if( factory == null ) {
 	      	factory = new EASchemaBuilderFactory((UTF_EA.Model)model);

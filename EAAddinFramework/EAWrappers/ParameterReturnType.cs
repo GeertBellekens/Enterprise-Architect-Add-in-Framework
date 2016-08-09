@@ -136,7 +136,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	
 
   	
-	public override TSF.UmlToolingFramework.UML.UMLItem getItemFromRelativePath(List<string> relativePath)
+	public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 	{
 		return null;
 	}
