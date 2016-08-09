@@ -18,6 +18,10 @@ namespace EAAddinFramework.Databases
 		{
 			
 		}
+		public PrimaryKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		{
+			
+		}
 
 	}
 }

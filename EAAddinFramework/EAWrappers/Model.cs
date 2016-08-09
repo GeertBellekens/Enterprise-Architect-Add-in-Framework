@@ -118,6 +118,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	return this.wrappedModel.AddTab(title,fullControlName) as UserControl;
     }
+    public void showTab(string title)
+    {
+    	this.wrappedModel.ActivateTab(title);
+    }
     public ArrayList toArrayList(IEnumerable collection)
     {
     	ArrayList arrayList = new ArrayList();

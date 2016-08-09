@@ -79,6 +79,10 @@
     <Compile Include="Databases\ForeignKey.cs" />
     <Compile Include="Databases\PrimaryKey.cs" />
     <Compile Include="Databases\Table.cs" />
+    <Compile Include="Databases\Transformation\DB2\DB2DatabaseTransformer.cs" />
+    <Compile Include="Databases\Transformation\DB2\DB2TableTransformer.cs" />
+    <Compile Include="Databases\Transformation\EADatabaseTransformer.cs" />
+    <Compile Include="Databases\Transformation\EATableTransformer.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
@@ -182,6 +186,8 @@
     <Compile Include="Utilities\TransformationILWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Databases\Transformation" />
+    <Folder Include="Databases\Transformation\DB2" />
     <Folder Include="EAWrappers" />
     <Folder Include="EASpecific" />
     <Folder Include="EAWrappers\BehaviorStateMachines" />

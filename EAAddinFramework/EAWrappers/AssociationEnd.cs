@@ -74,6 +74,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
 
+	public bool isID 
+	{
+		get 
+		{
+			return (this.wrappedAssociationEnd.Constraint.Equals("id",StringComparison.InvariantCultureIgnoreCase));
+		}
+		set 
+		{
+			if (value)
+			{
+				this.wrappedAssociationEnd.Constraint = "id";
+			}
+			else
+			{
+				this.wrappedAssociationEnd.Constraint = string.Empty;
+			}
+		}
+	}
     public String _default {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }

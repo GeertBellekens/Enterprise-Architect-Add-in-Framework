@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -47,7 +48,18 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+
+	public bool isID 
+	{
+		get 
+		{
+			return this.wrappedAttribute.IsID;
+		}
+		set 
+		{
+			this.wrappedAttribute.IsID = value;
+		}
+	}
     public UML.Classes.Kernel.AggregationKind aggregation {
       get { return UML.Classes.Kernel.AggregationKind.none; }
       set { /* do nothing */ }
@@ -190,6 +202,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     		//default for attributes is 1..1
     		string lowerString = "1";
     		string upperString = "1";
+    		//debug
     		if (this.WrappedAttribute.LowerBound.Length > 0)
     		{
     			lowerString = this.WrappedAttribute.LowerBound;

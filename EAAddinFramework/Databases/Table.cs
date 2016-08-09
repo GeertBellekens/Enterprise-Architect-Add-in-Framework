@@ -49,9 +49,14 @@ namespace EAAddinFramework.Databases
 		public void addColumn(DB.Column column)
 		{
 			//initialise columns
-			int columnCount = this.columns.Count;
-			this._columns.Add(column as Column);
+			if (this.columns != null) this._columns.Add((Column) column);
 		}
+
+		public void addConstraint(DB.Constraint constraint)
+		{
+			if (this.constraints != null) this._constraints.Add((Constraint) constraint);
+		}
+
 		public string itemType {
 			get {return "Table";}
 		}

@@ -21,6 +21,12 @@ namespace EAAddinFramework.Databases
 			_owner = owner;
 			_wrappedOperation = operation;
 		}
+		public Constraint(Table owner, List<Column> involvedColumns)
+		{
+			_owner = owner;
+			_involvedColumns = involvedColumns;
+			this.owner.addConstraint(this);
+		}
 
 		#region Constraint implementation
 
@@ -92,16 +98,16 @@ namespace EAAddinFramework.Databases
 			}
 			set 
 			{
+				_involvedColumns = value.Cast<Column>().ToList();
 				if (this._wrappedOperation == null)
 				{
-					//TODO create operation
-				}
-				List<Parameter> parameters = new List<Parameter>();
-				foreach (var column in value) 
-				{
+					List<Parameter> parameters = new List<Parameter>();
+					foreach (var column in _involvedColumns) 
 					{
-						Parameter parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name);
-						parameter.type = ((Column)column)._wrappedattribute.type;
+						{
+							Parameter parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name);
+							parameter.type = ((Column)column)._wrappedattribute.type;
+						}
 					}
 				}
 			}
