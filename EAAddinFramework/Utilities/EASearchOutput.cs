@@ -11,7 +11,7 @@ namespace EAAddinFramework.Utilities
 	/// <summary>
 	/// Description of EASearchOutput.
 	/// </summary>
-	class EASearchOutput : UML.Extended.UMLModelOutput
+	public class EASearchOutput : UML.Extended.UMLModelOutput
     {
         public List<UML.Extended.UMLModelOutPutItem> output { get; set; }
         public List<string> fields { get; set; }

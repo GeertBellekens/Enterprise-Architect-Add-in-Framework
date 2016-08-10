@@ -850,13 +850,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	{
   		try
   		{
-  		UML.Extended.UMLItem foundItem = null;
-  		foundItem = this.getElementByGUID(guidString);
-  		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
-  		if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
-  		if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
-  		if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
-  		return foundItem;
+  			if (guidString.Contains("_"))
+		    {
+  				guidString = this.wrappedModel.GetProjectInterface().XMLtoGUID(guidString);
+		    }
+	  		UML.Extended.UMLItem foundItem = null;
+	  		foundItem = this.getElementByGUID(guidString);
+	  		if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
+	  		if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
+	  		if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
+	  		if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
+	  		return foundItem;
   		}
   		catch (System.Runtime.InteropServices.COMException e)
   		{

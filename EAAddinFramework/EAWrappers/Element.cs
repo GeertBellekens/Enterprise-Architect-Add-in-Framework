@@ -5,7 +5,7 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public abstract class Element : UML.Classes.Kernel.Element {
-    internal Model model { get;  set; }
+    public Model model { get;  internal set; }
 
     internal Element(Model model){
       this.model = model;
