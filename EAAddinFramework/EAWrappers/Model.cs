@@ -112,7 +112,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     public UserControl addWindow(string title, string fullControlName)
     {
-    	return this.wrappedModel.AddWindow(title,fullControlName) as UserControl;
+    	var control = this.wrappedModel.AddWindow(title,fullControlName) as UserControl;
+    	this.showWindow(title);
+    	return control;
+    }
+    public void showWindow(string title)
+    {
+    	this.wrappedModel.ShowAddinWindow(title);
     }
     public UserControl addTab(string title, string fullControlName)
     {
