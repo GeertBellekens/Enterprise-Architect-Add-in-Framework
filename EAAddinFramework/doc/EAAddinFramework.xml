@@ -56,6 +56,16 @@
             Description of Table.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2ColumnTransformer">
+            <summary>
+            Description of DB2ColumnTransformer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.EAColumnTransformer">
+            <summary>
+            Description of EAColumnTransformer.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer">
             <summary>
             Description of DB2DatabaseTransformer.
@@ -64,6 +74,18 @@
         <member name="T:EAAddinFramework.Databases.Transformation.EADatabaseTransformer">
             <summary>
             Description of EADatabaseTransformer.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.EADatabaseTransformer.createNewDatabase">
+            <summary>
+            create the initial database from the logical package
+            </summary>
+            <param name="ldmPackage">the logical pacakge</param>
+            <returns>the new database</returns>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer.createNewDatabase">
+            <summary>
+            create the initial database from the logical package
             </summary>
         </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer">

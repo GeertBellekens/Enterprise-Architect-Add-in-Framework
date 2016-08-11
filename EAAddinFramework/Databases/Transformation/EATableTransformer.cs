@@ -16,29 +16,70 @@ namespace EAAddinFramework.Databases.Transformation
 	{
 
 		#region TableTransformer implementation
-		
-		public DB.Table table {
-			get {
-				throw new NotImplementedException();
-			}
-			set {
-				throw new NotImplementedException();
-			}
+		internal Table _table;
+		internal List<UTF_EA.Class> _logicalClasses = new List<UTF_EA.Class>();
+		internal Database _database;
+		public EATableTransformer(Database database)
+		{
+			_database = database;
 		}
 
-		public List<UML.Classes.Kernel.Class> logicalClasses {
-			get {
-				throw new NotImplementedException();
+		public DB.Database database 
+		{
+			get {return _database;}
+			set {_database = (Database) value;}
+		}
+
+		public abstract List<DB.Transformation.ColumnTransformer> columnTransformers {get;set;}
+
+		public DB.Table table 
+		{
+			get{ return _table;}
+			set{_table = (Table)value;}
+		}
+		
+		public List<UML.Classes.Kernel.Class> logicalClasses 
+		{
+			get 
+			{
+				return _logicalClasses.Cast<UML.Classes.Kernel.Class>().ToList();
 			}
-			set {
-				throw new NotImplementedException();
+			set 
+			{
+				_logicalClasses = value.Cast<UTF_EA.Class>().ToList();
 			}
 		}
 		
-		public DB.Table transformLogicalClasses(List<UML.Classes.Kernel.Class> logicalClasses)
+		public virtual DB.Table  transformLogicalClasses(List<UML.Classes.Kernel.Class> logicalClasses)
 		{
 			throw new NotImplementedException();
 		}
+		protected abstract void createTable(List<UML.Classes.Kernel.Class> logicalClasses);
+
+		public virtual DB.Table transformLogicalClass(UML.Classes.Kernel.Class logicalClass)
+		{
+			_logicalClasses.Add((UTF_EA.Class)logicalClass);
+			//create the table
+			createTable((UTF_EA.Class) logicalClass);
+			//create the columns from the attributes
+			createColumnsFromAttributes();
+			return this.table;
+		}
+		protected virtual void createColumnsFromAttributes()
+		{
+			foreach (var classElement in _logicalClasses) 
+			{				
+				foreach (var attribute in classElement.attributes)					
+				{
+					var column = transformLogicalAttribute((UTF_EA.Attribute)attribute);
+				}
+			}
+		}
+
+		protected abstract Column transformLogicalAttribute(UTF_EA.Attribute attribute);
+
+		protected abstract void createTable(UTF_EA.Class classElement);
+
 
 		#endregion
 	}
