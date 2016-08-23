@@ -1488,6 +1488,12 @@
             default empty implementation
             </summary>
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.owningPackage">
+            <summary>
+            the package owning this element (if any)
+            this will return null in case of a root package
+            </summary>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getDependentDiagrams">
             <summary>
             

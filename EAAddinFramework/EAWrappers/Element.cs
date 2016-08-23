@@ -297,13 +297,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		((Element)this.owner).deleteOwnedElement(this);
 	}
 	public abstract void deleteOwnedElement(Element ownedElement);
+	/// <summary>
+	/// the package owning this element (if any)
+	/// this will return null in case of a root package
+	/// </summary>
 	public UML.Classes.Kernel.Package owningPackage 
 	{
 		get
-		{
+		{	
 			var ownerPackage = this.owner as Package;
-			return ownerPackage ?? ownerPackage.owningPackage;
-				
+			//if the owner is a package then return the owner
+			if (ownerPackage != null) return ownerPackage;
+			//if the owner is not a package and it exists then return the owningPackage of the owner
+			if (this.owner != null) return ((Element)this.owner).owningPackage;
+			//the owner does not exis, so return null as the owningPackage
+			return null;		
 		}
 		set
 		{
