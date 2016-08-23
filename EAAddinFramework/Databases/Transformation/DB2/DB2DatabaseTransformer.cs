@@ -49,6 +49,27 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override void addTable(UTF_EA.Class classElement)
 		{
+			addDB2Table(classElement);
+		}
+		protected DB2TableTransformer addDB2Table(UTF_EA.AssociationEnd associationEnd)
+		{
+			DB2TableTransformer transformer = addDB2Table(associationEnd.type as UTF_EA.Class);
+			if (transformer == null)
+			{
+				transformer = this.tableTransformers.OfType<DB2TableTransformer>().FirstOrDefault( x => x.logicalClass.Equals(associationEnd.type));
+			}
+			if (transformer == null)
+			{
+				transformer = this.externalTableTransformers.FirstOrDefault( x => x.logicalClass.Equals(associationEnd.type));
+			}
+			if (transformer != null)
+			{
+				transformer.associationEnd = associationEnd;
+			}
+			return transformer;
+		}
+		protected DB2TableTransformer addDB2Table(UTF_EA.Class classElement)
+		{
 			DB2TableTransformer transformer = null;
 			if (classElement.owningPackage.Equals(this.logicalPackage))
 			{
@@ -71,11 +92,18 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				//transform to table
 				transformer.transformLogicalClass(classElement);
 				//now do the external tables linked to this classElement
-				foreach (var dependentClassElement in transformer.getDependingClassElements()) 
+				foreach (var dependingAssociationEnd in transformer.getDependingAssociationEnds()) 
 				{
-					addTable(dependentClassElement);
+					transformer.dependingTransformers.Add(addDB2Table(dependingAssociationEnd));
 				}
+				//add primary key
+				transformer.transformPrimaryKey();
+				//copy the primary keys of the depending transformers as column in this table
+				
+				//add foreign keys
+				transformer.transformForeignKeys();
 			}
+			return transformer;
 		}
 
 

@@ -21,6 +21,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		public override DB.Column transformLogicalProperty(UML.Classes.Kernel.Property property)
 		{
 			//TODO: translate name to alias
+			this.logicalProperty = property;
 			if (property is UTF_EA.Attribute) return transformLogicalAttribute((UTF_EA.Attribute)property);
 			if (property is UTF_EA.AssociationEnd) return transformLogicalAssociationEnd((UTF_EA.AssociationEnd)property);
 			//if neither then we have something weird here.

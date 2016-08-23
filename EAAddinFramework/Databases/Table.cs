@@ -122,8 +122,13 @@ namespace EAAddinFramework.Databases
 			{
 				return this.constraints.FirstOrDefault(x => x is PrimaryKey) as PrimaryKey;
 			}
-			set {
-				throw new NotImplementedException();
+			set 
+			{
+				if (this.primaryKey != null)
+				{
+					this.constraints.Remove(this.primaryKey);
+				}
+				this.constraints.Add(value);
 			}
 		}
 		public List<DB.ForeignKey> foreignKeys 
@@ -132,8 +137,10 @@ namespace EAAddinFramework.Databases
 			{
 				return this.constraints.OfType<ForeignKey>().Cast<DB.ForeignKey>().ToList();
 			}
-			set {
-				throw new NotImplementedException();
+			set 
+			{
+				this.constraints.RemoveAll(x => x is ForeignKey);
+				this.constraints.AddRange(value);
 			}
 		}
 		#endregion

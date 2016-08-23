@@ -98,15 +98,7 @@
             Description of EATableTransformer.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.getExternalClassElements">
-            <summary>
-            gets the external Class Elements that are needed for this logical element.
-            This means the classes that are in another package as the logical class, but to which this element has an association to with
-            multiplicity of 1..1 or 0..1. We will need these external classes because they will create one or more columns in the associated table.
-            </summary>
-            <returns>the externalClasses for this logical element</returns>
-        </member>
-        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.getDependingClassElements">
+        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.getDependingAssociationEnds">
             <summary>
             gets the Class Elements that are needed for this logical element.
             This means the classes to which this element has an association to with

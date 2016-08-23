@@ -30,15 +30,7 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public abstract DB.Column transformLogicalProperty(UML.Classes.Kernel.Property attribute);
 
-		public UML.Classes.Kernel.Property logicalProperty 
-		{
-			get {
-				throw new NotImplementedException();
-			}
-			set {
-				throw new NotImplementedException();
-			}
-		}
+		public UML.Classes.Kernel.Property logicalProperty {get;set;}
 
 		public DB.Table table 
 		{
