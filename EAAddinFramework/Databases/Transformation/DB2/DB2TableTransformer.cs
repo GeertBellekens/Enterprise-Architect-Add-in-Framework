@@ -16,6 +16,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	{
 		protected List<DB2ColumnTransformer> _columnTransformers = new List<DB2ColumnTransformer>();
 		internal List<DB2TableTransformer> dependingTransformers = new List<DB2TableTransformer>();
+		internal List<DB2ForeignKeyTransformer> _foreignKeyTransformers = new List<DB2ForeignKeyTransformer>();
 		internal UTF_EA.AssociationEnd associationEnd;
 		public DB2TableTransformer(Database database):base(database){}
 		internal UTF_EA.Class logicalClass
@@ -46,6 +47,18 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			get { return _columnTransformers.Cast<DB.Transformation.ColumnTransformer>().ToList();}
 			set { _columnTransformers = value.Cast<DB2ColumnTransformer>().ToList();}
 		}
+
+		#region implemented abstract members of EATableTransformer
+
+
+		public override List<DB.Transformation.ForeignKeyTransformer> foreignKeyTransformers {
+			get { return _foreignKeyTransformers.Cast<DB.Transformation.ForeignKeyTransformer>().ToList();}
+			set { _foreignKeyTransformers = value.Cast<DB2ForeignKeyTransformer>().ToList();}
+		}
+
+
+		#endregion
+
 		public void addRemoteColumnsAndKeys()
 		{
 			List<DB_EA.Column> involvedColumns = new List<DB_EA.Column>();
@@ -73,6 +86,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					}
 					foreach (var column in dependingTransformer.table.primaryKey.involvedColumns) 
 					{
+						//TODO: move transformationlogic to columntransformer
 						var newColumn = new Column((DB_EA.Table)table, column.name);
 						newColumn.type = column.type;
 						if (dependingTransformer.associationEnd != null)
@@ -90,14 +104,21 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 							{
 								FKInvolvedColumns.Add(newColumn);
 							}
+							//add columnTransformer
+							//get the transformer for the column
+							var transformer = dependingTransformer._columnTransformers.First(x => x.column == column);
+							this._columnTransformers.Add(new DB2ColumnTransformer(this._table, newColumn, transformer._attribute));
 						}
 					}
 					if (isForeignKey && FKInvolvedColumns.Count > 0)
 					{
+						//TODO: move transformation logic to foreignkeytransformer
 						var newFK = new ForeignKey((Table) table, FKInvolvedColumns);
 						newFK.name = "FK_" + this.table.name + "_" + dependingTransformer.table.name + "_1" ; //TODO: sequence number for multple foreign keys
 						newFK.foreignTable = dependingTransformer.table;
 						this.table.constraints.Add(newFK);
+						//add the transformer
+						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(newFK,(UTF_EA.Association)dependingTransformer.associationEnd.association));
 					}
 				}
 			}
@@ -110,29 +131,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			
 		}
 			
-				
-//			//check associations
-//			foreach (UTF_EA.AssociationEnd pkOtherEnd in classElement.getRelationships<UTF_EA.Association>()
-//													         .Select(x => x.memberEnds
-//														       	.FirstOrDefault(y => !y.type.Equals(classElement)
-//			                                 						&& y.type is UTF_EA.Class
-//			                     									&& y.isID )))
-//			{
-//				if (pkOtherEnd != null) 
-//				{
-//					 
-//					foreach (UTF_EA.Attribute attribute in ((UTF_EA.Class) pkOtherEnd.type).attributes.Where(x => x.isID))
-//					{
-//						var correspondingColumn = table.columns.FirstOrDefault(x => x.name == attribute.alias) as DB_EA.Column;
-//						if (correspondingColumn != null) involvedColumns.Add(correspondingColumn);
-//					}
-//				}
-//			}
 
-		public void transformForeignKeys()
-		{
-			//TODO
-		}
 		#endregion
 
 		/// <summary>

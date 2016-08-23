@@ -83,9 +83,11 @@
     <Compile Include="Databases\Table.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2ColumnTransformer.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2DatabaseTransformer.cs" />
+    <Compile Include="Databases\Transformation\DB2\DB2ForeignKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2TableTransformer.cs" />
     <Compile Include="Databases\Transformation\EAColumnTransformer.cs" />
     <Compile Include="Databases\Transformation\EADatabaseTransformer.cs" />
+    <Compile Include="Databases\Transformation\EAForeignKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\EATableTransformer.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />

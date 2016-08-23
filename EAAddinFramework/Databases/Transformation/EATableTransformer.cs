@@ -30,6 +30,8 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_database = (Database) value;}
 		}
 
+		public abstract List<DB.Transformation.ForeignKeyTransformer> foreignKeyTransformers {get;set;}
+
 		public abstract List<DB.Transformation.ColumnTransformer> columnTransformers {get;set;}
 
 		public DB.Table table 

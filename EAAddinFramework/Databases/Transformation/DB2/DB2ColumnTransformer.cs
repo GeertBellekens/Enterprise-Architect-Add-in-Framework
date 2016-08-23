@@ -15,6 +15,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	public class DB2ColumnTransformer:EAColumnTransformer
 	{
 		public DB2ColumnTransformer(Table table):base(table){}
+		public DB2ColumnTransformer(Table table, Column column, UTF_EA.Attribute attribute):this(table)
+		{
+			this.logicalProperty = attribute;
+			this.column = column;
+		}
 
 		#region implemented abstract members of EAColumnTransformer
 
