@@ -15,6 +15,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	public class DB2TableTransformer:EATableTransformer
 	{
 		protected List<DB2ColumnTransformer> _columnTransformers = new List<DB2ColumnTransformer>();
+		internal List<DB2TableTransformer> _externalTransformers = new List<DB2TableTransformer>();
 		public DB2TableTransformer(Database database):base(database){}
 		
 		#region implemented abstract members of EATableTransformer
@@ -24,6 +25,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 		protected override void createTable(UTF_EA.Class classElement)
 		{
+			this._logicalClasses.Add(classElement);
 			if (classElement.alias == string.Empty) classElement.alias = "unknown table name";
 			this.table = new Table(_database, classElement.alias);
 		}
@@ -41,5 +43,43 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 
 		#endregion
+		/// <summary>
+		/// gets the external Class Elements that are needed for this logical element.
+		/// This means the classes that are in another package as the logical class, but to which this element has an association to with
+		/// multiplicity of 1..1 or 0..1. We will need these external classes because they will create one or more columns in the associated table.
+		/// </summary>
+		/// <returns>the externalClasses for this logical element</returns>
+		public List<UTF_EA.Class> getExternalClassElements()
+		{
+			return getDependingClassElements().Where( x => ! this.logicalClasses.Any(y => y.owningPackage.Equals(x.owningPackage))).ToList();
+		}
+		/// <summary>
+		/// gets the Class Elements that are needed for this logical element.
+		/// This means the classes to which this element has an association to with
+		/// multiplicity of 1..1 or 0..1. We will need these classes because they will create one or more columns in the associated table.
+		/// </summary>
+		/// <returns>the classes on which this logical element depends for this logical element</returns>
+		public List<UTF_EA.Class> getDependingClassElements()
+		{
+			List<UTF_EA.Class> dependingClassElements = new List<UTF_EA.Class>();
+			foreach (var logicalClass in this.logicalClasses) 
+			{
+				foreach (var association in logicalClass.relationships.OfType<UTF_EA.Association>())
+				{
+					foreach (var end in association.memberEnds) 
+					{
+						if (!logicalClass.Equals(end.type) 
+					          && end.type is UTF_EA.Class
+					          && (end.upper.integerValue.HasValue && end.upper.integerValue == 1))
+						{
+							dependingClassElements.Add(( UTF_EA.Class) end.type);
+							break;
+						}
+					}
+				}
+			}
+			return dependingClassElements;
+			
+		}
 	}
 }

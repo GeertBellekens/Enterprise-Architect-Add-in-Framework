@@ -20,7 +20,7 @@ namespace EAAddinFramework.Databases.Transformation
 		internal Database _newDatabase;
 		internal Database _existingDatabase;
 		internal UTF_EA.Package _logicalPackage;
-		List<EATableTransformer> _tableTransformers = new List<EATableTransformer>();
+		protected List<EATableTransformer> _tableTransformers = new List<EATableTransformer>();
 
 
 		public EADatabaseTransformer(DatabaseFactory factory, UTF_EA.Model model)
@@ -92,7 +92,10 @@ namespace EAAddinFramework.Databases.Transformation
 			createNewDatabase();
 			//first create all tables
 			this.createTables();
-			//then do all columns
+
+			
+			//then do the primary keys
+			
 //			foreach (var table in database.tables) 
 //			{
 //				foreach (UTF_EA.Attribute attribute in classElement.attributes) 
@@ -121,7 +124,6 @@ namespace EAAddinFramework.Databases.Transformation
 
 		protected virtual void createTables()
 		{
-			
 			foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>()) 
 			{
 				addTable(classElement);

@@ -21,6 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			else
 			{
 				this.numericValue = uint.Parse(valueString);
+				this.integerValue = (int)this.numericValue;
 				this.isUnlimited = false;
 			}
 		}

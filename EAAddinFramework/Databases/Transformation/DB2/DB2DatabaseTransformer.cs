@@ -16,11 +16,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	/// </summary>
 	public class DB2DatabaseTransformer:EADatabaseTransformer
 	{
-		public DB2DatabaseTransformer(UTF_EA.Model model):base(getFactory(model),model)
+		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
+		internal Database _externalDatabase;
+		public DB2DatabaseTransformer(UTF_EA.Model model):this(getFactory(model),model)
 		{
 		}
 		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model):base(factory,model)
 		{
+			this._externalDatabase = factory.createDatabase("external");
 		}
 		private static DatabaseFactory getFactory(UTF_EA.Model model)
 		{
@@ -46,10 +49,35 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override void addTable(UTF_EA.Class classElement)
 		{
-			var transformer = new DB2TableTransformer(this._newDatabase);
-			this.tableTransformers.Add(transformer);
-			transformer.transformLogicalClass(classElement);
+			DB2TableTransformer transformer = null;
+			if (classElement.owningPackage.Equals(this.logicalPackage))
+			{
+				if ( ! this._tableTransformers.Any(x => x.logicalClasses.Any(y => y.Equals(classElement))))
+				{
+					transformer = new DB2TableTransformer(this._newDatabase);
+					this._tableTransformers.Add(transformer);
+				}
+			}
+			else
+			{
+				if (!this.externalTableTransformers.Any(x => x.logicalClasses.Any(y => y.Equals(classElement))))
+				{
+					transformer = new DB2TableTransformer(this._externalDatabase);
+					this.externalTableTransformers.Add(transformer);
+				}
+			}
+			if (transformer != null)
+			{
+				//transform to table
+				transformer.transformLogicalClass(classElement);
+				//now do the external tables linked to this classElement
+				foreach (var dependentClassElement in transformer.getDependingClassElements()) 
+				{
+					addTable(dependentClassElement);
+				}
+			}
 		}
+
 
 		#endregion
 	}

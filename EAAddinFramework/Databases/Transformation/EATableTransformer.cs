@@ -58,7 +58,6 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public virtual DB.Table transformLogicalClass(UML.Classes.Kernel.Class logicalClass)
 		{
-			_logicalClasses.Add((UTF_EA.Class)logicalClass);
 			//create the table
 			createTable((UTF_EA.Class) logicalClass);
 			//create the columns from the attributes
