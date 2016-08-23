@@ -46,7 +46,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			get { return _columnTransformers.Cast<DB.Transformation.ColumnTransformer>().ToList();}
 			set { _columnTransformers = value.Cast<DB2ColumnTransformer>().ToList();}
 		}
-		public void transformPrimaryKey()
+		public void addRemoteColumnsAndKeys()
 		{
 			List<DB_EA.Column> involvedColumns = new List<DB_EA.Column>();
 			//check attributes
@@ -62,8 +62,15 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			//add the columns for the primary key of the dependent table
 			foreach (var dependingTransformer in this.dependingTransformers) 
 			{
+				List<Column> FKInvolvedColumns = new List<Column>();
+				bool isForeignKey = false;
 				if (dependingTransformer.table.primaryKey != null)
 				{
+					//only add FK's for classes in the same pakage;
+					if (dependingTransformer.logicalClass.owningPackage.Equals(this.logicalClass.owningPackage))
+					{
+						isForeignKey = true;
+					}
 					foreach (var column in dependingTransformer.table.primaryKey.involvedColumns) 
 					{
 						var newColumn = new Column((DB_EA.Table)table, column.name);
@@ -79,12 +86,22 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 							{
 								involvedColumns.Add(newColumn);
 							}
+							if (isForeignKey)
+							{
+								FKInvolvedColumns.Add(newColumn);
+							}
 						}
+					}
+					if (isForeignKey && FKInvolvedColumns.Count > 0)
+					{
+						var newFK = new ForeignKey((Table) table, FKInvolvedColumns);
+						newFK.name = "FK_" + this.table.name + "_" + dependingTransformer.table.name + "_1" ; //TODO: sequence number for multple foreign keys
+						newFK.foreignTable = dependingTransformer.table;
+						this.table.constraints.Add(newFK);
 					}
 				}
 			}
 			//create primaryKey
-
 			if (involvedColumns.Count > 0)
 			{
 				this.table.primaryKey = new DB_EA.PrimaryKey((DB_EA.Table)table, involvedColumns);

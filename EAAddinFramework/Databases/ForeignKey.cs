@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
@@ -15,6 +16,10 @@ namespace EAAddinFramework.Databases
 		
 		public ForeignKey(Table owner,Operation operation):base(owner,operation)
 		{
+		}
+		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		{
+			
 		}
 		
 		internal Association wrappedAssociation
@@ -63,8 +68,9 @@ namespace EAAddinFramework.Databases
 				}
 				return _foreignTable;
 			}
-			set {
-				throw new NotImplementedException();
+			set 
+			{
+				_foreignTable = (Table)value;
 			}
 		}
 		#endregion

@@ -22,6 +22,9 @@ namespace EAAddinFramework.Databases
 		{
 			
 		}
+		public override string itemType {
+			get {return "Primary Key";}
+		}
 
 	}
 }

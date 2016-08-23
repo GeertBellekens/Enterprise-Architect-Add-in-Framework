@@ -97,7 +97,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					transformer.dependingTransformers.Add(addDB2Table(dependingAssociationEnd));
 				}
 				//add primary key
-				transformer.transformPrimaryKey();
+				transformer.addRemoteColumnsAndKeys();
 				//copy the primary keys of the depending transformers as column in this table
 				
 				//add foreign keys
