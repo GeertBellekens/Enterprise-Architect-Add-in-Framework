@@ -12,6 +12,8 @@ namespace EAAddinFramework.Databases
 	public class ForeignKey:Constraint, DB.ForeignKey
 	{
 		private Association _wrappedAssociation;
+		private Association _logicalAssociation;
+		
 		internal Table _foreignTable;
 		
 		public ForeignKey(Table owner,Operation operation):base(owner,operation)
@@ -21,7 +23,25 @@ namespace EAAddinFramework.Databases
 		{
 			
 		}
-		
+		public Association logicalAssociation
+		{
+			get
+			{
+				if (_logicalAssociation == null 
+				    && this._wrappedOperation != null)
+				{
+					_logicalAssociation = this._wrappedOperation.taggedValues
+						.Where(x => x.name.Equals("sourceAssociation",StringComparison.InvariantCultureIgnoreCase)
+						             && x.tagValue is Association)
+						.Select(y => y.tagValue as Association).FirstOrDefault();
+				}
+				return _logicalAssociation;
+			}
+			set
+			{
+				_logicalAssociation = value;
+			}
+		}
 		internal Association wrappedAssociation
 		{
 			get

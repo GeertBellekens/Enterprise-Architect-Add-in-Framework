@@ -15,6 +15,7 @@ namespace EAAddinFramework.Databases
 		internal Table _owner;
 		internal TSF_EA.Attribute _wrappedattribute;
 		internal DataType _type;
+		private TSF_EA.Attribute _logicalAttribute;
 		private string _name;
 		private bool _isNotNullable;
 		public Column(Table owner, TSF_EA.Attribute attribute)
@@ -28,7 +29,27 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.owner.addColumn(this);
 		}
-
+		
+		public TSF_EA.Attribute logicalAttribute
+		{
+			get
+			{
+				if (_logicalAttribute == null
+				   && _wrappedattribute != null)
+				{
+					_logicalAttribute = _wrappedattribute.taggedValues
+						.Where(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase)
+						             && x.tagValue is TSF_EA.Attribute)
+						.Select(y => y.tagValue as TSF_EA.Attribute).FirstOrDefault();
+				}
+				return _logicalAttribute;
+			}
+			set
+			{
+				_logicalAttribute = value;
+			}
+		}
+		
 		#region Column implementation
 
 		public DB.Table owner {

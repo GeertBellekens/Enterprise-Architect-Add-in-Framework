@@ -116,6 +116,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 						var newFK = new ForeignKey((Table) table, FKInvolvedColumns);
 						newFK.name = "FK_" + this.table.name + "_" + dependingTransformer.table.name + "_1" ; //TODO: sequence number for multple foreign keys
 						newFK.foreignTable = dependingTransformer.table;
+						newFK.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
 						this.table.constraints.Add(newFK);
 						//add the transformer
 						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(newFK,(UTF_EA.Association)dependingTransformer.associationEnd.association));

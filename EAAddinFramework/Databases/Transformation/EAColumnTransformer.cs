@@ -28,8 +28,14 @@ namespace EAAddinFramework.Databases.Transformation
 
 		#region ColumnTransformer implementation
 
-		public abstract DB.Column transformLogicalProperty(UML.Classes.Kernel.Property attribute);
-
+		public virtual DB.Column transformLogicalProperty(UML.Classes.Kernel.Property attribute)
+		{
+			createColumn((UTF_EA.Attribute)attribute);
+			if (this._column != null) this._column.logicalAttribute = (UTF_EA.Attribute)attribute;
+			return this._column;
+		}
+		protected abstract void createColumn(UTF_EA.Attribute attribute);
+				
 		public UML.Classes.Kernel.Property logicalProperty {get;set;}
 
 		public DB.Table table 

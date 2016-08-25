@@ -16,6 +16,7 @@ namespace EAAddinFramework.Databases
 		internal Package _wrappedPackage;
 		internal DatabaseFactory _factory;
 		internal List<Table> _tables;
+
 		private string _name;
 		public Database(Package package,DatabaseFactory factory)
 		{
@@ -108,6 +109,41 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public DB.Table getCorrespondingTable(DB.Table externalTable)
+		{
+			var _externalTable = (Table) externalTable;
+			//first check for exact match
+			var correspondingTable = this.tables.FirstOrDefault(x => x.name == externalTable.name);
+			if (correspondingTable == null)
+			{
+				//if no exact match found then get the one that is derived from the same logical classes
+				foreach (Table table in this.tables) 
+				{
+					bool match = false;
+					//each logical class of the external table should be equal to the logical class of this table
+					foreach (var logicalClass in table._logicalClasses) 
+					{
+						if (_externalTable.logicalClasses.Any(x => x.Equals(logicalClass)))
+					    {
+							match = true;
+					    }
+						else
+						{
+							match = false;
+						}
+					}
+					if (match)
+					{
+						//found it;
+						correspondingTable = table;
+						break;
+					}
+				}
+			}
+			return correspondingTable;
+		}
+
 		private List<Table> getTablesFromPackage(Package package)
 		{
 			

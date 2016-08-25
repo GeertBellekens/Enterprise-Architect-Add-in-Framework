@@ -23,15 +23,17 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		#region implemented abstract members of EAColumnTransformer
 
-		public override DB.Column transformLogicalProperty(UML.Classes.Kernel.Property property)
+
+		protected override void createColumn(UTF_EA.Attribute attribute)
 		{
 			//TODO: translate name to alias
-			this.logicalProperty = property;
-			if (property is UTF_EA.Attribute) return transformLogicalAttribute((UTF_EA.Attribute)property);
-			if (property is UTF_EA.AssociationEnd) return transformLogicalAssociationEnd((UTF_EA.AssociationEnd)property);
-			//if neither then we have something weird here.
-			return null;
+			this.logicalProperty = attribute;
+			this.column = transformLogicalAttribute(attribute);
 		}
+
+
+		#endregion
+
 		private Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
 			this.column = new Column(this._table, attribute.alias);
@@ -65,6 +67,5 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			throw new NotImplementedException();
 		}
 
-		#endregion
 	}
 }

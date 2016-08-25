@@ -17,6 +17,7 @@ namespace EAAddinFramework.Databases
 		internal Database _owner;
 		internal List<Column> _columns;
 		internal List<Constraint> _constraints;
+		internal List<Class> _logicalClasses;
 		private string _name;
 		public Table(Database owner,Class wrappedClass)
 		{
@@ -29,7 +30,58 @@ namespace EAAddinFramework.Databases
 			this._owner = owner;
 			this.owner.addTable(this);
 		}
-
+		
+		public List<Class> logicalClasses
+		{
+			get
+			{
+				if (_logicalClasses == null)
+				{
+					_logicalClasses = new List<Class>();
+					//check if wrapped class exists
+					if (_wrappedClass != null)
+					{
+						_logicalClasses.AddRange( _wrappedClass.relationships.OfType<Abstraction>()
+						                         .Where(x => x.target is Class 
+						                                && x.stereotypes.Any( z => z.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase)))
+												.Select(y => y.target).Cast<Class>());
+					}
+				}
+				return _logicalClasses;
+			}
+			set
+			{
+				_logicalClasses = value;
+			}
+		}
+		/// <summary>
+		/// gets te columns that corresponds to the given column.
+		/// If the properties are exactly the same then this column is returned. 
+		/// If not the columns that is based on the same logical attribute is returned.
+		/// </summary>
+		/// <param name="newColumn">the column to compare to</param>
+		/// <returns>the corresponding column</returns>
+		public Column getCorrespondingColumn(Column newColumn)
+		{
+			var correspondingColumn = this._columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties);
+			if (correspondingColumn == null) correspondingColumn = 
+											this._columns.FirstOrDefault( x => x.logicalAttribute != null
+				                						&& x.logicalAttribute.Equals(newColumn.logicalAttribute));
+			return correspondingColumn;
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="newForeignKey"></param>
+		/// <returns></returns>
+		public ForeignKey getCorrespondingForeignKey(ForeignKey newForeignKey)
+		{
+			var correspondingForeignKey = this.constraints.OfType<ForeignKey>()
+							.FirstOrDefault( x => x.name + x.properties == newForeignKey.name + newForeignKey.properties);
+			if (correspondingForeignKey == null) correspondingForeignKey = this.constraints.OfType<ForeignKey>()
+				.FirstOrDefault( x => x.logicalAssociation != null && x.logicalAssociation.Equals(newForeignKey.logicalAssociation));
+			return correspondingForeignKey;
+		}
 		#region Table implementation
 
 		public string name 

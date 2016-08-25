@@ -14,6 +14,16 @@
             Description of Column.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Compare.EADatabaseComparer">
+            <summary>
+            Description of EADatabaseComparer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Compare.EADatabaseItemComparison">
+            <summary>
+            Description of EADatabaseItemComparison.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Constraint">
             <summary>
             Description of Constraint.
@@ -55,6 +65,22 @@
             <summary>
             Description of Table.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Table.getCorrespondingColumn(EAAddinFramework.Databases.Column)">
+            <summary>
+            gets te columns that corresponds to the given column.
+            If the properties are exactly the same then this column is returned. 
+            If not the columns that is based on the same logical attribute is returned.
+            </summary>
+            <param name="newColumn">the column to compare to</param>
+            <returns>the corresponding column</returns>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Table.getCorrespondingForeignKey(EAAddinFramework.Databases.ForeignKey)">
+            <summary>
+            
+            </summary>
+            <param name="newForeignKey"></param>
+            <returns></returns>
         </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2ColumnTransformer">
             <summary>

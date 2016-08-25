@@ -74,6 +74,8 @@
   <ItemGroup>
     <Compile Include="Databases\BaseDataType.cs" />
     <Compile Include="Databases\Column.cs" />
+    <Compile Include="Databases\Compare\EADatabaseComparer.cs" />
+    <Compile Include="Databases\Compare\EADatabaseItemComparison.cs" />
     <Compile Include="Databases\Constraint.cs" />
     <Compile Include="Databases\Database.cs" />
     <Compile Include="Databases\DatabaseFactory.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Utilities\TransformationILWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Databases\Compare" />
     <Folder Include="Databases\Transformation" />
     <Folder Include="Databases\Transformation\DB2" />
     <Folder Include="EAWrappers" />

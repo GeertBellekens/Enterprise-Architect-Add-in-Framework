@@ -62,6 +62,8 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			//create the table
 			createTable((UTF_EA.Class) logicalClass);
+			//add the class as logical class
+			_table.logicalClasses.Add((UTF_EA.Class)logicalClass);
 			//create the columns from the attributes
 			createColumnsFromAttributes();
 			return this.table;
