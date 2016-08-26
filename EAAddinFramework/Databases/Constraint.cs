@@ -79,7 +79,7 @@ namespace EAAddinFramework.Databases
 				if (this.involvedColumns.Count > 0)
 				{
 					_properties += " (" 
-						+ string.Join(", ",this.involvedColumns.Select( x => x.name).ToArray())
+						+ string.Join(", ",this.involvedColumns.Select( x => x.name).ToArray().OrderBy(x => x.ToString()))
 						+ ")";
 				}
 				return _properties;
