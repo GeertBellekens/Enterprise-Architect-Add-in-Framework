@@ -89,6 +89,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 						//TODO: move transformationlogic to columntransformer
 						var newColumn = new Column((DB_EA.Table)table, column.name);
 						newColumn.type = column.type;
+						newColumn.logicalAttribute = ((DB_EA.Column)column).logicalAttribute;
 						if (dependingTransformer.associationEnd != null)
 						{
 							if (dependingTransformer.associationEnd.upper.integerValue.HasValue 
