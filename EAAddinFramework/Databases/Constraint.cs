@@ -27,6 +27,15 @@ namespace EAAddinFramework.Databases
 			_involvedColumns = involvedColumns;
 			this.owner.addConstraint(this);
 		}
+		public override bool isOverridden {
+			get 
+			{
+				return base.isOverridden || this.involvedColumns.Any(x => x.isOverridden);
+			}
+			set {
+				base.isOverridden = value;
+			}
+		}
 
 		#region implemented abstract members of DatabaseItem
 		internal abstract override void createTraceTaggedValue();

@@ -50,6 +50,10 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						comparisonStatus = DatabaseComparisonStatusEnum.equal;
 					}
+					else if (existingDatabaseItem.isOverridden)
+					{
+						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+					}
 					else
 					{
 						comparisonStatus = DatabaseComparisonStatusEnum.changed;
@@ -103,7 +107,9 @@ namespace EAAddinFramework.Databases.Compare
 					case DatabaseComparisonStatusEnum.newItem: 
 						return "New";
 					case DatabaseComparisonStatusEnum.equal: 
-						return "Equal";						
+						return "Equal";			
+					case DatabaseComparisonStatusEnum.dboverride: 
+						return "Overridden";								
 					default:
 						return "unknown";
 				}
