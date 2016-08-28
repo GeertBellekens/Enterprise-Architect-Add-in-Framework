@@ -28,11 +28,25 @@ namespace EAAddinFramework.Databases
 		{
 			get {return "BaseDatatype";}
 		}
+		
+
+
 		public string properties 
 		{
 			get { return this.name;}
 		}
 
 		#endregion
+		//base datatypes can't be overriden
+		public bool isOverridden 
+		{
+			get 
+			{
+				return false;
+			}
+			set {
+				//do nothing
+			}
+		}
 	}
 }

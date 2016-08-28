@@ -10,7 +10,7 @@ namespace EAAddinFramework.Databases
 	/// <summary>
 	/// Description of Constraint.
 	/// </summary>
-	public class Constraint:DB.Constraint
+	public abstract class Constraint:DatabaseItem,DB.Constraint
 	{
 		internal Operation _wrappedOperation;
 		internal Table _owner;
@@ -28,6 +28,17 @@ namespace EAAddinFramework.Databases
 			this.owner.addConstraint(this);
 		}
 
+		#region implemented abstract members of DatabaseItem
+		internal abstract override void createTraceTaggedValue();
+		internal override Element wrappedElement {
+			get {
+				return this._wrappedOperation;
+			}
+			set {
+				this._wrappedOperation = (Operation)value;
+			}
+		}
+		#endregion
 		#region Constraint implementation
 
 		public string name 

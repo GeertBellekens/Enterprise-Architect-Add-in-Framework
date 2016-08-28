@@ -26,5 +26,30 @@ namespace EAAddinFramework.Databases
 			get {return "Primary Key";}
 		}
 
+		#region implemented abstract members of Constraint
+		internal override void createTraceTaggedValue()
+		{
+			throw new NotImplementedException();
+		}
+		internal override TaggedValue traceTaggedValue 
+		{
+			get 
+			{
+				if (_wrappedOperation != null) return _wrappedOperation.taggedValues.OfType<TaggedValue>()
+					.FirstOrDefault(x => x.name.Equals("pkInfo",StringComparison.InvariantCultureIgnoreCase));
+				//if no wrappped operation then no tagged value
+				return null;
+			}
+			set 
+			{
+				if (_wrappedOperation != null
+				   && value != null)
+				{
+					var tag = _wrappedOperation.addTaggedValue(value.name, value.eaStringValue);
+					tag.comment = value.comment;
+				}
+			}
+		}
+#endregion
 	}
 }

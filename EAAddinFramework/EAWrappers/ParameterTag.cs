@@ -34,7 +34,15 @@ public class ParameterTag : TaggedValue
 			this.wrappedTaggedValue.Value = value;
 		}
 	}
-	
+	public override string comment {
+		get {
+			//apparently not no notes implemented in EA.ParamTag
+			return string.Empty;
+		}
+		set {
+			//do nothing
+		}
+	}
 	public override string name 
 	{
 		get 

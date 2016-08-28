@@ -23,7 +23,14 @@ public class AttributeTag : TaggedValue
 			return this.wrappedTaggedValue.TagGUID;
 		}
 	}
-	
+	public override string comment {
+		get {
+			return this.wrappedTaggedValue.Notes;
+		}
+		set {
+			this.wrappedTaggedValue.Notes = value;
+		}
+	}	
 	public override string eaStringValue 
 	{
 		get 

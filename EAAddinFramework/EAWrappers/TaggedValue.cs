@@ -56,7 +56,8 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			}
 		}
 	}
-
+	
+	public abstract string comment {get;set;}
 	private bool isGUID(string guidString)
 	{
 		Guid dummy;

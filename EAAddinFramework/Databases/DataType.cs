@@ -50,6 +50,17 @@ namespace EAAddinFramework.Databases
 
 
 		#endregion
+		//datatype can't be overriden
+		public bool isOverridden 
+		{
+			get 
+			{
+				return false;
+			}
+			set {
+				//do nothing
+			}
+		}
 
 	}
 }

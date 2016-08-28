@@ -82,6 +82,15 @@ namespace EAAddinFramework.Databases.Compare
 			}
 		}
 
+		public string itemType 
+		{
+			get 
+			{
+				if (this.newDatabaseItem != null) return this.newDatabaseItem.itemType;
+				if (this.existingDatabaseItem != null) return this.existingDatabaseItem.itemType;
+				return string.Empty;
+			}
+		}
 		public string comparisonStatusName {
 			get 
 			{

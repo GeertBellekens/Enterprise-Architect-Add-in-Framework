@@ -78,6 +78,42 @@ namespace EAAddinFramework.Databases
 		public override string itemType {
 			get {return "Foreign Key";}
 		}
+
+		#region implemented abstract members of Constraint
+
+
+		internal override void createTraceTaggedValue()
+		{
+			if (this._wrappedOperation != null)
+			{
+				this._wrappedOperation.addTaggedValue("sourceAssociation",string.Empty);
+			}
+		}
+
+
+		internal override TaggedValue traceTaggedValue 
+		{
+			get 
+			{
+				if (_wrappedOperation != null) return _wrappedOperation.taggedValues.OfType<TaggedValue>()
+					.FirstOrDefault(x => x.name.Equals("sourceAssociation",StringComparison.InvariantCultureIgnoreCase));
+				//if no wrappped operation then no tagged value
+				return null;
+			}
+			set 
+			{
+				if (_wrappedOperation != null
+				   && value != null)
+				{
+					var tag = _wrappedOperation.addTaggedValue(value.name, value.eaStringValue);
+					tag.comment = value.comment;
+				}
+			}
+		}
+
+
+		#endregion
+
 		#region ForeignKey implementation
 		public DB.Table foreignTable {
 			get 

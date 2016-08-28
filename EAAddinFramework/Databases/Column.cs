@@ -10,7 +10,7 @@ namespace EAAddinFramework.Databases
 	/// <summary>
 	/// Description of Column.
 	/// </summary>
-	public class Column:DB.Column
+	public class Column:DatabaseItem, DB.Column
 	{
 		internal Table _owner;
 		internal TSF_EA.Attribute _wrappedattribute;
@@ -29,7 +29,48 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.owner.addColumn(this);
 		}
-		
+
+		#region implemented abstract members of DatabaseItem
+		internal override void createTraceTaggedValue()
+		{
+			if (this._wrappedattribute != null)
+			{
+				this._wrappedattribute.addTaggedValue("sourceAttribute",string.Empty);
+			}
+		}
+		internal override Element wrappedElement 
+		{
+			get 
+			{
+				return _wrappedattribute;
+			}
+			set 
+			{
+				this._wrappedattribute = (TSF_EA.Attribute)value;
+			}
+		}
+		internal override TaggedValue traceTaggedValue 
+		{
+			get 
+			{
+				if (_wrappedattribute != null)
+				{
+					return _wrappedattribute.taggedValues.OfType<TaggedValue>().FirstOrDefault(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase));
+				}
+				//no wrapped attribute so retur null
+				return null;
+			}
+			set 
+			{
+				if (_wrappedattribute != null
+				   && value != null)
+				{
+					var tag = _wrappedattribute.addTaggedValue(value.name, value.eaStringValue);
+					tag.comment = value.comment;
+				}
+			}
+		}
+		#endregion		
 		public TSF_EA.Attribute logicalAttribute
 		{
 			get
@@ -116,6 +157,8 @@ namespace EAAddinFramework.Databases
 				if (_wrappedattribute != null) this._wrappedattribute.allowDuplicates = _isNotNullable;
 			}
 		}
+
+
 		private DataType getDataType()
 		{
 			if (this._wrappedattribute != null)

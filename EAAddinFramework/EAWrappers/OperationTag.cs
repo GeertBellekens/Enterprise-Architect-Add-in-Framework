@@ -70,5 +70,19 @@ public class OperationTag : TaggedValue
 	{
 		this.wrappedTaggedValue.Update();
 	}
+
+		#region implemented abstract members of TaggedValue
+
+	public override string comment 
+	{
+		get {
+			return this.wrappedTaggedValue.Notes;
+		}
+		set {
+			this.wrappedTaggedValue.Notes = value;
+		}
+	}
+
+	#endregion
 }
 }

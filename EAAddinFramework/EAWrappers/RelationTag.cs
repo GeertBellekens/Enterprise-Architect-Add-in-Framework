@@ -35,7 +35,14 @@ public class RelationTag : TaggedValue
 			this.wrappedTaggedValue.Value = value;
 		}
 	}
-	
+	public override string comment {
+		get {
+			return this.wrappedTaggedValue.Notes;
+		}
+		set {
+			this.wrappedTaggedValue.Notes = value;
+		}
+	}	
 	public override string name 
 	{
 		get 

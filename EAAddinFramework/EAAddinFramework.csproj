@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseItem.cs" />
     <Compile Include="Databases\BaseDataType.cs" />
     <Compile Include="Databases\Column.cs" />
     <Compile Include="Databases\Compare\EADatabaseComparer.cs" />

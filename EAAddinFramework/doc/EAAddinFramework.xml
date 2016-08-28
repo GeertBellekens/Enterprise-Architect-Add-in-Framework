@@ -4,6 +4,11 @@
         <name>EAAddinFramework</name>
     </assembly>
     <members>
+        <member name="T:EAAddinFramework.DatabaseItem">
+            <summary>
+            Description of DatabaseItem.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.BaseDataType">
             <summary>
             Description of BaseDataType.
