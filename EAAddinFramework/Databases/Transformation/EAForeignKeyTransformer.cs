@@ -17,6 +17,7 @@ namespace EAAddinFramework.Databases.Transformation
 	{
 		internal ForeignKey _foreignKey;
 		internal UTF_EA.Association _logicalAssociation;
+		public EAForeignKeyTransformer() {}
 		public EAForeignKeyTransformer(ForeignKey foreignKey, UTF_EA.Association association)
 		{
 			_foreignKey = foreignKey;

@@ -75,52 +75,27 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			//add the columns for the primary key of the dependent table
 			foreach (var dependingTransformer in this.dependingTransformers) 
 			{
-				List<Column> FKInvolvedColumns = new List<Column>();
+				
 				bool isForeignKey = false;
 				if (dependingTransformer.table.primaryKey != null)
 				{
-					//only add FK's for classes in the same pakage;
-					if (dependingTransformer.logicalClass.owningPackage.Equals(this.logicalClass.owningPackage))
+					var dependingColumnTransfomers = new List<DB2ColumnTransformer>();
+					foreach (Column column in dependingTransformer.table.primaryKey.involvedColumns) 
 					{
-						isForeignKey = true;
+						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column, dependingTransformer));
+						
 					}
-					foreach (var column in dependingTransformer.table.primaryKey.involvedColumns) 
+					this._columnTransformers.AddRange(dependingColumnTransfomers);
+					List<Column> FKInvolvedColumns = new List<Column>();
+					foreach (var columnTransformer in dependingColumnTransfomers) 
 					{
-						//TODO: move transformationlogic to columntransformer
-						var newColumn = new Column((DB_EA.Table)table, column.name);
-						newColumn.type = column.type;
-						newColumn.logicalAttribute = ((DB_EA.Column)column).logicalAttribute;
-						if (dependingTransformer.associationEnd != null)
-						{
-							if (dependingTransformer.associationEnd.upper.integerValue.HasValue 
-							    && dependingTransformer.associationEnd.upper.integerValue.Value > 0)
-							{
-								newColumn.isNotNullable = true;
-							}
-							if (dependingTransformer.associationEnd.isID)
-							{
-								involvedColumns.Add(newColumn);
-							}
-							if (isForeignKey)
-							{
-								FKInvolvedColumns.Add(newColumn);
-							}
-							//add columnTransformer
-							//get the transformer for the column
-							var transformer = dependingTransformer._columnTransformers.First(x => x.column == column);
-							this._columnTransformers.Add(new DB2ColumnTransformer(this._table, newColumn, transformer._attribute));
-						}
+						var FKInvolvedColumn = columnTransformer.getFKInvolvedColumn();
+						if (FKInvolvedColumn != null) FKInvolvedColumns.Add(FKInvolvedColumn);
 					}
-					if (isForeignKey && FKInvolvedColumns.Count > 0)
+					if (FKInvolvedColumns.Count > 0 )
 					{
-						//TODO: move transformation logic to foreignkeytransformer
-						var newFK = new ForeignKey((Table) table, FKInvolvedColumns);
-						newFK.name = "FK_" + this.table.name + "_" + dependingTransformer.table.name + "_1" ; //TODO: sequence number for multple foreign keys
-						newFK.foreignTable = dependingTransformer.table;
-						newFK.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
-						this.table.constraints.Add(newFK);
-						//add the transformer
-						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(newFK,(UTF_EA.Association)dependingTransformer.associationEnd.association));
+						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(this._table,FKInvolvedColumns,dependingTransformer));
+
 					}
 				}
 			}
