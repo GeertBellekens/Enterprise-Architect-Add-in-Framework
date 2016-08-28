@@ -35,11 +35,11 @@ namespace EAAddinFramework.Databases
 		/// </summary>
 		/// <param name="type">the type of the factory</param>
 		/// <param name="datatypes">the base datatypes for this factory</param>
-		public static void addFactory(string type, List<BaseDataType> datatypes)
+		public static void addFactory(string type, Model model)
 		{
 			if (!factories.ContainsKey(type))
 			{
-				DatabaseFactory factory = new DatabaseFactory(type, datatypes);
+				DatabaseFactory factory = new DatabaseFactory(type, model);
 				factories.Add(type, factory);
 			}
 		}
@@ -52,14 +52,24 @@ namespace EAAddinFramework.Databases
 			}
 			return null;
 		}
-		private DatabaseFactory(string type, List<BaseDataType> baseDataTypes)
+		private DatabaseFactory(string type, Model model)
 		{
 			this._type = type;
-			_baseDataTypes = new Dictionary<string, BaseDataType>();
-			foreach (var baseDataType in baseDataTypes) 
+			this._baseDataTypes = getBaseDataTypes(type,model);
+		}
+		public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
+		{
+			Dictionary<string, BaseDataType> datatypes = new Dictionary<string, BaseDataType>();
+			foreach (global::EA.Datatype eaDataType in model.getWrappedModel().Datatypes)
 			{
-				_baseDataTypes.Add(baseDataType.name, baseDataType);
+				if (eaDataType.Product.Equals(databaseType,StringComparison.InvariantCultureIgnoreCase)
+				    && eaDataType.Type == "DDL")
+				{
+					var datatype = new BaseDataType(eaDataType);
+					datatypes.Add(datatype.name, datatype);
+				}
 			}
+			return datatypes;
 		}
 		public Database createDataBase(Package package)
 		{

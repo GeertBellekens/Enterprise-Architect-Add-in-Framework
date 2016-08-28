@@ -27,13 +27,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 		private static DatabaseFactory getFactory(UTF_EA.Model model)
 		{
-			//TODO: use model to figure out the datatypes for DB2
-			List<DB_EA.BaseDataType> baseDatatypes = new List<DB_EA.BaseDataType>();
-			baseDatatypes.Add(new DB_EA.BaseDataType("CHAR",true, false));
-			baseDatatypes.Add(new DB_EA.BaseDataType("TIMESTAMP",false, false));
-			baseDatatypes.Add(new DB_EA.BaseDataType("DATE",false, false));
-			baseDatatypes.Add(new DB_EA.BaseDataType("DECIMAL",true, true));
-			DB_EA.DatabaseFactory.addFactory("DB2",baseDatatypes);
+			DB_EA.DatabaseFactory.addFactory("DB2",model);
 			return  DB_EA.DatabaseFactory.getFactory("DB2");
 		}
 

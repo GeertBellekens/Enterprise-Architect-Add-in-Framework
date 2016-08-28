@@ -1,5 +1,6 @@
 ﻿
 using System;
+using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 namespace EAAddinFramework.Databases
@@ -14,6 +15,12 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.hasLength = hasLength;
 			this.hasPrecision = hasPrecision;
+		}
+		public BaseDataType(global::EA.Datatype eaDatatype)
+		{
+			this.name = eaDatatype.Name;
+			this.hasLength = eaDatatype.Size > 0;
+			this.hasPrecision = eaDatatype.Size == 2;
 		}
 
 		#region BaseDataType implementation

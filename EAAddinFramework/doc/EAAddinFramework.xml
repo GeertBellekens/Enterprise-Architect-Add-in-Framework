@@ -44,7 +44,7 @@
             Description of DatabaseFactory.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.Databases.DatabaseFactory.addFactory(System.String,System.Collections.Generic.List{EAAddinFramework.Databases.BaseDataType})">
+        <member name="M:EAAddinFramework.Databases.DatabaseFactory.addFactory(System.String,TSF.UmlToolingFramework.Wrappers.EA.Model)">
             <summary>
             adds a factory to the list of possible database factories
             </summary>
