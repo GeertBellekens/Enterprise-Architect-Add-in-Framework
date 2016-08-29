@@ -17,6 +17,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		protected List<DB2ColumnTransformer> _columnTransformers = new List<DB2ColumnTransformer>();
 		internal List<DB2TableTransformer> dependingTransformers = new List<DB2TableTransformer>();
 		internal List<DB2ForeignKeyTransformer> _foreignKeyTransformers = new List<DB2ForeignKeyTransformer>();
+		internal DB2PrimaryKeyTransformer _primaryKeyTransformer = null;
 		internal UTF_EA.AssociationEnd associationEnd;
 		public DB2TableTransformer(Database database):base(database){}
 		internal UTF_EA.Class logicalClass
@@ -61,7 +62,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		public void addRemoteColumnsAndKeys()
 		{
-			List<DB_EA.Column> involvedColumns = new List<DB_EA.Column>();
+			List<DB_EA.Column> PKInvolvedColumns = new List<DB_EA.Column>();
 			//check attributes
 			foreach (var attribute in logicalClass.attributes.Where(x => x.isID).Cast<UTF_EA.Attribute>())
 			{
@@ -69,14 +70,13 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				var columnTransformer = this.columnTransformers.FirstOrDefault( x => attribute.Equals(x.logicalProperty));
 				if (columnTransformer != null)
 				{
-					involvedColumns.Add((DB_EA.Column) columnTransformer.column);
+					PKInvolvedColumns.Add((DB_EA.Column) columnTransformer.column);
 				}
 			}
 			//add the columns for the primary key of the dependent table
 			foreach (var dependingTransformer in this.dependingTransformers) 
 			{
 				
-				bool isForeignKey = false;
 				if (dependingTransformer.table.primaryKey != null)
 				{
 					var dependingColumnTransfomers = new List<DB2ColumnTransformer>();
@@ -89,8 +89,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					List<Column> FKInvolvedColumns = new List<Column>();
 					foreach (var columnTransformer in dependingColumnTransfomers) 
 					{
+						//get the FK column
 						var FKInvolvedColumn = columnTransformer.getFKInvolvedColumn();
 						if (FKInvolvedColumn != null) FKInvolvedColumns.Add(FKInvolvedColumn);
+						//get the PK column
+						var PKInvolvedColumn = columnTransformer.getPKInvolvedColumn();
+						if (PKInvolvedColumn != null) PKInvolvedColumns.Add(PKInvolvedColumn);
 					}
 					if (FKInvolvedColumns.Count > 0 )
 					{
@@ -100,10 +104,9 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				}
 			}
 			//create primaryKey
-			if (involvedColumns.Count > 0)
+			if (PKInvolvedColumns.Count > 0)
 			{
-				this.table.primaryKey = new DB_EA.PrimaryKey((DB_EA.Table)table, involvedColumns);
-				this.table.primaryKey.name = "PK_" + table.name;
+				this._primaryKeyTransformer = new DB2PrimaryKeyTransformer(_table, PKInvolvedColumns);
 			}
 			
 		}

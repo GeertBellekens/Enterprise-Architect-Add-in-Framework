@@ -129,6 +129,16 @@
             Description of EAForeignKeyTransformer.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2PrimaryKeyTransformer">
+            <summary>
+            Description of DB2PrimaryKeyTransformer.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.EAPrimaryKeyTransformer">
+            <summary>
+            Description of EAPrimaryKeyTransformer.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer">
             <summary>
             Description of DB2TableTransformer.
