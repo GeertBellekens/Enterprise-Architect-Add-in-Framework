@@ -22,13 +22,13 @@ namespace EAAddinFramework.Databases.Compare
 		{
 			this._newDatabase = newDatabase;
 			this._existingDatabase = existingDatabase;
-			this.comparedItems = new List<DatabaseItemComparison>();
 		}
 
 		#region DatabaseComparer implementation
 
 		public void compare()
 		{
+			this.comparedItems = new List<DatabaseItemComparison>();
 			//compare each new table
 			foreach (var newTable in _newDatabase.tables) 
 			{

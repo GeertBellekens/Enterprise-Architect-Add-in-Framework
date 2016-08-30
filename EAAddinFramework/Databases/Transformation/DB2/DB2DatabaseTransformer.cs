@@ -18,6 +18,10 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	{
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
+		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage):this(logicalPackage.model)
+		{
+			this._logicalPackage = logicalPackage;
+		}
 		public DB2DatabaseTransformer(UTF_EA.Model model):this(getFactory(model),model)
 		{
 		}
@@ -32,7 +36,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 
 		#region implemented abstract members of EADatabaseTransformer
-
+		public override DB.Database saveDatabase()
+		{
+			//TODO: save changes from new database to existing database
+			return this.existingDatabase;
+		}
 		/// <summary>
 		/// create the initial database from the logical package
 		/// </summary>

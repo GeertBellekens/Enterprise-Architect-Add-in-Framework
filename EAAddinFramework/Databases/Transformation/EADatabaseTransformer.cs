@@ -42,6 +42,16 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_model = (UTF_EA.Model) value;}
 		}
 
+		public abstract DB.Database saveDatabase();
+
+		public void refresh()
+		{
+			this._existingDatabase = null;
+			this._newDatabase = null;
+			this._tableTransformers.Clear();
+			this.transformLogicalPackage(this.logicalPackage);
+		}
+
 		public DB.Database newDatabase 
 		{
 			get {return this._newDatabase;}
@@ -92,27 +102,7 @@ namespace EAAddinFramework.Databases.Transformation
 			createNewDatabase();
 			//first create all tables
 			this.createTables();
-
-			
-			//then do the primary keys
-			
-//			foreach (var table in database.tables) 
-//			{
-//				foreach (UTF_EA.Attribute attribute in classElement.attributes) 
-//				{
-//					transformAttributeToColumn(table, attribute,classElement, factory);
-//				}
-//				//for associations to external classes we copy the primary key columns into this table, without actually createing a foreign key
-//				transformExternalAssociations(factory, classElement, table);
-//			}
-//			//then primary keys
-//			foreach (var table in database.tables)
-//			{
-//				//create the primary key
-//				transformPrimaryKey(table, classElement, factory);
-//			}
-//			//then create the foreign keys
-//			//TODO:
+			//return the database
 			return newDatabase;
 		}
 		/// <summary>
