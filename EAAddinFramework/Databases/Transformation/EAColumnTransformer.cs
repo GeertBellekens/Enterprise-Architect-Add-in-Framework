@@ -14,14 +14,14 @@ namespace EAAddinFramework.Databases.Transformation
 	/// <summary>
 	/// Description of EAColumnTransformer.
 	/// </summary>
-	public abstract class EAColumnTransformer:DB.Transformation.ColumnTransformer
+	public abstract class EAColumnTransformer:EADatabaseItemTransformer, DB.Transformation.ColumnTransformer
 	{
 		internal Table _table;
 		internal Column _column;
 		internal UTF_EA.Attribute _attribute;
 		internal UTF_EA.AssociationEnd _associationEnd;
 		
-		public EAColumnTransformer(Table table)
+		public EAColumnTransformer(Table table, NameTranslator nameTranslator):base(nameTranslator)
 		{
 			this._table =  table;
 		}

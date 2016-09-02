@@ -90,10 +90,14 @@
     <Compile Include="Databases\Transformation\DB2\DB2PrimaryKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2TableTransformer.cs" />
     <Compile Include="Databases\Transformation\EAColumnTransformer.cs" />
+    <Compile Include="Databases\Transformation\EADatabaseItemTransformer.cs" />
     <Compile Include="Databases\Transformation\EADatabaseTransformer.cs" />
     <Compile Include="Databases\Transformation\EAForeignKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\EAPrimaryKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\EATableTransformer.cs" />
+    <Compile Include="Databases\Transformation\NameTranslation.cs" />
+    <Compile Include="Databases\Transformation\NameTranslator.cs" />
+    <Compile Include="Databases\Transformation\TranslatedItem.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />

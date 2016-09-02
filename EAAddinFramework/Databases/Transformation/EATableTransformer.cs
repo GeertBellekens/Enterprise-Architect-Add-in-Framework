@@ -12,14 +12,14 @@ namespace EAAddinFramework.Databases.Transformation
 	/// <summary>
 	/// Description of EATableTransformer.
 	/// </summary>
-	public abstract class EATableTransformer:DB.Transformation.TableTransformer
+	public abstract class EATableTransformer:EADatabaseItemTransformer, DB.Transformation.TableTransformer
 	{
 
 		#region TableTransformer implementation
 		internal Table _table;
 		internal List<UTF_EA.Class> _logicalClasses = new List<UTF_EA.Class>();
 		internal Database _database;
-		public EATableTransformer(Database database)
+		public EATableTransformer(Database database, NameTranslator nametranslator):base(nametranslator)
 		{
 			_database = database;
 		}

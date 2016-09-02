@@ -97,6 +97,11 @@
             Description of EAColumnTransformer.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.EADatabaseItemTransformer">
+            <summary>
+            Description of EADatabaseItemTransformer.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer">
             <summary>
             Description of DB2DatabaseTransformer.
@@ -149,6 +154,13 @@
             Description of EATableTransformer.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.#ctor(EAAddinFramework.Databases.Database,EAAddinFramework.Databases.Transformation.NameTranslator)">
+            <summary>
+            constructor
+            </summary>
+            <param name="database">the database the table should belong to</param>
+            <param name="nameTranslator">the nametranslator</param>
+        </member>
         <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.getDependingAssociationEnds">
             <summary>
             gets the Class Elements that are needed for this logical element.
@@ -156,6 +168,21 @@
             multiplicity of 1..1 or 0..1. We will need these classes because they will create one or more columns in the associated table.
             </summary>
             <returns>the classes on which this logical element depends for this logical element</returns>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.NameTranslation">
+            <summary>
+            Description of NameTranslation.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.NameTranslator">
+            <summary>
+            Description of NameTranslator.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Transformation.TranslatedItem">
+            <summary>
+            Description of translatedItem.
+            </summary>
         </member>
         <member name="T:EAAddinFramework.EAAddinBase">
             <summary>

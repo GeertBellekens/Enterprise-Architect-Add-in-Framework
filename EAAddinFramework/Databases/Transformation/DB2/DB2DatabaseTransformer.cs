@@ -18,14 +18,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	{
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
-		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage):this(logicalPackage.model)
+		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage,NameTranslator nameTranslator):this(logicalPackage.model, nameTranslator)
 		{
 			this._logicalPackage = logicalPackage;
 		}
-		public DB2DatabaseTransformer(UTF_EA.Model model):this(getFactory(model),model)
+		public DB2DatabaseTransformer(UTF_EA.Model model,NameTranslator nameTranslator):this(getFactory(model),model,nameTranslator)
 		{
 		}
-		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model):base(factory,model)
+		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model,NameTranslator nameTranslator):base(factory,model,nameTranslator)
 		{
 			this._externalDatabase = factory.createDatabase("external");
 		}
@@ -77,7 +77,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			{
 				if ( ! this._tableTransformers.Any(x => x.logicalClasses.Any(y => y.Equals(classElement))))
 				{
-					transformer = new DB2TableTransformer(this._newDatabase);
+					transformer = new DB2TableTransformer(this._newDatabase,_nameTranslator);
 					this._tableTransformers.Add(transformer);
 				}
 			}
@@ -85,7 +85,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			{
 				if (!this.externalTableTransformers.Any(x => x.logicalClasses.Any(y => y.Equals(classElement))))
 				{
-					transformer = new DB2TableTransformer(this._externalDatabase);
+					transformer = new DB2TableTransformer(this._externalDatabase,_nameTranslator);
 					this.externalTableTransformers.Add(transformer);
 				}
 			}

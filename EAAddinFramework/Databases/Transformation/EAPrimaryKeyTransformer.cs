@@ -13,11 +13,11 @@ namespace EAAddinFramework.Databases.Transformation
 	/// <summary>
 	/// Description of EAPrimaryKeyTransformer.
 	/// </summary>
-	public abstract class EAPrimaryKeyTransformer:DB.Transformation.PrimaryKeyTransformer
+	public abstract class EAPrimaryKeyTransformer:EADatabaseItemTransformer, DB.Transformation.PrimaryKeyTransformer
 	{
 		internal PrimaryKey _primarykey;
 		internal Table _table;
-		public EAPrimaryKeyTransformer(Table table)
+		public EAPrimaryKeyTransformer(Table table, NameTranslator nameTranslator):base(nameTranslator)
 		{	
 			_table = table;
 		}

@@ -13,7 +13,7 @@ namespace EAAddinFramework.Databases.Transformation
 	/// <summary>
 	/// Description of EADatabaseTransformer.
 	/// </summary>
-	public abstract class EADatabaseTransformer:DB.Transformation.DatabaseTransformer
+	public abstract class EADatabaseTransformer:EADatabaseItemTransformer, DB.Transformation.DatabaseTransformer
 	{
 		private DatabaseFactory _factory;
 		internal UTF_EA.Model _model;		
@@ -22,8 +22,7 @@ namespace EAAddinFramework.Databases.Transformation
 		internal UTF_EA.Package _logicalPackage;
 		protected List<EATableTransformer> _tableTransformers = new List<EATableTransformer>();
 
-
-		public EADatabaseTransformer(DatabaseFactory factory, UTF_EA.Model model)
+		public EADatabaseTransformer(DatabaseFactory factory, UTF_EA.Model model,NameTranslator nameTranslator):base(nameTranslator)
 		{
 			this._factory = factory;
 			this._model = model;

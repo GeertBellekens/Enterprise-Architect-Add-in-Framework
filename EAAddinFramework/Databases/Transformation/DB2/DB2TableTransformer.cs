@@ -19,7 +19,13 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		internal List<DB2ForeignKeyTransformer> _foreignKeyTransformers = new List<DB2ForeignKeyTransformer>();
 		internal DB2PrimaryKeyTransformer _primaryKeyTransformer = null;
 		internal UTF_EA.AssociationEnd associationEnd;
-		public DB2TableTransformer(Database database):base(database){}
+		/// <summary>
+		/// constructor
+		/// </summary>
+		/// <param name="database">the database the table should belong to</param>
+		/// <param name="nameTranslator">the nametranslator</param>
+		public DB2TableTransformer(Database database,NameTranslator nameTranslator):base(database,nameTranslator){}
+		
 		internal UTF_EA.Class logicalClass
 		{
 			get{ return logicalClasses.FirstOrDefault() as UTF_EA.Class;}
@@ -39,7 +45,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
-			var columnTransformer = new DB2ColumnTransformer(this._table);
+			var columnTransformer = new DB2ColumnTransformer(this._table,this._nameTranslator);
 			this._columnTransformers.Add(columnTransformer);
 			return (Column) columnTransformer.transformLogicalProperty(attribute);
 		}
@@ -82,7 +88,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					var dependingColumnTransfomers = new List<DB2ColumnTransformer>();
 					foreach (Column column in dependingTransformer.table.primaryKey.involvedColumns) 
 					{
-						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column, dependingTransformer));
+						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column, dependingTransformer,_nameTranslator));
 						
 					}
 					this._columnTransformers.AddRange(dependingColumnTransfomers);
@@ -98,7 +104,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					}
 					if (FKInvolvedColumns.Count > 0 )
 					{
-						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(this._table,FKInvolvedColumns,dependingTransformer));
+						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(this._table,FKInvolvedColumns,dependingTransformer,_nameTranslator));
 
 					}
 				}
@@ -106,7 +112,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			//create primaryKey
 			if (PKInvolvedColumns.Count > 0)
 			{
-				this._primaryKeyTransformer = new DB2PrimaryKeyTransformer(_table, PKInvolvedColumns);
+				this._primaryKeyTransformer = new DB2PrimaryKeyTransformer(_table, PKInvolvedColumns,_nameTranslator);
 			}
 			
 		}

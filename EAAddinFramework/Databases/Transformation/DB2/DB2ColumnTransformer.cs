@@ -32,13 +32,13 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			return null;
 		}
 		
-		public DB2ColumnTransformer(Table table):base(table){}
-		public DB2ColumnTransformer(Table table, Column column, UTF_EA.Attribute attribute):this(table)
+		public DB2ColumnTransformer(Table table,NameTranslator nameTranslator):base(table,nameTranslator){}
+		public DB2ColumnTransformer(Table table, Column column, UTF_EA.Attribute attribute,NameTranslator nameTranslator):this(table,nameTranslator)
 		{
 			this.logicalProperty = attribute;
 			this.column = column;
 		}
-		public DB2ColumnTransformer(Table table, Column involvedColumn,DB2TableTransformer dependingTransformer):base(table)
+		public DB2ColumnTransformer(Table table, Column involvedColumn,DB2TableTransformer dependingTransformer,NameTranslator nameTranslator):this(table,nameTranslator)
 		{
 			this._involvedColumn = involvedColumn;
 			this._dependingTransformer = dependingTransformer;
@@ -70,6 +70,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		private Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
+			//first translate the columname if needed
+			if (string.IsNullOrEmpty(attribute.alias))
+			{
+				attribute.alias = this._nameTranslator.translate(attribute.name);
+				//should we save here?
+			}
 			this.column = new Column(this._table, attribute.alias);
 			//get base type
 			var attributeType = attribute.type as UTF_EA.ElementWrapper;
