@@ -75,57 +75,51 @@ namespace EAAddinFramework.Databases.Transformation
 			for (int i = 0; i < nameParts.Count; i++) 
 			{
 				//each time try to make a group of items of the given size that are not translated yet and try to translate
-				List<TranslatedItem> group = new List<TranslatedItem>();
+				List<TranslatedItem> untranslatedGroup = new List<TranslatedItem>();
 				for (int k = 0; k < groupsize && k + i < nameParts.Count;k++)
 				{
 					var currentItem = nameParts[i+k];
 					if (! currentItem.isTranslated) 
 					{
-						group.Add(nameParts[i+k]);
+						untranslatedGroup.Add(nameParts[i+k]);
 					}
 					else
 					{
 						//item is already translated
+						
 						//in that case can add this one and all previous ones to the translated groups and continue after after the translated item
-						translatedGroups.AddRange(translatedGroups.GetRange(i, i+k));
+						translatedGroups.AddRange(nameParts.GetRange(i, i+k +1)); 
+						//remove everyting from the group so it won't get processed
+						untranslatedGroup.Clear();
 						//start with the next item
 						i = i + k ; //the i++ adds the +1 itself so it starts with the item after the translated one?
 						break;
 					}
 				}
 				//check if the group is the required size
-				if (group.Count == groupsize)
+				if (untranslatedGroup.Count == groupsize)
 				{
-					var groupTranslation = translateGroup(group);
+					var groupTranslation = translateGroup(untranslatedGroup);
 					//check if translation has succeeded
 					if (groupTranslation != null)
 					{
 						//add the grouptranslation to the new list
 						translatedGroups.Add(groupTranslation);
-						//if possible we continue after this group with the same groupsize, 
-						if (i + groupsize < nameParts.Count)
-						{
-							i += groupsize;
-						}
-						else
-						{
-							//if not we add the individual items to the new list and we try to translate with a smaller groupsize
-							translatedGroups.AddRange(translatedGroups.GetRange( i + groupsize, nameParts.Count - (i + groupsize)));
-							return translateParts(translatedGroups, groupsize -1);
-						}
+						//up i with the size of the group
+						i += groupsize;
 					}
 					else
 					{
 						//could not translate this group. We add the first item of the group to the translated groups so we can try with the next items
-						translatedGroups.Add(group[0]);
+						translatedGroups.Add(untranslatedGroup[0]);
 					}					
 				}
-				else
+				else if (untranslatedGroup.Count > 0)
 				{
-					//group did not reach the required size, the first item so we can try with the next iteration
-					translatedGroups.AddRange(group);
+					//untranslated group did not reach the required size, the first item so we can try with the next iteration
+					translatedGroups.AddRange(untranslatedGroup);
 					//move i so we start checking after this group
-					i = i + group.Count;
+					i = i + untranslatedGroup.Count;
 				}
 			}
 			return translateParts(translatedGroups, groupsize -1);
