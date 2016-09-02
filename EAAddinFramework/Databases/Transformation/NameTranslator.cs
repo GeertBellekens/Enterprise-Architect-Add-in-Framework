@@ -51,8 +51,10 @@ namespace EAAddinFramework.Databases.Transformation
 			string translation = string.Join(this._separator, translatedParts.Where(x => ! x.isSuffix)
 			                                 .Select(y => y.translation).ToArray());
 			//then get the parts that are suffixes
-			string translationSuffix = string.Join(this._separator, translatedParts.Where(x => x.isSuffix).Select(y => y.target).ToArray());
-			return translation + translationSuffix;
+			string translationSuffix = string.Join(this._separator, translatedParts.Where(x => x.isSuffix).Select(y => y.translation).ToArray());
+			if (string.IsNullOrEmpty(translationSuffix)) return translation;
+			//if there is a suffix then return suffix as well
+			return translation + _separator + translationSuffix;
 			
 		}
 		private List<TranslatedItem> translateParts(List<string> nameParts)
@@ -67,8 +69,8 @@ namespace EAAddinFramework.Databases.Transformation
 		}
 		private List<TranslatedItem> translateParts(List<TranslatedItem> nameParts, int groupsize)
 		{
-			//return unchanged if the size of the group is 0
-			if (groupsize < 1) return nameParts;
+			//return unchanged if the size of the group is 0 or if all parts are already translated
+			if (groupsize < 1 || nameParts.All(x => x.isTranslated)) return nameParts;
 			//make a new list
 			List<TranslatedItem> translatedGroups = new List<TranslatedItem>();
 			//loop original list
@@ -88,7 +90,7 @@ namespace EAAddinFramework.Databases.Transformation
 						//item is already translated
 						
 						//in that case can add this one and all previous ones to the translated groups and continue after after the translated item
-						translatedGroups.AddRange(nameParts.GetRange(i, i+k +1)); 
+						translatedGroups.AddRange(nameParts.GetRange(i, k +1)); 
 						//remove everyting from the group so it won't get processed
 						untranslatedGroup.Clear();
 						//start with the next item
@@ -106,7 +108,7 @@ namespace EAAddinFramework.Databases.Transformation
 						//add the grouptranslation to the new list
 						translatedGroups.Add(groupTranslation);
 						//up i with the size of the group
-						i += groupsize;
+						i += groupsize -1;
 					}
 					else
 					{
