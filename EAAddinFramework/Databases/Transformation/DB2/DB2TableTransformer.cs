@@ -39,10 +39,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		protected override void createTable(UTF_EA.Class classElement)
 		{
 			this._logicalClasses.Add(classElement);
-			if (classElement.alias == string.Empty) classElement.alias = "unknown table name";
 			this.table = new Table(_database, classElement.alias);
 		}
-
 		protected override Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
 			var columnTransformer = new DB2ColumnTransformer(this._table,this._nameTranslator);
@@ -62,7 +60,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			get { return _foreignKeyTransformers.Cast<DB.Transformation.ForeignKeyTransformer>().ToList();}
 			set { _foreignKeyTransformers = value.Cast<DB2ForeignKeyTransformer>().ToList();}
 		}
-
+		public override void setTableName(string fixedTableString, int nameCounter)
+		{
+			string counterPart = nameCounter.ToString();
+			if (counterPart.Length < 2) counterPart = "0" + counterPart;
+			string tableName = fixedTableString + counterPart;
+			this.logicalClass.alias = tableName;
+			this._table.name = tableName;
+		}
 
 		#endregion
 

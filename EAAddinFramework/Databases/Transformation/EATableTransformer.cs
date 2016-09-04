@@ -79,6 +79,8 @@ namespace EAAddinFramework.Databases.Transformation
 			}
 		}
 
+		public abstract void setTableName(string fixedTableString, int nameCounter);
+
 		protected abstract Column transformLogicalAttribute(UTF_EA.Attribute attribute);
 
 		protected abstract void createTable(UTF_EA.Class classElement);
