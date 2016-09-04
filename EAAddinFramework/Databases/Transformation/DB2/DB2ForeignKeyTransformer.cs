@@ -20,11 +20,19 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 		public DB2ForeignKeyTransformer(Table table,List<Column> FKInvolvedColumns,DB2TableTransformer dependingTransformer,NameTranslator nameTranslator):base(nameTranslator)
 		{
-			var newFK = new ForeignKey((Table) table, FKInvolvedColumns);
-			newFK.name = "FK_" + table.name + "_" + dependingTransformer.table.name + "_1" ; //TODO: sequence number for multple foreign keys
-			newFK.foreignTable = dependingTransformer.table;
-			newFK.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
-			table.constraints.Add(newFK);
+			this._foreignKey = new ForeignKey((Table) table, FKInvolvedColumns);
+			this._foreignKey.foreignTable = dependingTransformer.table;
+			resetName();
+			this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
+			table.constraints.Add(this._foreignKey);
 		}
+		#region implemented abstract members of EAForeignKeyTransformer
+
+		public override void resetName()
+		{
+			this._foreignKey.name = "FK_" + this.foreignKey.owner.name + "_" + this.foreignKey.foreignTable.name + "_1" ; //TODO: sequence number for multple foreign keys
+		}
+
+		#endregion
 	}
 }

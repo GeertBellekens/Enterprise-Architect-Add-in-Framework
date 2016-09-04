@@ -25,7 +25,7 @@ namespace EAAddinFramework.Databases.Transformation
 					var lineParts = translationLine.Split(';');
 					if (lineParts.Count() > 1)
 					{
-						var sourceName = lineParts[0];
+						var sourceName = lineParts[0].ToLower();
 						var targetName = lineParts[1];
 						bool suffix = false;
 						if (lineParts.Count() > 2)
@@ -44,15 +44,18 @@ namespace EAAddinFramework.Databases.Transformation
 				Logger.logError(string.Format("Error: {0} Stacktrace: {1}",e.Message, e.StackTrace));
 			}
 		}
-		public string translate(string source)
+		public string translate(string source, string logicalTableName)
 		{
-			var translatedParts = this.translateParts(source.Split(' ').ToList());
+			var translatedParts = this.translateParts(source.ToLower().Split(' ').ToList());
 			//first get the parts that are not suffixes
 			string translation = string.Join(this._separator, translatedParts.Where(x => ! x.isSuffix)
 			                                 .Select(y => y.translation).ToArray());
 			//then get the parts that are suffixes
 			string translationSuffix = string.Join(this._separator, translatedParts.Where(x => x.isSuffix).Select(y => y.translation).ToArray());
 			if (string.IsNullOrEmpty(translationSuffix)) return translation;
+			//if we have only a suffix then we add the translation for the logical table name befor the suffix
+			if (string.IsNullOrEmpty(translation) 
+			    && !source.Equals(logicalTableName,StringComparison.InvariantCultureIgnoreCase)) return  translate(logicalTableName,string.Empty) + _separator + translationSuffix;
 			//if there is a suffix then return suffix as well
 			return translation + _separator + translationSuffix;
 			

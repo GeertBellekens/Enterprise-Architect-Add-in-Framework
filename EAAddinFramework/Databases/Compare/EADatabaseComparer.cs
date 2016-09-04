@@ -32,24 +32,26 @@ namespace EAAddinFramework.Databases.Compare
 			//compare each new table
 			foreach (var newTable in _newDatabase.tables) 
 			{
-				var existingTable = _existingDatabase.getCorrespondingTable(newTable);
+				Table existingTable = null;
+				if (_existingDatabase != null) existingTable = (Table)_existingDatabase.getCorrespondingTable(newTable);
 				var comparedItem = new EADatabaseItemComparison(newTable,existingTable);
 				comparedItems.Add(comparedItem);
 				this.addComparisonDetails(comparedItem);
 			}
-			//get existing tables that don't exist in the new database
-			foreach (var existingTable in _existingDatabase.tables) 
+			if (_existingDatabase != null)
 			{
-				//if the existingTable does not exist in the comparedItems then add it.
-				if (! comparedItems.Any(x => x.existingDatabaseItem == existingTable))
+				//get existing tables that don't exist in the new database
+				foreach (var existingTable in _existingDatabase.tables) 
 				{
-					var comparedItem = new EADatabaseItemComparison(null,existingTable);
-					comparedItems.Add(comparedItem);
-					this.addComparisonDetails(comparedItem);
+					//if the existingTable does not exist in the comparedItems then add it.
+					if (! comparedItems.Any(x => x.existingDatabaseItem == existingTable))
+					{
+						var comparedItem = new EADatabaseItemComparison(null,existingTable);
+						comparedItems.Add(comparedItem);
+						this.addComparisonDetails(comparedItem);
+					}
 				}
-			}
-			
-				
+			}	
 		}
 		public void addComparisonDetails(EADatabaseItemComparison comparedItem)
 		{

@@ -18,7 +18,16 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		public DB2PrimaryKeyTransformer(Table table, List<Column> involvedColumns,NameTranslator nameTranslator):base(table,nameTranslator)
 		{
 			this._table.primaryKey = new DB_EA.PrimaryKey((DB_EA.Table)table, involvedColumns);
-			this._table.primaryKey.name = "PK_" + table.name;
+			resetName();
 		}
+
+		#region implemented abstract members of EAPrimaryKeyTransformer
+
+		public override void resetName()
+		{
+			this._table.primaryKey.name = "PK_" + this._table.name;
+		}
+
+		#endregion
 	}
 }

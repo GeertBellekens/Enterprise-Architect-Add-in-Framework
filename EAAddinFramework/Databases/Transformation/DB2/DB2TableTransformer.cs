@@ -67,6 +67,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			string tableName = fixedTableString + counterPart;
 			this.logicalClass.alias = tableName;
 			this._table.name = tableName;
+			foreach (var fkTransformer in this.foreignKeyTransformers) {
+				fkTransformer.resetName();
+			}
+			this._primaryKeyTransformer.resetName();
+			
 		}
 
 		#endregion

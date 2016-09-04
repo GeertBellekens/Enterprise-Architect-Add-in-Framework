@@ -22,7 +22,6 @@ namespace EAAddinFramework.Databases.Transformation
 			_table = table;
 		}
 
-		#region PrimaryKeyTransformer implementation
 
 		public DB.PrimaryKey primaryKey {
 			get {
@@ -33,6 +32,7 @@ namespace EAAddinFramework.Databases.Transformation
 			}
 		}
 
-		#endregion
+		public abstract void resetName();
+	
 	}
 }

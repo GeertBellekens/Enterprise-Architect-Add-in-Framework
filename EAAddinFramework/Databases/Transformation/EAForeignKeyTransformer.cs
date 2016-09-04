@@ -35,6 +35,7 @@ namespace EAAddinFramework.Databases.Transformation
 			set { _foreignKey = (ForeignKey) value;}
 		}
 
+		public abstract void resetName();
 		public UML.Classes.Kernel.Association logicalAssociation {
 			get { return _logicalAssociation;}
 			set { _logicalAssociation = (UTF_EA.Association) value;}
