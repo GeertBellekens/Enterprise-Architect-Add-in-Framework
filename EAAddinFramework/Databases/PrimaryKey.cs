@@ -45,6 +45,24 @@ namespace EAAddinFramework.Databases
 				newPrimaryKey.save();
 			}
 		}
+		public override void save()
+		{
+			base.save();
+			//loop all columns and add or remove their primary key indicator
+			foreach (Column column in this.ownerTable.columns) 
+			{
+				if (this.involvedColumns.Any(x => x.name == column.name))
+			    {
+					column._wrappedattribute.wrappedAttribute.IsOrdered = true;
+					
+			    }
+				else
+				{
+					column._wrappedattribute.wrappedAttribute.IsOrdered = false;
+				}
+				column._wrappedattribute.save();
+			}
+		}
 
 		internal override void createTraceTaggedValue()
 		{

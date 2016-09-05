@@ -404,7 +404,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       else if (((Factory)this.model.factory).isEAConnector(type))
       {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
-      } 
+      }
+	  else if (((Factory)this.model.factory).isEAParameter(type))
+      {
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
+      }     
       else
       {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Elements, name, EAType );

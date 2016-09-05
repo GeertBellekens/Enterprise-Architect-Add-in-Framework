@@ -115,7 +115,11 @@ namespace EAAddinFramework.Databases
 					newTrace.target = logicalClass;
 					newTrace.save();
 	           }
+				//save logical class to save the tablename in the alias
+				logicalClass.save();
 			}
+			
+			
 		}
 		public override void delete()
 		{

@@ -62,6 +62,8 @@ namespace EAAddinFramework.Databases
 				//save
 				_wrappedattribute.save();
 			}
+			//save the columnn name in the alias
+			if (logicalAttribute != null) logicalAttribute.save(); 
 				
 		}
 

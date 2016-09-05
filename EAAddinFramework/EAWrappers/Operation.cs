@@ -29,6 +29,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	this.wrappedOperation.StereotypeEx = stereotype;
     }
+
+	public Parameter addOwnedParameter(string name)
+	{
+		return this.model.factory.createElement(this.wrappedOperation.Parameters.AddNew(name, "Parameter")) as Parameter;
+	}
+
 	/// <summary>
     /// return the unique ID of this element
     /// </summary>

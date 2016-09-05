@@ -43,9 +43,26 @@ namespace EAAddinFramework.Databases
 			{
 				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
 				this._wrappedOperation.setStereotype(getStereotype());
-				this.involvedColumns = _involvedColumns.Cast<DB.Column>().ToList();
 			}
-			this._wrappedOperation.save();
+			if (this._wrappedOperation != null)
+			{
+				this._wrappedOperation.save();
+				//get the corresponding columns from this table
+				this.involvedColumns = this.ownerTable.columns.Where (x => _involvedColumns.Any(y => y.name == x.name)).ToList();
+				if (this._wrappedOperation != null)
+				{
+					List<ParameterWrapper> parameters = new List<ParameterWrapper>();
+					foreach (var column in _involvedColumns) 
+					{
+						{
+							ParameterWrapper parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name) as ParameterWrapper;
+							parameter.type = ((Column)column)._wrappedattribute.type;
+							//TODO: this would be nicer if we could keep the parameters in memory and not save them directly
+							parameter.save();
+						}
+					}
+				}
+			}
 		}
 		protected abstract string getStereotype();
 
@@ -151,19 +168,10 @@ namespace EAAddinFramework.Databases
 			set 
 			{
 				_involvedColumns = value.Cast<Column>().ToList();
-				if (this._wrappedOperation != null)
-				{
-					List<Parameter> parameters = new List<Parameter>();
-					foreach (var column in _involvedColumns) 
-					{
-						{
-							Parameter parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name);
-							parameter.type = ((Column)column)._wrappedattribute.type;
-						}
-					}
-				}
+
 			}
 		}
+		
 		private void getInvolvedColumns()
 		{
 			_involvedColumns = new List<Column>();

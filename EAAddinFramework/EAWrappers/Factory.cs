@@ -647,9 +647,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override T createNewElement<T>
       ( UML.Classes.Kernel.Element owner, String name )
     {
-      if( owner is ElementWrapper ) {
+      if( owner is ElementWrapper ) 
+      {
         return ((ElementWrapper)owner).addOwnedElement<T>(name);
-      } else {
+      }else if (owner is Operation)
+      {
+      	//We can only add Parameters as owned elements to an operation
+      	return ((Operation)owner).addOwnedParameter(name) as T;
+      }
+	  else 
+	  {
         return default(T);
       }
     }
@@ -703,6 +710,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     internal bool isEAOperation(System.Type type){
       return type.Name == "Operation";
+    }
+    
+    internal bool isEAParameter(System.Type type){
+      return type.Name == "Parameter";
     }
     
     internal bool isEAConnector(System.Type type){

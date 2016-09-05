@@ -21,7 +21,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			return this.wrappedParameter.ParameterGUID;
 		}
-	}	    
+	}
+	public override void save()
+	{
+		this.saveElement();
+	}
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get { return new HashSet<UML.Classes.Kernel.Element>(); }
       set { /* do nothing */ }
@@ -107,7 +111,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
         return type;
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+      	//check if the value is an element wrapper
+      	var elementWrapperValue = value as ElementWrapper;
+      	if (elementWrapperValue != null)
+      	{
+      		this.wrappedParameter.ClassifierID = elementWrapperValue.id.ToString();
+      	}
+		//set the name anyway
+		this.wrappedParameter.Type = value.name;
+	  }
     }
     
     public override string name {
