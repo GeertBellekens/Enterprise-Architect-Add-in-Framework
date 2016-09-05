@@ -70,7 +70,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			foreach (var fkTransformer in this.foreignKeyTransformers) {
 				fkTransformer.resetName();
 			}
-			this._primaryKeyTransformer.resetName();
+			if (this._primaryKeyTransformer != null) this._primaryKeyTransformer.resetName();
 			
 		}
 
