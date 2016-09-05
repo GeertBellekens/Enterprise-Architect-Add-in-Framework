@@ -50,6 +50,12 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_column = (Column)value;}
 		}
 
+		
+
+		public void save()
+		{
+			throw new NotImplementedException();
+		}
 		#endregion
 	}
 }

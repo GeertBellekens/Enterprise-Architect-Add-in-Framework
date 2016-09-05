@@ -79,6 +79,10 @@ namespace EAAddinFramework.Databases.Transformation
 			}
 		}
 
+		public virtual void save()
+		{
+			throw new NotImplementedException();
+		}
 		public abstract void setTableName(string fixedTableString, int nameCounter);
 
 		protected abstract Column transformLogicalAttribute(UTF_EA.Attribute attribute);

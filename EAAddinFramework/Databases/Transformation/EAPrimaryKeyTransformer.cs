@@ -34,5 +34,9 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public abstract void resetName();
 	
+		public virtual void save()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

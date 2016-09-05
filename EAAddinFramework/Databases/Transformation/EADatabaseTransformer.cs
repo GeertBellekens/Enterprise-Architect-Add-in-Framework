@@ -41,7 +41,16 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_model = (UTF_EA.Model) value;}
 		}
 
-		public abstract DB.Database saveDatabase();
+		public virtual DB.Database save()
+		{
+			//both existing and new database should exist to even begin
+			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
+			foreach (var tableTransformer in this.tableTransformers) 
+			{
+				tableTransformer.save();
+			}
+			return this.existingDatabase;
+		}
 
 		public void refresh()
 		{
@@ -122,47 +131,7 @@ namespace EAAddinFramework.Databases.Transformation
 		}
 		protected abstract void addTable(UTF_EA.Class classElement);
 		
-		private void nameUnnamedTables()
-		{
-			int nameCounter = getTableNameCounter();
-			string fixedTableString = this.getFixedTableString();
-			foreach (var tableTransformer in this._tableTransformers.Where(x => string.IsNullOrEmpty(x._table.name)) )
-			{
-				nameCounter++;
-				tableTransformer.setTableName(fixedTableString,nameCounter);
-			}
-		}
-		private int getTableNameCounter()
-		{
-			var nameTables = this._tableTransformers.Where(x => !(string.IsNullOrEmpty(x._table.name))).Select(x => x._table.name).OrderBy(x => x);
-			string lastName = nameTables.LastOrDefault();
-			if(! string.IsNullOrEmpty(lastName))
-			{
-				//we have the last named table, now get the counter from the name
-				return  getCounterFromString(lastName, lastName.Length);
-			}
-			//return default
-			return 1;
-		}
-		private string getFixedTableString()
-		{
-			if (this._newDatabase.name.Length > 5)
-			{
-				return this._newDatabase.name.Substring(0,2) + "T" + this._newDatabase.name.Substring(3,this.newDatabase.name.Length -5);
-			}
-			else return "GBTXXX";
-		}
-		private int getCounterFromString(string name, int lenght)
-		{
-			//if we reach 0 lenght then we return 1 as default
-			if (lenght == 0) return 1;
-			int counter;
-			if (int.TryParse(name.Substring(name.Length - lenght),out counter))
-		    {
-				return counter;
-		    }
-			return getCounterFromString(name, lenght -1);
-		}
+		protected abstract void nameUnnamedTables();
 		
 		#endregion
 	}
