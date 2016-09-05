@@ -92,6 +92,8 @@ namespace EAAddinFramework.Databases
 					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
 					_wrappedClass.setStereotype("table");
 					_wrappedClass.save();
+					//add trace relation to logical class(ses)
+					setTracesToLogicalClasses();
 				}
 				else
 				{
@@ -101,22 +103,32 @@ namespace EAAddinFramework.Databases
 			}
 			
 		}
+		private void setTracesToLogicalClasses()
+		{
+			foreach (var logicalClass in this._logicalClasses) 
+			{
+				if (!this._wrappedClass.relationships.OfType<Abstraction>().Any(x => x.stereotypes
+				           .Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase)
+				                                      && logicalClass.Equals(((ConnectorWrapper)y).target))))
+	           {
+					var newTrace = this._factory._modelFactory.createNewElement<Abstraction>(_wrappedClass, string.Empty);
+					newTrace.target = logicalClass;
+					newTrace.save();
+	           }
+			}
+		}
 		public override void delete()
 		{
 			if (_wrappedClass != null) _wrappedClass.delete();
 		}	
 
 
-
 		public override void createAsNewItem(DB.Database existingDatabase)
 		{
 			var newTable = new Table((Database)existingDatabase,this.name);
+			newTable._logicalClasses = new List<Class>(_logicalClasses);
 			newTable.save();
 		}
-
-
-
-
 	
 		public List<Class> logicalClasses
 		{

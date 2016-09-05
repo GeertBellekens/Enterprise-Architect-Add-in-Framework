@@ -47,7 +47,9 @@ namespace EAAddinFramework.Databases
 				//set steretotype
 				this._wrappedattribute.setStereotype("column");
 				//set datatype;
-				_wrappedattribute.type = this.factory.modelFactory.createPrimitiveType(this.type.properties);
+				_wrappedattribute.type = this.factory.modelFactory.createPrimitiveType(this.type.name);
+				_wrappedattribute.length = this.type.length;
+				_wrappedattribute.precision = this.type.precision;
 				//is not nullable
 				this.isNotNullable = _isNotNullable;
 				//logical attribute
