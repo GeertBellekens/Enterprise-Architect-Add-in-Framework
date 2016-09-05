@@ -51,11 +51,6 @@ namespace EAAddinFramework.Databases.Transformation
 		}
 
 		
-
-		public void save()
-		{
-			throw new NotImplementedException();
-		}
 		#endregion
 	}
 }

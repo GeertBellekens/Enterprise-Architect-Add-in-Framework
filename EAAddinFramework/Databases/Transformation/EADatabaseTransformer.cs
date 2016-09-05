@@ -41,16 +41,7 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_model = (UTF_EA.Model) value;}
 		}
 
-		public virtual DB.Database save()
-		{
-			//both existing and new database should exist to even begin
-			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
-			foreach (var tableTransformer in this.tableTransformers) 
-			{
-				tableTransformer.save();
-			}
-			return this.existingDatabase;
-		}
+
 
 		public void refresh()
 		{

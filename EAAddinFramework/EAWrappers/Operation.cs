@@ -25,6 +25,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		return wrappedOperation;
     	}
     }
+    public void setStereotype(string stereotype)
+    {
+    	this.wrappedOperation.StereotypeEx = stereotype;
+    }
 	/// <summary>
     /// return the unique ID of this element
     /// </summary>

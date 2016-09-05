@@ -27,10 +27,73 @@ namespace EAAddinFramework.Databases
 		{
 			this._owner = owner;
 			this.name = name;
-			this.owner.addColumn(this);
+			this.ownerTable.addColumn(this);
+		}
+		#region implemented abstract members of DatabaseItem
+		public override void save()
+		{
+			//create the _wrapped attribute if needed
+			if (_wrappedattribute == null)
+			{
+				if (this._owner._wrappedClass == null)
+				{
+					this.ownerTable.save();
+				}
+				//now the wrappedClass should exist. if note then we have a problem
+				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._owner._wrappedClass,this.name);		
+			}
+			if (_wrappedattribute != null)
+			{
+				//set steretotype
+				this._wrappedattribute.setStereotype("column");
+				//set datatype;
+				_wrappedattribute.type = this.factory.modelFactory.createPrimitiveType(this.type.properties);
+				//is not nullable
+				this.isNotNullable = _isNotNullable;
+				//logical attribute
+				if (this.traceTaggedValue == null) this.createTraceTaggedValue();
+				if (this.traceTaggedValue != null)
+				{
+					traceTaggedValue.tagValue = this._logicalAttribute;
+					traceTaggedValue.save();
+				}
+				//save
+				_wrappedattribute.save();
+			}
+				
 		}
 
 		#region implemented abstract members of DatabaseItem
+		public override void createAsNewItem(DB.Database existingDatabase)
+		{
+			//look for corresponding table in existingDatabase
+			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			if (newTable != null)
+			{
+				var newColumn = new Column(newTable,this.name);
+				newColumn.isNotNullable = _isNotNullable;
+				newColumn.type = _type;
+				newColumn.save();
+			}
+		}
+		#endregion
+		#region implemented abstract members of DatabaseItem
+		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		{
+			var newColumn = (Column)newDatabaseItem;
+			this._isNotNullable = newColumn.isNotNullable;
+			this._logicalAttribute = newColumn.logicalAttribute;
+			this._type = newColumn._type;
+			this.isOverridden = newColumn.isOverridden;
+		}
+		#endregion		
+		
+		public override void delete()
+		{
+			if (_wrappedattribute != null) _wrappedattribute.delete();
+		}
+
+
 		internal override void createTraceTaggedValue()
 		{
 			if (this._wrappedattribute != null)
@@ -93,15 +156,22 @@ namespace EAAddinFramework.Databases
 		
 		#region Column implementation
 
-		public DB.Table owner {
+		public DB.Table ownerTable {
 			get {return this._owner;}
 			set {this._owner = (Table)value;}
 		}
 
-		public string itemType {
+		#region implemented abstract members of DatabaseItem
+		public override DB.DatabaseItem owner {
+			get {
+				return ownerTable;
+			}
+		}
+		#endregion
+		public override string itemType {
 			get {return "Column";}
 		}
-		public string properties {
+		public override string properties {
 			get 
 			{
 				
@@ -114,7 +184,7 @@ namespace EAAddinFramework.Databases
 				return _properties;
 			}
 		}
-		public string name {
+		public override string name {
 			get 
 			{
 				if(_wrappedattribute != null) _name = _wrappedattribute.name;
@@ -163,7 +233,7 @@ namespace EAAddinFramework.Databases
 		{
 			if (this._wrappedattribute != null)
 			{
-				var basetype = this.owner.owner.factory.baseDataTypes.FirstOrDefault(x => x.name == this._wrappedattribute.type.name);
+				var basetype = this.ownerTable.databaseOwner.databaseFactory.baseDataTypes.FirstOrDefault(x => x.name == this._wrappedattribute.type.name);
 				if (basetype != null)
 				{
 					if (basetype.hasPrecision)

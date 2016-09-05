@@ -218,7 +218,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	}
       set { throw new NotImplementedException(); }
     }
-    
+    public void setStereotype(string stereotype)
+    {
+    	this.wrappedElement.StereotypeEx = stereotype;
+    }
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get 
       {

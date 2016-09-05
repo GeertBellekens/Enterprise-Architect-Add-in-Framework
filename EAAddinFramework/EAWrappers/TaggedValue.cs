@@ -50,6 +50,10 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 			{
 				this.eaStringValue = ((Element)value).guid;
 			}
+			else if (value == null)
+			{
+				this.eaStringValue = string.Empty;
+			}
 			else
 			{
 				this.eaStringValue = value.ToString();

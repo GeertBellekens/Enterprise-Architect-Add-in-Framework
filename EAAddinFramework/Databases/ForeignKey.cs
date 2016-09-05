@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
@@ -23,6 +24,84 @@ namespace EAAddinFramework.Databases
 		{
 			
 		}
+
+		#region implemented abstract members of Constraint
+		protected override string getStereotype()
+		{
+			return "FK";
+		}
+		#endregion
+		public override void save()
+		{
+			base.save();
+			if (this.traceTaggedValue == null) createTraceTaggedValue();
+			if (this.traceTaggedValue != null)
+			{
+				this.traceTaggedValue.tagValue = _logicalAssociation;
+				this.traceTaggedValue.save();
+			}
+			//check if association to correct table
+			if (this._wrappedAssociation == null)
+			{
+				//create wrapped association
+				this._wrappedAssociation = this._factory._modelFactory.createNewElement<Association>(this._owner._wrappedClass, "");
+			}
+			if (this._wrappedAssociation != null)
+			{
+				if (this._foreignTable._wrappedClass != null)
+				{
+					this._wrappedAssociation.target = this._foreignTable._wrappedClass;
+					this.wrappedAssociation.sourceEnd.name = this.name;
+					if (this._foreignTable.primaryKey != null) this.wrappedAssociation.targetEnd.name = this._foreignTable.primaryKey.name;
+					this.wrappedAssociation.sourceEnd.multiplicity = new Multiplicity("0..*");
+					//TODO: implement multiplicities correctly by implementing isNotNullable on FK
+					this.wrappedAssociation.targetEnd.multiplicity = new Multiplicity("1..1");
+					this.wrappedAssociation.save();
+				}
+				else
+				{
+					Logger.logError(string.Format("foreign table {0} has not been saved yet",_foreignTable.name));
+				}
+			}
+		}
+
+		#region implemented abstract members of DatabaseItem
+
+
+		public override void createAsNewItem(DB.Database existingDatabase)
+		{
+			//look for corresponding table in existingDatabase
+			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			var newForeignTable = existingDatabase.tables.FirstOrDefault(x => x.name == this._foreignTable.name);
+			if (newTable != null && newForeignTable != null)
+			{
+				var newForeignKey = new ForeignKey(newTable,this._involvedColumns);
+				newForeignKey.name = name;
+				newForeignKey._foreignTable = (Table)newForeignTable;
+				newForeignKey.save();
+			}
+		}
+
+
+		#endregion
+
+		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		{
+			base.udateDetails(newDatabaseItem);
+			ForeignKey newForeignKey = (ForeignKey)newDatabaseItem;
+			//update the association
+			this._foreignTable = newForeignKey._foreignTable;
+			//set logical association
+			this.logicalAssociation = newForeignKey.logicalAssociation;
+
+		}
+
+		public override void delete()
+		{
+			base.delete();
+			if (this._wrappedAssociation != null) this._wrappedAssociation.delete();
+		}
+
 		public Association logicalAssociation
 		{
 			get

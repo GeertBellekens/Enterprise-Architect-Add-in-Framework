@@ -24,6 +24,29 @@ namespace EAAddinFramework.Databases.Compare
 			this.newDatabaseItem = newDatabaseItem;
 			this.existingDatabaseItem = existingDatabaseItem;
 		}
+
+		public void save(DB.Database existingDatabase)
+		{
+			switch (this.comparisonStatus) 
+			{
+				case DatabaseComparisonStatusEnum.equal:
+					//do nothing, already the same,
+					break;
+				case DatabaseComparisonStatusEnum.changed:
+					this.existingDatabaseItem.Update(this.newDatabaseItem);
+					break;
+				case DatabaseComparisonStatusEnum.dboverride:
+					break;
+				case DatabaseComparisonStatusEnum.deletedItem:
+					this.existingDatabaseItem.delete();
+					break;					
+				case DatabaseComparisonStatusEnum.newItem:
+					this.newDatabaseItem.createAsNewItem(existingDatabase);
+					break;				
+			}
+		}
+
+
 		private void compare()
 		{
 			if (newDatabaseItem == null)

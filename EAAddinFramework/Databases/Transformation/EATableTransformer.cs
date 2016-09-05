@@ -81,7 +81,9 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public virtual void save()
 		{
-			throw new NotImplementedException();
+			//update name if needed
+			//TODO: check if needed
+			
 		}
 		public abstract void setTableName(string fixedTableString, int nameCounter);
 

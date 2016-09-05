@@ -22,9 +22,37 @@ namespace EAAddinFramework.Databases
 			this.hasLength = eaDatatype.Size > 0;
 			this.hasPrecision = eaDatatype.Size == 2;
 		}
-
 		#region BaseDataType implementation
+		public void save()
+		{
+			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
+		}
+		public void delete()
+		{
+			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
+		}
 
+		public void createAsNewItem(DB.Database existingDatabase)
+		{
+			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
+		}
+		public void Update(DB.DatabaseItem newDatabaseItem)
+		{
+			//don't think we ever need this one
+			throw new NotImplementedException();
+		}
+		public DB.DatabaseItem owner {
+			get {
+				//don't think we ever need this one
+				throw new NotImplementedException();
+			}
+		}
+		public DB.DataBaseFactory factory {
+			get {
+				//TODO:figure out if we need it here
+				throw new NotImplementedException();
+			}
+		}
 		public string name {get;set;}
 
 		public bool hasLength {get;set;}

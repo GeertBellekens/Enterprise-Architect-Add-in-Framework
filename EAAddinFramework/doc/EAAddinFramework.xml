@@ -4,7 +4,7 @@
         <name>EAAddinFramework</name>
     </assembly>
     <members>
-        <member name="T:EAAddinFramework.DatabaseItem">
+        <member name="T:EAAddinFramework.Databases.DatabaseItem">
             <summary>
             Description of DatabaseItem.
             </summary>

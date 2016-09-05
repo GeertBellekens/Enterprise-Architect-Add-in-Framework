@@ -25,7 +25,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		public Column getFKInvolvedColumn()
 		{
 			//only add FK's for classes in the same pakage;
-			if (_dependingTransformer._database.Equals(this.table.owner))
+			if (_dependingTransformer._database.Equals(this.table.databaseOwner))
 			{
 				return _column;
 			}

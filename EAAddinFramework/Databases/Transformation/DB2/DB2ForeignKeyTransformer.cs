@@ -30,7 +30,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		public override void resetName()
 		{
-			this._foreignKey.name = "FK_" + this.foreignKey.owner.name + "_" + this.foreignKey.foreignTable.name + "_1" ; //TODO: sequence number for multple foreign keys
+			this._foreignKey.name = "FK_" + this.foreignKey.ownerTable.name + "_" + this.foreignKey.foreignTable.name + "_1" ; //TODO: sequence number for multple foreign keys
 		}
 
 		#endregion

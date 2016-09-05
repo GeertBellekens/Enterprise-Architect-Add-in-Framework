@@ -11,7 +11,7 @@ namespace EAAddinFramework.Databases
 	/// <summary>
 	/// Description of Table.
 	/// </summary>
-	public class Table:DB.Table
+	public class Table:DatabaseItem,DB.Table
 	{
 		internal Class _wrappedClass;
 		internal Database _owner;
@@ -28,9 +28,96 @@ namespace EAAddinFramework.Databases
 		{
 			this._name = name;
 			this._owner = owner;
-			this.owner.addTable(this);
+			this.databaseOwner.addTable(this);
 		}
-		
+
+		#region implemented abstract members of DatabaseItem
+		internal override void createTraceTaggedValue()
+		{
+			//don't think that's used here?
+			throw new NotImplementedException();
+		}
+		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		{
+			//nothing extra to do there
+		}
+		internal override Element wrappedElement {
+			get {
+				return _wrappedClass;
+			}
+			set {
+				this._wrappedClass = (Class)value;
+			}
+		}
+		internal override TaggedValue traceTaggedValue {
+			get {
+				//don't think we use that here
+				throw new NotImplementedException();
+			}
+			set {
+				//don't think we use that here
+				throw new NotImplementedException();
+			}
+		}
+		#endregion
+
+
+
+		public DB.Database databaseOwner {
+			get {
+				return _owner;
+			}
+			set {
+				
+				_owner = (Database)value;
+			}
+		}
+
+
+
+		public override void save()
+		{
+			if (_wrappedClass == null) 
+			{
+				var databasePackage = this._owner._wrappedPackage;
+				
+				if (databasePackage != null)
+				{
+					Package tablePackage = databasePackage.ownedElements.OfType<Package>()
+						.FirstOrDefault(x => x.name.Equals("Tables",StringComparison.InvariantCultureIgnoreCase));
+					Package ownerPackage = databasePackage;
+					if (tablePackage != null) ownerPackage = tablePackage;
+					_wrappedClass = this._factory._modelFactory.createNewElement<Class>(ownerPackage, this.name);
+					//TODO: provide wrapper function for gentype?
+					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
+					_wrappedClass.setStereotype("table");
+					_wrappedClass.save();
+				}
+				else
+				{
+					throw new Exception(string.Format("cannot save {0} because wrapped pacakge for database {1} does not exist",this.name, this.databaseOwner.name));
+				}
+				
+			}
+			
+		}
+		public override void delete()
+		{
+			if (_wrappedClass != null) _wrappedClass.delete();
+		}	
+
+
+
+		public override void createAsNewItem(DB.Database existingDatabase)
+		{
+			var newTable = new Table((Database)existingDatabase,this.name);
+			newTable.save();
+		}
+
+
+
+
+	
 		public List<Class> logicalClasses
 		{
 			get
@@ -84,7 +171,7 @@ namespace EAAddinFramework.Databases
 		}
 		#region Table implementation
 
-		public string name 
+		public override string name 
 		{
 			get 
 			{
@@ -109,19 +196,18 @@ namespace EAAddinFramework.Databases
 			if (this.constraints != null) this._constraints.Add((Constraint) constraint);
 		}
 
-		public string itemType {
+		public override string itemType {
 			get {return "Table";}
 		}
 
 
-		public string properties {
+		public override string properties {
 			get { return string.Empty;}
 		}
 
-		public DB.Database owner 
+		public override DB.DatabaseItem owner 
 		{
 			get {return this._owner;}
-			set {this._owner = (Database)value;}
 		}
 		public List<DB.Column> columns 
 		{

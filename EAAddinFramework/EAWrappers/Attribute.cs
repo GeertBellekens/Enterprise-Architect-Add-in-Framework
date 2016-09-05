@@ -48,7 +48,10 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-
+	public void setStereotype(string stereotype)
+    {
+    	this.wrappedAttribute.StereotypeEx = stereotype;
+    }
 	public bool isID 
 	{
 		get 

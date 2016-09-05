@@ -27,6 +27,25 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of Constraint
+		protected override string getStereotype()
+		{
+			return "PK";
+		}
+		#endregion
+
+
+		public override void createAsNewItem(DB.Database existingDatabase)
+		{
+			//look for corresponding table in existingDatabase
+			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.owner.name);
+			if (newTable != null )
+			{
+				var newPrimaryKey = new PrimaryKey(newTable,this._involvedColumns);
+				newPrimaryKey.name = name;
+				newPrimaryKey.save();
+			}
+		}
+
 		internal override void createTraceTaggedValue()
 		{
 			throw new NotImplementedException();
@@ -50,6 +69,6 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
-#endregion
+
 	}
 }

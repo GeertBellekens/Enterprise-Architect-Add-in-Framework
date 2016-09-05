@@ -696,7 +696,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     internal bool isEAAtttribute(System.Type type)
     {
-    	return (type.Name == "Property" || type.Name == "EnumerationLiteral");
+    	return (type.Name == "Property" 
+    	        || type.Name == "EnumerationLiteral" 
+    	        || type.Name == "Attribute");
     }
 
     internal bool isEAOperation(System.Type type){

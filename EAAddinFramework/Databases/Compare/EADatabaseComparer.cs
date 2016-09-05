@@ -23,8 +23,32 @@ namespace EAAddinFramework.Databases.Compare
 			this._newDatabase = newDatabase;
 			this._existingDatabase = existingDatabase;
 		}
-
 		#region DatabaseComparer implementation
+		public void save()
+		{
+			//both existing and new database should exist to even begin
+			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
+			//first save all tables
+			foreach (var tableCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Table",StringComparison.InvariantCultureIgnoreCase)))
+			{
+				tableCompareItem.save(_existingDatabase);
+			}
+			//then save all columns
+			foreach (var columnCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)))
+			{
+				columnCompareItem.save(_existingDatabase);
+			}
+			//then save all primary keys
+			foreach (var PKCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Primary Key",StringComparison.InvariantCultureIgnoreCase)))
+			{
+				PKCompareItem.save(_existingDatabase);
+			}
+			//then save all foreign keys
+			foreach (var FKCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Foreign Key",StringComparison.InvariantCultureIgnoreCase)))
+			{
+				FKCompareItem.save(_existingDatabase);
+			}
+		}
 
 		public void compare()
 		{

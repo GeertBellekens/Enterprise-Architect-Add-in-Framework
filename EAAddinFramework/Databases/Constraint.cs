@@ -15,7 +15,7 @@ namespace EAAddinFramework.Databases
 		internal Operation _wrappedOperation;
 		internal Table _owner;
 		internal string _name;
-		private List<Column> _involvedColumns;
+		protected List<Column> _involvedColumns;
 		public Constraint(Table owner,Operation operation)
 		{
 			_owner = owner;
@@ -25,8 +25,36 @@ namespace EAAddinFramework.Databases
 		{
 			_owner = owner;
 			_involvedColumns = involvedColumns;
-			this.owner.addConstraint(this);
+			this.ownerTable.addConstraint(this);
 		}
+
+		#region implemented abstract members of DatabaseItem
+		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		{
+			var newConstraint = (Constraint)newDatabaseItem;
+			this.involvedColumns = newConstraint.involvedColumns;
+		}
+		
+		internal abstract override TaggedValue traceTaggedValue {get;set;}
+		#endregion
+		public override void save()
+		{
+			if (this._wrappedOperation == null)
+			{
+				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+				this._wrappedOperation.setStereotype(getStereotype());
+				this.involvedColumns = _involvedColumns.Cast<DB.Column>().ToList();
+			}
+			this._wrappedOperation.save();
+		}
+		protected abstract string getStereotype();
+
+
+		public override void delete()
+		{
+			if (this._wrappedOperation != null) this._wrappedOperation.delete();
+		}
+
 		public override bool isOverridden {
 			get 
 			{
@@ -50,7 +78,7 @@ namespace EAAddinFramework.Databases
 		#endregion
 		#region Constraint implementation
 
-		public string name 
+		public override string name 
 		{
 			get 
 			{
@@ -73,25 +101,29 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public DB.Table owner 
+		public DB.Table ownerTable {
+			get {
+				return _owner;
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+		public override DB.DatabaseItem owner 
 		{
 			get 
 			{
 				return _owner;
 			}
-			set 
-			{
-				throw new NotImplementedException();
-			}
 		}
 
-		public virtual string itemType 
+		public override string itemType 
 		{
 			get {return "Constraint";}
 		}
 
 
-		public virtual string properties 
+		public override string properties 
 		{
 			get 
 			{
@@ -119,7 +151,7 @@ namespace EAAddinFramework.Databases
 			set 
 			{
 				_involvedColumns = value.Cast<Column>().ToList();
-				if (this._wrappedOperation == null)
+				if (this._wrappedOperation != null)
 				{
 					List<Parameter> parameters = new List<Parameter>();
 					foreach (var column in _involvedColumns) 

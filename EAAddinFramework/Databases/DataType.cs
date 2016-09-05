@@ -20,6 +20,38 @@ namespace EAAddinFramework.Databases
 
 		public DB.BaseDataType type {get;set;}
 
+		public void save()
+		{
+			throw new NotImplementedException();
+		}
+		public void delete()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void createAsNewItem(DB.Database existingDatabase)
+		{
+			throw new NotImplementedException();
+		}
+		public void Update(DB.DatabaseItem newDatabaseItem)
+		{
+			//don't think we need it here
+			throw new NotImplementedException();
+		}
+		public DB.DatabaseItem owner {
+			get {
+				//don't think we need it here
+				throw new NotImplementedException();
+			}
+		}
+
+		public DB.DataBaseFactory factory {
+			get {
+				//don't think we need that here
+				throw new NotImplementedException();
+			}
+		}
+
 		public string itemType {
 			get {return "DataType";}
 		}

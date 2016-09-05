@@ -11,33 +11,97 @@ namespace EAAddinFramework.Databases
 	/// <summary>
 	/// Description of Database.
 	/// </summary>
-	public class Database:DB.Database
+	public class Database:DatabaseItem, DB.Database
 	{
 		internal Package _wrappedPackage;
-		internal DatabaseFactory _factory;
 		internal List<Table> _tables;
-
 		private string _name;
+		private DatabaseFactory __factory;
 		public Database(Package package,DatabaseFactory factory)
 		{
 			this._wrappedPackage = package;
-			this._factory = factory;
+			this.__factory = factory;
 		}
 		public Database(string name,DatabaseFactory factory)
 		{
 			this._name = name;
-			this._factory = factory;
+			this.__factory = factory;
 		}
-
+		public override DB.DataBaseFactory factory {
+			get 
+			{
+				return __factory;
+			}
+		}
 		public void addTable(DB.Table table)
 		{
 			//initialize 
 			int nbrOfTable = this.tables.Count;
 			this._tables.Add(table as Table);
 		}
+
+		#region implemented abstract members of DatabaseItem
+		internal override void createTraceTaggedValue()
+		{
+			//do nothing?
+		}
+
+		#region implemented abstract members of DatabaseItem
+
+
+		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		{
+			//nothing extra to do here
+		}
+
+		#region implemented abstract members of DatabaseItem
+		public override void createAsNewItem(DB.Database existingDatabase)
+		{
+			//TODO: figure out how to handle creation of new databases
+		}
+		#endregion
+
+		#endregion
+
+		internal override Element wrappedElement {
+			get {
+				return this._wrappedPackage;
+			}
+			set {
+				this._wrappedPackage = (Package)value;
+			}
+		}
+		internal override TaggedValue traceTaggedValue {
+			get {
+				//do we need any at this level?
+				return null;
+			}
+			set 
+			{
+				//do nothing?
+			}
+		}
+		public override DB.DatabaseItem owner 
+		{
+			get 
+			{
+				return null;
+			}
+		}
+		#endregion
+		public override void save()
+		{
+			if (this._wrappedPackage != null) this._wrappedPackage.save();
+			//TODO: figure out some way to get a new database to be saved
+		}
+		public override void delete()
+		{
+			if (this._wrappedPackage != null) this._wrappedPackage.delete();
+		}
+
 		#region Database implementation
 
-		public string name 
+		public override string name 
 		{
 			get 
 			{
@@ -57,21 +121,21 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public string itemType {
+		public override string itemType {
 			get {return "Database";}
 		}
-		public string properties {
+		public override string properties {
 			get {return this._factory.type;}
 		}
-		public DB.DataBaseFactory factory 
+		public DB.DataBaseFactory databaseFactory 
 		{
 			get 
 			{
 				return this._factory;
 			}
-			set 
+			set
 			{
-				this._factory = (DatabaseFactory) value;
+				this.__factory = (DatabaseFactory)value;
 			}
 		}
 		public string type 
@@ -85,7 +149,7 @@ namespace EAAddinFramework.Databases
 				var newFactory = DatabaseFactory.getFactory(value);
 				if (newFactory != null)
 				{
-					this.factory = newFactory;
+					this.databaseFactory = newFactory;
 				}
 				else 
 				{

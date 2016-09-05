@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Databases
 {
@@ -13,10 +14,20 @@ namespace EAAddinFramework.Databases
 	public class DatabaseFactory:DB.DataBaseFactory
 	{
 		private string _type;
+		private Model _model;
 		public string type 
 		{
 			get { return _type;}
 		}
+
+		public string databaseName 
+		{
+			get 
+			{
+				return type;
+			}
+		}
+
 		private Dictionary<string, BaseDataType> _baseDataTypes;
 		public List<DB.BaseDataType> baseDataTypes
 		{
@@ -52,9 +63,25 @@ namespace EAAddinFramework.Databases
 			}
 			return null;
 		}
+		public UML.Extended.UMLFactory modelFactory
+		{
+			get
+			{
+				if (this._model != null) return (Factory)this._model.factory;
+				else return null;
+			}
+		}
+		public Factory _modelFactory
+		{
+			get
+			{
+				return modelFactory as Factory;
+			}
+		}
 		private DatabaseFactory(string type, Model model)
 		{
 			this._type = type;
+			this._model = model;
 			this._baseDataTypes = getBaseDataTypes(type,model);
 		}
 		public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
