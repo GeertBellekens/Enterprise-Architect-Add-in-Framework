@@ -175,7 +175,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override string name 
 	{
       get { return this.wrappedOperation.Name;   }
-      set { throw new NotImplementedException(); }
+      set { this.wrappedOperation.Name = value; }
     }
     
     public UML.Classes.Kernel.VisibilityKind visibility {

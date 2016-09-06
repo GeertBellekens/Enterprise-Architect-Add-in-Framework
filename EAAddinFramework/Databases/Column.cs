@@ -15,6 +15,7 @@ namespace EAAddinFramework.Databases
 		internal Table _owner;
 		internal TSF_EA.Attribute _wrappedattribute;
 		internal DataType _type;
+		private TSF_EA.TaggedValue _traceTaggedValue;
 		private TSF_EA.Attribute _logicalAttribute;
 		private string _name;
 		private bool _isNotNullable;
@@ -52,18 +53,17 @@ namespace EAAddinFramework.Databases
 				_wrappedattribute.precision = this.type.precision;
 				//is not nullable
 				this.isNotNullable = _isNotNullable;
-				//logical attribute
-				if (this.traceTaggedValue == null) this.createTraceTaggedValue();
-				if (this.traceTaggedValue != null)
-				{
-					traceTaggedValue.tagValue = this._logicalAttribute;
-					traceTaggedValue.save();
-				}
 				//save
 				_wrappedattribute.save();
+				//logical attribute tag value
+				if (traceTaggedValue == null) createTraceTaggedValue();
+				
+
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 
+			
+
 				
 		}
 
@@ -77,6 +77,7 @@ namespace EAAddinFramework.Databases
 				var newColumn = new Column(newTable,this.name);
 				newColumn.isNotNullable = _isNotNullable;
 				newColumn.type = _type;
+				newColumn.logicalAttribute = _logicalAttribute;
 				newColumn.save();
 			}
 		}
@@ -102,8 +103,11 @@ namespace EAAddinFramework.Databases
 		{
 			if (this._wrappedattribute != null)
 			{
-				this._wrappedattribute.addTaggedValue("sourceAttribute",string.Empty);
+				string tagValue = string.Empty;
+				if (_logicalAttribute != null) tagValue = _logicalAttribute.guid;
+				 this._wrappedattribute.addTaggedValue("sourceAttribute",tagValue);
 			}
+			
 		}
 		internal override Element wrappedElement 
 		{
@@ -120,20 +124,25 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				if (_wrappedattribute != null)
+				if (_traceTaggedValue == null)
 				{
-					return _wrappedattribute.taggedValues.OfType<TaggedValue>().FirstOrDefault(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase));
+					if (_wrappedattribute != null)
+					{
+						_traceTaggedValue = _wrappedattribute.taggedValues.OfType<TaggedValue>().FirstOrDefault(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase));
+					}
 				}
 				//no wrapped attribute so retur null
-				return null;
+				return _traceTaggedValue;
 			}
 			set 
 			{
+				_traceTaggedValue = value;
 				if (_wrappedattribute != null
 				   && value != null)
 				{
-					var tag = _wrappedattribute.addTaggedValue(value.name, value.eaStringValue);
-					tag.comment = value.comment;
+					_traceTaggedValue = _wrappedattribute.addTaggedValue(value.name, value.eaStringValue);
+					_traceTaggedValue.comment = value.comment;
+					_traceTaggedValue.save();
 				}
 			}
 		}
@@ -155,6 +164,7 @@ namespace EAAddinFramework.Databases
 			set
 			{
 				_logicalAttribute = value;
+				this.createTraceTaggedValue();
 			}
 		}
 		

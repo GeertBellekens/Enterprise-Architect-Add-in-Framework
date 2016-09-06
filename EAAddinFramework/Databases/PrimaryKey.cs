@@ -54,7 +54,6 @@ namespace EAAddinFramework.Databases
 				if (this.involvedColumns.Any(x => x.name == column.name))
 			    {
 					column._wrappedattribute.wrappedAttribute.IsOrdered = true;
-					
 			    }
 				else
 				{
