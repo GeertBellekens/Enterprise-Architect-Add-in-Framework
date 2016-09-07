@@ -42,7 +42,7 @@ namespace EAAddinFramework.Databases
 		{
 			throw new NotImplementedException();
 		}
-		public void Update(DB.DatabaseItem newDatabaseItem)
+		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//don't think we need it here
 			throw new NotImplementedException();

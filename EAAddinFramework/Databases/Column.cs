@@ -97,7 +97,7 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 		#region implemented abstract members of DatabaseItem
-		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		protected override void updateDetails(DB.DatabaseItem newDatabaseItem)
 		{
 			var newColumn = (Column)newDatabaseItem;
 			this._isNotNullable = newColumn.isNotNullable;

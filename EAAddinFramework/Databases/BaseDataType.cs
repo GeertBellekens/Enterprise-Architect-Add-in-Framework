@@ -43,7 +43,7 @@ namespace EAAddinFramework.Databases
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 		}
-		public void Update(DB.DatabaseItem newDatabaseItem)
+		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//don't think we ever need this one
 			throw new NotImplementedException();

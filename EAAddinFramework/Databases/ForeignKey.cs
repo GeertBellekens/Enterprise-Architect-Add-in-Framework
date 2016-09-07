@@ -81,9 +81,9 @@ namespace EAAddinFramework.Databases
 
 		#endregion
 
-		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		protected override void updateDetails(DB.DatabaseItem newDatabaseItem)
 		{
-			base.udateDetails(newDatabaseItem);
+			base.updateDetails(newDatabaseItem);
 			ForeignKey newForeignKey = (ForeignKey)newDatabaseItem;
 			//update the association
 			this._foreignTable = newForeignKey._foreignTable;

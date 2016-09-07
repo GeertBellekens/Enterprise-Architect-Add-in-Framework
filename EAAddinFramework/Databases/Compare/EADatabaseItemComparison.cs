@@ -33,7 +33,7 @@ namespace EAAddinFramework.Databases.Compare
 					//do nothing, already the same,
 					break;
 				case DatabaseComparisonStatusEnum.changed:
-					this.existingDatabaseItem.Update(this.newDatabaseItem);
+					this.existingDatabaseItem.update(this.newDatabaseItem);
 					break;
 				case DatabaseComparisonStatusEnum.dboverride:
 					break;
@@ -76,6 +76,9 @@ namespace EAAddinFramework.Databases.Compare
 					else if (existingDatabaseItem.isOverridden)
 					{
 						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						//we need to set the new item to match the properties of the existing item
+						//This might also resolve validity issues
+						this.newDatabaseItem.update(this.existingDatabaseItem, false);
 					}
 					else
 					{

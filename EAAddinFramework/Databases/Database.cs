@@ -65,7 +65,7 @@ namespace EAAddinFramework.Databases
 		#region implemented abstract members of DatabaseItem
 
 
-		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		protected override void updateDetails(DB.DatabaseItem newDatabaseItem)
 		{
 			//nothing extra to do here
 		}

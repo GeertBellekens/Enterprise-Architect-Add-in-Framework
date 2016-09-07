@@ -25,19 +25,22 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public void Update(DB.DatabaseItem newDatabaseItem)
+		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//check if types are the same
-			if (newDatabaseItem.itemType != this.itemType) throw new Exception(string.Format("Cannot update objec of type {0} with object of type {1}",this.itemType, newDatabaseItem.itemType));
+			if (newDatabaseItem.itemType != this.itemType) throw new Exception(string.Format("Cannot update object of type {0} with object of type {1}",this.itemType, newDatabaseItem.itemType));
 			this.name = newDatabaseItem.name;
-			this.udateDetails(newDatabaseItem);
-			this.save();
+			this.updateDetails(newDatabaseItem);
+			if (save)
+			{
+				this.save();
+			}
 		}
 
 		public abstract void createAsNewItem(DB.Database existingDatabase);
 
 		public abstract bool isValid{get;}
-		protected abstract void udateDetails(DB.DatabaseItem newDatabaseItem);
+		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory
 		{
 			get

@@ -37,7 +37,7 @@ namespace EAAddinFramework.Databases
 			//don't think that's used here?
 			throw new NotImplementedException();
 		}
-		protected override void udateDetails(DB.DatabaseItem newDatabaseItem)
+		protected override void updateDetails(DB.DatabaseItem newDatabaseItem)
 		{
 			//nothing extra to do there
 		}
