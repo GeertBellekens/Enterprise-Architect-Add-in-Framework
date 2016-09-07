@@ -68,6 +68,20 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
+		public override bool isValid 
+		{
+			get 
+			{
+				// a column is valid if it has a name, a type, and if there's no other column in the table with the same name
+				return (! string.IsNullOrEmpty(this.name)
+				        && this.type != null
+				        && this.type.isValid
+				        && ownerTable.columns.Count(x => x.name == this.name) == 1);
+				       
+			}
+		}
+		#endregion
+		#region implemented abstract members of DatabaseItem
 		public override void createAsNewItem(DB.Database existingDatabase)
 		{
 			//look for corresponding table in existingDatabase

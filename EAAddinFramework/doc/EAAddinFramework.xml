@@ -4,11 +4,6 @@
         <name>EAAddinFramework</name>
     </assembly>
     <members>
-        <member name="T:EAAddinFramework.Databases.DatabaseItem">
-            <summary>
-            Description of DatabaseItem.
-            </summary>
-        </member>
         <member name="T:EAAddinFramework.Databases.BaseDataType">
             <summary>
             Description of BaseDataType.
@@ -17,6 +12,11 @@
         <member name="T:EAAddinFramework.Databases.Column">
             <summary>
             Description of Column.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.DatabaseItem">
+            <summary>
+            Description of DatabaseItem.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Databases.Compare.EADatabaseComparer">

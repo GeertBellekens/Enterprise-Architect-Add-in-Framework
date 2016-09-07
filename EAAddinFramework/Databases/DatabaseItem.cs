@@ -36,6 +36,7 @@ namespace EAAddinFramework.Databases
 
 		public abstract void createAsNewItem(DB.Database existingDatabase);
 
+		public abstract bool isValid{get;}
 		protected abstract void udateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory
 		{

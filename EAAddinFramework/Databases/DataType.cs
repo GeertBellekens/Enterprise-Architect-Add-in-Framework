@@ -29,6 +29,15 @@ namespace EAAddinFramework.Databases
 			throw new NotImplementedException();
 		}
 
+		public bool isValid 
+		{
+			get
+			{
+				//datatype is valid if it has a name
+				return (! string.IsNullOrEmpty(this.name));
+				
+			}
+		}
 		public void createAsNewItem(DB.Database existingDatabase)
 		{
 			throw new NotImplementedException();

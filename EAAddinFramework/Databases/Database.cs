@@ -33,6 +33,22 @@ namespace EAAddinFramework.Databases
 				return __factory;
 			}
 		}
+
+		#region implemented abstract members of DatabaseItem
+
+
+		public override bool isValid 
+		{
+			get 
+			{
+				//database is valid if all columns and constraints are valid
+				return this.tables.All(x => x.isValid);
+			}
+		}
+
+
+		#endregion
+
 		public void addTable(DB.Table table)
 		{
 			//initialize 

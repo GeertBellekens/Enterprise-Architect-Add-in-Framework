@@ -68,6 +68,24 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
+
+		#region implemented abstract members of DatabaseItem
+
+
+		public override bool isValid 
+		{
+			get
+			{
+				//valid if there's no other constraint with the same name
+				// and if there is at least one involved column
+				return (this.involvedColumns.Count > 0 
+				        && ownerTable.constraints.Count( x => x.name == this.name) == 1);
+			}
+		}
+
+
+		#endregion
+
 		protected abstract string getStereotype();
 
 

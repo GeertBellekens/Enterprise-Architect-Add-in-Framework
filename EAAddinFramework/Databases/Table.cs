@@ -73,6 +73,21 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		#region implemented abstract members of DatabaseItem
+		public override bool isValid 
+		{
+			get 
+			{
+				//table is valid if it has a name
+				// there is no other table with the same name
+				// all columns and constraints are valid
+				return (! string.IsNullOrEmpty(this.name)
+				        && this.databaseOwner.tables.Count(x => x.name == this.name) == 1
+				        && this.columns.All(x => x.isValid)
+				        && this.constraints.All(x => x.isValid));
+			}
+		}
+		#endregion
 
 
 		public override void save()

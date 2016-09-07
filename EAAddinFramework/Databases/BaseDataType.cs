@@ -32,6 +32,13 @@ namespace EAAddinFramework.Databases
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 		}
 
+		public bool isValid {
+			get 
+			{
+				//base data type is valid if it has a name
+				return ! string.IsNullOrEmpty(this.name);
+			}
+		}
 		public void createAsNewItem(DB.Database existingDatabase)
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI

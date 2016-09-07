@@ -72,7 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseItem.cs" />
     <Compile Include="Databases\BaseDataType.cs" />
     <Compile Include="Databases\Column.cs" />
     <Compile Include="Databases\Compare\EADatabaseComparer.cs" />
@@ -80,6 +79,7 @@
     <Compile Include="Databases\Constraint.cs" />
     <Compile Include="Databases\Database.cs" />
     <Compile Include="Databases\DatabaseFactory.cs" />
+    <Compile Include="Databases\DatabaseItem.cs" />
     <Compile Include="Databases\DataType.cs" />
     <Compile Include="Databases\ForeignKey.cs" />
     <Compile Include="Databases\PrimaryKey.cs" />
