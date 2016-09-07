@@ -144,7 +144,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
         return parameters;
       }
-      set { throw new NotImplementedException(); }
+      set { 
+			//only implemented to remove all parameters
+			if (value.Count > 0) throw new NotImplementedException();
+			for (short i = (short)(this.wrappedOperation.Parameters.Count-1); i >= 0; i--)
+			{
+				this.wrappedOperation.Parameters.DeleteAt(i,false);
+			}
+			this.wrappedOperation.Parameters.Refresh();
+		}
     }
     
     public bool isStatic {

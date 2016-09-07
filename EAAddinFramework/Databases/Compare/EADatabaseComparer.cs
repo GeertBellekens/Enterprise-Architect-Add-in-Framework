@@ -59,7 +59,7 @@ namespace EAAddinFramework.Databases.Compare
 				Table existingTable = null;
 				if (_existingDatabase != null) existingTable = (Table)_existingDatabase.getCorrespondingTable(newTable);
 				var comparedItem = new EADatabaseItemComparison(newTable,existingTable);
-				comparedItems.Add(comparedItem);
+				addToComparison(comparedItem);
 				this.addComparisonDetails(comparedItem);
 			}
 			if (_existingDatabase != null)
@@ -71,11 +71,37 @@ namespace EAAddinFramework.Databases.Compare
 					if (! comparedItems.Any(x => x.existingDatabaseItem == existingTable))
 					{
 						var comparedItem = new EADatabaseItemComparison(null,existingTable);
-						comparedItems.Add(comparedItem);
+						addToComparison(comparedItem);
 						this.addComparisonDetails(comparedItem);
 					}
 				}
 			}	
+		}
+		private void addToComparison(DatabaseItemComparison comparedItem)
+		{
+			//if new item alrady compared then make it null
+			if (comparedItems.Any(x => x.newDatabaseItem == comparedItem.newDatabaseItem))
+			{
+				comparedItem.newDatabaseItem = null;
+			}
+			//if existing item already compared then make it null
+			if ( comparedItems.Any(x => x.existingDatabaseItem == comparedItem.existingDatabaseItem))
+			{
+				comparedItem.existingDatabaseItem = null;
+			}
+			//only add the commparison if not both of them are null
+			if (comparedItem.existingDatabaseItem != null 
+			    || comparedItem.newDatabaseItem != null)
+			{
+				comparedItems.Add(comparedItem);
+			}
+		}
+		private void addToComparison(List<DatabaseItemComparison> addedComparedItems)
+		{
+			foreach (var comparedItem in addedComparedItems) 
+			{
+				addToComparison( comparedItem);
+			}
 		}
 		public void addComparisonDetails(EADatabaseItemComparison comparedItem)
 		{
@@ -145,7 +171,7 @@ namespace EAAddinFramework.Databases.Compare
 			}
 			
 			//add the new compared items
-			this.comparedItems.AddRange(addedComparedItems);
+			addToComparison(addedComparedItems);
 		}
 		public DB.Database newDatabase {
 			get { return _newDatabase;}

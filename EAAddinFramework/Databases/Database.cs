@@ -186,7 +186,7 @@ namespace EAAddinFramework.Databases
 				{
 					bool match = false;
 					//each logical class of the external table should be equal to the logical class of this table
-					foreach (var logicalClass in table._logicalClasses) 
+					foreach (var logicalClass in table.logicalClasses) 
 					{
 						if (_externalTable.logicalClasses.Any(x => x.Equals(logicalClass)))
 					    {

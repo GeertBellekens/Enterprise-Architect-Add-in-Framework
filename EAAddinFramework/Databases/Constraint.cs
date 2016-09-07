@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML=TSF.UmlToolingFramework.UML;
+
 using System.Linq;
 
 namespace EAAddinFramework.Databases
@@ -51,7 +53,9 @@ namespace EAAddinFramework.Databases
 				this.involvedColumns = this.ownerTable.columns.Where (x => _involvedColumns.Any(y => y.name == x.name)).ToList();
 				if (this._wrappedOperation != null)
 				{
-					List<ParameterWrapper> parameters = new List<ParameterWrapper>();
+					//first remove all existing parameters
+					
+					this._wrappedOperation.ownedParameters = new HashSet<UML.Classes.Kernel.Parameter>();
 					foreach (var column in _involvedColumns) 
 					{
 						{

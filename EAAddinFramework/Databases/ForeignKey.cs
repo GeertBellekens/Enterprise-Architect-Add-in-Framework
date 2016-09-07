@@ -35,11 +35,6 @@ namespace EAAddinFramework.Databases
 		{
 			base.save();
 			if (this.traceTaggedValue == null) createTraceTaggedValue();
-			if (this.traceTaggedValue != null)
-			{
-				this.traceTaggedValue.tagValue = _logicalAssociation;
-				this.traceTaggedValue.save();
-			}
 			//check if association to correct table
 			if (this._wrappedAssociation == null)
 			{
@@ -78,6 +73,7 @@ namespace EAAddinFramework.Databases
 				var newForeignKey = new ForeignKey(newTable,this._involvedColumns);
 				newForeignKey.name = name;
 				newForeignKey._foreignTable = (Table)newForeignTable;
+				newForeignKey._logicalAssociation = _logicalAssociation;
 				newForeignKey.save();
 			}
 		}
@@ -163,9 +159,9 @@ namespace EAAddinFramework.Databases
 
 		internal override void createTraceTaggedValue()
 		{
-			if (this._wrappedOperation != null)
+			if (this._wrappedOperation != null && _logicalAssociation != null)
 			{
-				this._wrappedOperation.addTaggedValue("sourceAssociation",string.Empty);
+				this._wrappedOperation.addTaggedValue("sourceAssociation",_logicalAssociation.guid);
 			}
 		}
 
