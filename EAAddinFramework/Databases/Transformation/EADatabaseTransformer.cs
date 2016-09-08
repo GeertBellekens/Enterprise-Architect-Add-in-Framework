@@ -45,7 +45,6 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public void refresh()
 		{
-			this._existingDatabase = null;
 			this._newDatabase = null;
 			this._tableTransformers.Clear();
 			this.transformLogicalPackage(this.logicalPackage);
@@ -53,7 +52,10 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public DB.Database newDatabase 
 		{
-			get {return this._newDatabase;}
+			get 
+			{
+				return this._newDatabase;
+			}
 			set {this._newDatabase = (Database)value;}
 		}
 
@@ -81,7 +83,20 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public UML.Classes.Kernel.Package logicalPackage 
 		{
-			get {return this._logicalPackage;}
+			get 
+			{
+				if (_logicalPackage == null
+				    && _existingDatabase != null
+				   && _existingDatabase._wrappedPackage != null)
+				{
+					//search for the first logical package we find
+					_logicalPackage = _existingDatabase._wrappedPackage.relationships.OfType<UTF_EA.Abstraction>()
+									.Where(x => x.stereotypes.Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase)
+											&& x.target is UTF_EA.Package))
+											.Select(z => z.target as UTF_EA.Package).FirstOrDefault();
+				}
+				return this._logicalPackage;
+			}
 			set {this._logicalPackage = (UTF_EA.Package)value;}
 		}
 		public List<DB.Transformation.TableTransformer> tableTransformers {
@@ -113,12 +128,15 @@ namespace EAAddinFramework.Databases.Transformation
 
 		protected virtual void createTables()
 		{
-			foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>()) 
+			if (logicalPackage != null)
 			{
-				addTable(classElement);
+				foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>()) 
+				{
+					addTable(classElement);
+				}
+				//set table names for tables that don't have a name yet;
+				nameUnnamedTables();
 			}
-			//set table names for tables that don't have a name yet;
-			nameUnnamedTables();
 		}
 		protected abstract void addTable(UTF_EA.Class classElement);
 		

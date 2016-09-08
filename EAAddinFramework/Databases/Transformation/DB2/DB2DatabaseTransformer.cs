@@ -29,7 +29,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			this._externalDatabase = factory.createDatabase("external");
 		}
-		private static DatabaseFactory getFactory(UTF_EA.Model model)
+		public static DatabaseFactory getFactory(UTF_EA.Model model)
 		{
 			DB_EA.DatabaseFactory.addFactory("DB2",model);
 			return  DB_EA.DatabaseFactory.getFactory("DB2");
@@ -42,7 +42,10 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		/// </summary>
 		protected override void createNewDatabase()
 		{
-			this._newDatabase = factory.createDatabase(this._logicalPackage.alias);
+			if (this.logicalPackage != null)
+			{
+				this._newDatabase = factory.createDatabase(this._logicalPackage.alias);
+			}
 		}
 
 		protected override void addTable(UTF_EA.Class classElement)
