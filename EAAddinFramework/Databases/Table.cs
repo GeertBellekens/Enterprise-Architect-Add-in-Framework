@@ -32,7 +32,7 @@ namespace EAAddinFramework.Databases
 		}
 		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
 			get {
-				return this._logicalClasses.FirstOrDefault();
+				return this.logicalClasses.FirstOrDefault();
 			}
 		}
 		#region implemented abstract members of DatabaseItem
