@@ -31,6 +31,11 @@ namespace EAAddinFramework.Databases
 			return "FK";
 		}
 		#endregion
+		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+			get {
+				return this.logicalAssociation;
+			}
+		}
 		public override void save()
 		{
 			base.save();

@@ -32,6 +32,17 @@ namespace EAAddinFramework.Databases
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 		}
 
+		public void Select()
+		{
+			//you cannot select a Base Datatype
+		}
+		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+			get 
+			{
+				//base datatypes don't have logical elements
+				return null;
+			}
+		}
 		public bool isValid {
 			get 
 			{

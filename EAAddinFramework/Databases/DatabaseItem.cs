@@ -37,6 +37,12 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public void Select()
+		{
+			if (this.wrappedElement != null) this.wrappedElement.select();
+		}
+		public abstract UML.Classes.Kernel.Element logicalElement {get;}
+
 		public abstract void createAsNewItem(DB.Database existingDatabase);
 
 		public abstract bool isValid{get;}

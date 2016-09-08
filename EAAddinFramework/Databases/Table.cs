@@ -30,7 +30,11 @@ namespace EAAddinFramework.Databases
 			this._owner = owner;
 			this.databaseOwner.addTable(this);
 		}
-
+		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+			get {
+				return this._logicalClasses.FirstOrDefault();
+			}
+		}
 		#region implemented abstract members of DatabaseItem
 		internal override void createTraceTaggedValue()
 		{
@@ -51,12 +55,10 @@ namespace EAAddinFramework.Databases
 		}
 		internal override TaggedValue traceTaggedValue {
 			get {
-				//don't think we use that here
-				throw new NotImplementedException();
+				return null;
 			}
 			set {
-				//don't think we use that here
-				throw new NotImplementedException();
+				// do nothing, not used here
 			}
 		}
 		#endregion

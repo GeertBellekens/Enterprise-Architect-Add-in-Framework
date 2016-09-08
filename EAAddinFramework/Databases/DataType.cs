@@ -38,6 +38,17 @@ namespace EAAddinFramework.Databases
 				
 			}
 		}
+		public void Select()
+		{
+			//you cannot select a Datatype
+		}
+		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+			get 
+			{
+				// datatypes don't have logical elements
+				return null;
+			}
+		}
 		public void createAsNewItem(DB.Database existingDatabase)
 		{
 			throw new NotImplementedException();

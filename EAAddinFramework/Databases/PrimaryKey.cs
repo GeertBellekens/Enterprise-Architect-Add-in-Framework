@@ -33,7 +33,13 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 
-
+		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+			get {
+				var firstColumn = this.involvedColumns.FirstOrDefault();
+				if (firstColumn != null) return firstColumn.logicalElement;
+				return null;
+			}
+		}
 		public override void createAsNewItem(DB.Database existingDatabase)
 		{
 			//look for corresponding table in existingDatabase

@@ -33,7 +33,7 @@ namespace EAAddinFramework.Databases
 				return __factory;
 			}
 		}
-
+		
 		#region implemented abstract members of DatabaseItem
 
 
@@ -46,6 +46,15 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		#region implemented abstract members of DatabaseItem
+		public override UML.Classes.Kernel.Element logicalElement {
+			get 
+			{
+				//TODO: return logical package if ever needed
+				return null;
+			}
+		}
+		#endregion
 
 		#endregion
 

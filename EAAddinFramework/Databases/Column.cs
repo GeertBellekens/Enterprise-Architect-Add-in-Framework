@@ -66,7 +66,13 @@ namespace EAAddinFramework.Databases
 
 				
 		}
-
+		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement 
+		{
+			get 
+			{
+				return logicalAttribute;
+			}
+		}
 		#region implemented abstract members of DatabaseItem
 		public override bool isValid 
 		{
