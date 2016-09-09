@@ -15,6 +15,7 @@ namespace EAAddinFramework.Databases
 		internal abstract Element wrappedElement {get;set;}
 		internal abstract TaggedValue traceTaggedValue {get;set;}
 		internal abstract void createTraceTaggedValue();
+		internal bool? _isOverridden;
 		public virtual DB.DataBaseFactory factory 
 		{
 			get 
@@ -30,6 +31,7 @@ namespace EAAddinFramework.Databases
 			//check if types are the same
 			if (newDatabaseItem.itemType != this.itemType) throw new Exception(string.Format("Cannot update object of type {0} with object of type {1}",this.itemType, newDatabaseItem.itemType));
 			this.name = newDatabaseItem.name;
+			this.isOverridden = newDatabaseItem.isOverridden;
 			this.updateDetails(newDatabaseItem);
 			if (save)
 			{
@@ -59,33 +61,29 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				return (this.traceTaggedValue != null 
-				        && this.traceTaggedValue.comment.ToLower().Contains("dboverride=true"));
-			}
-			set
-			{
-				//create tagged value if needed if not overridden then we don't need the tagged value;
-				if (value)
+				if (! _isOverridden.HasValue)
 				{
-					if (this.traceTaggedValue == null) 
+					//get the tagged value
+					if (this.wrappedElement != null)
 					{
-						createTraceTaggedValue();
-					}
-				}
-				if (this.traceTaggedValue != null)
-				{
-					//set the value
-					string goodString = "dboverride=" + value.ToString().ToLower();
-					string replaceString = "dboverride=" + (!value).ToString().ToLower();
-	
-					if(this.traceTaggedValue.comment.ToLower().Contains(replaceString))
-					{
-						this.traceTaggedValue.comment = this.traceTaggedValue.comment.ToLower().Replace(replaceString,goodString);
+						_isOverridden = this.wrappedElement.taggedValues
+							.Any( x => x.name.Equals("dboverride",StringComparison.InvariantCultureIgnoreCase)
+							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
 					}
 					else
 					{
-						this.traceTaggedValue.comment += goodString;
+						return false;
 					}
+				}
+				return _isOverridden.Value;
+			}
+			set
+			{
+				this._isOverridden = value;
+				//create tagged value if needed if not overridden then we don't need the tagged value;
+				if (this.wrappedElement != null)
+				{
+					wrappedElement.addTaggedValue("dboverride",value.ToString().ToLower());
 				}
 			}
 		}

@@ -35,6 +35,13 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			return  DB_EA.DatabaseFactory.getFactory("DB2");
 		}
 
+		#region implemented abstract members of EADatabaseItemTransformer
+		public override void rename(string newName)
+		{
+			throw new NotImplementedException();
+		}
+		#endregion
+
 		#region implemented abstract members of EADatabaseTransformer
 
 		/// <summary>

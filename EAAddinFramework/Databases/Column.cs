@@ -40,7 +40,7 @@ namespace EAAddinFramework.Databases
 				{
 					this.ownerTable.save();
 				}
-				//now the wrappedClass should exist. if note then we have a problem
+				//now the wrappedClass should exist. if not then we have a problem
 				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._owner._wrappedClass,this.name);		
 			}
 			if (_wrappedattribute != null)
@@ -55,6 +55,8 @@ namespace EAAddinFramework.Databases
 				this.isNotNullable = _isNotNullable;
 				//save
 				_wrappedattribute.save();
+				//set isOverridden
+				this.isOverridden = this.isOverridden;
 				//logical attribute tag value
 				if (traceTaggedValue == null) createTraceTaggedValue();
 				

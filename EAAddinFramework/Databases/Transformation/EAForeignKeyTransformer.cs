@@ -36,6 +36,27 @@ namespace EAAddinFramework.Databases.Transformation
 		}
 
 		public abstract void resetName();
+
+		#region implemented abstract members of EADatabaseItemTransformer
+
+
+
+		public override DB.Transformation.DatabaseItemTransformer getCorrespondingTransformer(DB.DatabaseItem item)
+		{
+			if (item == this.foreignKey) return this;
+			return null;
+		}
+
+
+		public override DB.DatabaseItem databaseItem {
+			get {
+				return this.foreignKey;
+			}
+		}
+
+
+		#endregion
+
 		public UML.Classes.Kernel.Association logicalAssociation {
 			get { return _logicalAssociation;}
 			set { _logicalAssociation = (UTF_EA.Association) value;}

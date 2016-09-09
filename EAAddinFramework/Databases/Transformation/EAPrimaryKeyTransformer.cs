@@ -34,9 +34,27 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public abstract void resetName();
 	
+
+		#region implemented abstract members of EADatabaseItemTransformer
+
+
+		public override DB.Transformation.DatabaseItemTransformer getCorrespondingTransformer(DB.DatabaseItem item)
+		{
+			if (item == this.primaryKey) return this;
+			return null;
+		}
+
+		public override DB.DatabaseItem databaseItem {
+			get {
+				return this.primaryKey;
+			}
+		}
+		
 		public virtual void save()
 		{
 			throw new NotImplementedException();
 		}
+
+		#endregion
 	}
 }

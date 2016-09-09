@@ -41,8 +41,33 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_model = (UTF_EA.Model) value;}
 		}
 
-
-
+		public void renameItem(DB.DatabaseItem item, string newName)
+		{
+			//get corresponding transformer
+			var transformer = getCorrespondingTransformer(item);
+			if (transformer != null) transformer.rename(newName);
+		}
+		
+		public override DB.Transformation.DatabaseItemTransformer getCorrespondingTransformer(DB.DatabaseItem item)
+		{
+			//check if the item is our new database
+			if (item == this.newDatabase) return this;
+			//go deeper
+			DB.Transformation.DatabaseItemTransformer correspondingTransformer = null;
+			foreach (var tableTransformer in this.tableTransformers) 
+			{
+				correspondingTransformer = tableTransformer.getCorrespondingTransformer(item);
+				if (correspondingTransformer != null) break;
+			}
+			return correspondingTransformer;
+		}
+		
+		public override DB.DatabaseItem databaseItem {
+			get {
+				return this.existingDatabase;
+			}
+		}
+		
 		public void refresh()
 		{
 			this._newDatabase = null;

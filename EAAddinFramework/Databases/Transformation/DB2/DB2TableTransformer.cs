@@ -53,6 +53,23 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			set { _columnTransformers = value.Cast<DB2ColumnTransformer>().ToList();}
 		}
 
+		#region implemented abstract members of EADatabaseItemTransformer
+		public override void rename(string newName)
+		{
+			this.table.name = newName;
+			this.logicalClass.alias = newName;
+		}
+		#endregion
+		#region implemented abstract members of EATableTransformer
+		public override DB.Transformation.PrimaryKeyTransformer primaryKeyTransformer {
+			get {
+				return _primaryKeyTransformer;
+			}
+			set {
+				this._primaryKeyTransformer = (DB2PrimaryKeyTransformer)value;
+			}
+		}
+		#endregion
 		#region implemented abstract members of EATableTransformer
 
 

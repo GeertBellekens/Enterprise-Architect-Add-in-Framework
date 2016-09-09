@@ -50,6 +50,21 @@ namespace EAAddinFramework.Databases.Transformation
 			set {_column = (Column)value;}
 		}
 
+		#region implemented abstract members of EADatabaseItemTransformer
+				
+		public override DB.Transformation.DatabaseItemTransformer getCorrespondingTransformer(DB.DatabaseItem item)
+		{
+			if (item == this.column) return this;
+			return null;
+		}
+		#endregion				
+		public override DB.DatabaseItem databaseItem
+		{
+			get 
+			{
+				return this.column;
+			}
+		}
 		
 		#endregion
 	}

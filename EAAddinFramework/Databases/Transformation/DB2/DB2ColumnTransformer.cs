@@ -65,6 +65,23 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			this.column = transformLogicalAttribute(attribute);
 		}
 
+		#region implemented abstract members of EADatabaseItemTransformer
+		public override void rename(string newName)
+		{
+			this.column.name = newName;
+			//we can only change the alias if this is a direct transformation
+			if (this._dependingTransformer == null)
+			{
+				if (this.logicalProperty != null) ((UTF_EA.Attribute)this.logicalProperty).alias = newName;
+			}
+			else
+			{
+				//otherwise we override on database level to allow for a different name
+				this.column.isOverridden = true;
+			}
+		}
+
+		#endregion
 
 		#endregion
 

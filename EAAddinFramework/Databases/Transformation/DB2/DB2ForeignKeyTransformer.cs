@@ -34,5 +34,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 
 		#endregion
+
+		#region implemented abstract members of EADatabaseItemTransformer
+
+		public override void rename(string newName)
+		{
+			this.foreignKey.name = newName;
+		}
+
+		#endregion
 	}
 }
