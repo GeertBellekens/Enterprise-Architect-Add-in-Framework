@@ -656,6 +656,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		get 
 		{
+			//make sure we have an up-to-date collection
+			this.wrappedElement.TaggedValues.Refresh();
 			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedElement.TaggedValues));
 		}
 		set { throw new NotImplementedException();}

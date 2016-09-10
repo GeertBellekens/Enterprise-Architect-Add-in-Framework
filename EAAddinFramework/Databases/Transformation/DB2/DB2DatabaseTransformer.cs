@@ -118,6 +118,15 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				nameCounter++;
 				tableTransformer.setTableName(fixedTableString,nameCounter);
 			}
+			//rename foreign keys to match new table names
+			foreach (var foreignKeyTransformers in this._tableTransformers.Select(x => x.foreignKeyTransformers)) 
+			{
+				foreach (DB2ForeignKeyTransformer foreignKeyTransformer in foreignKeyTransformers) 
+				{
+					foreignKeyTransformer.resetName();
+				}
+				
+			}
 		}
 		private int getTableNameCounter()
 		{

@@ -79,6 +79,7 @@ namespace EAAddinFramework.Databases
 				newForeignKey.name = name;
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
+				newForeignKey.isOverridden = isOverridden;
 				newForeignKey.save();
 			}
 		}

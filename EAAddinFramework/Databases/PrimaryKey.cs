@@ -48,6 +48,7 @@ namespace EAAddinFramework.Databases
 			{
 				var newPrimaryKey = new PrimaryKey(newTable,this._involvedColumns);
 				newPrimaryKey.name = name;
+				newPrimaryKey.isOverridden = this.isOverridden;
 				newPrimaryKey.save();
 			}
 		}

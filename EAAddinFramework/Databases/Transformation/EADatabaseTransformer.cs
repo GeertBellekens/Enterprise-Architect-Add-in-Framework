@@ -161,6 +161,7 @@ namespace EAAddinFramework.Databases.Transformation
 				}
 				//set table names for tables that don't have a name yet;
 				nameUnnamedTables();
+				
 			}
 		}
 		protected abstract void addTable(UTF_EA.Class classElement);

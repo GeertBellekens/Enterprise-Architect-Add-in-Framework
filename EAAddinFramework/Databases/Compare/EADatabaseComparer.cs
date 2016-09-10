@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
@@ -48,6 +49,8 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				FKCompareItem.save(_existingDatabase);
 			}
+			//refresh model in gui
+			this._existingDatabase._wrappedPackage.refresh();
 		}
 
 		public void compare()

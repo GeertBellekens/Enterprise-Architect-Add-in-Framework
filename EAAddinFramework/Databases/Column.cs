@@ -100,6 +100,7 @@ namespace EAAddinFramework.Databases
 				newColumn.isNotNullable = _isNotNullable;
 				newColumn.type = _type;
 				newColumn.logicalAttribute = _logicalAttribute;
+				newColumn.isOverridden = isOverridden;
 				newColumn.save();
 			}
 		}
