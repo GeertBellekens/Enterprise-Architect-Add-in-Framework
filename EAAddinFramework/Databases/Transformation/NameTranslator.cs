@@ -20,7 +20,9 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			try
 			{
-				foreach (string translationLine in System.IO.File.ReadAllLines(csvFilepath))
+				var allLines = System.IO.File.ReadAllLines(csvFilepath);
+				Logger.log("All lines.count = " + allLines.Count());
+				foreach (string translationLine in allLines)
 				{
 					var lineParts = translationLine.Split(';');
 					if (lineParts.Count() > 1)
@@ -33,7 +35,10 @@ namespace EAAddinFramework.Databases.Transformation
 							suffix = lineParts[2].ToLower().Contains("suffix");
 						}
 						if (! translations.ContainsKey(sourceName))
-						translations.Add(sourceName,new NameTranslation(sourceName,targetName,suffix));
+						{
+							translations.Add(sourceName,new NameTranslation(sourceName,targetName,suffix));
+						}
+						else Logger.log("translation : " + sourceName + " already exists");
 					}
 					
 				} 

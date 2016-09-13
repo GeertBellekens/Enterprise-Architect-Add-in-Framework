@@ -735,6 +735,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				}
 			}
 		}
+		else if (ownedElement is Operation)
+		{
+			for (short i = 0; i< this.WrappedElement.Methods.Count; i++)
+			{
+				var eaMethod = this.WrappedElement.Methods.GetAt(i) as global::EA.Method;
+				if (eaMethod.MethodGUID == ownedElement.guid)
+				{   
+					this.WrappedElement.Methods.Delete(i);
+					this.WrappedElement.Methods.Refresh();
+					break;
+				}
+			}
+		}
 		else
 		{
 			//type not supported (yet)

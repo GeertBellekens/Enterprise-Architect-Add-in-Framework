@@ -294,7 +294,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	public virtual void delete()
 	{
-		((Element)this.owner).deleteOwnedElement(this);
+		if (this.owner != null) ((Element)this.owner).deleteOwnedElement(this);
 	}
 	public abstract void deleteOwnedElement(Element ownedElement);
 	/// <summary>

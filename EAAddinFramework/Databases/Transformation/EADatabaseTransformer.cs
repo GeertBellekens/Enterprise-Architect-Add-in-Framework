@@ -71,6 +71,7 @@ namespace EAAddinFramework.Databases.Transformation
 		public void refresh()
 		{
 			this._newDatabase = null;
+			this._existingDatabase = null;
 			this._tableTransformers.Clear();
 			this.transformLogicalPackage(this.logicalPackage);
 		}
