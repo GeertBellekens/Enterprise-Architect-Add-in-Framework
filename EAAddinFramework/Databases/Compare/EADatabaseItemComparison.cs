@@ -30,7 +30,8 @@ namespace EAAddinFramework.Databases.Compare
 			switch (this.comparisonStatus) 
 			{
 				case DatabaseComparisonStatusEnum.equal:
-					//do nothing, already the same,
+					//make sure the translation sticks
+					if (this.newDatabaseItem.logicalElement != null) this.newDatabaseItem.logicalElement.save();
 					break;
 				case DatabaseComparisonStatusEnum.changed:
 					this.existingDatabaseItem.update(this.newDatabaseItem);

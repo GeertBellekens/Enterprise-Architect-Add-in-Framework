@@ -6,6 +6,7 @@ using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using DB_EA = EAAddinFramework.Databases;
 using EAAddinFramework.Utilities;
+using System.IO;
 
 namespace EAAddinFramework.Databases.Transformation
 {
@@ -20,9 +21,11 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			try
 			{
-				var allLines = System.IO.File.ReadAllLines(csvFilepath);
-				Logger.log("All lines.count = " + allLines.Count());
-				foreach (string translationLine in allLines)
+				//workaround to make sure it also works when the file is open
+				var fileStream = new FileStream(csvFilepath,FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+				var reader = new StreamReader(fileStream);
+				string translationLine;
+				while ( (translationLine = reader.ReadLine()) != null)
 				{
 					var lineParts = translationLine.Split(';');
 					if (lineParts.Count() > 1)
