@@ -58,7 +58,14 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				if (existingDatabaseItem != null)
 				{
-					comparisonStatus = DatabaseComparisonStatusEnum.deletedItem;
+					if (existingDatabaseItem.isOverridden)
+					{
+						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+					}
+					else
+					{
+						comparisonStatus = DatabaseComparisonStatusEnum.deletedItem;
+					}
 				}
 				else
 				{
