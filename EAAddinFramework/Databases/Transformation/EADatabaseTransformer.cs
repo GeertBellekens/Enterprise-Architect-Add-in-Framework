@@ -70,10 +70,13 @@ namespace EAAddinFramework.Databases.Transformation
 		
 		public void refresh()
 		{
-			this._newDatabase = null;
-			this._existingDatabase = null;
-			this._tableTransformers.Clear();
-			this.transformLogicalPackage(this.logicalPackage);
+			if (this.logicalPackage != null)
+			{
+				this._newDatabase = null;
+				this._existingDatabase = null;
+				this._tableTransformers.Clear();
+				this.transformLogicalPackage(this.logicalPackage);
+			}
 		}
 
 		public DB.Database newDatabase 
@@ -89,9 +92,10 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			get 
 			{
-				if (this._existingDatabase == null)
+				if (this._existingDatabase == null
+				   && logicalPackage != null)
 				{
-					var traces = _logicalPackage.relationships.Where(x => x.stereotypes.Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase))).Cast<UTF_EA.ConnectorWrapper>();
+					var traces = logicalPackage.relationships.Where(x => x.stereotypes.Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase))).Cast<UTF_EA.ConnectorWrapper>();
 					foreach (var trace in traces) {
 						if (trace.target.Equals(_logicalPackage)
 					    && trace.source is UTF_EA.Package
