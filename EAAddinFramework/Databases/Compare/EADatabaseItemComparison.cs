@@ -90,9 +90,12 @@ namespace EAAddinFramework.Databases.Compare
 						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
 						//we need to set the new item to match the properties of the existing item
 						//This might also resolve validity issues
-						this.newDatabaseItem.update(this.existingDatabaseItem, false);
+						//TODO move this step to a moment after the whole table has been compared.
+						// in case two existing columns point to one new column, and there is an override on the second one then we need to create a duplicate instead of updating the existing one.
+						// but we can only know that after we have done the whole table.
+						//this.newDatabaseItem.update(this.existingDatabaseItem, false);
 					}
-					else if (newDatabaseItem.isOverridden)
+					else if (newDatabaseItem.isOverridden) //is this realistic? this part may be removed
 					{
 						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
 						this.existingDatabaseItem.update(this.newDatabaseItem, false);

@@ -78,10 +78,25 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						var comparedItem = new EADatabaseItemComparison(null,existingTable);
 						addToComparison(comparedItem);
-						this.addComparisonDetails(comparedItem);
+						var tableComparisons = this.addComparisonDetails(comparedItem);
+						//check overriden items
+						this.checkOverrides(tableComparisons,existingTable);
 					}
 				}
 			}	
+		}
+		/// <summary>
+		/// for each overridden existing item we update the new item, but only if this is the only existing item  referencing the new item.
+		/// If there are more then we need to duplicate the columns in the new database
+		/// </summary>
+		/// <param name="existingTable"></param>
+		void checkOverrides(List<DatabaseItemComparison> tableComparisons, DB.Table table )
+		{
+			//get all elements that are overridden on the existing table side
+			foreach (var overrideCompares in tableComparisons.Where(x => x.existingDatabaseItem.isOverridden)) 
+			{
+				//TODO check if update or duplicate needed
+			} 
 		}
 		private void addToComparison(DatabaseItemComparison comparedItem)
 		{
@@ -109,7 +124,7 @@ namespace EAAddinFramework.Databases.Compare
 				addToComparison( comparedItem);
 			}
 		}
-		public void addComparisonDetails(EADatabaseItemComparison comparedItem)
+		public List<DatabaseItemComparison> addComparisonDetails(EADatabaseItemComparison comparedItem)
 		{
 			List<DatabaseItemComparison> addedComparedItems = new List<DatabaseItemComparison>();
 			var existingTable = comparedItem.existingDatabaseItem as Table;
@@ -177,7 +192,8 @@ namespace EAAddinFramework.Databases.Compare
 			}
 			
 			//add the new compared items
-			addToComparison(addedComparedItems);
+			//TODO move to the table level addToComparison(addedComparedItems);
+			return addedComparedItems;
 		}
 		public DB.Database newDatabase {
 			get { return _newDatabase;}

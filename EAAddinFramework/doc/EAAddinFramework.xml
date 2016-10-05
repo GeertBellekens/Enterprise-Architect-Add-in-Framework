@@ -24,6 +24,13 @@
             Description of EADatabaseComparer.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.Databases.Compare.EADatabaseComparer.checkOverrides(System.Collections.Generic.List{DatabaseFramework.Compare.DatabaseItemComparison},DatabaseFramework.Table)">
+            <summary>
+            for each overridden existing item we update the new item, but only if this is the only existing item  referencing the new item.
+            If there are more then we need to duplicate the columns in the new database
+            </summary>
+            <param name="existingTable"></param>
+        </member>
         <member name="T:EAAddinFramework.Databases.Compare.EADatabaseItemComparison">
             <summary>
             Description of EADatabaseItemComparison.
