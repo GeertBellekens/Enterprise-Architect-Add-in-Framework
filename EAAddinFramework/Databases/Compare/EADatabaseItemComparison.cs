@@ -54,55 +54,53 @@ namespace EAAddinFramework.Databases.Compare
 
 		private void compare()
 		{
-			if (newDatabaseItem == null)
+			//if the status is already overridden then don't bother
+			if (this.comparisonStatus != DatabaseComparisonStatusEnum.dboverride)
 			{
-				if (existingDatabaseItem != null)
+				if (newDatabaseItem == null)
 				{
-					if (existingDatabaseItem.isOverridden)
+					if (existingDatabaseItem != null)
 					{
-						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						if (existingDatabaseItem.isOverridden)
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						}
+						else
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.deletedItem;
+						}
 					}
 					else
 					{
-						comparisonStatus = DatabaseComparisonStatusEnum.deletedItem;
+						//both are null, so equal?
+						comparisonStatus = DatabaseComparisonStatusEnum.equal;
 					}
 				}
 				else
 				{
-					//both are null, so equal?
-					comparisonStatus = DatabaseComparisonStatusEnum.equal;
-				}
-			}
-			else
-			{
-				if (existingDatabaseItem == null)
-				{
-					comparisonStatus = DatabaseComparisonStatusEnum.newItem;
-				}else
-				{
-					//both items exist
-					if (existingDatabaseItem.name + existingDatabaseItem.properties == newDatabaseItem.name + newDatabaseItem.properties)
+					if (existingDatabaseItem == null)
 					{
-						comparisonStatus = DatabaseComparisonStatusEnum.equal;
-					}
-					else if (existingDatabaseItem.isOverridden)
+						comparisonStatus = DatabaseComparisonStatusEnum.newItem;
+					}else
 					{
-						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
-						//we need to set the new item to match the properties of the existing item
-						//This might also resolve validity issues
-						//TODO move this step to a moment after the whole table has been compared.
-						// in case two existing columns point to one new column, and there is an override on the second one then we need to create a duplicate instead of updating the existing one.
-						// but we can only know that after we have done the whole table.
-						//this.newDatabaseItem.update(this.existingDatabaseItem, false);
-					}
-					else if (newDatabaseItem.isOverridden) //is this realistic? this part may be removed
-					{
-						comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
-						this.existingDatabaseItem.update(this.newDatabaseItem, false);
-					}
-					else
-					{
-						comparisonStatus = DatabaseComparisonStatusEnum.changed;
+						//both items exist
+						if (existingDatabaseItem.name + existingDatabaseItem.properties == newDatabaseItem.name + newDatabaseItem.properties)
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.equal;
+						}
+						else if (existingDatabaseItem.isOverridden)
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						}
+						else if (newDatabaseItem.isOverridden) //is this realistic? this part may be removed
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+							this.existingDatabaseItem.update(this.newDatabaseItem, false);
+						}
+						else
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.changed;
+						}
 					}
 				}
 			}

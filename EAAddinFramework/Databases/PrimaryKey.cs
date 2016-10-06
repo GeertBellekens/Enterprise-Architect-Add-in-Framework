@@ -40,17 +40,19 @@ namespace EAAddinFramework.Databases
 				return null;
 			}
 		}
-		public override void createAsNewItem(DB.Database existingDatabase)
+		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			//look for corresponding table in existingDatabase
 			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.owner.name);
-			if (newTable != null )
+			if (newTable != null && newTable.primaryKey == null ) //only create it if htere is not already one
 			{
 				var newPrimaryKey = new PrimaryKey(newTable,this._involvedColumns);
 				newPrimaryKey.name = name;
 				newPrimaryKey.isOverridden = this.isOverridden;
-				newPrimaryKey.save();
+				if (save) newPrimaryKey.save();
+				return newPrimaryKey;
 			}
+			return null;
 		}
 		public override void save()
 		{

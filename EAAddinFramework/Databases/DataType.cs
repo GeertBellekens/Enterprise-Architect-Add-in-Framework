@@ -49,7 +49,7 @@ namespace EAAddinFramework.Databases
 				return null;
 			}
 		}
-		public void createAsNewItem(DB.Database existingDatabase)
+		public DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			throw new NotImplementedException();
 		}

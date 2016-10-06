@@ -68,7 +68,7 @@ namespace EAAddinFramework.Databases
 		#region implemented abstract members of DatabaseItem
 
 
-		public override void createAsNewItem(DB.Database existingDatabase)
+		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			//look for corresponding table in existingDatabase
 			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
@@ -80,8 +80,10 @@ namespace EAAddinFramework.Databases
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
 				newForeignKey.isOverridden = isOverridden;
-				newForeignKey.save();
+				if (save) newForeignKey.save();
+				return newForeignKey;
 			}
+			return null;
 		}
 
 

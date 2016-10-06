@@ -49,8 +49,15 @@ namespace EAAddinFramework.Databases
 				this._wrappedattribute.setStereotype("column");
 				//set datatype;
 				_wrappedattribute.type = this.factory.modelFactory.createPrimitiveType(this.type.name);
-				_wrappedattribute.length = this.type.length;
-				_wrappedattribute.precision = this.type.precision;
+				if (this.type.type.hasPrecision)
+				{
+					_wrappedattribute.precision = this.type.length;
+					_wrappedattribute.scale = this.type.precision;
+				}
+				else
+				{
+					_wrappedattribute.length = this.type.length;
+				}
 				//is not nullable
 				this.isNotNullable = _isNotNullable;
 				//save
@@ -90,7 +97,7 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 		#region implemented abstract members of DatabaseItem
-		public override void createAsNewItem(DB.Database existingDatabase)
+		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			//look for corresponding table in existingDatabase
 			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
@@ -101,8 +108,10 @@ namespace EAAddinFramework.Databases
 				newColumn.type = _type;
 				newColumn.logicalAttribute = _logicalAttribute;
 				newColumn.isOverridden = isOverridden;
-				newColumn.save();
+				if (save) newColumn.save();
+				return newColumn;
 			}
+			return null;
 		}
 		#endregion
 		#region implemented abstract members of DatabaseItem

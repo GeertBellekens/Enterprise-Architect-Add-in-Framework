@@ -64,8 +64,7 @@ namespace EAAddinFramework.Databases.Compare
 					Table existingTable = null;
 					if (_existingDatabase != null) existingTable = (Table)_existingDatabase.getCorrespondingTable(newTable);
 					var comparedItem = new EADatabaseItemComparison(newTable,existingTable);
-					addToComparison(comparedItem);
-					this.addComparisonDetails(comparedItem);
+					addTableComparison(comparedItem);
 				}
 			}
 			if (existingDatabase != null)
@@ -77,25 +76,49 @@ namespace EAAddinFramework.Databases.Compare
 					if (! comparedItems.Any(x => x.existingDatabaseItem == existingTable))
 					{
 						var comparedItem = new EADatabaseItemComparison(null,existingTable);
-						addToComparison(comparedItem);
-						var tableComparisons = this.addComparisonDetails(comparedItem);
-						//check overriden items
-						this.checkOverrides(tableComparisons,existingTable);
+						addTableComparison(comparedItem);
 					}
 				}
 			}	
+		}
+		private void addTableComparison(EADatabaseItemComparison tableComparison)
+		{
+			addToComparison(tableComparison);
+			var tableComparisons = this.addComparisonDetails(tableComparison);
+			//check overriden items
+			this.updateOverrides(tableComparisons);
+			//add them to the comparison
+			addToComparison(tableComparisons);
 		}
 		/// <summary>
 		/// for each overridden existing item we update the new item, but only if this is the only existing item  referencing the new item.
 		/// If there are more then we need to duplicate the columns in the new database
 		/// </summary>
-		/// <param name="existingTable"></param>
-		void checkOverrides(List<DatabaseItemComparison> tableComparisons, DB.Table table )
+		void updateOverrides(List<DatabaseItemComparison> tableComparisons )
 		{
+			List<DB.DatabaseItem> updatedNewItems = new List<DB.DatabaseItem>();
 			//get all elements that are overridden on the existing table side
-			foreach (var overrideCompares in tableComparisons.Where(x => x.existingDatabaseItem.isOverridden)) 
+			foreach (var overrideCompare in tableComparisons.Where(x => x.existingDatabaseItem != null
+			                                                      && x.existingDatabaseItem.isOverridden))
 			{
-				//TODO check if update or duplicate needed
+				//check if an equal exists. In that case we need to create a duplicate in the new database
+				bool equalExists = tableComparisons.Any(x => x.newDatabaseItem == overrideCompare.newDatabaseItem
+				                                        && x.comparisonStatus == DatabaseComparisonStatusEnum.equal);
+				//check if we have already updated the new item
+				bool alreadyUpdated = updatedNewItems.Contains(overrideCompare.newDatabaseItem);
+				
+				//and equal exists or the new item is already updated then we need to create a duplicate
+				if (equalExists || alreadyUpdated )
+				{
+					//create a duplicate of the existing item and set it as the new item
+					overrideCompare.newDatabaseItem = overrideCompare.existingDatabaseItem.createAsNewItem(this.newDatabase,false);
+				}
+				else if (overrideCompare.newDatabaseItem != null)
+				{
+					//update new item to match the existing item
+					overrideCompare.newDatabaseItem.update(overrideCompare.existingDatabaseItem, false);
+					updatedNewItems.Add(overrideCompare.newDatabaseItem);	
+				}
 			} 
 		}
 		private void addToComparison(DatabaseItemComparison comparedItem)

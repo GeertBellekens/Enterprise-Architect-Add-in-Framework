@@ -144,11 +144,12 @@ namespace EAAddinFramework.Databases
 		}	
 
 
-		public override void createAsNewItem(DB.Database existingDatabase)
+		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			var newTable = new Table((Database)existingDatabase,this.name);
 			newTable._logicalClasses = new List<Class>(_logicalClasses);
-			newTable.save();
+			if (save) newTable.save(); 
+			return newTable;
 		}
 	
 		public List<Class> logicalClasses

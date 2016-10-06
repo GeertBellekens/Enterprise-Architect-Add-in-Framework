@@ -45,9 +45,10 @@ namespace EAAddinFramework.Databases
 		}
 		public abstract UML.Classes.Kernel.Element logicalElement {get;}
 
-		public abstract void createAsNewItem(DB.Database existingDatabase);
-
 		public abstract bool isValid{get;}
+
+		public abstract DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true);
+
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory
 		{
