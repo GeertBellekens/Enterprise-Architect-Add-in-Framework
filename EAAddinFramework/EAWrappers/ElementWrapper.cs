@@ -131,7 +131,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { return this.wrappedElement.Abstract == "1"; }
       set { this.wrappedElement.Abstract = value ? "1" : "0"; }
     }
-
+	public override int position 
+	{
+		get 
+		{
+			return wrappedElement.TreePos;
+		}
+		set 
+		{
+			this.wrappedElement.TreePos = value;
+		}
+	}
     /// the visibility indicates the scope of the element
     public UML.Classes.Kernel.VisibilityKind visibility {
       get {

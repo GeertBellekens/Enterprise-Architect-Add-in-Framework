@@ -110,14 +110,19 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			//add the columns for the primary key of the dependent table
 			foreach (var dependingTransformer in this.dependingTransformers) 
 			{
-				
+				//dependingTransformer.associationEnd decide position based on association end, or on tags on the association?
 				if (dependingTransformer.table.primaryKey != null)
 				{
+					//get the position of the association (tag sequence)
+					var sequenceTag = dependingTransformer.associationEnd.association.taggedValues.FirstOrDefault( x => x.name.Equals("sequence",StringComparison.InvariantCultureIgnoreCase));
+					int associationSequence = int.MaxValue;
+					if (sequenceTag != null) int.TryParse(sequenceTag.tagValue.ToString(),out associationSequence);
+					
 					var dependingColumnTransfomers = new List<DB2ColumnTransformer>();
-					foreach (Column column in dependingTransformer.table.primaryKey.involvedColumns) 
+					foreach (Column column in dependingTransformer.table.primaryKey.involvedColumns.OrderBy(x => x.position))
 					{
 						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column, dependingTransformer,_nameTranslator));
-						
+						//TODO: set the order of the columns depending on the associationsequence and their internal order
 					}
 					this._columnTransformers.AddRange(dependingColumnTransfomers);
 					List<Column> FKInvolvedColumns = new List<Column>();

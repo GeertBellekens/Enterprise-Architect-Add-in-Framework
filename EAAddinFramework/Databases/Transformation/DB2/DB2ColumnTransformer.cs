@@ -60,7 +60,6 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override void createColumn(UTF_EA.Attribute attribute)
 		{
-			//TODO: translate name to alias
 			this.logicalProperty = attribute;
 			this.column = transformLogicalAttribute(attribute);
 		}
@@ -89,7 +88,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			//first translate the columname if needed
 			if (string.IsNullOrEmpty(attribute.alias))
-			{
+			{(
 				attribute.alias = this._nameTranslator.translate(attribute.name, attribute.owner.name);
 				//should we save here?
 			}
@@ -117,6 +116,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			{
 				column.isNotNullable = true;
 			}
+			//set position
+			this.column.position = attribute.position;
 			return this._column;
 		}
 		private Column transformLogicalAssociationEnd(UTF_EA.AssociationEnd associationEnd)

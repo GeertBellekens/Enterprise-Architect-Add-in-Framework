@@ -106,6 +106,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				}
 				//add the remote columns and primary and foreign keys
 				transformer.addRemoteColumnsAndKeys();
+				
 			}
 			return transformer;
 		}

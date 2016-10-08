@@ -103,7 +103,7 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			foreach (var classElement in _logicalClasses) 
 			{				
-				foreach (var attribute in classElement.attributes)					
+				foreach (var attribute in classElement.attributes.OrderBy(x => x.position))
 				{
 					var column = transformLogicalAttribute((UTF_EA.Attribute)attribute);
 				}

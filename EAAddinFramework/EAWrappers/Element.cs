@@ -14,7 +14,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public abstract String notes { get; set; }
     public abstract HashSet<UML.Classes.Kernel.Element> ownedElements 
       { get; set; }
-    
+	/// <summary>
+	/// default implementation
+	/// </summary>
+	public virtual int position 
+	{
+		get 
+		{
+			return 0;
+		}
+		set 
+		{
+			//do nothing
+		}
+	}
     public virtual HashSet<UML.Classes.Kernel.Comment> ownedComments
       { 
     	get

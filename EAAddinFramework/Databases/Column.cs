@@ -30,6 +30,27 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.ownerTable.addColumn(this);
 		}
+		private int _position;
+		public int position 
+		{
+			get 
+			{
+				if (_wrappedattribute != null)
+				{
+					this._position = position;
+				}
+				return _position;
+			}
+			set 
+			{
+				this._position = value;
+				if (_wrappedattribute != null)
+				{
+					_wrappedattribute.position = _position;
+				}
+			}
+		}
+
 		#region implemented abstract members of DatabaseItem
 		public override void save()
 		{
@@ -60,6 +81,8 @@ namespace EAAddinFramework.Databases
 				}
 				//is not nullable
 				this.isNotNullable = _isNotNullable;
+				//set position
+				_wrappedattribute.position = _position;
 				//save
 				_wrappedattribute.save();
 				//set isOverridden

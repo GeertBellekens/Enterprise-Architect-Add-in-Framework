@@ -34,6 +34,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			get{return this.wrappedAttribute.Alias;}
 			set{this.wrappedAttribute.Alias = value;}
 		}
+		public override int position 
+		{
+			get 
+			{
+				return this.wrappedAttribute.Pos;
+			}
+			set 
+			{
+				this.wrappedAttribute.Pos = value;
+			}
+		}
 	    	
 		/// <summary>
 	    /// return the unique ID of this element
