@@ -29,6 +29,14 @@ namespace EAAddinFramework.Databases
 			throw new NotImplementedException();
 		}
 
+		public int position {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		public bool isValid 
 		{
 			get

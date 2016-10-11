@@ -88,7 +88,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			//first translate the columname if needed
 			if (string.IsNullOrEmpty(attribute.alias))
-			{(
+			{
 				attribute.alias = this._nameTranslator.translate(attribute.name, attribute.owner.name);
 				//should we save here?
 			}

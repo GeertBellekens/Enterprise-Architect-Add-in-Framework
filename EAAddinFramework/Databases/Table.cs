@@ -62,8 +62,26 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#endregion
-
-
+		private int _position;
+		public override int position 
+		{
+			get 
+			{
+				if (_wrappedClass != null)
+				{
+					_position = _wrappedClass.position;
+				}
+				return _position;
+			}
+			set 
+			{
+				_position = value;
+				if (_wrappedClass != null)
+				{
+					_wrappedClass.position =_position;
+				}
+			}
+		}
 
 		public DB.Database databaseOwner {
 			get {

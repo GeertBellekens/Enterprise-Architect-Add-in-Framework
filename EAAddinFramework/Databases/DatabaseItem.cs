@@ -47,6 +47,18 @@ namespace EAAddinFramework.Databases
 
 		public abstract bool isValid{get;}
 
+		public virtual int position 
+		{
+			get 
+			{
+				//default implmementation
+				return 0;
+			}
+			set 
+			{
+				//default implementation: do nothing
+			}
+		}
 		public abstract DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true);
 
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);

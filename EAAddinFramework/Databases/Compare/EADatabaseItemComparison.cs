@@ -24,7 +24,11 @@ namespace EAAddinFramework.Databases.Compare
 			this.newDatabaseItem = newDatabaseItem;
 			this.existingDatabaseItem = existingDatabaseItem;
 		}
-
+		public void updatePosition(int i)
+		{
+			if (newDatabaseItem != null) newDatabaseItem.position = i;
+			if (existingDatabaseItem != null) existingDatabaseItem.position = i;
+		}
 		public void save(DB.Database existingDatabase)
 		{
 			switch (this.comparisonStatus) 
@@ -32,6 +36,8 @@ namespace EAAddinFramework.Databases.Compare
 				case DatabaseComparisonStatusEnum.equal:
 					//make sure the translation sticks
 					if (this.newDatabaseItem.logicalElement != null) this.newDatabaseItem.logicalElement.save();
+					//make sure the position is saved
+					this.existingDatabaseItem.save();
 					break;
 				case DatabaseComparisonStatusEnum.changed:
 					this.existingDatabaseItem.update(this.newDatabaseItem);
@@ -84,7 +90,11 @@ namespace EAAddinFramework.Databases.Compare
 					}else
 					{
 						//both items exist
-						if (existingDatabaseItem.name + existingDatabaseItem.properties == newDatabaseItem.name + newDatabaseItem.properties)
+						if (newDatabaseItem.isOverridden && existingDatabaseItem.isOverridden)
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						}
+						else if (existingDatabaseItem.name + existingDatabaseItem.properties == newDatabaseItem.name + newDatabaseItem.properties)
 						{
 							comparisonStatus = DatabaseComparisonStatusEnum.equal;
 						}

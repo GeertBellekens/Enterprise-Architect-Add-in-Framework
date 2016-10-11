@@ -30,15 +30,27 @@ namespace EAAddinFramework.Databases.Compare
 			//both existing and new database should exist to even begin
 			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
 			//first save all tables
-			foreach (var tableCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Table",StringComparison.InvariantCultureIgnoreCase)))
+			var tableComparers = this.comparedItems.Where(x => x.itemType.Equals("Table",StringComparison.InvariantCultureIgnoreCase));
+			foreach (var tableCompareItem in tableComparers )
 			{
 				tableCompareItem.save(_existingDatabase);
 			}
-			//then save all columns
-			foreach (var columnCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)))
+			//loop each table again and save its columns, setting the correct order
+			foreach (var tableCompareItem in tableComparers )
 			{
-				columnCompareItem.save(_existingDatabase);
+				//then save all columns
+				int i = 1;
+				foreach (var columnCompareItem in this.comparedItems.Where(
+					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)
+					&&( x.existingDatabaseItem != null && tableCompareItem.existingDatabaseItem != null && ((DB.Column)x.existingDatabaseItem).ownerTable.name == tableCompareItem.existingDatabaseItem.name 
+					   ||	x.newDatabaseItem != null && tableCompareItem.newDatabaseItem != null && ((DB.Column)x.newDatabaseItem).ownerTable.name == tableCompareItem.newDatabaseItem.name )))
+				{
+					columnCompareItem.updatePosition(i);
+					columnCompareItem.save(_existingDatabase);
+					i++;
+				}
 			}
+
 			//then save all primary keys
 			foreach (var PKCompareItem in this.comparedItems.Where(x => x.itemType.Equals("Primary Key",StringComparison.InvariantCultureIgnoreCase)))
 			{
@@ -49,6 +61,7 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				FKCompareItem.save(_existingDatabase);
 			}
+
 			//refresh model in gui
 			this._existingDatabase._wrappedPackage.refresh();
 		}
@@ -56,30 +69,39 @@ namespace EAAddinFramework.Databases.Compare
 		public void compare()
 		{
 			this.comparedItems = new List<DatabaseItemComparison>();
+			var tableComparisons = new List<EADatabaseItemComparison>();
 			//compare each new table
 			if (newDatabase != null)
 			{
-				foreach (var newTable in _newDatabase.tables) 
+				foreach (var newTable in _newDatabase.tables)
 				{
 					Table existingTable = null;
 					if (_existingDatabase != null) existingTable = (Table)_existingDatabase.getCorrespondingTable(newTable);
-					var comparedItem = new EADatabaseItemComparison(newTable,existingTable);
-					addTableComparison(comparedItem);
+					tableComparisons.Add( new EADatabaseItemComparison(newTable,existingTable));
 				}
 			}
 			if (existingDatabase != null)
 			{
 				//get existing tables that don't exist in the new database
-				foreach (var existingTable in _existingDatabase.tables) 
+				foreach (var existingTable in _existingDatabase.tables)
 				{
 					//if the existingTable does not exist in the comparedItems then add it.
-					if (! comparedItems.Any(x => x.existingDatabaseItem == existingTable))
+					if (! tableComparisons.Any(x => x.existingDatabaseItem == existingTable))
 					{
-						var comparedItem = new EADatabaseItemComparison(null,existingTable);
-						addTableComparison(comparedItem);
+						tableComparisons.Add(new EADatabaseItemComparison(null,existingTable));
 					}
 				}
-			}	
+			}
+			//first process the ones that have an existing database item
+			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem != null).OrderBy(y => y.existingDatabaseItem.position).ThenBy(y => y.existingDatabaseItem.name))
+			{
+				addTableComparison(tableComparison);
+			}
+			//then the ones without an existing database item
+			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem == null).OrderBy(y => y.newDatabaseItem.position).ThenBy(y => y.newDatabaseItem.name))
+			{
+				addTableComparison(tableComparison);
+			}
 		}
 		private void addTableComparison(EADatabaseItemComparison tableComparison)
 		{
@@ -155,7 +177,7 @@ namespace EAAddinFramework.Databases.Compare
 			if (existingTable != null)
 			{
 				//add all existing columns
-				foreach (Column existingColumn in existingTable.columns) 
+				foreach (Column existingColumn in existingTable.columns.OrderBy(x => x.position))
 				{
 					Column newColumn = null;
 					if (newTable != null) newColumn = newTable.getCorrespondingColumn(existingColumn);
@@ -213,9 +235,6 @@ namespace EAAddinFramework.Databases.Compare
 					addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,null));
 				}
 			}
-			
-			//add the new compared items
-			//TODO move to the table level addToComparison(addedComparedItems);
 			return addedComparedItems;
 		}
 		public DB.Database newDatabase {

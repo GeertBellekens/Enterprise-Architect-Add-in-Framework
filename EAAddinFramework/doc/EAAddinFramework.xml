@@ -1571,6 +1571,11 @@
             In Enterprise Architect we can only delete an element by removing it from its parents collection.
             </summary>
         </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.position">
+            <summary>
+            default implementation
+            </summary>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.relationships">
             default implementation returns an empty list because there is only one
             subclass that can actually implement this operation: ElementWrapper.

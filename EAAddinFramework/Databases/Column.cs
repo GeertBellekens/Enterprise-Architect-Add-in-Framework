@@ -31,13 +31,13 @@ namespace EAAddinFramework.Databases
 			this.ownerTable.addColumn(this);
 		}
 		private int _position;
-		public int position 
+		public override int position 
 		{
 			get 
 			{
 				if (_wrappedattribute != null)
 				{
-					this._position = position;
+					this._position = _wrappedattribute.position;
 				}
 				return _position;
 			}
@@ -131,6 +131,7 @@ namespace EAAddinFramework.Databases
 				newColumn.type = _type;
 				newColumn.logicalAttribute = _logicalAttribute;
 				newColumn.isOverridden = isOverridden;
+				newColumn.position = _position;
 				if (save) newColumn.save();
 				return newColumn;
 			}
@@ -145,6 +146,7 @@ namespace EAAddinFramework.Databases
 			this._logicalAttribute = newColumn.logicalAttribute;
 			this._type = newColumn._type;
 			this.isOverridden = newColumn.isOverridden;
+			this.position = newColumn.position;
 		}
 		#endregion		
 		
