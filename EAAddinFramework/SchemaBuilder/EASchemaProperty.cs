@@ -95,6 +95,21 @@ namespace EAAddinFramework.SchemaBuilder
 						//replace the type by the subset element of the redefined type
 						this.subSetProperty.type = this.redefinedElement.subsetElement;
 					}
+					//check for restriction of type choice because that can contain the type that is used to redefine this attribute
+					else if (this.choiceElements != null
+					    && this.choiceElements.Count > 0
+					   && this.subSetProperty != null)
+					{
+						var redefinedTypeElement = this.choiceElements[0];
+						if (redefinedTypeElement.subsetElement != null)
+						{
+							this.subSetProperty.type = redefinedTypeElement.subsetElement;
+						}
+						else
+						{
+							this.subSetProperty.type = redefinedTypeElement.sourceElement;
+						}
+					}
 					else if (element.sourceElement != null && 
 					    element.subsetElement != null &&
 					    this.subSetProperty != null &&
