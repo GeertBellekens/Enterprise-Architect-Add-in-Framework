@@ -98,13 +98,16 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			List<DB_EA.Column> PKInvolvedColumns = new List<DB_EA.Column>();
 			//check attributes
-			foreach (var attribute in logicalClass.attributes.Where(x => x.isID).Cast<UTF_EA.Attribute>())
+			foreach (var attributes in allLogicalClasses.Select(z => z.attributes.Where(x => x.isID)))
 			{
-				//get the corresponding transformer
-				var columnTransformer = this.columnTransformers.FirstOrDefault( x => attribute.Equals(x.logicalProperty));
-				if (columnTransformer != null)
+				foreach (var attribute in attributes) 
 				{
-					PKInvolvedColumns.Add((DB_EA.Column) columnTransformer.column);
+					//get the corresponding transformer
+					var columnTransformer = this.columnTransformers.FirstOrDefault( x => attribute.Equals(x.logicalProperty));
+					if (columnTransformer != null)
+					{
+						PKInvolvedColumns.Add((DB_EA.Column) columnTransformer.column);
+					}
 				}
 			}
 			//add the columns for the primary key of the dependent table
@@ -162,9 +165,9 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		public List<UTF_EA.AssociationEnd> getDependingAssociationEnds()
 		{
 			var dependingAssociationEnds = new List<UTF_EA.AssociationEnd>();
-			foreach (var logicalClass in this.logicalClasses) 
+			foreach (var currentClass in this.allLogicalClasses) 
 			{
-				foreach (var association in logicalClass.relationships.OfType<UTF_EA.Association>())
+				foreach (var association in currentClass.relationships.OfType<UTF_EA.Association>())
 				{
 					foreach (UTF_EA.AssociationEnd end in association.memberEnds) 
 					{
@@ -179,7 +182,6 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				}
 			}
 			return dependingAssociationEnds;
-			
 		}
 	}
 }

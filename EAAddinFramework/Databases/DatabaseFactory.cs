@@ -46,23 +46,25 @@ namespace EAAddinFramework.Databases
 		/// </summary>
 		/// <param name="type">the type of the factory</param>
 		/// <param name="datatypes">the base datatypes for this factory</param>
-		public static void addFactory(string type, Model model)
+		public static DatabaseFactory getFactory(string type, Model model)
 		{
+			
+			if (!modelFactories.ContainsKey(model))
+			{
+				var newFactories = new Dictionary<string, DatabaseFactory>();
+				modelFactories.Add(model, newFactories);
+			}
+			var factories = modelFactories[model];
 			if (!factories.ContainsKey(type))
 			{
 				DatabaseFactory factory = new DatabaseFactory(type, model);
 				factories.Add(type, factory);
 			}
+			return factories[type];
 		}
-		private static Dictionary<string, DatabaseFactory> factories = new Dictionary<string, DatabaseFactory>();
-		public static DatabaseFactory getFactory(string type)
-		{
-			if (factories.ContainsKey(type))
-			{
-				return factories[type];
-			}
-			return null;
-		}
+		//private static Dictionary<string, DatabaseFactory> factories = new Dictionary<string, DatabaseFactory>();
+		private static Dictionary<Model, Dictionary<string, DatabaseFactory>> modelFactories = new Dictionary<Model, Dictionary<string, DatabaseFactory>>();
+
 		public UML.Extended.UMLFactory modelFactory
 		{
 			get

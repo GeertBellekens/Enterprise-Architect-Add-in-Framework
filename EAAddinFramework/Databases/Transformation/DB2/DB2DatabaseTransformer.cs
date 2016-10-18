@@ -31,8 +31,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 		public static DatabaseFactory getFactory(UTF_EA.Model model)
 		{
-			DB_EA.DatabaseFactory.addFactory("DB2",model);
-			return  DB_EA.DatabaseFactory.getFactory("DB2");
+			return DB_EA.DatabaseFactory.getFactory("DB2",model);
 		}
 
 		#region implemented abstract members of EADatabaseItemTransformer
@@ -57,7 +56,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override void addTable(UTF_EA.Class classElement)
 		{
-			addDB2Table(classElement);
+			//only add table if this class has no subclasses
+			if (!classElement.generalizations.Any(x => classElement.Equals(x.target)))
+			{
+				addDB2Table(classElement);
+			}
 		}
 		protected DB2TableTransformer addDB2Table(UTF_EA.AssociationEnd associationEnd)
 		{
@@ -139,7 +142,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				return  getCounterFromString(lastName, lastName.Length);
 			}
 			//return default
-			return 1;
+			return 0;
 		}
 		private string getFixedTableString()
 		{

@@ -50,7 +50,7 @@
             Description of DatabaseFactory.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.Databases.DatabaseFactory.addFactory(System.String,TSF.UmlToolingFramework.Wrappers.EA.Model)">
+        <member name="M:EAAddinFramework.Databases.DatabaseFactory.getFactory(System.String,TSF.UmlToolingFramework.Wrappers.EA.Model)">
             <summary>
             adds a factory to the list of possible database factories
             </summary>
@@ -158,6 +158,24 @@
         <member name="T:EAAddinFramework.Databases.Transformation.EATableTransformer">
             <summary>
             Description of EATableTransformer.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.EATableTransformer.createColumnsFromAttributes">
+            <summary>
+            creates columns from the attributes of the logical classes.
+            In case the logical class has superclasses then the attributes of the superclasses are transformed as well.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.EATableTransformer.getsuperClasses(TSF.UmlToolingFramework.Wrappers.EA.Class)">
+            <summary>
+            gets the superclasses of an element
+            </summary>
+            <param name="classElement"></param>
+            <returns></returns>
+        </member>
+        <member name="P:EAAddinFramework.Databases.Transformation.EATableTransformer.allLogicalClasses">
+            <summary>
+            a list of all logical classes inlcuding their superclasses
             </summary>
         </member>
         <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.#ctor(EAAddinFramework.Databases.Database,EAAddinFramework.Databases.Transformation.NameTranslator)">
@@ -2423,9 +2441,6 @@
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance(TSF.UmlToolingFramework.Wrappers.EA.Model)">
             returns the singleton instance for the given model.
-        </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.getInstance">
-            returns the singleton instance for a new model
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createDiagram(System.Object)">
             <summary>

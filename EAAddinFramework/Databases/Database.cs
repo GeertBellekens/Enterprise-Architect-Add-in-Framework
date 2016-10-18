@@ -172,14 +172,9 @@ namespace EAAddinFramework.Databases
 			}
 			set 
 			{
-				var newFactory = DatabaseFactory.getFactory(value);
-				if (newFactory != null)
+				if (!value.Equals(this._factory.type, StringComparison.InvariantCultureIgnoreCase))
 				{
-					this.databaseFactory = newFactory;
-				}
-				else 
-				{
-					throw new ArgumentException(string.Format("Database type {0} is not known", value));
+					throw new NotImplementedException();
 				}
 			}
 		}

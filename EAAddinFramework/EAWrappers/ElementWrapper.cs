@@ -181,7 +181,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._attributeWrappers == null)
     		{
-    			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance()
+    			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.model)
       		                   .createElements( this.wrappedElement.Attributes).Cast<AttributeWrapper>());
     		}
     		return this._attributeWrappers;

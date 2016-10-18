@@ -27,10 +27,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       return factory;
     }
 
-    /// returns the singleton instance for a new model
-    public static new Factory getInstance(){
-      return getInstance(new Model());
-    }
 
 	/// <summary>
 	/// creates a diagram based on the given EA.Diagram object
