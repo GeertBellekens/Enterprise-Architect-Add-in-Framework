@@ -20,6 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
 
     public Boolean isLiteEdition {get {return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite;}}
+    public string currentUserID {get{return this.wrappedModel.GetCurrentLoginUser(true);}}
     
     /// <summary>
     /// returns the full path of the running ea.exe

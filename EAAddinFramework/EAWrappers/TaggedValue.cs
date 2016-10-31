@@ -154,5 +154,18 @@ public abstract class TaggedValue : UML.Profiles.TaggedValue
 		{
 			throw new NotImplementedException();
 		}
+
+		public bool makeWritable(bool overrideLocks)
+		{
+			return this.owner.makeWritable(overrideLocks);
+		}
+
+		public bool isReadOnly 
+		{
+			get 
+			{
+				return this.owner.isReadOnly;
+			}
+		}
 }
 }

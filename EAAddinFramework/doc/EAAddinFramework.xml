@@ -77,7 +77,7 @@
             Description of Table.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.Databases.Table.getCorrespondingColumn(EAAddinFramework.Databases.Column)">
+        <member name="M:EAAddinFramework.Databases.Table.getCorrespondingColumn(EAAddinFramework.Databases.Column,System.Collections.Generic.List{EAAddinFramework.Databases.Column})">
             <summary>
             gets te columns that corresponds to the given column.
             If the properties are exactly the same then this column is returned. 
@@ -1589,6 +1589,12 @@
             In Enterprise Architect we can only delete an element by removing it from its parents collection.
             </summary>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getLockedUser">
+            <summary>
+            returns the name of the user currently locking this element
+            </summary>
+            <returns>the name of the user currently locking this element</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.position">
             <summary>
             default implementation
@@ -1608,6 +1614,12 @@
             the package owning this element (if any)
             this will return null in case of a root package
             </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.isLocked">
+            <summary>
+            returns true if currently locked
+            </summary>
+            <returns>true if currently locked</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getDependentDiagrams">
             <summary>
@@ -1740,6 +1752,19 @@
             deletes an element owned by this element
             </summary>
             <param name="ownedElement">the owned element to delete</param>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getLockedUser">
+            <summary>
+            returns the name of the user currently locking this element
+            </summary>
+            <returns>the name of the user currently locking this element</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.makeWritable(System.Boolean)">
+            <summary>
+            Makes the element writeable
+            </summary>
+            <param name="overrideLocks">remove any existing locks</param>
+            <returns>true if successful</returns>
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.uniqueID">
             <summary>
@@ -1899,6 +1924,20 @@
             <param name="element">the element that is used on this diagram</param>
             <returns>the diagramElement that represents the element shown on this diagram</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getLockedUser">
+            <summary>
+            returns the name of the user currently locking this element
+            </summary>
+            <returns>the name of the user currently locking this element</returns>
+        </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Diagram.getOwnedElements">
+            <summary>
+            returns the owned elements of this diagram.
+            That are all elements that are shown on the diagram and that have the same parent as the diagram
+            Plus all notes shown on this diagram
+            </summary>
+            <returns>list of "owned" elements</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.uniqueID">
             <summary>
             return the unique ID of this element
@@ -1912,6 +1951,12 @@
             <summary>
             The elements that have this diagram as composite diagram
             </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Diagram.isLocked">
+            <summary>
+            returns true if currently locked
+            </summary>
+            <returns>true if currently locked</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.AssociationClass">
             <summary>

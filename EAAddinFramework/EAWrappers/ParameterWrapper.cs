@@ -31,10 +31,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { /* do nothing */ }
     }
     
-    
-    public override UML.Classes.Kernel.Element owner {
-    	get { return this.model.getOperationByID(this.wrappedParameter.OperationID); }
-      	set { throw new NotImplementedException(); }
+	internal Operation _owner;
+	
+    public override UML.Classes.Kernel.Element owner 
+    {
+    	get 
+    	{
+    		if (_owner == null)
+    		{
+    			_owner = this.model.getOperationByID(this.wrappedParameter.OperationID);
+    		}
+    		return _owner;
+    	}
+      	set 
+      	{ 
+      		throw new NotImplementedException();
+      	}
     }
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
@@ -196,6 +208,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public override void deleteOwnedElement(Element ownedElement)
 	{
 		throw new NotImplementedException();
+	}
+	
+	public override bool makeWritable(bool overrideLocks)
+	{
+		return this.owner.makeWritable(overrideLocks);
+	}
+
+	public override string getLockedUser()
+	{
+		return this._owner.getLockedUser();
+	}
+
+	public override string getLockedUserID()
+	{
+		return this._owner.getLockedUserID();
 	}
 
 	#endregion

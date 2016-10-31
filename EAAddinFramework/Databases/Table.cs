@@ -200,12 +200,16 @@ namespace EAAddinFramework.Databases
 		/// </summary>
 		/// <param name="newColumn">the column to compare to</param>
 		/// <returns>the corresponding column</returns>
-		public Column getCorrespondingColumn(Column newColumn)
+		public Column getCorrespondingColumn(Column newColumn, List<Column> alreadyMappedColumns)
 		{
-			var correspondingColumn = this._columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties);
+			var correspondingColumn = this._columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
+			                                                       && !alreadyMappedColumns.Contains(x));
 			if (correspondingColumn == null) correspondingColumn = 
 											this._columns.FirstOrDefault( x => x.logicalAttribute != null
-				                						&& x.logicalAttribute.Equals(newColumn.logicalAttribute));
+				                						&& x.logicalAttribute.Equals(newColumn.logicalAttribute)
+				                						&& !alreadyMappedColumns.Contains(x));
+			if (correspondingColumn == null) correspondingColumn = 
+				getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
 			return correspondingColumn;
 		}
 		/// <summary>

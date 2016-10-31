@@ -159,5 +159,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 
 	#endregion
+
+	#region implemented abstract members of Element
+
+	public override bool makeWritable(bool overrideLocks)
+	{
+		return true;
+	}
+
+	public override string getLockedUser()
+	{
+		return string.Empty;
+	}
+
+	public override string getLockedUserID()
+	{
+		return string.Empty;
+	}
+
+	#endregion
   }
 }

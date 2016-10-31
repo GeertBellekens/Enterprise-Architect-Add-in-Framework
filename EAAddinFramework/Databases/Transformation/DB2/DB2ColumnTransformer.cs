@@ -47,8 +47,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			_column.logicalAttribute = ((DB_EA.Column)involvedColumn).logicalAttribute;
 			if (dependingTransformer.associationEnd != null)
 			{
-				if (dependingTransformer.associationEnd.upper.integerValue.HasValue 
-				    && dependingTransformer.associationEnd.upper.integerValue.Value > 0)
+				if (dependingTransformer.associationEnd.lower > 0 )
 				{
 					_column.isNotNullable = true;
 				}

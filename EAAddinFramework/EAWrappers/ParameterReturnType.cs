@@ -164,6 +164,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		throw new NotImplementedException();
 	}
 
-	#endregion
+	
+		public override bool makeWritable(bool overrideLocks)
+		{
+			return this.owner.makeWritable(overrideLocks);
+		}
+	
+		public override string getLockedUser()
+		{
+			return this._owner.getLockedUser();
+		}
+	
+		public override string getLockedUserID()
+		{
+			return this._owner.getLockedUserID();
+		}
+	
+		#endregion
   }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using System.Xml;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
@@ -764,6 +765,63 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 	}
-
+		/// <summary>
+        /// returns the name of the user currently locking this element
+        /// </summary>
+        /// <returns>the name of the user currently locking this element</returns>
+        public override string getLockedUser()
+        {
+            string lockedUser = string.Empty;
+            //if (this.wrappedElement.Locked)
+            //{
+                string SQLQuery = @"select u.FirstName, u.Surname from t_seclocks s
+                                    inner join t_secuser u on s.userID = u.userID 
+                                    where s.entityID = '" + this.guid + "'";
+                var result = this.model.SQLQuery(SQLQuery);
+                XmlNode firstNameNode = result.SelectSingleNode("//FirstName");
+                XmlNode lastNameNode = result.SelectSingleNode("//Surname");
+                if (firstNameNode != null && lastNameNode != null)
+                {
+                    lockedUser = firstNameNode.InnerText + " " + lastNameNode.InnerText;
+                }
+            //}
+            return lockedUser;
+        }
+        public override string getLockedUserID()
+        {
+        	    string SQLQuery = @"select s.UserID from t_seclocks s
+                                    where s.entityID = '" + this.guid+ "'";
+                XmlDocument result = this.model.SQLQuery(SQLQuery);
+                XmlNode userIDNode = result.SelectSingleNode("//UserID");
+                return userIDNode.InnerText;
+        }
+        /// <summary>
+        /// Makes the element writeable
+        /// </summary>
+        /// <param name="overrideLocks">remove any existing locks</param>
+        /// <returns>true if successful</returns>
+		public override bool makeWritable(bool overrideLocks)
+		{
+			//if security is not enabled then it is always writeable
+			if (!this.model.isSecurityEnabled) return true;
+			//TODO: override locks
+            if (! this.isLocked)
+            {
+                //no lock found, go ahead and try to lock the element
+                try
+                {
+                    return this.wrappedElement.ApplyUserLock();
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else  
+            {
+                //lock found, don't even try it.
+                return false;
+            }
+		}
   }
 }

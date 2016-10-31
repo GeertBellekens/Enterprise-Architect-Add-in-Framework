@@ -331,5 +331,41 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+
+	public abstract bool makeWritable(bool overrideLocks);
+	
+	public bool isReadOnly 
+	{
+		get 
+		{
+			//first check if locking is enabled
+			if (!this.model.isSecurityEnabled) return false;
+			
+			if (this.isLocked)
+			{
+				return this.getLockedUserID() == this.model.currentUserID;
+			}
+			//not locked so readonly (only works when "require user lock to edit is on")
+			return true;
+		}
+	}
+	/// <summary>
+    /// returns the name of the user currently locking this element
+    /// </summary>
+    /// <returns>the name of the user currently locking this element</returns>
+    public abstract string getLockedUser();
+    
+    public abstract string getLockedUserID();
+    /// <summary>
+    /// returns true if currently locked
+    /// </summary>
+    /// <returns>true if currently locked</returns>
+    public  bool isLocked	
+    {
+    	get
+    	{
+            return (this.getLockedUser() != string.Empty);
+    	}
+    }
   }
 }

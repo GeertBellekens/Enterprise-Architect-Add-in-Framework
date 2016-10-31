@@ -68,6 +68,16 @@ namespace EAAddinFramework.Databases
 					}
 				}
 			}
+			//set all attributes to static
+			foreach (Column involvedColumn in this.involvedColumns) 
+			{
+				if (involvedColumn._wrappedattribute != null
+				   && ! involvedColumn._wrappedattribute.isStatic)
+				{
+					involvedColumn._wrappedattribute.isStatic = true;
+					involvedColumn._wrappedattribute.save();
+				}
+			}
 		}
 
 		#region implemented abstract members of DatabaseItem

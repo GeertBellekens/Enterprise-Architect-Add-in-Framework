@@ -124,7 +124,8 @@ namespace EAAddinFramework.Databases.Compare
 			                                                      && x.existingDatabaseItem.isOverridden))
 			{
 				//check if an equal exists. In that case we need to create a duplicate in the new database
-				bool equalExists = tableComparisons.Any(x => x.newDatabaseItem == overrideCompare.newDatabaseItem
+				bool equalExists = tableComparisons.Any(x => x != overrideCompare  
+				                                       && x.newDatabaseItem == overrideCompare.newDatabaseItem
 				                                        && x.comparisonStatus == DatabaseComparisonStatusEnum.equal);
 				//check if we have already updated the new item
 				bool alreadyUpdated = updatedNewItems.Contains(overrideCompare.newDatabaseItem);
@@ -176,11 +177,16 @@ namespace EAAddinFramework.Databases.Compare
 			var newTable = comparedItem.newDatabaseItem as Table;
 			if (existingTable != null)
 			{
+				List<Column> alreadMappedcolumns = new List<Column>();
 				//add all existing columns
 				foreach (Column existingColumn in existingTable.columns.OrderBy(x => x.position))
 				{
 					Column newColumn = null;
-					if (newTable != null) newColumn = newTable.getCorrespondingColumn(existingColumn);
+					if (newTable != null) 
+					{
+						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
+						alreadMappedcolumns.Add(newColumn);
+					}
 					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,existingColumn));
 				}
 				//now the new columns that don't have a corresponding existing column

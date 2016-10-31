@@ -52,13 +52,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       set { throw new NotImplementedException(); }
     }
-        
-    public override UML.Classes.Kernel.Element owner {
+    
+	internal ElementWrapper _owner;
+    public override UML.Classes.Kernel.Element owner 
+    {
       get 
-      { 
-      	return this.model.getElementWrapperByID( this.wrappedOperation.ParentID);
+      {
+      	if (_owner == null)
+      	{
+      		_owner = this.model.getElementWrapperByID( this.wrappedOperation.ParentID);
+      	}
+      	return _owner;
       }
-      set { throw new NotImplementedException(); }
+      set 
+      {
+      	throw new NotImplementedException();
+      }
     }
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
@@ -431,6 +440,25 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 	public override void deleteOwnedElement(Element ownedElement)
 	{
 		throw new NotImplementedException();
+	}
+
+	#endregion
+
+		#region implemented abstract members of Element
+
+	public override bool makeWritable(bool overrideLocks)
+	{
+		return this.owner.makeWritable(overrideLocks);
+	}
+
+	public override string getLockedUser()
+	{
+		return this._owner.getLockedUser();
+	}
+
+	public override string getLockedUserID()
+	{
+		return this._owner.getLockedUserID();
 	}
 
 	#endregion

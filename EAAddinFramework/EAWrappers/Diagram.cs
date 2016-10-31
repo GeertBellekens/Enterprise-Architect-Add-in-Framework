@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using System.Xml;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -497,5 +498,115 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				return null;
 			}
 		}
+
+		public bool makeWritable(bool overrideLocks)
+		{
+			//if security is not enabled then it is always writeable
+			if (!this.model.isSecurityEnabled) return true;
+			//TODO: implement overrideLocks
+			if (! this.isLocked)
+            {
+                //no lock found, go ahead and try to lock the element
+                try
+                {
+                    bool lockingSucceeded =this.wrappedDiagram.ApplyUserLock();
+                    if (lockingSucceeded)
+                    {
+                        // if succeeded we also lock all "owned" elements of the diagram
+                        foreach (var element in this.getOwnedElements())
+                        {
+                            element.makeWritable(overrideLocks);
+                        }
+                    }
+                    return lockingSucceeded;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                //lock found, don't even try it.
+                return false;
+            }   
+		}
+	
+		public bool isReadOnly 
+		{
+			get 
+			{
+				//first check if locking is enabled
+				if (!this.model.isSecurityEnabled) return false;
+				
+				if (this.isLocked)
+				{
+					return this.getLockedUserID() == this.model.currentUserID;
+				}
+				//not locked so readonly (only works when "require user lock to edit is on")
+				return true;
+			}
+		}
+		/// <summary>
+	    /// returns the name of the user currently locking this element
+	    /// </summary>
+	    /// <returns>the name of the user currently locking this element</returns>
+	    public string getLockedUser()
+	    {
+	    	string lockedUser = string.Empty;
+
+            string SQLQuery = @"select u.FirstName, u.Surname from t_seclocks s
+                                inner join t_secuser u on s.userID = u.userID 
+                                where s.entityID = '" + this.diagramGUID + "'";
+            XmlDocument result = model.SQLQuery(SQLQuery);
+            XmlNode firstNameNode = result.SelectSingleNode("//FirstName");
+            XmlNode lastNameNode = result.SelectSingleNode("//Surname");
+            if (firstNameNode != null && lastNameNode != null)
+            {
+                lockedUser = firstNameNode.InnerText + " " + lastNameNode.InnerText;
+            }
+
+            return lockedUser;
+	    }
+	    
+	    public  string getLockedUserID()
+	    {
+        	    string SQLQuery = @"select s.UserID from t_seclocks s
+                        			where s.entityID = '" + this.diagramGUID+ "'";
+                XmlDocument result = this.model.SQLQuery(SQLQuery);
+                XmlNode userIDNode = result.SelectSingleNode("//UserID");
+                return userIDNode.InnerText;
+	    }
+	    /// <summary>
+	    /// returns true if currently locked
+	    /// </summary>
+	    /// <returns>true if currently locked</returns>
+	    public  bool isLocked	
+	    {
+	    	get
+	    	{
+	            return (this.getLockedUser() != string.Empty);
+	    	}
+	    }
+	            /// <summary>
+        /// returns the owned elements of this diagram.
+        /// That are all elements that are shown on the diagram and that have the same parent as the diagram
+        /// Plus all notes shown on this diagram
+        /// </summary>
+        /// <returns>list of "owned" elements</returns>
+        public List<Element> getOwnedElements()
+        {
+            var ownedElements = new List<Element>();
+
+            string SQLQuery = @"select o.Object_ID from ((t_diagram d
+                                inner join t_diagramobjects do on d.Diagram_ID = do.Diagram_ID)
+                                inner join t_object o on o.Object_ID = do.Object_ID)
+                                where d.ea_guid = " + this.diagramGUID + @"
+                                 and (d.ParentID = o.ParentID 
+	                                or 
+	                                (o.ParentID = 0 
+	                                and o.Object_Type = 'Note'))";
+            return this.model.getElementWrappersByQuery(SQLQuery).Cast<Element>().ToList();
+        }
   }
 }

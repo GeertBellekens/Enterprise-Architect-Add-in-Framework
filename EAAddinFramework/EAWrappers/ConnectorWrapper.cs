@@ -13,6 +13,46 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private UML.Classes.Kernel.Element _target;
     private AssociationEnd _sourceEnd;
     private AssociationEnd _targetEnd;
+    internal Element sourceElement
+    {
+    	get
+    	{
+    		//check if elementwrapper
+			var elementSource = this.source as ElementWrapper;
+			if (elementSource != null) return elementSource;
+			//check if attributeWrapper
+			var attributeSource = this.source as AttributeWrapper;
+			if (attributeSource != null) return attributeSource;
+			//check if operationWrapper
+			var operationSource = this.source as Operation;
+			if (operationSource != null) return operationSource;
+			//hceck if connectorWrapper
+			var connectorSource = this.source as ConnectorWrapper;
+			if (connectorSource != null) return connectorSource;
+			//nothing found
+			return null;
+    	}
+    }
+    internal Element targetElement
+    {
+    	get
+    	{
+    		//check if elementwrapper
+			var elementSource = this.target as ElementWrapper;
+			if (elementSource != null) return elementSource;
+			//check if attributeWrapper
+			var attributeSource = this.target as AttributeWrapper;
+			if (attributeSource != null) return attributeSource;
+			//check if operationWrapper
+			var operationSource = this.target as Operation;
+			if (operationSource != null) return operationSource;
+			//hceck if connectorWrapper
+			var connectorSource = this.target as ConnectorWrapper;
+			if (connectorSource != null) return connectorSource;
+			//nothing found
+			return null;
+    	}
+    }
     public int id
     {
     	get{return this.wrappedConnector.ConnectorID;}
@@ -481,6 +521,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public override void deleteOwnedElement(Element ownedElement)
 	{
 		throw new NotImplementedException();
+	}
+
+	#endregion
+
+		#region implemented abstract members of Element
+
+	public override bool makeWritable(bool overrideLocks)
+	{
+		return this.source.makeWritable(overrideLocks);
+	}
+
+	public override string getLockedUser()
+	{
+		if (this.sourceElement != null) return sourceElement.getLockedUser();
+		return string.Empty;
+	}
+
+	public override string getLockedUserID()
+	{
+		if (this.sourceElement != null) return sourceElement.getLockedUserID();
+		return string.Empty;
 	}
 
 	#endregion

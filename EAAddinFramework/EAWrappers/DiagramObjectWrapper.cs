@@ -150,5 +150,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			throw new NotImplementedException();
 		}
 	}
+	
+	public bool makeWritable(bool overrideLocks)
+	{
+		return this.diagram.makeWritable(overrideLocks);
+	}
+
+	public bool isReadOnly 
+	{
+		get 
+		{
+			return this.diagram.isReadOnly;
+		}
+	}
   }
 }

@@ -100,9 +100,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    }
 	
 	    
-	    public override UML.Classes.Kernel.Element owner {
-	      get { return this.model.getElementWrapperByID(this.wrappedAttribute.ParentID);}
-	      set { throw new NotImplementedException(); }
+		internal Element _owner;
+	    public override UML.Classes.Kernel.Element owner 
+	    {
+	      get 
+	      {
+				if (_owner == null)
+				{
+					_owner = this.model.getElementWrapperByID(this.wrappedAttribute.ParentID);
+				}
+				return _owner;
+			}
+	      set 
+	      { 
+	      	throw new NotImplementedException();
+	      }
 	    }
 	    
 	    public override HashSet<UML.Profiles.Stereotype> stereotypes {
@@ -194,5 +206,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		#endregion
 
+		#region implemented abstract members of Element
+		public override bool makeWritable(bool overrideLocks)
+		{
+			return this.owner.makeWritable(overrideLocks);
+		}
+		public override string getLockedUser()
+		{
+			return this._owner.getLockedUser();
+		}
+		public override string getLockedUserID()
+		{
+			return this._owner.getLockedUserID();
+		}
+		#endregion
 	}
 }
