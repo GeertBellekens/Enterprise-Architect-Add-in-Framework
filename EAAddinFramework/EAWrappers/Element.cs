@@ -343,7 +343,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			
 			if (this.isLocked)
 			{
-				return this.getLockedUserID() == this.model.currentUserID;
+				return this.getLockedUserID() != this.model.currentUserID;
 			}
 			//not locked so readonly (only works when "require user lock to edit is on")
 			return true;

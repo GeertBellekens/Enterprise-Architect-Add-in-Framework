@@ -503,6 +503,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			//if security is not enabled then it is always writeable
 			if (!this.model.isSecurityEnabled) return true;
+			//if already writable return true
+			if (!this.isReadOnly) return true;
 			//TODO: implement overrideLocks
 			if (! this.isLocked)
             {
@@ -541,7 +543,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				
 				if (this.isLocked)
 				{
-					return this.getLockedUserID() == this.model.currentUserID;
+					return this.getLockedUserID()!= this.model.currentUserID;
 				}
 				//not locked so readonly (only works when "require user lock to edit is on")
 				return true;
@@ -601,7 +603,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
             string SQLQuery = @"select o.Object_ID from ((t_diagram d
                                 inner join t_diagramobjects do on d.Diagram_ID = do.Diagram_ID)
                                 inner join t_object o on o.Object_ID = do.Object_ID)
-                                where d.ea_guid = " + this.diagramGUID + @"
+                                where d.ea_guid = '" + this.diagramGUID + @"'
                                  and (d.ParentID = o.ParentID 
 	                                or 
 	                                (o.ParentID = 0 

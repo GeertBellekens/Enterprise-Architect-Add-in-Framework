@@ -804,6 +804,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			//if security is not enabled then it is always writeable
 			if (!this.model.isSecurityEnabled) return true;
+			//if already writable return true
+			if (!this.isReadOnly) return true;
 			//TODO: override locks
             if (! this.isLocked)
             {
