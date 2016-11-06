@@ -113,7 +113,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    public bool isReadOnly {
+    public bool isUMLReadOnly {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }

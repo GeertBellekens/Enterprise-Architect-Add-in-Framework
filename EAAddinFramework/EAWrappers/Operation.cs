@@ -453,12 +453,12 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 
 	public override string getLockedUser()
 	{
-		return this._owner.getLockedUser();
+		return ((Element)this.owner).getLockedUser();
 	}
 
 	public override string getLockedUserID()
 	{
-		return this._owner.getLockedUserID();
+		return ((Element)this.owner).getLockedUserID();
 	}
 
 	#endregion

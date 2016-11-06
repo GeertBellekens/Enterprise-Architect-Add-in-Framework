@@ -153,7 +153,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
 
-    public bool isReadOnly {
+    public bool isUMLReadOnly {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
