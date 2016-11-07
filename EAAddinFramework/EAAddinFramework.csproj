@@ -187,6 +187,9 @@
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Licensing\License.cs" />
+    <Compile Include="Mapping\AssociationMappingEnd.cs" />
+    <Compile Include="Mapping\Mapping.cs" />
+    <Compile Include="Mapping\MappingEnd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaBuilder\EASchemaAssociation.cs" />
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
@@ -210,6 +213,7 @@
     <Folder Include="EAWrappers\BehaviorStateMachines" />
     <Folder Include="Licensing" />
     <Folder Include="Databases" />
+    <Folder Include="Mapping" />
     <Folder Include="SchemaBuilder" />
     <Folder Include="Utilities" />
   </ItemGroup>
@@ -220,6 +224,10 @@
     <ProjectReference Include="..\..\UML-Tooling-Framework\DatabaseFramework\DatabaseFramework.csproj">
       <Project>{033c0df8-5bb0-496f-b024-4443b9fcf2dc}</Project>
       <Name>DatabaseFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UML-Tooling-Framework\MappingFramework\MappingFramework.csproj">
+      <Project>{b56abb9c-5ac0-4621-97b4-92d59c976f2f}</Project>
+      <Name>MappingFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\SchemaBuilderFramework\SchemaBuilderFramework.csproj">
       <Project>{5C63DAE8-2567-4270-8F7C-CEB8396B73D3}</Project>
