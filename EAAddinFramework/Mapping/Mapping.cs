@@ -9,36 +9,45 @@ namespace EAAddinFramework.Mapping
 	/// </summary>
 	public class Mapping:MP.Mapping
 	{
-		public Mapping()
+		internal MappingEnd _source;
+		internal MappingEnd _target;
+		internal MappingLogic _mappingLogic;
+		public Mapping(MappingEnd sourceEnd, MappingEnd targetEnd)
 		{
+			_source = sourceEnd;
+			_target = targetEnd;
+		}
+		public Mapping(MappingEnd sourceEnd, MappingEnd targetEnd, MappingLogic logic):this(sourceEnd,targetEnd)
+		{
+			_mappingLogic = logic;
 		}
 
 		#region Mapping implementation
 
 		public MP.MappingEnd source {
 			get {
-				throw new NotImplementedException();
+				return _source;
 			}
 			set {
-				throw new NotImplementedException();
+				_source = (MappingEnd)value;
 			}
 		}
 
 		public MP.MappingEnd target {
 			get {
-				throw new NotImplementedException();
+				return _target;
 			}
 			set {
-				throw new NotImplementedException();
+				_target = (MappingEnd)value;
 			}
 		}
 
 		public MP.MappingLogic mappingLogic {
 			get {
-				throw new NotImplementedException();
+				return _mappingLogic;
 			}
 			set {
-				throw new NotImplementedException();
+				_mappingLogic = (MappingLogic)value;
 			}
 		}
 
