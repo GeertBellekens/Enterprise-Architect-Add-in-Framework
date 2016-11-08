@@ -13,7 +13,7 @@ namespace EAAddinFramework.Mapping
 	public class AttributeAssociationEnd:MappingEnd,MP.AttributeMappingEnd
 	{
 		internal TSF_EA.Attribute _mappedAttribute;
-		public AttributeAssociationEnd(Attribute mappedAttribute,string path):base(mappedAttribute,path)
+		public AttributeAssociationEnd(TSF_EA.Attribute mappedAttribute,string path):base(mappedAttribute,path)
 		{
 		}
 

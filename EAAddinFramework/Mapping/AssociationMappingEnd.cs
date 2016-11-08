@@ -32,7 +32,7 @@ namespace EAAddinFramework.Mapping
 
 		#region MappingEnd implementation
 
-		public UML.Classes.Kernel.Element mappedEnd {
+		public override UML.Classes.Kernel.Element mappedEnd {
 			get 
 			{
 				return _mappedAssociation;
