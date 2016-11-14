@@ -50,6 +50,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		return _applicationFullPath;
     	}
     }
+    public string projectGUID
+    {
+    	get
+    	{
+    		return this.wrappedModel.ProjectGUID;
+    	}
+    }
     /// <summary>
     /// returns the type of repository backend.
     /// This is mostly needed to adjust to sql to the specific sql dialect

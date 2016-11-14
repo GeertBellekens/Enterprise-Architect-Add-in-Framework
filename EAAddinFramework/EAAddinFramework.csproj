@@ -217,8 +217,10 @@
     <Folder Include="Licensing" />
     <Folder Include="Databases" />
     <Folder Include="Mapping" />
+    <Folder Include="WorkTracking" />
     <Folder Include="SchemaBuilder" />
     <Folder Include="Utilities" />
+    <Folder Include="WorkTracking\TFS" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />
