@@ -1487,5 +1487,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.wrappedModel.RefreshOpenDiagrams(true);
 	}
+	public UML.Classes.Kernel.Package getCurrentRootPackage()
+	{
+		return this.getRoootPackage(this.selectedItem);
+	}
+	public RootPackage getRoootPackage(UML.Extended.UMLItem item)
+	{
+		//if the item is a RootPackage or null we return the given item
+		if (item is RootPackage || item == null) return item as RootPackage;
+		//else go up in the hierarchy
+		return (getRoootPackage(item.owner as UML.Classes.Kernel.Element));
+	}
   }
 }

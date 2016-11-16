@@ -41,7 +41,6 @@ namespace EAAddinFramework.Databases.Transformation
 						{
 							translations.Add(sourceName,new NameTranslation(sourceName,targetName,suffix));
 						}
-						else Logger.log("translation : " + sourceName + " already exists");
 					}
 					
 				} 

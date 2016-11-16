@@ -208,8 +208,8 @@ namespace EAAddinFramework.Databases
 											this._columns.FirstOrDefault( x => x.logicalAttribute != null
 				                						&& x.logicalAttribute.Equals(newColumn.logicalAttribute)
 				                						&& !alreadyMappedColumns.Contains(x));
-			if (correspondingColumn == null) correspondingColumn = 
-				getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
+			if (correspondingColumn == null && alreadyMappedColumns != null && alreadyMappedColumns.Count > 0) 
+				correspondingColumn = getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
 			return correspondingColumn;
 		}
 		/// <summary>
