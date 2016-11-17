@@ -79,7 +79,6 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				foreach (var newTable in _newDatabase.tables)
 				{
-					Logger.log("comparing new table " + newTable.name);
 					Table existingTable = null;
 					if (_existingDatabase != null) existingTable = (Table)_existingDatabase.getCorrespondingTable(newTable);
 					tableComparisons.Add( new EADatabaseItemComparison(newTable,existingTable));
@@ -90,7 +89,6 @@ namespace EAAddinFramework.Databases.Compare
 				//get existing tables that don't exist in the new database
 				foreach (var existingTable in _existingDatabase.tables)
 				{
-					Logger.log("comparing existing table " + existingTable.name);
 					//if the existingTable does not exist in the comparedItems then add it.
 					if (! tableComparisons.Any(x => x.existingDatabaseItem == existingTable))
 					{
@@ -101,27 +99,21 @@ namespace EAAddinFramework.Databases.Compare
 			//first process the ones that have an existing database item
 			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem != null).OrderBy(y => y.existingDatabaseItem.position).ThenBy(y => y.existingDatabaseItem.name))
 			{
-				Logger.log("adding comparison for existing Database Item: " + tableComparison.existingDatabaseItem.name);
 				addTableComparison(tableComparison);
 			}
 			//then the ones without an existing database item
 			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem == null).OrderBy(y => y.newDatabaseItem.position).ThenBy(y => y.newDatabaseItem.name))
 			{
-				Logger.log("adding comparison for only new Database Item: " + tableComparison.newDatabaseItem.name);
 				addTableComparison(tableComparison);
 			}
 		}
 		private void addTableComparison(EADatabaseItemComparison tableComparison)
 		{
-			Logger.log("starting addToComparison for Table");
 			addToComparison(tableComparison);
-			Logger.log("starting addComparisonDetails");
 			var tableComparisons = this.addComparisonDetails(tableComparison);
 			//check overriden items
-			Logger.log("starting update overrrides");
 			this.updateOverrides(tableComparisons);
 			//add them to the comparison
-			Logger.log("starting addToComparison for details");
 			addToComparison(tableComparisons);
 		}
 		/// <summary>
@@ -189,7 +181,6 @@ namespace EAAddinFramework.Databases.Compare
 			var newTable = comparedItem.newDatabaseItem as Table;
 			if (existingTable != null)
 			{
-				Logger.log("adding columns for processing existing table: " + existingTable.name);
 				List<Column> alreadMappedcolumns = new List<Column>();
 				//add all existing columns
 				foreach (Column existingColumn in existingTable.columns.OrderBy(x => x.position))
@@ -200,7 +191,6 @@ namespace EAAddinFramework.Databases.Compare
 						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
 						alreadMappedcolumns.Add(newColumn);
 					}
-					Logger.log("adding compare for existing column: " + existingColumn.name);
 					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,existingColumn));
 				}
 				//now the new columns that don't have a corresponding existing column
@@ -255,7 +245,6 @@ namespace EAAddinFramework.Databases.Compare
 					addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,null));
 				}
 			}
-			Logger.log("added " + addedComparedItems.Count.ToString() + " items to comparison");
 			return addedComparedItems;
 		}
 		public DB.Database newDatabase {

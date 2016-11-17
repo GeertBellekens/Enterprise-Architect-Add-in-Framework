@@ -83,6 +83,12 @@ namespace EAAddinFramework.Databases
 							.Any( x => x.name.Equals("dboverride",StringComparison.InvariantCultureIgnoreCase)
 							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
 					}
+					else if (this.logicalElement != null)
+					{
+						_isOverridden = this.logicalElement.taggedValues
+							.Any( x => x.name.Equals("dboverride",StringComparison.InvariantCultureIgnoreCase)
+							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
+					}
 					else
 					{
 						return false;
@@ -97,6 +103,10 @@ namespace EAAddinFramework.Databases
 				if (this.wrappedElement != null)
 				{
 					wrappedElement.addTaggedValue("dboverride",value.ToString().ToLower());
+				}
+				else if (this.logicalElement != null)
+				{
+					((Element)this.logicalElement).addTaggedValue("dboverride",value.ToString().ToLower());
 				}
 			}
 		}
