@@ -97,7 +97,7 @@ namespace EAAddinFramework.WorkTracking.TFS
                     //loop over the workitems to create actual workitems
                     foreach (var workitemResponse in workitemsResponses.value) 
                     {	
-                    	WorkItem workitem = new WorkItem(workitemResponse.id,workitemResponse.fields);
+                    	WorkItem workitem = new TFSWorkItem(this,workitemResponse.id,workitemResponse.fields);
                     	allWorkitems.Add(workitem);
                     }
                     

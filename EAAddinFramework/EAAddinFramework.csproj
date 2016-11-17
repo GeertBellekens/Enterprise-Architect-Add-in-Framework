@@ -218,11 +218,13 @@
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
+    <Compile Include="WorkTracking\Project.cs" />
     <Compile Include="WorkTracking\TFS\ListOfWorkItemResponse.cs" />
     <Compile Include="WorkTracking\TFS\Project.cs" />
     <Compile Include="WorkTracking\TFS\TFSHelperClasses.cs" />
     <Compile Include="WorkTracking\TFS\TFSSettings.cs" />
-    <Compile Include="WorkTracking\TFS\WorkItem.cs" />
+    <Compile Include="WorkTracking\TFS\TFSWorkItem.cs" />
+    <Compile Include="WorkTracking\WorkItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Databases\Compare" />

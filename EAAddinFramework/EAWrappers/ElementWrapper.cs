@@ -31,6 +31,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		get{return this.wrappedElement.Alias;}
 		set{this.wrappedElement.Alias = value;}
 	}
+	public string status
+	{
+		get{return this.wrappedElement.Status;}
+		set{this.wrappedElement.Status = value;}
+	}
+	public string phase
+	{
+		get{return this.wrappedElement.Phase;}
+		set{this.wrappedElement.Phase = value;}
+	}
     /// <summary>
     /// return the unique ID of this element
     /// </summary>

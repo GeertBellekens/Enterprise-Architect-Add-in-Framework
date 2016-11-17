@@ -3725,6 +3725,16 @@
             <param name="umlItem"></param>
             <returns>The TransformationILWriter instance for use in concatenated output.</returns>
         </member>
+        <member name="T:EAAddinFramework.WorkTracking.Project">
+            <summary>
+            Description of Project.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.WorkTracking.Project.#ctor">
+            <summary>
+            default constructor
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.WorkTracking.TFS.ListofWorkItemsResponse">
             <summary>
             Description of ListOfWorkItemResponse.
@@ -3740,9 +3750,65 @@
             Description of TFSSettings.
             </summary>
         </member>
-        <member name="T:EAAddinFramework.WorkTracking.TFS.WorkItem">
+        <member name="T:EAAddinFramework.WorkTracking.TFS.TFSWorkItem">
             <summary>
             Description of WorkItem.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.WorkTracking.WorkItem">
+            <summary>
+            Description of WorkItem.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.WorkTracking.WorkItem.#ctor(WorkTrackingFramework.Project)">
+            <summary>
+            default constructor
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.WorkTracking.WorkItem.#ctor(WorkTrackingFramework.Project,TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper)">
+            <summary>
+            constructuro with ElementWrapper
+            </summary>
+            <param name="wrappedElement"></param>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.ID">
+            <summary>
+            mapped to tagged value TFS_ID
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.type">
+            <summary>
+            mapped to tagged value TFS_type
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.title">
+            <summary>
+            mapped to name of wrapped element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.state">
+            <summary>
+            mapped to status of wrapped element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.description">
+            <summary>
+            mapped to notes of wrapped element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.assignedTo">
+            <summary>
+            mapped to Tagged Value TFS_AssignedTo
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.area">
+            <summary>
+            mapped to Tagged Value TFS_Area
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.iteration">
+            <summary>
+            mapped to phase of wrapped element
             </summary>
         </member>
     </members>
