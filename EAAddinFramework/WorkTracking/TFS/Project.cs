@@ -56,7 +56,7 @@ namespace EAAddinFramework.WorkTracking.TFS
             {
                 query = "Select [State], [Title] " +
                         "From WorkItems " +
-                        "Where [Work Item Type] = 'Feature' " +
+                	"Where [Work Item Type] in ( '"+ string.Join("','", settings.workitemMappings.Values.ToArray()) +"' )" +
                 		"AND [System.TeamProject] = '" + this.name + "' "	+
                         "Order By [State] Asc, [Changed Date] Desc"
             };
