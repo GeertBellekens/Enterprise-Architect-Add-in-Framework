@@ -3725,5 +3725,25 @@
             <param name="umlItem"></param>
             <returns>The TransformationILWriter instance for use in concatenated output.</returns>
         </member>
+        <member name="T:EAAddinFramework.WorkTracking.TFS.ListofWorkItemsResponse">
+            <summary>
+            Description of ListOfWorkItemResponse.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.WorkTracking.TFS.Project">
+            <summary>
+            Description of Project.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.WorkTracking.TFS.TFSSettings">
+            <summary>
+            Description of TFSSettings.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.WorkTracking.TFS.WorkItem">
+            <summary>
+            Description of WorkItem.
+            </summary>
+        </member>
     </members>
 </doc>

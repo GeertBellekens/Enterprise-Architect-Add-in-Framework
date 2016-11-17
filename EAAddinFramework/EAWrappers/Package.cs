@@ -26,8 +26,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.wrappedPackage = package;
 		}
-
-		public global::EA.Package WrappedPackage {
+		public override String notes 
+		{
+	        get { return this.WrappedPackage.Notes;  }
+	        set { this.WrappedPackage.Notes = value; }
+    	}
+		public global::EA.Package WrappedPackage 
+		{
 			get { return this.wrappedPackage; }
 		}
 		/// <summary>

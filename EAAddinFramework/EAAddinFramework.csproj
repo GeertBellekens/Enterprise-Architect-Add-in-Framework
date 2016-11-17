@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>EAAddinFramework</RootNamespace>
     <AssemblyName>EAAddinFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -57,6 +57,9 @@
     <Reference Include="Interop.EA">
       <HintPath>..\..\..\..\..\..\..\Program Files %28x86%29\Sparx Systems\EA\Interop.EA.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -64,7 +67,16 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -206,6 +218,11 @@
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
+    <Compile Include="WorkTracking\TFS\ListOfWorkItemResponse.cs" />
+    <Compile Include="WorkTracking\TFS\Project.cs" />
+    <Compile Include="WorkTracking\TFS\TFSHelperClasses.cs" />
+    <Compile Include="WorkTracking\TFS\TFSSettings.cs" />
+    <Compile Include="WorkTracking\TFS\WorkItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Databases\Compare" />
@@ -224,6 +241,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UML-Tooling-Framework\DatabaseFramework\DatabaseFramework.csproj">
@@ -242,6 +260,10 @@
       <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
       <Name>UMLToolingFramework</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UML-Tooling-Framework\WorkTrackingFramework\WorkTrackingFramework.csproj">
+      <Project>{5e06f0d2-b40a-45a9-be8f-07dcda11ef9c}</Project>
+      <Name>WorkTrackingFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
