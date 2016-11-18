@@ -58,7 +58,31 @@ namespace EAAddinFramework.WorkTracking
 			if (this.wrappedElement != null)
 			{
 				this.wrappedElement.save();
-				//do we need to save the tagged values?
+			}
+		}
+		/// <summary>
+		/// if it doesn't exist yet then we create it new, if it already exists then we update it
+		/// </summary>
+		/// <param name="ownerPackage">the package where the new items should be created</param>
+		/// <param name = "elementType">the type of element to create for new items</param>
+		public void synchronizeToEA(Package ownerPackage,string elementType)
+		{
+			//first check if it exists already
+			string sqlGetExistingElement = @"select o.Object_ID from (t_object o 
+											inner join t_objectproperties tv on o.Object_ID = tv.Object_ID)
+											where tv.[Property] = 'TFS_ID'
+											and tv.[Value] = '"+ this.ID +"'";
+			//TODO: get elements by query
+			var elementToWrap = ownerPackage.model.getElementWrappersByQuery(sqlGetExistingElement).FirstOrDefault();
+			if (elementToWrap == null)
+			{
+				//element does not exist, create a new one
+				elementToWrap = ownerPackage.addOwnedElement<ElementWrapper>(this.title,elementType);
+			}
+			if (elementToWrap != null)
+			{
+				this.wrappedElement = elementToWrap;
+				this.save();
 			}
 		}
 

@@ -15,7 +15,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	/// <summary>
 	/// Description of Project.
 	/// </summary>
-	public class Project:WT.Project
+	public class TFSProject:Project
 	{
 		 //TFS constants
         const string tfsCollection = "/DefaultCollection/";
@@ -24,7 +24,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 		internal string TFSUrl {get;set;}
 		private List<WorkItem> _workitems;
 		//constructor
-		public Project(string projectName,string TFSUrl, TFSSettings settings)
+		public TFSProject(string projectName,string TFSUrl, TFSSettings settings)
 		{
 			this.settings = settings;
 			this.name = projectName;
@@ -34,7 +34,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 		public string name {get;set;}
 
 
-		public List<WT.Workitem> workitems {
+		public override List<WT.Workitem> workitems {
 			get 
 			{
 				if (_workitems == null)
@@ -80,7 +80,6 @@ namespace EAAddinFramework.WorkTracking.TFS
 
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                	string testqueryResult = httpResponseMessage.Content.ReadAsStringAsync().Result;
                     WorkItemQueryResult workItemQueryResult = httpResponseMessage.Content.ReadAsAsync<WorkItemQueryResult>().Result;
                                      
                     // now that we have a bunch of work items, build a list of id's so we can get details

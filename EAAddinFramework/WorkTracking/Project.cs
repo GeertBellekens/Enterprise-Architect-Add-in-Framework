@@ -42,7 +42,7 @@ namespace EAAddinFramework.WorkTracking
 		#region Project implementation
 
 		List<WorkItem> _workitems;
-		public List<WT.Workitem> workitems {
+		public virtual List<WT.Workitem> workitems {
 			get 
 			{
 				return _workitems.Cast<WT.Workitem>().ToList();

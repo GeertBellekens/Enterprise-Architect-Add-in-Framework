@@ -16,9 +16,10 @@ namespace EAAddinFramework.WorkTracking.TFS
 	/// </summary>
 	public class TFSWorkItem:WorkItem
 	{
-		
-		public TFSWorkItem(Project ownerProject, int workitemID, ListofWorkItemsResponse.Fields fields):base(ownerProject)
+		private TFSProject _TFSOwnerProject;
+		public TFSWorkItem(TFSProject ownerProject, int workitemID, ListofWorkItemsResponse.Fields fields):base(ownerProject)
 		{
+			_TFSOwnerProject = ownerProject;
 			this.ID = workitemID.ToString();
 			this.type = fields.SystemWorkItemType;
 			this.title = fields.SystemTitle;
@@ -36,7 +37,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			}
 			set 
 			{
-				base.iteration = value.Replace(this.ownerProject.name,string.Empty);
+				base.iteration = value.Replace(_TFSOwnerProject.name,string.Empty);
 			}
 		}
 		public override string area 
@@ -47,7 +48,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			}
 			set 
 			{
-				base.area = value.Replace(this.ownerProject.name,string.Empty);
+				base.area = value.Replace(_TFSOwnerProject.name,string.Empty);
 			}
 		}
 

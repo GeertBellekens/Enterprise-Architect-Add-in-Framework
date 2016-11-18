@@ -3740,7 +3740,7 @@
             Description of ListOfWorkItemResponse.
             </summary>
         </member>
-        <member name="T:EAAddinFramework.WorkTracking.TFS.Project">
+        <member name="T:EAAddinFramework.WorkTracking.TFS.TFSProject">
             <summary>
             Description of Project.
             </summary>
@@ -3770,6 +3770,13 @@
             constructuro with ElementWrapper
             </summary>
             <param name="wrappedElement"></param>
+        </member>
+        <member name="M:EAAddinFramework.WorkTracking.WorkItem.synchronizeToEA(TSF.UmlToolingFramework.Wrappers.EA.Package,System.String)">
+            <summary>
+            if it doesn't exist yet then we create it new, if it already exists then we update it
+            </summary>
+            <param name="ownerPackage">the package where the new items should be created</param>
+            <param name = "elementType">the type of element to create for new items</param>
         </member>
         <member name="P:EAAddinFramework.WorkTracking.WorkItem.ID">
             <summary>
