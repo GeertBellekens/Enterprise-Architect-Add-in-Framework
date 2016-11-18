@@ -87,7 +87,7 @@ namespace EAAddinFramework.WorkTracking
 		}
 
 		internal Project _ownerProject;
-		public WT.Project ownerProject 
+		public virtual WT.Project ownerProject 
 		{
 			get 
 			{

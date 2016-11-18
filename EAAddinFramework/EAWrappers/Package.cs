@@ -206,6 +206,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedPackage.Diagrams,name);
 		}
+		{
+			this.wrappedPackage.Update();
+		}
 		/// <summary>
 		/// deletes an element owned by this Package
 		/// </summary>

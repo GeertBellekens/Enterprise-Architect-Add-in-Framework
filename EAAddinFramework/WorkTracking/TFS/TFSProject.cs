@@ -30,7 +30,13 @@ namespace EAAddinFramework.WorkTracking.TFS
 			this.name = projectName;
 			this.TFSUrl = TFSUrl + tfsCollection;
 		}
-
+		public string url
+		{
+			get
+			{
+				return Uri.EscapeUriString(this.TFSUrl + this.name + "/");
+			}
+		}
 		public string name {get;set;}
 
 
