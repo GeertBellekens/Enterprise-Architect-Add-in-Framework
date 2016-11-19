@@ -31,8 +31,12 @@ namespace EAAddinFramework.WorkTracking.TFS
 			this.state = fields.SystemState;
 			this.description = fields.SystemDescription;
 			this.assignedTo = fields.SystemAssignedTo;
-			this.area = fields.SystemAreaPath;
-			this.iteration = fields.SystemIterationPath;
+			this.area = fields.SystemAreaPath
+							.Replace(_TFSOwnerProject.name + @"\", string.Empty)
+							.Replace(_TFSOwnerProject.name, string.Empty);;
+			this.iteration = fields.SystemIterationPath
+							.Replace(_TFSOwnerProject.name + @"\", string.Empty)
+							.Replace(_TFSOwnerProject.name, string.Empty);;
 		}
 		public string url
 		{
@@ -51,28 +55,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 				this._TFSOwnerProject = (TFSProject)value;
 			}
 		}
-		public override string iteration 
-		{
-			get 
-			{
-				return this.ownerProject.name + @"\" + base.iteration;
-			}
-			set 
-			{
-				base.iteration = value.Replace(@"\" +_TFSOwnerProject.name,string.Empty);
-			}
-		}
-		public override string area 
-		{
-			get 
-			{
-				return this.ownerProject.name + @"\" + base.area;
-			}
-			set 
-			{
-				base.area = value.Replace(@"\" +_TFSOwnerProject.name,string.Empty);
-			}
-		}
+		
 
 	}
 }

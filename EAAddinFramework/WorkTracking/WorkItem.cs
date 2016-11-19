@@ -258,7 +258,7 @@ namespace EAAddinFramework.WorkTracking
 		/// <summary>
 		/// mapped to Tagged Value TFS_Area
 		/// </summary>
-		public virtual string area 
+		public string area 
 		{
 			get 
 			{
@@ -286,7 +286,7 @@ namespace EAAddinFramework.WorkTracking
 		/// <summary>
 		/// mapped to phase of wrapped element
 		/// </summary>
-		public virtual string iteration 
+		public string iteration 
 		{
 			get 
 			{
