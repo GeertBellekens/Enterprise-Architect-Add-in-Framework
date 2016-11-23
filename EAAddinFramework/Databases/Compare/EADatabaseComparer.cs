@@ -92,7 +92,11 @@ namespace EAAddinFramework.Databases.Compare
 					//if the existingTable does not exist in the comparedItems then add it.
 					if (! tableComparisons.Any(x => x.existingDatabaseItem == existingTable))
 					{
-						tableComparisons.Add(new EADatabaseItemComparison(null,existingTable));
+						//maybe this table is derived from the same logical class as another table 
+						// in that case we add the oter table as new item
+						Table newTable = null;
+						if (_newDatabase != null) newTable = (Table)_newDatabase.getCorrespondingTable(existingTable);
+						tableComparisons.Add(new EADatabaseItemComparison(newTable,existingTable));
 					}
 				}
 			}
@@ -106,13 +110,13 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				addTableComparison(tableComparison);
 			}
+			//check and update overriden items
+			this.updateOverrides(comparedItems);
 		}
 		private void addTableComparison(EADatabaseItemComparison tableComparison)
 		{
 			addToComparison(tableComparison);
 			var tableComparisons = this.addComparisonDetails(tableComparison);
-			//check overriden items
-			this.updateOverrides(tableComparisons);
 			//add them to the comparison
 			addToComparison(tableComparisons);
 		}
@@ -150,16 +154,6 @@ namespace EAAddinFramework.Databases.Compare
 		}
 		private void addToComparison(DatabaseItemComparison comparedItem)
 		{
-			//if new item alrady compared then make it null
-			if (comparedItems.Any(x => x.newDatabaseItem == comparedItem.newDatabaseItem))
-			{
-				comparedItem.newDatabaseItem = null;
-			}
-			//if existing item already compared then make it null
-			if ( comparedItems.Any(x => x.existingDatabaseItem == comparedItem.existingDatabaseItem))
-			{
-				comparedItem.existingDatabaseItem = null;
-			}
 			//only add the commparison if not both of them are null
 			if (comparedItem.existingDatabaseItem != null 
 			    || comparedItem.newDatabaseItem != null)

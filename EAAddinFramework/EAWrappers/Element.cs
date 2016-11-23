@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
-  public abstract class Element : UML.Classes.Kernel.Element {
+ public abstract class Element : UML.Classes.Kernel.Element {
     public Model model { get;  internal set; }
 
     internal Element(Model model){

@@ -199,12 +199,12 @@
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Licensing\License.cs" />
-    <Compile Include="Mapping\AssociationMappingEnd.cs" />
-    <Compile Include="Mapping\AttributeAssociationEnd.cs" />
+    <Compile Include="Mapping\ConnectorMapping.cs" />
     <Compile Include="Mapping\Mapping.cs" />
     <Compile Include="Mapping\MappingEnd.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />
     <Compile Include="Mapping\MappingSet.cs" />
+    <Compile Include="Mapping\PackageMappingSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaBuilder\EASchemaAssociation.cs" />
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />

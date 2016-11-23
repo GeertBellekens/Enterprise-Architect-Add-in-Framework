@@ -9,16 +9,21 @@ namespace EAAddinFramework.Mapping
 	/// <summary>
 	/// Description of MappingEnd.
 	/// </summary>
-	public abstract class MappingEnd:MP.MappingEnd
+	public  class MappingEnd:MP.MappingEnd
 	{
 		
-		protected MappingEnd(Element mappedElement,string path)
+		public MappingEnd(Element mappedElement,string path)
 		{
 			this.mappedEnd = mappedElement;
 			this.ownerPath = path;
 		}
+		public MappingEnd(Element mappedElement)
+		{
+			this.mappedEnd = mappedElement;
+			this.ownerPath = mappedElement.fqn;
+		}
 		#region MappingEnd implementation
-		public abstract TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
+		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
 		public virtual string ownerPath { get;set;}
 	
 		#endregion

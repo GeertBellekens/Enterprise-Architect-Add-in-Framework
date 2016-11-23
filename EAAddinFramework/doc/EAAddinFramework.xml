@@ -2938,24 +2938,19 @@
             Wrapper needed to be able to open properties dialog in EA
             </summary>
         </member>
-        <member name="T:EAAddinFramework.Mapping.AssociationMappingEnd">
+        <member name="T:EAAddinFramework.Mapping.ConnectorMapping">
             <summary>
-            Description of AssociationMappingEnd.
-            </summary>
-        </member>
-        <member name="T:EAAddinFramework.Mapping.MappingEnd">
-            <summary>
-            Description of MappingEnd.
-            </summary>
-        </member>
-        <member name="T:EAAddinFramework.Mapping.AttributeAssociationEnd">
-            <summary>
-            Description of AttributeAssociationEnd.
+            Description of ConnectorMapping.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Mapping.Mapping">
             <summary>
             Description of Mapping.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.MappingEnd">
+            <summary>
+            Description of MappingEnd.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Mapping.MappingLogic">
@@ -2966,6 +2961,11 @@
         <member name="T:EAAddinFramework.Mapping.MappingSet">
             <summary>
             Description of MappingSet.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.PackageMappingSet">
+            <summary>
+            Description of PackageMappingSet.
             </summary>
         </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaAssociation">

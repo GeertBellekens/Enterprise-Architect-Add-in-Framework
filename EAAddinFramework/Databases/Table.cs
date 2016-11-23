@@ -354,16 +354,6 @@ namespace EAAddinFramework.Databases
 		}
 
 
-		//Table can't be overriden
-		public bool isOverridden 
-		{
-			get 
-			{
-				return false;
-			}
-			set {
-				//do nothing
-			}
-		}
+
 	}
 }

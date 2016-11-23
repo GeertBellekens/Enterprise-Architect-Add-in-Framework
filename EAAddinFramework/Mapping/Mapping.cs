@@ -1,6 +1,9 @@
-﻿
-using System;
+﻿using System;
 using MP = MappingFramework;
+using UML=TSF.UmlToolingFramework.UML;
+using TSF.UmlToolingFramework.Wrappers.EA;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EAAddinFramework.Mapping
 {
@@ -21,6 +24,8 @@ namespace EAAddinFramework.Mapping
 		{
 			_mappingLogic = logic;
 		}
+		public Mapping(Element sourceElement, Element targetElement)
+			:this(new MappingEnd(sourceElement),new MappingEnd(targetElement)){}
 
 		#region Mapping implementation
 
