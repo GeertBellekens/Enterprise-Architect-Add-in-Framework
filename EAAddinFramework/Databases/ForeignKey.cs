@@ -80,6 +80,7 @@ namespace EAAddinFramework.Databases
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
 				newForeignKey.isOverridden = isOverridden;
+				newForeignKey.derivedFromItem = this;
 				if (save) newForeignKey.save();
 				return newForeignKey;
 			}

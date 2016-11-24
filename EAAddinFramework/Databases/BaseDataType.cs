@@ -65,6 +65,14 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public DB.DatabaseItem derivedFromItem {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//don't think we ever need this one

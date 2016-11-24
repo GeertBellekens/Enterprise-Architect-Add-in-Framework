@@ -37,6 +37,16 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public DB.DatabaseItem derivedFromItem {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
 		public bool isValid 
 		{
 			get

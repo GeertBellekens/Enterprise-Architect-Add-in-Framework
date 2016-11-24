@@ -132,6 +132,7 @@ namespace EAAddinFramework.Databases
 				newColumn.logicalAttribute = _logicalAttribute;
 				newColumn.isOverridden = isOverridden;
 				newColumn.position = _position;
+				newColumn.derivedFromItem = this;
 				if (save) newColumn.save();
 				return newColumn;
 			}

@@ -124,33 +124,64 @@ namespace EAAddinFramework.Databases.Compare
 		/// for each overridden existing item we update the new item, but only if this is the only existing item  referencing the new item.
 		/// If there are more then we need to duplicate the columns in the new database
 		/// </summary>
-		void updateOverrides(List<DatabaseItemComparison> tableComparisons )
+		public void updateOverrides(List<DatabaseItemComparison> tableComparisons )
 		{
 			List<DB.DatabaseItem> updatedNewItems = new List<DB.DatabaseItem>();
 			//get all elements that are overridden on the existing table side
 			foreach (var overrideCompare in tableComparisons.Where(x => x.existingDatabaseItem != null
 			                                                      && x.existingDatabaseItem.isOverridden))
 			{
+				this.setOverride(overrideCompare,true, updatedNewItems);
+			} 
+		}
+		public void setOverride(DatabaseItemComparison overrideCompare, bool overrideValue,List<DB.DatabaseItem>updatedNewItems = null)
+		{
+			if (overrideValue)
+			{
+				//set the comparisonstatus just in case
+				overrideCompare.comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+				
+				if (updatedNewItems == null) updatedNewItems = new List<DB.DatabaseItem>();
 				//check if an equal exists. In that case we need to create a duplicate in the new database
-				bool equalExists = tableComparisons.Any(x => x != overrideCompare  
+				bool equalExists = this.comparedItems.Any(x => x != overrideCompare  
 				                                       && x.newDatabaseItem == overrideCompare.newDatabaseItem
 				                                        && x.comparisonStatus == DatabaseComparisonStatusEnum.equal);
+				//check if this was a duplicate generated to be able to make the comparison
+				bool duplicate = this.comparedItems.Any(x => x.existingDatabaseItem == overrideCompare.newDatabaseItem.derivedFromItem);
 				//check if we have already updated the new item
 				bool alreadyUpdated = updatedNewItems.Contains(overrideCompare.newDatabaseItem);
 				
-				//and equal exists or the new item is already updated then we need to create a duplicate
-				if (equalExists || alreadyUpdated )
+				//if it is duplicate then we don't need to update it or create it as new item
+				if (! duplicate)
 				{
-					//create a duplicate of the existing item and set it as the new item
-					overrideCompare.newDatabaseItem = overrideCompare.existingDatabaseItem.createAsNewItem(this.newDatabase,false);
+					//and equal exists or the new item is already updated then we need to create a duplicate
+					if (equalExists || alreadyUpdated )
+					{
+						//create a duplicate of the existing item and set it as the new item
+						overrideCompare.newDatabaseItem = overrideCompare.existingDatabaseItem.createAsNewItem(this.newDatabase,false);
+						//TODO: check if we need to make a duplicate in the existing database
+					}
+					else if (overrideCompare.newDatabaseItem != null)
+					{
+						//update new item to match the existing item
+						overrideCompare.newDatabaseItem.update(overrideCompare.existingDatabaseItem, false);
+						updatedNewItems.Add(overrideCompare.newDatabaseItem);	
+					}
 				}
-				else if (overrideCompare.newDatabaseItem != null)
-				{
-					//update new item to match the existing item
-					overrideCompare.newDatabaseItem.update(overrideCompare.existingDatabaseItem, false);
-					updatedNewItems.Add(overrideCompare.newDatabaseItem);	
-				}
-			} 
+			}
+			else
+			{
+				//un-override item
+				// existing item
+				if (overrideCompare.existingDatabaseItem != null 
+				    && overrideCompare.existingDatabaseItem.isOverridden) 
+						overrideCompare.existingDatabaseItem.isOverridden = false;
+				// new item
+				if (overrideCompare.newDatabaseItem != null 
+				    && overrideCompare.newDatabaseItem.isOverridden) 
+						overrideCompare.newDatabaseItem.isOverridden = false;
+			}
+			
 		}
 		private void addToComparison(DatabaseItemComparison comparedItem)
 		{

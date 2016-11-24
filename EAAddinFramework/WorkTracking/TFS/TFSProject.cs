@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Windows.Forms;
 using WT=WorkTrackingFramework;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,32 +60,25 @@ namespace EAAddinFramework.WorkTracking.TFS
 			List<WorkItem> allWorkitems = new List<WorkItem>();
             // create wiql object
             var wiql = new
-            {
+            {	
                 query = "Select [State], [Title] " +
                         "From WorkItems " +
                 	"Where [Work Item Type] in ( '"+ string.Join("','", settings.workitemMappings.Values.ToArray()) +"' )" +
                 		"AND [System.TeamProject] = '" + this.name + "' "	+
                         "Order By [State] Asc, [Changed Date] Desc"
             };
-
+			//TODO: check if code below is needed for default credentials
+            //new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true })
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(TFSUrl );
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(settings.defaultUserName + ":" + settings.defaultPassword)));
+                
+                var httpResponseMessage = postWiql( client, wiql);
 
-                // serialize the wiql object into a json string   
-                var postValue = new StringContent(JsonConvert.SerializeObject(wiql), Encoding.UTF8, "application/json"); // mediaType needs to be application/json for a post call
-
-                // set the httpmethod to PPOST
-                var method = new HttpMethod("POST");
-
-                // send the request               
-                var httpRequestMessage = new HttpRequestMessage(method, TFSUrl + "_apis/wit/wiql?api-version=2.2") { Content = postValue };
-                var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
-
-                if (httpResponseMessage.IsSuccessStatusCode)
+                if (httpResponseMessage != null &&
+                    httpResponseMessage.IsSuccessStatusCode)
                 {
                     WorkItemQueryResult workItemQueryResult = httpResponseMessage.Content.ReadAsAsync<WorkItemQueryResult>().Result;
                                      
@@ -105,13 +99,65 @@ namespace EAAddinFramework.WorkTracking.TFS
                     	WorkItem workitem = new TFSWorkItem(this,workitemResponse.id,workitemResponse.fields);
                     	allWorkitems.Add(workitem);
                     }
-                    
-                    return allWorkitems;
                 }
-
-                return null;
+              return allWorkitems;
             }
         }
+		private HttpResponseMessage postWiql(HttpClient client, object wiql,bool useBasicAuthentication = false, bool askUser = false)
+		{
+			AuthenticationHeaderValue authorization = null;
+			if ( useBasicAuthentication) 
+			{
+				authorization = getBasicAuthorization(askUser);
+				if (authorization != null ) client.DefaultRequestHeaders.Authorization = authorization;
+			}
+			//user pressed cancel
+			if (useBasicAuthentication && authorization == null) return null;
+
+            // serialize the wiql object into a json string   
+            var postValue = new StringContent(JsonConvert.SerializeObject(wiql), Encoding.UTF8, "application/json"); // mediaType needs to be application/json for a post call
+
+            // set the httpmethod to PPOST
+            var method = new HttpMethod("POST");
+
+            // send the request               
+            var httpRequestMessage = new HttpRequestMessage(method, TFSUrl + "_apis/wit/wiql?api-version=2.2") { Content = postValue };
+            var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
+            if (!httpResponseMessage.IsSuccessStatusCode)
+            {
+            	if (!useBasicAuthentication && !askUser)
+            	{
+            		//if it didn't work using default authentication then try using basic authentication
+            		httpResponseMessage = postWiql(client,wiql,true);
+                }
+            	if (useBasicAuthentication && !askUser)
+            	{
+            		httpResponseMessage = postWiql(client,wiql,true,true);
+            	}
+            }
+            return httpResponseMessage;
+		}
+		private AuthenticationHeaderValue getBasicAuthorization(bool askUser)
+		{
+			AuthenticationHeaderValue authenticationHeader = null;
+			if (! string.IsNullOrEmpty(settings.defaultPassword) && ! askUser)
+			{
+				authenticationHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(settings.defaultUserName+ ":" + settings.defaultPassword)));
+			}
+			else
+			{
+				//ask user for password
+				GetAuthorizationForm getAuthorizationForm = new GetAuthorizationForm();
+				getAuthorizationForm.userName = settings.defaultUserName;
+				var dialogResponse = getAuthorizationForm.ShowDialog();
+				if (dialogResponse == DialogResult.OK)
+				{
+					settings.defaultPassword = getAuthorizationForm.passWord;
+					authenticationHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(getAuthorizationForm.userName + ":" + settings.defaultPassword)));
+				}
+			}
+			return authenticationHeader;
+		}
 		public ListofWorkItemsResponse.WorkItems GetListOfWorkItems_ByIDs(string ids, HttpClient client)
         {
             ListofWorkItemsResponse.WorkItems viewModel = new ListofWorkItemsResponse.WorkItems();

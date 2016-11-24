@@ -165,7 +165,8 @@ namespace EAAddinFramework.Databases
 		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
 		{
 			var newTable = new Table((Database)existingDatabase,this.name);
-			newTable._logicalClasses = new List<Class>(_logicalClasses);
+			newTable._logicalClasses = new List<Class>(logicalClasses);
+			newTable.derivedFromItem = this;
 			if (save) newTable.save(); 
 			return newTable;
 		}
@@ -202,7 +203,7 @@ namespace EAAddinFramework.Databases
 		/// <returns>the corresponding column</returns>
 		public Column getCorrespondingColumn(Column newColumn, List<Column> alreadyMappedColumns)
 		{
-			var correspondingColumn = this._columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
+			var correspondingColumn = this.columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
 			                                                       && !alreadyMappedColumns.Contains(x));
 			if (correspondingColumn == null) correspondingColumn = 
 											this._columns.FirstOrDefault( x => x.logicalAttribute != null
@@ -210,7 +211,7 @@ namespace EAAddinFramework.Databases
 				                						&& !alreadyMappedColumns.Contains(x));
 			if (correspondingColumn == null && alreadyMappedColumns != null && alreadyMappedColumns.Count > 0) 
 				correspondingColumn = getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
-			return correspondingColumn;
+			return correspondingColumn as Column;
 		}
 		/// <summary>
 		/// 

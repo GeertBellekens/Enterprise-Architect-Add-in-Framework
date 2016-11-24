@@ -59,6 +59,7 @@ namespace EAAddinFramework.Databases
 				//default implementation: do nothing
 			}
 		}
+		public DB.DatabaseItem derivedFromItem {get;set;}
 		public abstract DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true);
 
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);

@@ -219,6 +219,10 @@
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="WorkTracking\Project.cs" />
+    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.cs" />
+    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.Designer.cs">
+      <DependentUpon>GetAuthorizationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkTracking\TFS\ListOfWorkItemResponse.cs" />
     <Compile Include="WorkTracking\TFS\TFSProject.cs" />
     <Compile Include="WorkTracking\TFS\TFSHelperClasses.cs" />
@@ -277,6 +281,11 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx">
+      <DependentUpon>GetAuthorizationForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
