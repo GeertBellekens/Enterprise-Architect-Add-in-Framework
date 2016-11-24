@@ -25,6 +25,22 @@ namespace EAAddinFramework.WorkTracking.TFS
 		internal TFSSettings settings {get;set;}
 		internal string TFSUrl {get;set;}
 		private List<WorkItem> _workitems;
+		AuthenticationHeaderValue _authorization;
+		internal AuthenticationHeaderValue authorization
+		{
+			get
+			{
+				if (_authorization == null)
+				{
+					_authorization = getBasicAuthorization(false) ;
+				}
+				return _authorization;
+			}
+			private set
+			{
+				_authorization = value;
+			}
+		}
 		//constructor
 		public TFSProject(Package packageToWrap,string TFSUrl, TFSSettings settings):base(packageToWrap)
 		{
@@ -116,7 +132,6 @@ namespace EAAddinFramework.WorkTracking.TFS
         }
 		private HttpResponseMessage postWiql(HttpClient client, object wiql,bool useBasicAuthentication = false, bool askUser = false)
 		{
-			AuthenticationHeaderValue authorization = null;
 			if ( useBasicAuthentication) 
 			{
 				authorization = getBasicAuthorization(askUser);

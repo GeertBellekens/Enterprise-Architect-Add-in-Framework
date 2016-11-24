@@ -228,6 +228,7 @@
     <Compile Include="WorkTracking\TFS\TFSHelperClasses.cs" />
     <Compile Include="WorkTracking\TFS\TFSSettings.cs" />
     <Compile Include="WorkTracking\TFS\TFSWorkItem.cs" />
+    <Compile Include="WorkTracking\TFS\WorkItemPatchResponse.cs" />
     <Compile Include="WorkTracking\WorkItem.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -65,7 +65,7 @@ namespace EAAddinFramework.WorkTracking
 		/// </summary>
 		/// <param name="ownerPackage">the package where the new items should be created</param>
 		/// <param name = "elementType">the type of element to create for new items</param>
-		public void synchronizeToEA(Package ownerPackage,string elementType)
+		public virtual void synchronizeToEA(Package ownerPackage,string elementType)
 		{
 			//first check if it exists already
 			string sqlGetExistingElement = @"select o.Object_ID from (t_object o 
