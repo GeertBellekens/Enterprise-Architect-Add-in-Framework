@@ -58,6 +58,24 @@ namespace EAAddinFramework.WorkTracking.TFS
 				this._TFSOwnerProject = (TFSProject)value;
 			}
 		}
+		public string TFSIteration
+		{get
+			{
+				if (this.iteration.Length > 0)
+					return this.ownerProject.name + @"\" + this.iteration;
+				return this.ownerProject.name;
+			}
+		}
+		public string TFSArea
+		{
+			get
+			{
+				if (this.area.Length > 0)
+					return this.ownerProject.name + @"\" + this.area;
+				return this.ownerProject.name ;
+			}
+			
+		}
 		
 		// / <summary>
         // / Create a bug
@@ -83,10 +101,10 @@ namespace EAAddinFramework.WorkTracking.TFS
 	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[4];
 
 	            // set some field values like title and description
-	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = "Authorization Errors" };
-	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.TCM.ReproSteps", value = "Our authorization logic needs to allow for users with Microsoft accounts (formerly Live Ids) - http:// msdn.microsoft.com/en-us/library/live/hh826547.aspx" };
-	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Priority", value = "1" };
-	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Severity", value = "2 - High" };
+	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
+	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
+	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.TFSIteration };
+	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.TFSArea };
 	            
 	            using (var client = new HttpClient())
 	            {
@@ -102,7 +120,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	               
 	                // send the request
 	                //var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
-	                var request = new HttpRequestMessage(method, "https://tfs.realdolmen.com/tfs/DefaultCollection/172%20N%20ProjectFactory%20PocDotNet/_apis/wit/workitems/$Bug?api-version=2.2") { Content = patchValue };
+	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) +"/_apis/wit/workitems/$Feature?api-version=2.2") { Content = patchValue };
 	                var response = client.SendAsync(request).Result;
 	
 	                var me = response.ToString();
@@ -110,6 +128,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                if (response.IsSuccessStatusCode)
 	                {
 	                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
+	                    this.ID = viewModel.id.ToString();
 	                }
 	
 	                viewModel.HttpStatusCode = response.StatusCode;

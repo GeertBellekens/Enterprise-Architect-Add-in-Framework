@@ -294,7 +294,7 @@ namespace EAAddinFramework.WorkTracking
 				{
 					_iteration = this.wrappedElement.phase;
 				}
-				return _description;
+				return _iteration;
 			}
 			set 
 			{
