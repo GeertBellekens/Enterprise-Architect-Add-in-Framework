@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace EAAddinFramework.WorkTracking.TFS
 {
@@ -25,11 +26,23 @@ namespace EAAddinFramework.WorkTracking.TFS
 		internal string TFSUrl {get;set;}
 		private List<WorkItem> _workitems;
 		//constructor
+		public TFSProject(Package packageToWrap,string TFSUrl, TFSSettings settings):base(packageToWrap)
+		{
+			this.settings = settings;
+			this.TFSUrl = TFSUrl + tfsCollection;
+		}
 		public TFSProject(string projectName,string TFSUrl, TFSSettings settings)
 		{
 			this.settings = settings;
 			this.name = projectName;
 			this.TFSUrl = TFSUrl + tfsCollection;
+		}
+		public static TFSProject getCurrentProject(Element currentElement,string TFSUrl, TFSSettings settings)
+		{
+			var currentProjectPackage = Project.getCurrentProjectPackage(currentElement);
+			if (currentProjectPackage != null) return new TFSProject(currentProjectPackage,TFSUrl,settings);
+			//no project package found
+			return null;
 		}
 		public string url
 		{
@@ -38,8 +51,6 @@ namespace EAAddinFramework.WorkTracking.TFS
 				return Uri.EscapeUriString(this.TFSUrl + this.name + "/");
 			}
 		}
-		public string name {get;set;}
-
 
 		public override List<WT.Workitem> workitems {
 			get 
