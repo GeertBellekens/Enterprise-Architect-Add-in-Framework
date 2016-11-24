@@ -69,15 +69,24 @@ namespace EAAddinFramework.WorkTracking.TFS
         	if (string.IsNullOrEmpty(this.ID))
 	        {
 	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
-	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[6];
+//	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[2];
 	
 	            // set some field values like title and description
-	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
-	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.iteration };
-	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.iteration };
-	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.area };
-	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
-	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
+	            
+//	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
+//	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
+//	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.iteration };
+//	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.area };
+//	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
+//	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
+	            
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[4];
+
+	            // set some field values like title and description
+	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = "Authorization Errors" };
+	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.TCM.ReproSteps", value = "Our authorization logic needs to allow for users with Microsoft accounts (formerly Live Ids) - http:// msdn.microsoft.com/en-us/library/live/hh826547.aspx" };
+	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Priority", value = "1" };
+	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Severity", value = "2 - High" };
 	            
 	            using (var client = new HttpClient())
 	            {
@@ -92,7 +101,8 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                var method = new HttpMethod("PATCH");
 	               
 	                // send the request
-	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeUriString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
+	                //var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
+	                var request = new HttpRequestMessage(method, "https://tfs.realdolmen.com/tfs/DefaultCollection/172%20N%20ProjectFactory%20PocDotNet/_apis/wit/workitems/$Bug?api-version=2.2") { Content = patchValue };
 	                var response = client.SendAsync(request).Result;
 	
 	                var me = response.ToString();

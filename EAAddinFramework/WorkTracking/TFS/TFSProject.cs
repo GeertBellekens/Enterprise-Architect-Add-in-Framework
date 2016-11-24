@@ -20,7 +20,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	public class TFSProject:Project
 	{
 		 //TFS constants
-        const string tfsCollection = "/DefaultCollection/";
+        const string tfsCollection = "DefaultCollection/";
         //variables
 		internal TFSSettings settings {get;set;}
 		internal string TFSUrl {get;set;}
