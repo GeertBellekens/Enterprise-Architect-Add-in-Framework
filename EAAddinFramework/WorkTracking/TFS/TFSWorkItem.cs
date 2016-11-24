@@ -58,93 +58,59 @@ namespace EAAddinFramework.WorkTracking.TFS
 				this._TFSOwnerProject = (TFSProject)value;
 			}
 		}
+		
 		// / <summary>
-        // / create a work item using bypass rules
+        // / Create a bug
         // / </summary>
-        // / <param name="projectName">name of project</param>
+        // / <param name="projectName"></param>
         // / <returns>WorkItemPatchResponse.WorkItem</returns>
-        public WorkItemPatchResponse.WorkItem CreateWorkItemUsingByPassRules(string projectName)
+        public WorkItemPatchResponse.WorkItem CreateNewOnTFS()
         {
-            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
-            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[3];
-
-            // add a title and add a field you normally cant add such as CreatedDate
-            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = "hello world!" };
-            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.CreatedDate", value = "6/1/2016" };
-            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.CreatedBy", value = "Art Vandelay" };
-
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
-
-                // serialize the fields array into a json string          
-                var patchValue = new StringContent(JsonConvert.SerializeObject(fields), Encoding.UTF8, "application/json-patch+json"); // mediaType needs to be application/json-patch+json for a patch call
-
-                // set the httpmethod to Patch
-                var method = new HttpMethod("PATCH");
-
-                var url = _TFSOwnerProject.TFSUrl + projectName + "/_apis/wit/workitems/$UserStory?api-version=2.2";
-
-                // send the request
-                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + projectName + "/_apis/wit/workitems/$User Story?bypassRules=true&api-version=2.2") { Content = patchValue };
-                var response = client.SendAsync(request).Result;
-
-                var me = response.ToString();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
-                }
-
-                viewModel.HttpStatusCode = response.StatusCode;
-
-                return viewModel;
-            }
+        	if (string.IsNullOrEmpty(this.ID))
+	        {
+	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[6];
+	
+	            // set some field values like title and description
+	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
+	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.iteration };
+	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.iteration };
+	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.area };
+	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
+	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
+	            
+	            using (var client = new HttpClient())
+	            {
+	                client.DefaultRequestHeaders.Accept.Clear();
+	                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+	                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
+	
+	                // serialize the fields array into a json string          
+	                var patchValue = new StringContent(JsonConvert.SerializeObject(fields), Encoding.UTF8, "application/json-patch+json"); // mediaType needs to be application/json-patch+json for a patch call
+	
+	                // set the httpmethod to Patch
+	                var method = new HttpMethod("PATCH");
+	               
+	                // send the request
+	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeUriString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
+	                var response = client.SendAsync(request).Result;
+	
+	                var me = response.ToString();
+	
+	                if (response.IsSuccessStatusCode)
+	                {
+	                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
+	                }
+	
+	                viewModel.HttpStatusCode = response.StatusCode;
+	
+	                return viewModel;
+	            }
+        	}
+        	return null;
         }
-                // / <summary>
-        // / update a specific work item by id and return that changed worked item
-        // / </summary>
-        // / <param name="id"></param>
-        // / <returns>WorkItemPatchResponse.WorkItem</returns>
-        public WorkItemPatchResponse.WorkItem UpdateWorkItemFields(string id)
-        {
-            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
-            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[4];
-
-            // change some values on a few fields
-            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.History", value = "adding some history" };
-            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Priority", value = "2" };
-            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.BusinessValue", value = "100" };
-            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.ValueArea", value = "Architectural" };
-                      
-            using (var client = new HttpClient())
-            {               
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")); 
-                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
-                
-                // serialize the fields array into a json string          
-                var patchValue = new StringContent(JsonConvert.SerializeObject(fields), Encoding.UTF8, "application/json-patch+json"); // mediaType needs to be application/json-patch+json for a patch call
-
-                // set the httpmethod to Patch
-                var method = new HttpMethod("PATCH"); 
-
-                // send the request
-                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + id + "?api-version=2.2") { Content = patchValue };
-                var response = client.SendAsync(request).Result;
-                               
-                if (response.IsSuccessStatusCode)
-                {
-                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
-                }
-
-                viewModel.HttpStatusCode = response.StatusCode;
-
-                return viewModel;
-            }
-        }
+		
+        
 
         // / <summary>
         // / update fields on work item using bypass rules
@@ -187,7 +153,48 @@ namespace EAAddinFramework.WorkTracking.TFS
 			base.synchronizeToEA(ownerPackage, elementType);
 			this.UpdateEAGUIDToTFS();
 		}
-		
+		        // / <summary>
+        // / update a specific work item by id and return that changed worked item
+        // / </summary>
+        // / <param name="id"></param>
+        // / <returns>WorkItemPatchResponse.WorkItem</returns>
+        public WorkItemPatchResponse.WorkItem UpdateWorkItemFields(string id)
+        {
+            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
+            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[4];
+
+            // change some values on a few fields
+            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.History", value = "adding some history" };
+            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.Priority", value = "2" };
+            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.BusinessValue", value = "100" };
+            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/Microsoft.VSTS.Common.ValueArea", value = "Architectural" };
+                      
+            using (var client = new HttpClient())
+            {               
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")); 
+                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
+                
+                // serialize the fields array into a json string          
+                var patchValue = new StringContent(JsonConvert.SerializeObject(fields), Encoding.UTF8, "application/json-patch+json"); // mediaType needs to be application/json-patch+json for a patch call
+
+                // set the httpmethod to Patch
+                var method = new HttpMethod("PATCH"); 
+
+                // send the request
+                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + id + "?api-version=2.2") { Content = patchValue };
+                var response = client.SendAsync(request).Result;
+                               
+                if (response.IsSuccessStatusCode)
+                {
+                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
+                }
+
+                viewModel.HttpStatusCode = response.StatusCode;
+
+                return viewModel;
+            }
+        }
 
 	}
 }
