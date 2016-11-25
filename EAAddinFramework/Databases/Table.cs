@@ -162,8 +162,9 @@ namespace EAAddinFramework.Databases
 		}	
 
 
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
+			Database existingDatabase = owner as Database;
 			var newTable = new Table((Database)existingDatabase,this.name);
 			newTable._logicalClasses = new List<Class>(logicalClasses);
 			newTable.derivedFromItem = this;

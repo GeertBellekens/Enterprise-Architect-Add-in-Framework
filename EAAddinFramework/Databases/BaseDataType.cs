@@ -50,7 +50,7 @@ namespace EAAddinFramework.Databases
 				return ! string.IsNullOrEmpty(this.name);
 			}
 		}
-		public DB.DatabaseItem createAsNewItem(DB.Database existingDatabase,bool save = true)
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner,bool save = true)
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 			return null;

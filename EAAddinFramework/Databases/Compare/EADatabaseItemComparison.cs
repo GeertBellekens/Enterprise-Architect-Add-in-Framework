@@ -29,6 +29,35 @@ namespace EAAddinFramework.Databases.Compare
 			if (newDatabaseItem != null) newDatabaseItem.position = i;
 			if (existingDatabaseItem != null) existingDatabaseItem.position = i;
 		}
+
+		DatabaseItemComparison _ownerComparison;
+		public DatabaseItemComparison ownerComparison {
+			get {
+				return _ownerComparison;
+			}
+			set {
+				_ownerComparison = value;
+			}
+		}
+
+
+		List<DatabaseItemComparison> _ownedComparisons = new List<DatabaseItemComparison>();
+		public List<DatabaseItemComparison> ownedComparisons {
+			get {
+				return _ownedComparisons;
+			}
+			set {
+				_ownedComparisons = value;
+			}
+		}
+
+		public DatabaseItemComparison addOwnedComparison(DB.DatabaseItem existingItem, DB.DatabaseItem newItem)
+		{
+			var newComparison = new EADatabaseItemComparison(existingItem,newItem);
+			this.ownedComparisons.Add(newComparison);
+			newComparison.ownerComparison = this;
+			return newComparison;
+		}
 		public void save(DB.Database existingDatabase)
 		{
 			switch (this.comparisonStatus) 
@@ -57,7 +86,15 @@ namespace EAAddinFramework.Databases.Compare
 					this.existingDatabaseItem.delete();
 					break;					
 				case DatabaseComparisonStatusEnum.newItem:
-					this.newDatabaseItem.createAsNewItem(existingDatabase);
+					if (ownerComparison != null
+					   && ownerComparison.existingDatabaseItem != null)
+					{
+						this.newDatabaseItem.createAsNewItem(ownerComparison.existingDatabaseItem);
+					}
+					else
+					{
+						this.newDatabaseItem.createAsNewItem(existingDatabase);
+					}
 					break;				
 			}
 		}

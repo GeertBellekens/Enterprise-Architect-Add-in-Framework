@@ -120,10 +120,15 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 		#region implemented abstract members of DatabaseItem
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
-			//look for corresponding table in existingDatabase
-			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			Table newTable = owner as Table;
+			Database existingDatabase = owner as Database;
+			if (newTable == null)
+			{
+				//look for corresponding table in existingDatabase
+				newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			}
 			if (newTable != null)
 			{
 				var newColumn = new Column(newTable,this.name);

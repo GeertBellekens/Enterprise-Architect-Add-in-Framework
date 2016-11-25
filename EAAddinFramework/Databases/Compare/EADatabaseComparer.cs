@@ -28,7 +28,7 @@ namespace EAAddinFramework.Databases.Compare
 		public void save()
 		{
 			//both existing and new database should exist to even begin
-			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
+			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existing and new database should exist in order to save the database!");
 			//first save all valid tables
 			var tableComparers = this.comparedItems.Where(x =>x.itemType.Equals("Table",StringComparison.InvariantCultureIgnoreCase)
 			                                              && (x.newDatabaseItem == null
@@ -42,10 +42,8 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				//then save all columns
 				int i = 1;
-				foreach (var columnCompareItem in this.comparedItems.Where(
-					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)
-					&&( x.existingDatabaseItem != null && tableCompareItem.existingDatabaseItem != null && ((DB.Column)x.existingDatabaseItem).ownerTable.name == tableCompareItem.existingDatabaseItem.name 
-					   ||	x.newDatabaseItem != null && tableCompareItem.newDatabaseItem != null && ((DB.Column)x.newDatabaseItem).ownerTable.name == tableCompareItem.newDatabaseItem.name )))
+				foreach (var columnCompareItem in tableCompareItem.ownedComparisons.Where(
+					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)))
 				{
 					columnCompareItem.updatePosition(i);
 					columnCompareItem.save(_existingDatabase);
@@ -196,7 +194,7 @@ namespace EAAddinFramework.Databases.Compare
 						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
 						alreadMappedcolumns.Add(newColumn);
 					}
-					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,existingColumn));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,existingColumn));
 				}
 				//now the new columns that don't have a corresponding existing column
 				if (newTable != null)
@@ -205,7 +203,7 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						if (! addedComparedItems.Any(x => x.newDatabaseItem == newColumn))
 						{
-							addedComparedItems.Add(new EADatabaseItemComparison(newColumn, null));
+							addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn, null));
 						}
 					}
 				}
@@ -223,7 +221,7 @@ namespace EAAddinFramework.Databases.Compare
 						{
 							newConstraint = (Constraint)newTable.primaryKey ;
 						}
-						addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,existingConstraint));
+						addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,existingConstraint));
 					}
 				}
 				//then add the new constraints don't have a corresponding existing constraint
@@ -233,7 +231,7 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						if (! addedComparedItems.Any(x => x.newDatabaseItem == newConstraint))
 						{
-							addedComparedItems.Add(new EADatabaseItemComparison(newConstraint, null));
+							addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint, null));
 						}
 					}
 				}
@@ -243,11 +241,11 @@ namespace EAAddinFramework.Databases.Compare
 				//no existing table, everything is new
 				foreach (var newColumn in newTable.columns) 
 				{
-					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,null));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,null));
 				}
 				foreach (var newConstraint in newTable.constraints) 
 				{
-					addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,null));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,null));
 				}
 			}
 			return addedComparedItems;

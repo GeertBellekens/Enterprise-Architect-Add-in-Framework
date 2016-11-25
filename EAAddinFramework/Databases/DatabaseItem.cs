@@ -60,7 +60,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		public DB.DatabaseItem derivedFromItem {get;set;}
-		public abstract DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true);
+		public abstract DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true);
 
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory
