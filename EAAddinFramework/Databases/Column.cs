@@ -12,7 +12,7 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public class Column:DatabaseItem, DB.Column
 	{
-		internal Table _owner;
+		internal Table _ownerTable;
 		internal TSF_EA.Attribute _wrappedattribute;
 		internal DataType _type;
 		private TSF_EA.TaggedValue _traceTaggedValue;
@@ -21,15 +21,24 @@ namespace EAAddinFramework.Databases
 		private bool _isNotNullable;
 		public Column(Table owner, TSF_EA.Attribute attribute)
 		{
-			this._owner = owner;
+			this._ownerTable = owner;
 			this._wrappedattribute = attribute;
 		}
 		public Column(Table owner, string name)
 		{
-			this._owner = owner;
+			this._ownerTable = owner;
 			this.name = name;
 			this.ownerTable.addColumn(this);
 		}
+		
+		/// <summary>
+		/// a column is remote if the logical attribute for this column has a different owner then the logical element of the owner table
+		/// </summary>
+		public bool isRemote 
+		{
+			get { return _logicalAttribute != null && _logicalAttribute.owner != this._ownerTable.logicalElement;}
+		}
+
 		private int _position;
 		public override int position 
 		{
@@ -57,12 +66,12 @@ namespace EAAddinFramework.Databases
 			//create the _wrapped attribute if needed
 			if (_wrappedattribute == null)
 			{
-				if (this._owner._wrappedClass == null)
+				if (this._ownerTable._wrappedClass == null)
 				{
 					this.ownerTable.save();
 				}
 				//now the wrappedClass should exist. if not then we have a problem
-				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._owner._wrappedClass,this.name);		
+				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable._wrappedClass,this.name);		
 			}
 			if (_wrappedattribute != null)
 			{
@@ -87,6 +96,8 @@ namespace EAAddinFramework.Databases
 				_wrappedattribute.save();
 				//set isOverridden
 				this.isOverridden = this.isOverridden;
+				//set renamed
+				this.isRenamed = this.isRenamed;
 				//logical attribute tag value
 				if (traceTaggedValue == null) createTraceTaggedValue();
 				
@@ -94,9 +105,57 @@ namespace EAAddinFramework.Databases
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 
-			
-
 				
+		}
+		bool? _isRenamed;
+		public bool isRenamed 
+		{
+			get 
+			{
+				//renamed only makes sense on remote columns
+				if (!isRemote) return false;
+				if (! _isRenamed.HasValue)
+				{
+					//get the tagged value
+					if (this.wrappedElement != null)
+					{
+						_isRenamed = this.wrappedElement.taggedValues
+							.Any( x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)
+							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
+					}
+					else
+					{
+						return false;
+					}
+				}
+				return _isRenamed.Value;
+			}
+			set
+			{
+				//renamed only makes sense if the column is remote
+				if (this.isRemote)
+				{
+					this._isRenamed = value;
+					//create tagged value if needed
+					if (this.wrappedElement != null)
+					{
+						if (value)
+						{
+							wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
+						}
+						else
+						{
+							//if the tagged value exists then set it to false
+							if (wrappedElement.taggedValues
+								.Any(x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)))
+							{
+								wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
+							}
+						}
+						
+					}
+				}
+			}
 		}
 		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement 
 		{
@@ -136,6 +195,7 @@ namespace EAAddinFramework.Databases
 				newColumn.type = _type;
 				newColumn.logicalAttribute = _logicalAttribute;
 				newColumn.isOverridden = isOverridden;
+				newColumn.isRenamed = isRenamed;
 				newColumn.position = _position;
 				newColumn.derivedFromItem = this;
 				if (save) newColumn.save();
@@ -152,6 +212,7 @@ namespace EAAddinFramework.Databases
 			this._logicalAttribute = newColumn.logicalAttribute;
 			this._type = newColumn._type;
 			this.isOverridden = newColumn.isOverridden;
+			this.isRenamed = newColumn.isRenamed;
 			this.position = newColumn.position;
 		}
 		#endregion		
@@ -234,8 +295,8 @@ namespace EAAddinFramework.Databases
 		#region Column implementation
 
 		public DB.Table ownerTable {
-			get {return this._owner;}
-			set {this._owner = (Table)value;}
+			get {return this._ownerTable;}
+			set {this._ownerTable = (Table)value;}
 		}
 
 		#region implemented abstract members of DatabaseItem
@@ -271,6 +332,7 @@ namespace EAAddinFramework.Databases
 			{
 				_name = value;
 				if (_wrappedattribute != null) this._wrappedattribute.name = _name;
+				if (this.logicalAttribute != null && !this.isRemote) this.logicalAttribute.alias = value;
 			}
 		}
 

@@ -58,6 +58,19 @@ namespace EAAddinFramework.Databases.Compare
 			newComparison.ownerComparison = this;
 			return newComparison;
 		}
+
+		public void rename(string newName)
+		{
+			
+			if (this.newDatabaseItem != null)
+			{
+				this.newDatabaseItem.name = newName;
+				//set renamed for columns
+				var newColumn = this.newDatabaseItem as Column;
+				if (newColumn != null) newColumn.isRenamed = true;
+			}
+		}
+
 		public void save(DB.Database existingDatabase)
 		{
 			switch (this.comparisonStatus) 
@@ -97,11 +110,22 @@ namespace EAAddinFramework.Databases.Compare
 					}
 					break;				
 			}
+
 		}
 
 
 		private void compare()
 		{
+			//rename new column if existing column was renamed
+			var existingColumn = this.existingDatabaseItem as Column;
+			var newColumn = this.newDatabaseItem as Column;
+			if (existingColumn != null 
+			    && existingColumn.isRenamed
+			    && newColumn != null 
+			    && newColumn.name != existingColumn.name)
+			{
+				newDatabaseItem.name = existingDatabaseItem.name;
+			}
 			//if the status is already overridden then don't bother
 			if (this.comparisonStatus != DatabaseComparisonStatusEnum.dboverride)
 			{

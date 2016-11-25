@@ -19,6 +19,11 @@
             Description of DatabaseItem.
             </summary>
         </member>
+        <member name="P:EAAddinFramework.Databases.Column.isRemote">
+            <summary>
+            a column is remote if the logical attribute for this column has a different owner then the logical element of the owner table
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Compare.EADatabaseComparer">
             <summary>
             Description of EADatabaseComparer.
