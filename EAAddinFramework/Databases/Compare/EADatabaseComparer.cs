@@ -140,33 +140,13 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				//set the comparisonstatus just in case
 				overrideCompare.comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
-				
-				if (updatedNewItems == null) updatedNewItems = new List<DB.DatabaseItem>();
-				//check if an equal exists. In that case we need to create a duplicate in the new database
-				bool equalExists = this.comparedItems.Any(x => x != overrideCompare  
-				                                       && x.newDatabaseItem == overrideCompare.newDatabaseItem
-				                                        && x.comparisonStatus == DatabaseComparisonStatusEnum.equal);
-				//check if this was a duplicate generated to be able to make the comparison
-				bool duplicate = this.comparedItems.Any(x => x.existingDatabaseItem == overrideCompare.newDatabaseItem.derivedFromItem);
-				//check if we have already updated the new item
-				bool alreadyUpdated = updatedNewItems.Contains(overrideCompare.newDatabaseItem);
-				
-				//if it is duplicate then we don't need to update it or create it as new item
-				if (! duplicate)
+				if (overrideCompare.existingDatabaseItem != null)
 				{
-					//and equal exists or the new item is already updated then we need to create a duplicate
-					if (equalExists || alreadyUpdated )
-					{
-						//create a duplicate of the existing item and set it as the new item
-						overrideCompare.newDatabaseItem = overrideCompare.existingDatabaseItem.createAsNewItem(this.newDatabase,false);
-						//TODO: check if we need to make a duplicate in the existing database
-					}
-					else if (overrideCompare.newDatabaseItem != null)
-					{
-						//update new item to match the existing item
-						overrideCompare.newDatabaseItem.update(overrideCompare.existingDatabaseItem, false);
-						updatedNewItems.Add(overrideCompare.newDatabaseItem);	
-					}
+					overrideCompare.existingDatabaseItem.isOverridden = true;
+				}
+				else
+				{
+					overrideCompare.newDatabaseItem.isOverridden = true;
 				}
 			}
 			else
