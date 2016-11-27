@@ -199,12 +199,35 @@ namespace EAAddinFramework.Databases.Compare
 				//now the new columns that don't have a corresponding existing column
 				if (newTable != null)
 				{
+					List<Column> columnsToDelete = new List<Column>();
 					foreach (Column newColumn in newTable.columns) 
 					{
-						if (! addedComparedItems.Any(x => x.newDatabaseItem == newColumn))
+						//if not already mapped
+						if (addedComparedItems.All(x => x.newDatabaseItem != newColumn)) 
 						{
-							addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn, null));
+							//and there is no other column with the same name that maps to the same physical column and has exactly the same properties and name
+							var newColumnsToDelete = addedComparedItems.Where(y => 
+														y.existingDatabaseItem != null							                                                  
+							                            && y.existingDatabaseItem.logicalElements.Contains(newColumn.logicalElement)
+							                            && y.newDatabaseItem != null
+							                            && y.newDatabaseItem.name == newColumn.name
+							                            && y.newDatabaseItem.properties == newColumn.properties)
+														.Select(z => z.newDatabaseItem as Column);
+							if (newColumnsToDelete.Any()) 
+							{
+								columnsToDelete.AddRange(newColumnsToDelete);
+							} 
+							else
+							{
+								//no duplicates so add to the comparison						    	
+								addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn, null));
+							}
 						}
+					}
+					//delete the columns that were identified as duplicates
+					foreach (var columnToDelete in columnsToDelete) 
+					{
+						columnToDelete.delete();
 					}
 				}
 				//add all existing constraints

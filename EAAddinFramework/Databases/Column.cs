@@ -3,6 +3,7 @@ using System;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using TSF_EA=TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 using System.Collections.Generic;
 using System.Linq;
 namespace EAAddinFramework.Databases
@@ -17,6 +18,7 @@ namespace EAAddinFramework.Databases
 		internal DataType _type;
 		private TSF_EA.TaggedValue _traceTaggedValue;
 		private TSF_EA.Attribute _logicalAttribute;
+		private List<TSF_EA.Attribute> _logicalAttributes;
 		private string _name;
 		private bool _isNotNullable;
 		public Column(Table owner, TSF_EA.Attribute attribute)
@@ -30,7 +32,29 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.ownerTable.addColumn(this);
 		}
-		
+		public override bool isOverridden 
+		{
+			get 
+			{
+				return base.isOverridden;
+			}
+			set 
+			{
+				if (! isRemote)
+				{
+					base.isOverridden = value;
+				}
+				else
+				{
+					this._isOverridden = value;
+					//create tagged value if needed if not overridden then we don't need the tagged value;
+					if (this.wrappedElement != null)
+					{
+						wrappedElement.addTaggedValue("dboverride",value.ToString().ToLower());
+					}
+				}
+			}
+		}
 		/// <summary>
 		/// a column is remote if the logical attribute for this column has a different owner then the logical element of the owner table
 		/// </summary>
@@ -157,11 +181,11 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement 
+		public override List<UML.Classes.Kernel.Element> logicalElements 
 		{
 			get 
 			{
-				return logicalAttribute;
+				return logicalAttributes.Cast<UML.Classes.Kernel.Element>().ToList();
 			}
 		}
 		#region implemented abstract members of DatabaseItem
@@ -220,6 +244,7 @@ namespace EAAddinFramework.Databases
 		public override void delete()
 		{
 			if (_wrappedattribute != null) _wrappedattribute.delete();
+			this.ownerTable.removeColumn(this);
 		}
 
 
@@ -288,7 +313,39 @@ namespace EAAddinFramework.Databases
 			set
 			{
 				_logicalAttribute = value;
+				//add the logical attribute to the list of logical attributes
+				if (_logicalAttributes == null)
+				{
+					_logicalAttributes = new List<TSF_EA.Attribute>();
+					_logicalAttributes.Add(_logicalAttribute);
+				}
+				else if (!_logicalAttributes.Contains(_logicalAttribute))
+				{
+					_logicalAttributes.Add(_logicalAttribute);
+				}
 				this.createTraceTaggedValue();
+			}
+		}
+		public List<TSF_EA.Attribute> logicalAttributes
+		{
+			get
+			{
+				if (_logicalAttributes == null)
+				{
+				 	if ( _wrappedattribute != null)
+					{
+						_logicalAttributes = _wrappedattribute.taggedValues
+							.Where(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase)
+							             && x.tagValue is TSF_EA.Attribute)
+							.Select(y => y.tagValue as TSF_EA.Attribute).ToList();
+						return _logicalAttributes;
+					}
+				}
+				else
+				{
+					return _logicalAttributes;
+				}
+				return new List<TSF_EA.Attribute>();
 			}
 		}
 		

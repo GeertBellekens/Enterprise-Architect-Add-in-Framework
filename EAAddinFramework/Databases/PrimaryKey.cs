@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Databases
 {
@@ -33,11 +34,14 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public override List<UML.Classes.Kernel.Element> logicalElements{
 			get {
-				var firstColumn = this.involvedColumns.FirstOrDefault();
-				if (firstColumn != null) return firstColumn.logicalElement;
-				return null;
+				var _logicalElements = new List<UML.Classes.Kernel.Element>();
+				foreach (var involvedColumn in involvedColumns) 
+				{
+					_logicalElements.AddRange(involvedColumn.logicalElements);
+				}
+				return _logicalElements;
 			}
 		}
 		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)

@@ -5,6 +5,7 @@ using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 namespace EAAddinFramework.Databases
 {
 	/// <summary>
@@ -31,9 +32,10 @@ namespace EAAddinFramework.Databases
 			return "FK";
 		}
 		#endregion
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
-			get {
-				return this.logicalAssociation;
+		public override List<UML.Classes.Kernel.Element> logicalElements{
+			get 
+			{
+				return new List<UML.Classes.Kernel.Element>(){ this.logicalAssociation};
 			}
 		}
 		public override void save()

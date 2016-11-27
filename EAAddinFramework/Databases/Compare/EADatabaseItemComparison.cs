@@ -77,7 +77,10 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				case DatabaseComparisonStatusEnum.equal:
 					//make sure the translation sticks
-					if (this.newDatabaseItem.logicalElement != null) this.newDatabaseItem.logicalElement.save();
+					foreach (var logical in newDatabaseItem.logicalElements) 
+					{
+						logical.save();
+					}
 					//make sure the position is saved
 					this.existingDatabaseItem.save();
 					break;

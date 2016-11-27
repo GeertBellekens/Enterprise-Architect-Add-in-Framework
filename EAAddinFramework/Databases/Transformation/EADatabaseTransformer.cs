@@ -161,7 +161,8 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			if (logicalPackage != null)
 			{
-				foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>()) 
+				//not for abstract classes
+				foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>().Where(x => !x.isAbstract))
 				{
 					addTable(classElement);
 				}

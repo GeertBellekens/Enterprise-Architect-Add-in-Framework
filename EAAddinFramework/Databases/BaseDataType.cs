@@ -1,8 +1,10 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 namespace EAAddinFramework.Databases
 {
 	/// <summary>
@@ -39,11 +41,11 @@ namespace EAAddinFramework.Databases
 		{
 			//you cannot select a Base Datatype
 		}
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
 				//base datatypes don't have logical elements
-				return null;
+				return new List<UML.Classes.Kernel.Element>();
 			}
 		}
 		public bool isValid {

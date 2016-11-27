@@ -47,11 +47,11 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
-		public override UML.Classes.Kernel.Element logicalElement {
+		public override List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
 				//TODO: return logical package if ever needed
-				return null;
+				return new List<UML.Classes.Kernel.Element>();
 			}
 		}
 		#endregion

@@ -5,6 +5,7 @@ using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Databases
 {
@@ -30,9 +31,9 @@ namespace EAAddinFramework.Databases
 			this._owner = owner;
 			this.databaseOwner.addTable(this);
 		}
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public  override List<UML.Classes.Kernel.Element> logicalElements {
 			get {
-				return this.logicalClasses.FirstOrDefault();
+				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
 			}
 		}
 		#region implemented abstract members of DatabaseItem
@@ -249,6 +250,10 @@ namespace EAAddinFramework.Databases
 			if (this.columns != null) this._columns.Add((Column) column);
 		}
 
+		public void removeColumn(DB.Column column)
+		{
+			if (this.columns != null)this._columns.Remove((Column)column);
+		}
 		public void addConstraint(DB.Constraint constraint)
 		{
 			if (this.constraints != null) this._constraints.Add((Constraint) constraint);

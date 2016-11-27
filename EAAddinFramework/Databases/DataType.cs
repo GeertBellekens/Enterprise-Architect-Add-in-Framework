@@ -1,7 +1,9 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 namespace EAAddinFramework.Databases
 {
 	/// <summary>
@@ -60,11 +62,11 @@ namespace EAAddinFramework.Databases
 		{
 			//you cannot select a Datatype
 		}
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
 				// datatypes don't have logical elements
-				return null;
+				return new List<UML.Classes.Kernel.Element>();
 			}
 		}
 		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)

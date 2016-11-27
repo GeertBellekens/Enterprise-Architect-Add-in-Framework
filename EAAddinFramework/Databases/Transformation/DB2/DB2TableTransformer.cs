@@ -168,8 +168,31 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					          && end.type is UTF_EA.Class
 					          && (end.upper.integerValue.HasValue && end.upper.integerValue == 1))
 						{
-							dependingAssociationEnds.Add(end);
-							break;
+							//if both end have an upper value of 1 then we take only the one with {id} or else use the association direction
+							var otherEnd = association.memberEnds.FirstOrDefault(x => x != end) as UTF_EA.AssociationEnd;
+							//both have an upper value of 1
+							if (otherEnd.upper.integerValue.HasValue && otherEnd.upper.integerValue == 1)
+							{
+								//this one is the one with ID
+								if (end.isID)
+								{
+									dependingAssociationEnds.Add(end);
+									break;
+								}
+								//the other end is not an ID either, 
+								// then we use the association direction to determine wher the FK should be placed
+								if (! otherEnd.isID
+								         && association.targetEnd == end)
+								{
+									dependingAssociationEnds.Add(end);
+									break;
+								}
+							}
+							else
+							{
+								dependingAssociationEnds.Add(end);
+								break;
+							}
 						}
 					}
 				}
