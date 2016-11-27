@@ -36,6 +36,13 @@ namespace EAAddinFramework.Databases
 				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
 			}
 		}
+		public bool isAbstract
+		{
+			get
+			{
+				return this.logicalClasses.Any(x => x.isAbstract || x.generalizations.Any(y => x.Equals(y.target)));
+			}
+		}
 		#region implemented abstract members of DatabaseItem
 		internal override void createTraceTaggedValue()
 		{

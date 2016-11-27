@@ -164,7 +164,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				{
 					foreach (UTF_EA.AssociationEnd end in association.memberEnds) 
 					{
-						if (!logicalClass.Equals(end.type) 
+						if (!currentClass.Equals(end.type) 
 					          && end.type is UTF_EA.Class
 					          && (end.upper.integerValue.HasValue && end.upper.integerValue == 1))
 						{

@@ -78,8 +78,6 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 		protected DB2TableTransformer addDB2Table(UTF_EA.Class classElement)
 		{
-			//we do not add tables for classes that are abstract or that have subclasses
-			if (classElement.isAbstract || classElement.generalizations.Any(x => classElement.Equals(x.target))) return null;
 			DB2TableTransformer transformer = null;
 			if (classElement.owningPackage.Equals(this.logicalPackage))
 			{
@@ -104,21 +102,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				//now do the external tables linked to this classElement
 				foreach (var dependingAssociationEnd in transformer.getDependingAssociationEnds()) 
 				{
-					//process all subclasses of this class
-					foreach (UTF_EA.Class subClass in dependingAssociationEnd.type.relationships
-					         .OfType<UML.Classes.Kernel.Generalization>()
-					         .Where(x => dependingAssociationEnd.type.Equals(x.target))
-					         .Select(y => y.source))
-					{
-						var dependingTransformer = addDB2Table(subClass);
-						if (dependingTransformer != null)transformer.dependingTransformers.Add(dependingTransformer);
-					}
 					var dependingEndTransformer = addDB2Table(dependingAssociationEnd);
 					if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingEndTransformer);
 				}
 				//add the remote columns and primary and foreign keys
 				transformer.addRemoteColumnsAndKeys();
-				
 			}
 			return transformer;
 		}
@@ -126,7 +114,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			int nameCounter = getTableNameCounter();
 			string fixedTableString = this.getFixedTableString();
-			foreach (var tableTransformer in this._tableTransformers.Where(x => string.IsNullOrEmpty(x._table.name)) )
+			foreach (var tableTransformer in this._tableTransformers.Where(x => string.IsNullOrEmpty(x._table.name)
+			                                                               && !x.table.isAbstract) )
 			{
 				nameCounter++;
 				tableTransformer.setTableName(fixedTableString,nameCounter);
