@@ -74,12 +74,16 @@ namespace EAAddinFramework.Databases
 		{
 			Table newTable = owner as Table;
 			Database existingDatabase = owner as Database;
+			if (newTable != null)
+			{
+				existingDatabase = newTable.databaseOwner as Database;
+			}
 			if (newTable == null)
 			{
 				//look for corresponding table in existingDatabase
 				newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
 			}
-			var newForeignTable = existingDatabase.tables.FirstOrDefault(x => x.name == this._foreignTable.name);
+			var newForeignTable = existingDatabase.tables.FirstOrDefault(x => x.name == this.foreignTable.name);
 			if (newTable != null && newForeignTable != null)
 			{
 				var newForeignKey = new ForeignKey(newTable,this._involvedColumns);

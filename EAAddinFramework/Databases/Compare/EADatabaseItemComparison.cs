@@ -79,7 +79,7 @@ namespace EAAddinFramework.Databases.Compare
 					//make sure the translation sticks
 					foreach (var logical in newDatabaseItem.logicalElements) 
 					{
-						logical.save();
+						if (logical != null) logical.save();
 					}
 					//make sure the position is saved
 					this.existingDatabaseItem.save();

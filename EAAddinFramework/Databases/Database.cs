@@ -65,6 +65,10 @@ namespace EAAddinFramework.Databases
 			this._tables.Add(table as Table);
 		}
 
+		public void removeTable(DB.Table table)
+		{
+			this._tables.Remove((Table)table);
+		}
 		#region implemented abstract members of DatabaseItem
 		internal override void createTraceTaggedValue()
 		{

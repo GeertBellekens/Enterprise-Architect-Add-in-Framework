@@ -130,9 +130,21 @@
             <param name="ldmPackage">the logical pacakge</param>
             <returns>the new database</returns>
         </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.EADatabaseTransformer.removeAbstractTables">
+            <summary>
+            abstract tables need to be removed. All foreign keys to these tables have to be replaced by foreign key's to the tables for the 
+            subclasses of the logical class
+            </summary>
+        </member>
         <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer.createNewDatabase">
             <summary>
             create the initial database from the logical package
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer.removeAbstractTables">
+            <summary>
+            abstract tables need to be removed. All foreign keys to these tables have to be replaced by foreign key's to the tables for the 
+            subclasses of the logical class
             </summary>
         </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2ForeignKeyTransformer">
@@ -1792,6 +1804,11 @@
             represents the internal EA's elementID
         </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.superClasses">
+            EA provides a shortcut tot the superclasses through its 
+            element.BaseClasses
+            Normally we would get those via the element.generalizations.general
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.subClasses">
             EA provides a shortcut tot the superclasses through its 
             element.BaseClasses
             Normally we would get those via the element.generalizations.general

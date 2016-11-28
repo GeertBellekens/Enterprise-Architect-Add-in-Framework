@@ -161,6 +161,55 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		    }
 			return getCounterFromString(name, lenght -1);
 		}
+				/// <summary>
+		/// abstract tables need to be removed. All foreign keys to these tables have to be replaced by foreign key's to the tables for the 
+		/// subclasses of the logical class
+		/// </summary>
+		protected override void removeAbstractTables()
+		{
+			foreach (var abstractTableTransformer in this.tableTransformers.Where(x => x.table.isAbstract))
+			{
+				//check if there are any foreign keys pointing to this table
+				foreach (var foreignTabletransformers in this._tableTransformers
+				         .Where(x => x.foreignKeyTransformers
+				          .Any(y => y.foreignKey.foreignTable == abstractTableTransformer.table)))
+				{
+					//if there are any subclasses then there should be a foreign key transformer to each of the subclasses be added
+					//then the original foreignKeyTransformer should be removed
+					foreach (var foreignKeyTransformer in foreignTabletransformers.foreignKeyTransformers.Where(x => x.foreignKey.foreignTable == abstractTableTransformer.table)) 
+					{
+						foreach (var subclasses in abstractTableTransformer.logicalClasses.Select(x => x.subClasses))
+						{
+							foreach (var subclass in subclasses) 
+							{
+								var subTabletransformer = this.tableTransformers.FirstOrDefault(x => x.table.logicalElements.Any(y => subclass.Equals(y)));
+								//get corresponding columns from subtable
+								var correspondingsubColumns = getCorrespondingColumn(foreignKeyTransformer.foreignKey.involvedColumns,subTabletransformer.table);
+								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,this._nameTranslator);
+							}
+						}
+						//delete the original foereign key
+						foreignKeyTransformer.foreignKey.delete();
+						foreignTabletransformers.foreignKeyTransformers.Remove(foreignKeyTransformer);
+					}
+				}
+				//delete abstract table and its transformer
+	
+				abstractTableTransformer.table.delete();
+				this.tableTransformers.Remove(abstractTableTransformer);
+				
+			}
+		}
+		private List<Column> getCorrespondingColumn(List<DB.Column> originalColumns, DB.Table newTable)
+		{
+			var newColumns = new List<Column>();
+			foreach (Column originalcolumn in originalColumns) 
+			{
+				Column newColumn = newTable.columns.FirstOrDefault(x => x.name == originalcolumn.name) as Column;
+				if (newColumn != null) newColumns.Add(newColumn);
+			}
+			return newColumns;
+		}
 
 		#endregion
 	}

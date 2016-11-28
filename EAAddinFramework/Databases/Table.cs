@@ -167,6 +167,8 @@ namespace EAAddinFramework.Databases
 		public override void delete()
 		{
 			if (_wrappedClass != null) _wrappedClass.delete();
+			//remove from the database
+			this.databaseOwner.removeTable(this);
 		}	
 
 
@@ -266,6 +268,10 @@ namespace EAAddinFramework.Databases
 			if (this.constraints != null) this._constraints.Add((Constraint) constraint);
 		}
 
+		public void removeConstraint(DB.Constraint constraint)
+		{
+			if (this.constraints != null) this._constraints.Remove((Constraint) constraint);
+		}
 		public override string itemType {
 			get {return "Table";}
 		}
