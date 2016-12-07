@@ -76,35 +76,34 @@ namespace EAAddinFramework.WorkTracking.TFS
 			}
 			
 		}
+		public bool synchronizeToTFS()
+		{
+			if (string.IsNullOrEmpty(this.ID))
+			{
+				return createNewOnTFS();
+			}
+			else
+			{
+				return updateToTFS();
+			}
+
+		}
 		
-		// / <summary>
-        // / Create a bug
-        // / </summary>
-        // / <param name="projectName"></param>
-        // / <returns>WorkItemPatchResponse.WorkItem</returns>
-        public WorkItemPatchResponse.WorkItem CreateNewOnTFS()
+        public bool createNewOnTFS()
         {
         	if (string.IsNullOrEmpty(this.ID))
 	        {
 	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
-//	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[2];
-	
-	            // set some field values like title and description
 	            
-//	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
-//	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
-//	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.iteration };
-//	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.area };
-//	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
-//	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
-	            
-	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[4];
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[5];
 
 	            // set some field values like title and description
 	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
 	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
 	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.TFSIteration };
 	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.TFSArea };
+	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
+	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
 	            
 	            using (var client = new HttpClient())
 	            {
@@ -120,7 +119,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	               
 	                // send the request
 	                //var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
-	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) +"/_apis/wit/workitems/$Feature?api-version=2.2") { Content = patchValue };
+	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) +"/_apis/wit/workitems/$"+ this.type +"?api-version=2.2") { Content = patchValue };
 	                var response = client.SendAsync(request).Result;
 	
 	                var me = response.ToString();
@@ -129,24 +128,53 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                {
 	                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
 	                    this.ID = viewModel.id.ToString();
+	                    return true;
 	                }
 	
-	                viewModel.HttpStatusCode = response.StatusCode;
-	
-	                return viewModel;
+	                return false;
 	            }
         	}
-        	return null;
+        	return false;
         }
 		
+        public bool updateToTFS()
+        {
+        	if (this.wrappedElement != null
+        	    && ! string.IsNullOrEmpty(this.ID))
+        	{
+	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[5];
+	
+	           	fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
+	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
+	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.TFSIteration };
+	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.TFSArea };
+	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
+	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
+	                      
+	            using (var client = new HttpClient())
+	            {
+	                client.DefaultRequestHeaders.Accept.Clear();
+	                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+	                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
+	
+	                // serialize the fields array into a json string          
+	                var patchValue = new StringContent(JsonConvert.SerializeObject(fields), Encoding.UTF8, "application/json-patch+json"); // mediaType needs to be application/json-patch+json for a patch call
+	
+	                // set the httpmethod to Patch
+	                var method = new HttpMethod("PATCH");
+	
+	                // send the request
+	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + this.ID + "?api-version=2.2") { Content = patchValue };
+	                var response = client.SendAsync(request).Result;
+	
+	                return response.IsSuccessStatusCode;
+	            }
+        	}
+        	return false;
+        }
         
-
-        // / <summary>
-        // / update fields on work item using bypass rules
-        // / </summary>
-        // / <param name="id">work item id</param>
-        // / <returns>WorkItemPatchResponse.WorkItem</returns>
-        public bool UpdateEAGUIDToTFS()
+        public bool updateEAGUIDToTFS()
         {
         	if (this.wrappedElement != null)
         	{
@@ -180,7 +208,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 		public override void synchronizeToEA(Package ownerPackage, string elementType)
 		{
 			base.synchronizeToEA(ownerPackage, elementType);
-			this.UpdateEAGUIDToTFS();
+			this.updateEAGUIDToTFS();
 		}
 		        // / <summary>
         // / update a specific work item by id and return that changed worked item

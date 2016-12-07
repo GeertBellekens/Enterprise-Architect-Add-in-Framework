@@ -8,13 +8,14 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML=TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.WorkTracking
 {
 	/// <summary>
 	/// Description of Project.
 	/// </summary>
-	public class Project:WT.Project
+	public abstract class Project:WT.Project
 	{
 		Package _wrappedPackage;
 		internal Package wrappedPackage {
@@ -34,13 +35,6 @@ namespace EAAddinFramework.WorkTracking
 		{
 			this._wrappedPackage = wrappedPackage;
 		}
-		public static Project getCurrentProject(Element currentElement)
-		{
-			var currentProjectPackage = getCurrentProjectPackage(currentElement);
-			if (currentProjectPackage != null) return new Project(currentProjectPackage);
-			//no project package found
-			return null;
-		}
 		protected static Package getCurrentProjectPackage(Element currentElement)
 		{
 			//if the current element is null then we can't find the project
@@ -59,6 +53,16 @@ namespace EAAddinFramework.WorkTracking
 			//no project found on this level, go one level up
 			return getCurrentProjectPackage(currentElement.owningPackage as Element);
 		}
+
+		/// <summary>
+		/// returns all owned workitems for this package and if requested for all owned packages recursively
+		/// </summary>
+		/// <param name="ownerPackage">the owner package</param>
+		/// <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
+		/// <returns>a list of owned workitems for the given package</returns>
+		public abstract List<WT.Workitem> getOwnedWorkitems(UML.Classes.Kernel.Package ownerPackage, bool recursive);
+		
+
 		void resetProperties()
 		{
 			if (this.wrappedPackage is RootPackage)

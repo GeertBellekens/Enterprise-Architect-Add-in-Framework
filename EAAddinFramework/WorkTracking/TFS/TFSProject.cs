@@ -11,6 +11,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML=TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.WorkTracking.TFS
 {
@@ -41,6 +42,9 @@ namespace EAAddinFramework.WorkTracking.TFS
 				_authorization = value;
 			}
 		}
+
+		
+
 		//constructor
 		public TFSProject(Package packageToWrap,string TFSUrl, TFSSettings settings):base(packageToWrap)
 		{
@@ -81,6 +85,56 @@ namespace EAAddinFramework.WorkTracking.TFS
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+		/// <summary>
+		/// returns all owned workitems for this package and if requested for all owned packages recursively
+		/// </summary>
+		/// <param name="ownerPackage">the owner package</param>
+		/// <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
+		/// <returns>a list of owned workitems for the given package</returns>
+		public override List<WT.Workitem> getOwnedWorkitems(UML.Classes.Kernel.Package ownerPackage, bool recursive)
+		{
+			List<WT.Workitem> foundWorkItems = new List<WT.Workitem>();
+			var elementTypes = settings.mappedElementTypes;
+			var stereotypes = settings.mappedStereotypes;
+			string elementTypeClause = "o.Object_Type in ('" + string.Join("','",elementTypes) + "')";
+			string stereotypeClause = "o.Stereotype in ('"+  string.Join("','",stereotypes)  +"')";
+			string getWorkitemsSQL = @"select o.Object_ID from t_object o
+									where o.Package_ID =" + ((Package)ownerPackage).packageID;
+			if (elementTypes.Count > 0)
+			{
+				if(stereotypes.Count > 0)
+				{
+					getWorkitemsSQL += " and ( " + elementTypeClause;
+					getWorkitemsSQL += " or " + stereotypeClause + ")";
+				}
+				else
+				{
+					getWorkitemsSQL += " and " + elementTypeClause;
+				}
+			}
+			else
+			{
+				if (stereotypes.Count > 0)
+				{
+					getWorkitemsSQL += " and " + stereotypeClause;
+				}
+			}
+			//add the direct owned workitems
+			foreach (var workitemElement in ((Package)ownerPackage).model.getElementWrappersByQuery(getWorkitemsSQL))
+			{
+				foundWorkItems.Add( new TFSWorkItem(this, workitemElement));
+			}
+			//recurse owned packages
+			if (recursive)
+			{
+				foreach (var ownedPackage in ownerPackage.ownedElements.OfType<Package>()) 
+				{
+					foundWorkItems.AddRange(getOwnedWorkitems(ownedPackage,recursive));
+				}
+			}
+			return foundWorkItems;
 		}
 		private List<WorkItem> getAllWorkitems()
         {

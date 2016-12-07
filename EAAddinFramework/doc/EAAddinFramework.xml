@@ -3757,6 +3757,14 @@
             default constructor
             </summary>
         </member>
+        <member name="M:EAAddinFramework.WorkTracking.Project.getOwnedWorkitems(TSF.UmlToolingFramework.UML.Classes.Kernel.Package,System.Boolean)">
+            <summary>
+            returns all owned workitems for this package and if requested for all owned packages recursively
+            </summary>
+            <param name="ownerPackage">the owner package</param>
+            <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
+            <returns>a list of owned workitems for the given package</returns>
+        </member>
         <member name="T:EAAddinFramework.WorkTracking.TFS.GetAuthorizationForm">
             <summary>
             Description of GetAuthorizationForm.
@@ -3789,6 +3797,14 @@
             <summary>
             Description of Project.
             </summary>
+        </member>
+        <member name="M:EAAddinFramework.WorkTracking.TFS.TFSProject.getOwnedWorkitems(TSF.UmlToolingFramework.UML.Classes.Kernel.Package,System.Boolean)">
+            <summary>
+            returns all owned workitems for this package and if requested for all owned packages recursively
+            </summary>
+            <param name="ownerPackage">the owner package</param>
+            <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
+            <returns>a list of owned workitems for the given package</returns>
         </member>
         <member name="T:EAAddinFramework.WorkTracking.TFS.TFSSettings">
             <summary>
