@@ -2990,6 +2990,11 @@
             Description of PackageMappingSet.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Mapping.TaggedValueMapping">
+            <summary>
+            Description of TaggedValueMapping.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.SchemaBuilder.EASchemaAssociation">
             <summary>
             Description of EASchemaAssociation.
@@ -3839,16 +3844,6 @@
             <param name="ownerPackage">the package where the new items should be created</param>
             <param name = "elementType">the type of element to create for new items</param>
         </member>
-        <member name="P:EAAddinFramework.WorkTracking.WorkItem.ID">
-            <summary>
-            mapped to tagged value TFS_ID
-            </summary>
-        </member>
-        <member name="P:EAAddinFramework.WorkTracking.WorkItem.type">
-            <summary>
-            mapped to tagged value TFS_type
-            </summary>
-        </member>
         <member name="P:EAAddinFramework.WorkTracking.WorkItem.title">
             <summary>
             mapped to name of wrapped element
@@ -3877,6 +3872,16 @@
         <member name="P:EAAddinFramework.WorkTracking.WorkItem.iteration">
             <summary>
             mapped to phase of wrapped element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.ID">
+            <summary>
+            mapped to tagged value TFS_ID
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.type">
+            <summary>
+            mapped to tagged value TFS_type
             </summary>
         </member>
     </members>

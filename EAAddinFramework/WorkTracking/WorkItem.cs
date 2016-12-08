@@ -14,9 +14,11 @@ namespace EAAddinFramework.WorkTracking
 	/// <summary>
 	/// Description of WorkItem.
 	/// </summary>
-	public class WorkItem:WT.Workitem
+	public abstract class WorkItem:WT.Workitem
 	{
 		ElementWrapper _wrappedElement;
+		protected string _type = string.Empty;
+		protected string _ID = string.Empty;
 		internal ElementWrapper wrappedElement {
 			get {
 				return _wrappedElement;
@@ -65,7 +67,7 @@ namespace EAAddinFramework.WorkTracking
 		/// </summary>
 		/// <param name="ownerPackage">the package where the new items should be created</param>
 		/// <param name = "elementType">the type of element to create for new items</param>
-		public virtual void synchronizeToEA(Package ownerPackage,string elementType)
+		public virtual bool synchronizeToEA(Package ownerPackage,string elementType)
 		{
 			//first check if it exists already
 			string sqlGetExistingElement = @"select o.Object_ID from (t_object o 
@@ -84,6 +86,8 @@ namespace EAAddinFramework.WorkTracking
 				this.wrappedElement = elementToWrap;
 				this.save();
 			}
+			//return if this worked
+			return elementToWrap != null;
 		}
 
 		internal Project _ownerProject;
@@ -100,62 +104,8 @@ namespace EAAddinFramework.WorkTracking
 		}
 
 		#region Workitem implementation
-		string _ID;
-		/// <summary>
-		/// mapped to tagged value TFS_ID
-		/// </summary>
-		public string ID 
-		{
-			get 
-			{
-				if (this.wrappedElement != null)
-				{
-					
-					var IDTag = this.wrappedElement.getTaggedValue("TFS_ID");
-					if (IDTag != null)
-					{
-						_ID = IDTag.tagValue.ToString();
-					}
-				}
-				return _ID;
-			}
-			set 
-			{
-				if (this.wrappedElement != null)
-				{
-					this.wrappedElement.addTaggedValue("TFS_ID",value);
-				}
-				_ID = value;
-			}
-		}
-		string _type;
-		/// <summary>
-		/// mapped to tagged value TFS_type
-		/// </summary>
-		public string type 
-		{
-			get 
-			{
-				if (this.wrappedElement != null)
-				{
-					var typeTag = this.wrappedElement.getTaggedValue("TFS_type");
-					if (typeTag != null)
-					{
-						_type = typeTag.tagValue.ToString();
-					}
-				}
-				return _type;
-			}
-			set 
-			{
-				if (this.wrappedElement != null)
-				{
-					this.wrappedElement.addTaggedValue("TFS_type",value);
-				}
-				_type = value;
-			}
-		}
-		string _title;
+		
+		string _title = string.Empty;
 		/// <summary>
 		/// mapped to name of wrapped element
 		/// </summary>
@@ -179,7 +129,10 @@ namespace EAAddinFramework.WorkTracking
 			}
 		}
 
-		string _state;
+		public abstract string ID {get;set;}
+		public abstract string type{get;set;}
+		
+		string _state = string.Empty;
 		/// <summary>
 		/// mapped to status of wrapped element
 		/// </summary>
@@ -203,7 +156,7 @@ namespace EAAddinFramework.WorkTracking
 			}
 		}
 
-		string _description;
+		string _description = string.Empty;
 		/// <summary>
 		/// mapped to notes of wrapped element
 		/// </summary>
@@ -226,7 +179,7 @@ namespace EAAddinFramework.WorkTracking
 				_description = value;
 			}
 		}
-		string _assignedTo;
+		string _assignedTo = string.Empty;
 		/// <summary>
 		/// mapped to Tagged Value TFS_AssignedTo
 		/// </summary>
@@ -254,7 +207,7 @@ namespace EAAddinFramework.WorkTracking
 			}
 		}
 
-		string _area;
+		string _area = string.Empty;
 		/// <summary>
 		/// mapped to Tagged Value TFS_Area
 		/// </summary>
@@ -282,7 +235,7 @@ namespace EAAddinFramework.WorkTracking
 			}
 		}
 
-		string _iteration;
+		string _iteration = string.Empty;
 		/// <summary>
 		/// mapped to phase of wrapped element
 		/// </summary>

@@ -24,6 +24,27 @@ namespace EAAddinFramework.WorkTracking.TFS
 		public TFSWorkItem(TFSProject ownerProject, ElementWrapper elementToWrap):base(ownerProject,elementToWrap)
 		{
 			_TFSOwnerProject = ownerProject;
+			//set default type
+			if (string.IsNullOrEmpty(this.type))
+		    {
+				if (this._TFSOwnerProject.settings.workitemMappings.ContainsKey(this.wrappedElement.wrappedElement.FQStereotype)) //TODO add to ElementWrapper?
+				{
+					this.type = _TFSOwnerProject.settings.workitemMappings[this.wrappedElement.wrappedElement.FQStereotype];
+				}
+			 	else if(this._TFSOwnerProject.settings.workitemMappings.ContainsKey(this.wrappedElement.EAElementType))
+				{
+					this.type = _TFSOwnerProject.settings.workitemMappings[this.wrappedElement.EAElementType];
+				}
+			 	else
+			 	{
+			 		this.type = _TFSOwnerProject.settings.defaultWorkitemType;
+			 	}
+		    }
+			//set default status
+			if (string.IsNullOrEmpty( this.state))
+			{
+				this.state = this._TFSOwnerProject.settings.defaultStatus;
+			}
 		}
 		public TFSWorkItem(TFSProject ownerProject, int workitemID, ListofWorkItemsResponse.Fields fields):base(ownerProject)
 		{
@@ -76,6 +97,61 @@ namespace EAAddinFramework.WorkTracking.TFS
 			}
 			
 		}
+		
+		/// <summary>
+		/// mapped to tagged value TFS_ID
+		/// </summary>
+		public override string ID 
+		{
+			get 
+			{
+				if (this.wrappedElement != null)
+				{
+					
+					var IDTag = this.wrappedElement.getTaggedValue("TFS_ID");
+					if (IDTag != null)
+					{
+						_ID = IDTag.tagValue.ToString();
+					}
+				}
+				return _ID;
+			}
+			set 
+			{
+				if (this.wrappedElement != null)
+				{
+					this.wrappedElement.addTaggedValue("TFS_ID",value);
+				}
+				_ID = value;
+			}
+		}
+		
+		/// <summary>
+		/// mapped to tagged value TFS_type
+		/// </summary>
+		public override string type 
+		{
+			get 
+			{
+				if (this.wrappedElement != null)
+				{
+					var typeTag = this.wrappedElement.getTaggedValue("TFS_type");
+					if (typeTag != null)
+					{
+						_type = typeTag.tagValue.ToString();
+					}
+				}
+				return _type;
+			}
+			set 
+			{
+				if (this.wrappedElement != null)
+				{
+					this.wrappedElement.addTaggedValue("TFS_type",value);
+				}
+				_type = value;
+			}
+		}
 		public bool synchronizeToTFS()
 		{
 			if (string.IsNullOrEmpty(this.ID))
@@ -95,16 +171,16 @@ namespace EAAddinFramework.WorkTracking.TFS
 	        {
 	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
 	            
-	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[5];
-
-	            // set some field values like title and description
-	            fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[7];
+	
+	           	fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
 	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
 	            fields[2] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.IterationPath", value = this.TFSIteration };
 	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.TFSArea };
 	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
 	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
-	            
+	            fields[6] = new WorkItemPatch.Field() { op = "add", path = "/fields/State", value = this.state};
+	                     
 	            using (var client = new HttpClient())
 	            {
 	                client.DefaultRequestHeaders.Accept.Clear();
@@ -143,7 +219,7 @@ namespace EAAddinFramework.WorkTracking.TFS
         	    && ! string.IsNullOrEmpty(this.ID))
         	{
 	            WorkItemPatchResponse.WorkItem viewModel = new WorkItemPatchResponse.WorkItem();
-	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[5];
+	            WorkItemPatch.Field[] fields = new WorkItemPatch.Field[7];
 	
 	           	fields[0] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Title", value = this.title };
 	            fields[1] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.Description", value = this.description };
@@ -151,6 +227,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	            fields[3] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AreaPath", value = this.TFSArea };
 	            fields[4] = new WorkItemPatch.Field() { op = "add", path = "/fields/System.AssignedTo", value = this.assignedTo };
 	            fields[5] = new WorkItemPatch.Field() { op = "add", path = "/fields/Ext_RefId", value = this.wrappedElement.uniqueID };
+	            fields[6] = new WorkItemPatch.Field() { op = "add", path = "/fields/State", value = this.wrappedElement.status };
 	                      
 	            using (var client = new HttpClient())
 	            {
@@ -205,10 +282,11 @@ namespace EAAddinFramework.WorkTracking.TFS
         	}
         	return false;
         }
-		public override void synchronizeToEA(Package ownerPackage, string elementType)
+		public override bool synchronizeToEA(Package ownerPackage, string elementType)
 		{
-			base.synchronizeToEA(ownerPackage, elementType);
+			bool result = base.synchronizeToEA(ownerPackage, elementType);
 			this.updateEAGUIDToTFS();
+			return result;
 		}
 		        // / <summary>
         // / update a specific work item by id and return that changed worked item

@@ -86,7 +86,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 				throw new NotImplementedException();
 			}
 		}
-
+		
 		/// <summary>
 		/// returns all owned workitems for this package and if requested for all owned packages recursively
 		/// </summary>

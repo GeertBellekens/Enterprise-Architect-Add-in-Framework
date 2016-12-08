@@ -22,7 +22,7 @@ namespace EAAddinFramework.WorkTracking.TFS
         string defaultPassword {get;set;}
         List<string> mappedElementTypes{get;}
         List<string> mappedStereotypes{get;}
-        
-
+        string defaultWorkitemType {get;set;}
+        string defaultStatus {get;set;}
 	}
 }
