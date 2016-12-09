@@ -130,6 +130,28 @@ namespace EAAddinFramework.WorkTracking.TFS
 				_ID = value;
 			}
 		}
+				/// <summary>
+		/// mapped to notes of wrapped element
+		/// </summary>
+		public override string description 
+		{
+			get 
+			{
+				if (this.wrappedElement != null)
+				{
+					_description = this.wrappedElement.convertFromEANotes("HTML");
+				}
+				return _description;
+			}
+			set 
+			{
+				if (this.wrappedElement != null)
+				{
+					this.wrappedElement.convertToEANotes(value,"HTML");
+				}
+				_description = value;
+			}
+		}
 		
 		/// <summary>
 		/// mapped to tagged value TFS_type

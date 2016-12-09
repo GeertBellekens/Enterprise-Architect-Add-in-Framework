@@ -230,7 +230,15 @@ namespace EAAddinFramework.WorkTracking.TFS
 				//ask user for password
 				GetAuthorizationForm getAuthorizationForm = new GetAuthorizationForm();
 				getAuthorizationForm.userName = settings.defaultUserName;
-				var dialogResponse = getAuthorizationForm.ShowDialog();
+				DialogResult dialogResponse;
+				if (this.wrappedPackage != null) 
+				{
+					dialogResponse = getAuthorizationForm.ShowDialog(this.wrappedPackage.model.mainEAWindow);
+				}
+				else
+				{
+					dialogResponse = getAuthorizationForm.ShowDialog();
+				}
 				if (dialogResponse == DialogResult.OK)
 				{
 					settings.defaultPassword = getAuthorizationForm.passWord;

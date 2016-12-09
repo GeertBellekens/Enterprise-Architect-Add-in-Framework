@@ -19,6 +19,7 @@ namespace EAAddinFramework.WorkTracking
 		ElementWrapper _wrappedElement;
 		protected string _type = string.Empty;
 		protected string _ID = string.Empty;
+		protected string _description = string.Empty;
 		internal ElementWrapper wrappedElement {
 			get {
 				return _wrappedElement;
@@ -156,29 +157,8 @@ namespace EAAddinFramework.WorkTracking
 			}
 		}
 
-		string _description = string.Empty;
-		/// <summary>
-		/// mapped to notes of wrapped element
-		/// </summary>
-		public string description 
-		{
-			get 
-			{
-				if (this.wrappedElement != null)
-				{
-					_description = this.wrappedElement.convertFromEANotes("HTML");
-				}
-				return _description;
-			}
-			set 
-			{
-				if (this.wrappedElement != null)
-				{
-					this.wrappedElement.convertToEANotes(value,"HTML");
-				}
-				_description = value;
-			}
-		}
+		
+		public abstract string description {get;set;}
 		string _assignedTo = string.Empty;
 		/// <summary>
 		/// mapped to Tagged Value TFS_AssignedTo

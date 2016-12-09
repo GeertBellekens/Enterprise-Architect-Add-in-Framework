@@ -3854,11 +3854,6 @@
             mapped to status of wrapped element
             </summary>
         </member>
-        <member name="P:EAAddinFramework.WorkTracking.WorkItem.description">
-            <summary>
-            mapped to notes of wrapped element
-            </summary>
-        </member>
         <member name="P:EAAddinFramework.WorkTracking.WorkItem.assignedTo">
             <summary>
             mapped to Tagged Value TFS_AssignedTo
@@ -3877,6 +3872,11 @@
         <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.ID">
             <summary>
             mapped to tagged value TFS_ID
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.description">
+            <summary>
+            mapped to notes of wrapped element
             </summary>
         </member>
         <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.type">

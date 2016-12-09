@@ -47,7 +47,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			// 
 			// useNameLabel
 			// 
-			this.useNameLabel.Location = new System.Drawing.Point(12, 9);
+			this.useNameLabel.Location = new System.Drawing.Point(12, 18);
 			this.useNameLabel.Name = "useNameLabel";
 			this.useNameLabel.Size = new System.Drawing.Size(150, 23);
 			this.useNameLabel.TabIndex = 0;
@@ -74,7 +74,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			// 
 			// passwordLabel
 			// 
-			this.passwordLabel.Location = new System.Drawing.Point(12, 60);
+			this.passwordLabel.Location = new System.Drawing.Point(12, 71);
 			this.passwordLabel.Name = "passwordLabel";
 			this.passwordLabel.Size = new System.Drawing.Size(150, 23);
 			this.passwordLabel.TabIndex = 2;
@@ -82,7 +82,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			// 
 			// okButton
 			// 
-			this.okButton.Location = new System.Drawing.Point(201, 127);
+			this.okButton.Location = new System.Drawing.Point(120, 127);
 			this.okButton.Name = "okButton";
 			this.okButton.Size = new System.Drawing.Size(75, 23);
 			this.okButton.TabIndex = 4;
@@ -93,7 +93,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			// cancelButton
 			// 
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Location = new System.Drawing.Point(120, 126);
+			this.cancelButton.Location = new System.Drawing.Point(201, 127);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(75, 23);
 			this.cancelButton.TabIndex = 5;
@@ -120,6 +120,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(304, 201);
 			this.Name = "GetAuthorizationForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "TFS username and password";
 			this.ResumeLayout(false);
 			this.PerformLayout();
