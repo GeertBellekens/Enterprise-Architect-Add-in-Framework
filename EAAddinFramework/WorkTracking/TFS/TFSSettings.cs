@@ -24,5 +24,6 @@ namespace EAAddinFramework.WorkTracking.TFS
         List<string> mappedStereotypes{get;}
         string defaultWorkitemType {get;set;}
         string defaultStatus {get;set;}
+        string TFSFilterTag {get;set;}
 	}
 }

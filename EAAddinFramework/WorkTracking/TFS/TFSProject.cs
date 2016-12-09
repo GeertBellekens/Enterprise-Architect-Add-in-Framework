@@ -141,13 +141,20 @@ namespace EAAddinFramework.WorkTracking.TFS
         {
 			List<WorkItem> allWorkitems = new List<WorkItem>();
             // create wiql object
+            string wiqlQuery = 	"Select [State], [Title] " +
+                        	   	" From WorkItems " +
+                				" Where [Work Item Type] in ( '"+ string.Join("','", settings.workitemMappings.Values.ToArray()) +"' )" +
+                				" AND [System.TeamProject] = '" + this.name + "' ";
+            //if the filter tag is set we filter items on this tag
+            if (!string.IsNullOrEmpty(settings.TFSFilterTag))
+            {
+            	wiqlQuery += "AND [Tags] contains '" +settings.TFSFilterTag + "'";
+            }
+            //add default ordering
+            wiqlQuery += "Order By [State] Asc, [Changed Date] Desc";
             var wiql = new
             {	
-                query = "Select [State], [Title] " +
-                        "From WorkItems " +
-                	"Where [Work Item Type] in ( '"+ string.Join("','", settings.workitemMappings.Values.ToArray()) +"' )" +
-                		"AND [System.TeamProject] = '" + this.name + "' "	+
-                        "Order By [State] Asc, [Changed Date] Desc"
+            	query = wiqlQuery      
             };
 			//TODO: check if code below is needed for default credentials
             //new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true })
