@@ -41,7 +41,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		get{return this.wrappedElement.Phase;}
 		set{this.wrappedElement.Phase = value;}
 	}
-	public string EAElementType
+	public virtual string EAElementType
 	{
 		get{return this.wrappedElement.Type;}
 	}
