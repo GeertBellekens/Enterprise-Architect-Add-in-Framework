@@ -223,7 +223,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                // send the request
 	                //var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) + "/_apis/wit/workitems/$" + this.type + "?api-version=2.2") { Content = patchValue };
 	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) +"/_apis/wit/workitems/$"+ this.type +"?api-version=2.2") { Content = patchValue };
-	                var response = client.SendAsync(request).Result;
+	                var response = _TFSOwnerProject.sendToTFS(client,request);
 	
 	                var me = response.ToString();
 	
@@ -271,7 +271,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	
 	                // send the request
 	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + this.ID + "?api-version=2.2") { Content = patchValue };
-	                var response = client.SendAsync(request).Result;
+	                var response = _TFSOwnerProject.sendToTFS(client,request);
 	                if (! response.IsSuccessStatusCode)
 	                {
 	                	Logger.logError("Could not update workitem to TFS with ID: '" + this.ID + " because of error \nStatuscode: " 
@@ -307,7 +307,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	
 	                // send the request
 	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + this.ID + "?api-version=2.2") { Content = patchValue };
-	                var response = client.SendAsync(request).Result;
+	                var response = _TFSOwnerProject.sendToTFS(client,request);
 	
 	                return response.IsSuccessStatusCode;
 	            }
@@ -372,7 +372,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 
                 // send the request
                 var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + id + "?api-version=2.2") { Content = patchValue };
-                var response = client.SendAsync(request).Result;
+                var response = _TFSOwnerProject.sendToTFS(client,request);
                                
                 if (response.IsSuccessStatusCode)
                 {

@@ -3811,6 +3811,13 @@
             <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
             <returns>a list of owned workitems for the given package</returns>
         </member>
+        <member name="M:EAAddinFramework.WorkTracking.TFS.TFSProject.cloneHttpRequestMessage(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            clone the httpRequestMessage in order to be able to send it again if it failed the first time
+            </summary>
+            <param name="req">the httpRequestMessage</param>
+            <returns></returns>
+        </member>
         <member name="T:EAAddinFramework.WorkTracking.TFS.TFSSettings">
             <summary>
             Description of TFSSettings.

@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using EAAddinFramework.Utilities;
 using WT=WorkTrackingFramework;
@@ -192,16 +194,8 @@ namespace EAAddinFramework.WorkTracking.TFS
               return allWorkitems;
             }
         }
-		private HttpResponseMessage postWiql(HttpClient client, object wiql,bool useBasicAuthentication = false, bool askUser = false)
+		private HttpResponseMessage postWiql(HttpClient client, object wiql)
 		{
-			if ( useBasicAuthentication) 
-			{
-				authorization = getBasicAuthorization(askUser);
-				if (authorization != null ) client.DefaultRequestHeaders.Authorization = authorization;
-			}
-			//user pressed cancel
-			if (useBasicAuthentication && authorization == null) return null;
-
             // serialize the wiql object into a json string   
             var postValue = new StringContent(JsonConvert.SerializeObject(wiql), Encoding.UTF8, "application/json"); // mediaType needs to be application/json for a post call
 
@@ -210,21 +204,72 @@ namespace EAAddinFramework.WorkTracking.TFS
 
             // send the request               
             var httpRequestMessage = new HttpRequestMessage(method, TFSUrl + "_apis/wit/wiql?api-version=2.2") { Content = postValue };
-            var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
+            //send the actual request to TFS
+            return sendToTFS(client,httpRequestMessage);
+		}
+		internal HttpResponseMessage sendToTFS(HttpClient client, HttpRequestMessage httpRequestMessage,bool useBasicAuthentication = false, bool askUser = false)
+		{
+			if ( useBasicAuthentication) 
+			{
+				authorization = getBasicAuthorization(askUser);
+				if (authorization != null ) client.DefaultRequestHeaders.Authorization = authorization;
+			}
+			//user pressed cancel
+			if (useBasicAuthentication && authorization == null) return null;
+			//make a clone of the request message
+			var cloneRequestMessage = cloneHttpRequestMessage(httpRequestMessage).Result;
+			//send http message
+			var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
             	if (!useBasicAuthentication && !askUser)
             	{
             		//if it didn't work using default authentication then try using basic authentication
-            		httpResponseMessage = postWiql(client,wiql,true);
+            		httpRequestMessage = cloneHttpRequestMessage(cloneRequestMessage).Result;
+            		httpResponseMessage = sendToTFS(client,httpRequestMessage,true);
                 }
             	if (useBasicAuthentication && !askUser)
             	{
-            		httpResponseMessage = postWiql(client,wiql,true,true);
+            		httpRequestMessage = cloneHttpRequestMessage(cloneRequestMessage).Result;
+            		httpResponseMessage = sendToTFS(client,httpRequestMessage,true,true);
             	}
             }
             return httpResponseMessage;
 		}
+		/// <summary>
+		/// clone the httpRequestMessage in order to be able to send it again if it failed the first time
+		/// </summary>
+		/// <param name="req">the httpRequestMessage</param>
+		/// <returns></returns>
+		private static async Task<HttpRequestMessage> cloneHttpRequestMessage(HttpRequestMessage req)
+	    {
+	        HttpRequestMessage clone = new HttpRequestMessage(req.Method, req.RequestUri);
+	
+	        // Copy the request's content (via a MemoryStream) into the cloned object
+	        var ms = new MemoryStream();
+	        if (req.Content != null)
+	        {
+	            await req.Content.CopyToAsync(ms).ConfigureAwait(false);
+	            ms.Position = 0;
+	            clone.Content = new StreamContent(ms);
+	
+	            // Copy the content headers
+	            if (req.Content.Headers != null)
+	                foreach (var h in req.Content.Headers)
+	                    clone.Content.Headers.Add(h.Key, h.Value);
+	        }
+	
+	
+	        clone.Version = req.Version;
+	
+	        foreach (KeyValuePair<string, object> prop in req.Properties)
+	            clone.Properties.Add(prop);
+	
+	        foreach (KeyValuePair<string, IEnumerable<string>> header in req.Headers)
+	            clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+	
+	        return clone;
+	    }
 		private AuthenticationHeaderValue getBasicAuthorization(bool askUser)
 		{
 			AuthenticationHeaderValue authenticationHeader = null;
