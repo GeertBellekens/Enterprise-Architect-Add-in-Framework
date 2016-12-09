@@ -166,7 +166,7 @@ namespace EAAddinFramework.WorkTracking
 			{
 				if (this.wrappedElement != null)
 				{
-					_description = this.wrappedElement.notes;
+					_description = this.wrappedElement.convertFromEANotes("HTML");
 				}
 				return _description;
 			}
@@ -174,7 +174,7 @@ namespace EAAddinFramework.WorkTracking
 			{
 				if (this.wrappedElement != null)
 				{
-					this.wrappedElement.notes = value;
+					this.wrappedElement.convertToEANotes(value,"HTML");
 				}
 				_description = value;
 			}

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Windows.Forms;
+using EAAddinFramework.Utilities;
 using WT=WorkTrackingFramework;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,10 +47,8 @@ namespace EAAddinFramework.WorkTracking.TFS
 				this.state = this._TFSOwnerProject.settings.defaultStatus;
 			}
 		}
-		public TFSWorkItem(TFSProject ownerProject, int workitemID, ListofWorkItemsResponse.Fields fields):base(ownerProject)
+		private void updateTFSFields(ListofWorkItemsResponse.Fields fields)
 		{
-			_TFSOwnerProject = ownerProject;
-			this.ID = workitemID.ToString();
 			this.type = fields.SystemWorkItemType;
 			this.title = fields.SystemTitle;
 			this.state = fields.SystemState;
@@ -61,6 +60,12 @@ namespace EAAddinFramework.WorkTracking.TFS
 			this.iteration = fields.SystemIterationPath
 							.Replace(_TFSOwnerProject.name + @"\", string.Empty)
 							.Replace(_TFSOwnerProject.name, string.Empty);;
+		}
+		public TFSWorkItem(TFSProject ownerProject, int workitemID, ListofWorkItemsResponse.Fields fields):base(ownerProject)
+		{
+			_TFSOwnerProject = ownerProject;
+			this.ID = workitemID.ToString();
+			this.updateTFSFields(fields);
 		}
 		public string url
 		{
@@ -206,7 +211,8 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                    this.ID = viewModel.id.ToString();
 	                    return true;
 	                }
-	
+	                Logger.logError("Could not create workitem on TFS with title: '" + this.title + " because of error \nStatuscode: " 
+	                                + response.StatusCode + " Reasonphrase: " +response.ReasonPhrase);
 	                return false;
 	            }
         	}
@@ -244,7 +250,11 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                // send the request
 	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl  + "_apis/wit/workitems/" + this.ID + "?api-version=2.2") { Content = patchValue };
 	                var response = client.SendAsync(request).Result;
-	
+	                if (! response.IsSuccessStatusCode)
+	                {
+	                	Logger.logError("Could not update workitem to TFS with ID: '" + this.ID + " because of error \nStatuscode: " 
+	                                + response.StatusCode + " Reasonphrase: " +response.ReasonPhrase);
+	                }
 	                return response.IsSuccessStatusCode;
 	            }
         	}
@@ -279,6 +289,28 @@ namespace EAAddinFramework.WorkTracking.TFS
 	
 	                return response.IsSuccessStatusCode;
 	            }
+        	}
+        	return false;
+        }
+        public bool synchronizeToEA()
+        {
+        	if (this.ID.Length > 0)
+        	{
+	       		using (var client = new HttpClient())
+	            {
+					client.BaseAddress = new Uri(this._TFSOwnerProject.TFSUrl);
+	                client.DefaultRequestHeaders.Accept.Clear();
+	                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")); 
+	                client.DefaultRequestHeaders.Authorization = _TFSOwnerProject.authorization;
+	                var workitemResponses = this._TFSOwnerProject.GetListOfWorkItems_ByIDs(this.ID ,client);
+	                if (workitemResponses.value != null && workitemResponses.value.Any())
+	                {
+	                	var workitemValues = workitemResponses.value[0].fields;
+	                	this.updateTFSFields(workitemResponses.value[0].fields);
+	                	this.save();
+	                	return true;
+	                }
+	        	}
         	}
         	return false;
         }

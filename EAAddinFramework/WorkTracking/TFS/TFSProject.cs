@@ -154,8 +154,6 @@ namespace EAAddinFramework.WorkTracking.TFS
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(TFSUrl );
-                //debug
-                Logger.log("TFSUrl: " + TFSUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 
@@ -205,7 +203,6 @@ namespace EAAddinFramework.WorkTracking.TFS
 
             // send the request               
             var httpRequestMessage = new HttpRequestMessage(method, TFSUrl + "_apis/wit/wiql?api-version=2.2") { Content = postValue };
-            Logger.log("httpRequestMessage.RequestUri.ToString(): " + httpRequestMessage.RequestUri);
             var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
@@ -250,6 +247,11 @@ namespace EAAddinFramework.WorkTracking.TFS
             if (response.IsSuccessStatusCode)
             {
                 viewModel = response.Content.ReadAsAsync<ListofWorkItemsResponse.WorkItems>().Result;
+            }
+            else
+            {
+            	Logger.logError("Could not get workitems from TFS because of error \nStatuscode: " 
+	                                + response.StatusCode + " Reasonphrase: " +response.ReasonPhrase);
             }
             viewModel.HttpStatusCode = response.StatusCode;
 

@@ -10,6 +10,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     internal Element(Model model){
       this.model = model;
     }
+    internal string convertFromEANotes( string newFormat)
+    {
+    	return this.model.convertFromEANotes(this.notes,newFormat);
+    }
+    internal void convertToEANotes(string externalNotes, string externalFormat)
+    {
+    	this.notes = this.model.convertToEANotes(externalNotes,externalFormat);
+    }
     internal abstract global::EA.Collection eaTaggedValuesCollection {get;}
     public abstract String notes { get; set; }
     public abstract HashSet<UML.Classes.Kernel.Element> ownedElements 
