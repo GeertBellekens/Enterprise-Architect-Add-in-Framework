@@ -15,16 +15,16 @@ namespace EAAddinFramework.Mapping
 		public MappingEnd(Element mappedElement,string path)
 		{
 			this.mappedEnd = mappedElement;
-			this.ownerPath = path;
+			this.mappingPath = path;
 		}
 		public MappingEnd(Element mappedElement)
 		{
 			this.mappedEnd = mappedElement;
-			this.ownerPath = mappedElement.fqn;
+			this.mappingPath = mappedElement.fqn;
 		}
 		#region MappingEnd implementation
 		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
-		public virtual string ownerPath { get;set;}
+		public virtual string mappingPath { get;set;}
 	
 		#endregion
 		

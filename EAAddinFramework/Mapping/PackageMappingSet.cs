@@ -28,30 +28,7 @@ namespace EAAddinFramework.Mapping
 			List<Mapping> returnedMappings = new List<Mapping>();
 			foreach (var classElement in wrappedPackage.ownedElements.OfType<ElementWrapper>()) 
 			{
-				//connectors to an attribute
-				foreach (ConnectorWrapper mappedConnector in classElement.relationships.OfType<ConnectorWrapper>()
-				         .Where(y => y.targetElement is AttributeWrapper)) 
-				{
-					var connectorMapping = new ConnectorMapping(mappedConnector);
-					returnedMappings.Add(connectorMapping);
-				} 
-				// loop owned attributes
-				foreach (var ownedAttribute in classElement.ownedAttributes) 
-				{
-					//connectors from owned attributes
-					foreach (ConnectorWrapper mappedConnector in ownedAttribute.relationships.OfType<ConnectorWrapper>())
-					{
-						var connectorMapping = new ConnectorMapping(mappedConnector);
-						returnedMappings.Add(connectorMapping);
-					}
-					//tagged value references from owned attributes	
-					foreach (TaggedValue mappedTaggedValue in ownedAttribute.taggedValues.Where(x => x.tagValue is Element) )
-					{
-						var tagMapping = new TaggedValueMapping(mappedTaggedValue);
-						returnedMappings.Add(tagMapping);
-					}
-				}
-				
+				returnedMappings.AddRange(MappingFactory.createOwnedMappings(classElement,wrappedPackage.name + "." + classElement.name));
 			}
 			return returnedMappings;
 		}

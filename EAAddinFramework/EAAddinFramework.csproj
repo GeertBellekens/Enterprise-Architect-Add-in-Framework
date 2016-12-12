@@ -200,8 +200,10 @@
     <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Licensing\License.cs" />
     <Compile Include="Mapping\ConnectorMapping.cs" />
+    <Compile Include="Mapping\ElementMappingSet.cs" />
     <Compile Include="Mapping\Mapping.cs" />
     <Compile Include="Mapping\MappingEnd.cs" />
+    <Compile Include="Mapping\MappingFactory.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />
     <Compile Include="Mapping\MappingSet.cs" />
     <Compile Include="Mapping\PackageMappingSet.cs" />

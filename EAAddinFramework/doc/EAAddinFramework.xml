@@ -2970,19 +2970,29 @@
             Description of Mapping.
             </summary>
         </member>
-        <member name="T:EAAddinFramework.Mapping.MappingEnd">
+        <member name="T:EAAddinFramework.Mapping.ElementMappingSet">
             <summary>
-            Description of MappingEnd.
-            </summary>
-        </member>
-        <member name="T:EAAddinFramework.Mapping.MappingLogic">
-            <summary>
-            Description of MappingLogic.
+            Description of ElementMappingSet.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Mapping.MappingSet">
             <summary>
             Description of MappingSet.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.MappingEnd">
+            <summary>
+            Description of MappingEnd.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.MappingFactory">
+            <summary>
+            Description of MappingFactory.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.MappingLogic">
+            <summary>
+            Description of MappingLogic.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Mapping.PackageMappingSet">

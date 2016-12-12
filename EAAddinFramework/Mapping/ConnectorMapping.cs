@@ -13,7 +13,7 @@ namespace EAAddinFramework.Mapping
 	public class ConnectorMapping:Mapping
 	{
 		internal ConnectorWrapper wrappedConnector{get;private set;}
-		public ConnectorMapping(ConnectorWrapper wrappedConnector):base(wrappedConnector.sourceElement,wrappedConnector.targetElement)
+		public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath)
 		{
 			this.wrappedConnector = wrappedConnector;
 		}

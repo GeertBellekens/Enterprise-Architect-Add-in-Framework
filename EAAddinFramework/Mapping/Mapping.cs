@@ -24,8 +24,8 @@ namespace EAAddinFramework.Mapping
 		{
 			_mappingLogic = logic;
 		}
-		public Mapping(Element sourceElement, Element targetElement)
-			:this(new MappingEnd(sourceElement),new MappingEnd(targetElement)){}
+		public Mapping(Element sourceElement, Element targetElement,string basepath)
+			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement)){}
 
 		#region Mapping implementation
 

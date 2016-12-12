@@ -13,7 +13,7 @@ namespace EAAddinFramework.Mapping
 	public class TaggedValueMapping:Mapping
 	{
 		internal  TaggedValue wrappedTaggedValue{get;private set;}
-		public TaggedValueMapping(TaggedValue wrappedTaggedValue):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element)
+		public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath)
 		{
 			this.wrappedTaggedValue = wrappedTaggedValue;
 		}
