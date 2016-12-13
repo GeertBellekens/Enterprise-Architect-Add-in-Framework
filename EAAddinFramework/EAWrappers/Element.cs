@@ -259,10 +259,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	/// <param name="name">the name fo the tagged value to add</param>
 	/// <param name="tagValue">the value of the tagged value</param>
+	/// <param name = "comment">the comment to add to the tagged value</param>
 	/// <param name = "addDuplicate"></param>
 	/// <returns>the added (or updated) tagged value</returns>
 		
-	public virtual TaggedValue addTaggedValue(string name, string tagValue, bool addDuplicate = false)
+	public virtual TaggedValue addTaggedValue(string name, string tagValue,string comment = null, bool addDuplicate = false)
 	{
 		TaggedValue newTaggedValue = null;
 		if (! addDuplicate)
@@ -276,6 +277,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
 		}
 		newTaggedValue.tagValue = tagValue;
+		if (comment != null) newTaggedValue.comment = comment;
 		newTaggedValue.save();
 		return newTaggedValue;
 	}

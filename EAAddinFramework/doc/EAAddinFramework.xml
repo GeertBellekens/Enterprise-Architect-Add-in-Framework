@@ -1575,13 +1575,14 @@
             </summary>
             <returns>the name as ToString</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.Boolean)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.String,System.Boolean)">
             <summary>
             adds a new tagged value to the element with the given name and value
             if a tagged value with that name already exists the value of the existing tagged value is updated./
             </summary>
             <param name="name">the name fo the tagged value to add</param>
             <param name="tagValue">the value of the tagged value</param>
+            <param name = "comment">the comment to add to the tagged value</param>
             <param name = "addDuplicate"></param>
             <returns>the added (or updated) tagged value</returns>
         </member>

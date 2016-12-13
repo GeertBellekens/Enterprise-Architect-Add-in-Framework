@@ -289,8 +289,7 @@ namespace EAAddinFramework.Databases
 				if (_wrappedattribute != null
 				   && value != null)
 				{
-					_traceTaggedValue = _wrappedattribute.addTaggedValue(value.name, value.eaStringValue);
-					_traceTaggedValue.comment = value.comment;
+					_traceTaggedValue = _wrappedattribute.addTaggedValue(value.name, value.eaStringValue,value.comment);
 					_traceTaggedValue.save();
 				}
 			}
