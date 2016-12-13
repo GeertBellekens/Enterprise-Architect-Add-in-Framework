@@ -46,7 +46,7 @@ namespace EAAddinFramework.Mapping
 			if (attributeType != null) returnedMappings.AddRange(createOwnedMappings(attributeType,attributeBasePath));
 			return returnedMappings;
 		}
-		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath)
+		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,ElementWrapper targetRootElement)
 		{
 			List<Mapping> returnedMappings = new List<Mapping>();
 			//connectors to an attribute
@@ -55,7 +55,7 @@ namespace EAAddinFramework.Mapping
 			{
 				
 				string connectorPath = basepath + "." + getConnectorString(mappedConnector);
-				var connectorMapping = new ConnectorMapping(mappedConnector,connectorPath);
+				var connectorMapping = new ConnectorMapping(mappedConnector,connectorPath,targetRootElement);
 				returnedMappings.Add(connectorMapping);
 			}			
 			//loop owned attributes
@@ -64,6 +64,10 @@ namespace EAAddinFramework.Mapping
 				returnedMappings.AddRange(createNewMappings(ownedAttribute,basepath));
 			}
 			return returnedMappings;
+		}
+		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath)
+		{
+			return createOwnedMappings( ownerElement, basepath,null);
 		}
 		public static List<Mapping> createRootMappings(ElementWrapper root,string basePath)
 		{

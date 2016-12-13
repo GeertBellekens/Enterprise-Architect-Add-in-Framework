@@ -26,6 +26,8 @@ namespace EAAddinFramework.Mapping
 		}
 		public Mapping(Element sourceElement, Element targetElement,string basepath)
 			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement)){}
+		public Mapping(Element sourceElement, Element targetElement,string basepath, ElementWrapper targetRoot)
+			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement,targetRoot)){}
 
 		#region Mapping implementation
 
