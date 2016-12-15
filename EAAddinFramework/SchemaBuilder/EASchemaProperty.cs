@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -66,6 +67,16 @@ namespace EAAddinFramework.SchemaBuilder
 				if (this.subSetProperty == null)
 				{
 					this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
+				}
+				else
+				{
+					//report rename
+					if (this.subSetProperty.name != this.sourceProperty.name)
+					{
+						EAAddinFramework.Utilities.EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+						                                              ,string.Format("Attribute {0} has been renamed from {1} since the last schema generation",this.sourceProperty.owner.name + "." + this.sourceProperty.name,this.subSetProperty.name)
+						                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id);
+					}
 				}
 				this.subSetProperty.name = this.sourceProperty.name;
 				this.subSetProperty.type = this.sourceProperty.type;

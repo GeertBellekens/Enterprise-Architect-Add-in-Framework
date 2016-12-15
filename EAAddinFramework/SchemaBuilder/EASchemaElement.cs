@@ -194,6 +194,10 @@ namespace EAAddinFramework.SchemaBuilder
                     this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.DataType>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
             }
+			else
+			{
+				//TODO: check and report differences
+			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//notes only update them if they are empty

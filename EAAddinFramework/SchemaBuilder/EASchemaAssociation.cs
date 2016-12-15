@@ -277,6 +277,7 @@ namespace EAAddinFramework.SchemaBuilder
         	}
         	else
         	{
+        		//TODO: check and report differences
         		subSetAssociation = existingAssociation;
         	}
            	//update name

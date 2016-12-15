@@ -218,6 +218,7 @@
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
     <Compile Include="Utilities\AddinSettings.cs" />
+    <Compile Include="Utilities\EAOutputLogger.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />

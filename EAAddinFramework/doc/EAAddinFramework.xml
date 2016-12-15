@@ -2718,12 +2718,6 @@
             </summary>
             <param name="item">the item to open the properties dialog for</param>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getWrappedModel">
-            <summary>
-            returns the repository object
-            </summary>
-            <returns>the wrapped repository object</returns>
-        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedPackage">
             <summary>
             Show a dialog to the user that allows him to select a package from the model
@@ -2791,6 +2785,12 @@
             <summary>
             returns true if security is enabled in this model
             </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.wrappedModel">
+            <summary>
+            returns the repository object
+            </summary>
+            <returns>the wrapped repository object</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.NoteComment">
             A comment is a textual annotation that can be attached to a set of 
@@ -3317,6 +3317,18 @@
             <summary>
             saves the settings to the config file
             </summary>
+        </member>
+        <member name="T:EAAddinFramework.Utilities.EAOutputLogger">
+            <summary>
+            Description of EAOutputLogger.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Utilities.EAOutputLogger.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String)">
+            <summary>
+            private constructor
+            </summary>
+            <param name="model">the model this output applies to</param>
+            <param name="outputName"></param>
         </member>
         <member name="T:EAAddinFramework.Utilities.EASearchOutput">
             <summary>
