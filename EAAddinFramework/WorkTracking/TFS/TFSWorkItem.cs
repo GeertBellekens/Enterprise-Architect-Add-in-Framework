@@ -225,17 +225,18 @@ namespace EAAddinFramework.WorkTracking.TFS
 	                var request = new HttpRequestMessage(method, _TFSOwnerProject.TFSUrl + Uri.EscapeDataString(_TFSOwnerProject.name) +"/_apis/wit/workitems/$"+ this.type +"?api-version=2.2") { Content = patchValue };
 	                var response = _TFSOwnerProject.sendToTFS(client,request);
 	
-	                var me = response.ToString();
-	
-	                if (response.IsSuccessStatusCode)
+	                if (response != null)
 	                {
-	                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
-	                    this.ID = viewModel.id.ToString();
-	                    return true;
+		                if (response.IsSuccessStatusCode)
+		                {
+		                    viewModel = response.Content.ReadAsAsync<WorkItemPatchResponse.WorkItem>().Result;
+		                    this.ID = viewModel.id.ToString();
+		                    return true;
+		                }
+		                Logger.logError("Could not create workitem on TFS with title: '" + this.title + " because of error \nStatuscode: " 
+		                                + response.StatusCode + " Reasonphrase: " +response.ReasonPhrase);
 	                }
-	                Logger.logError("Could not create workitem on TFS with title: '" + this.title + " because of error \nStatuscode: " 
-	                                + response.StatusCode + " Reasonphrase: " +response.ReasonPhrase);
-	                return false;
+	               return false;
 	            }
         	}
         	return false;

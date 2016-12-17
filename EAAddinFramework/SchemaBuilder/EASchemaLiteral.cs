@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Utilities;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -63,6 +64,18 @@ namespace EAAddinFramework.SchemaBuilder
 			if (this.subSetLiteral == null)
 			{
 				this.subSetLiteral = this.model.factory.createNewElement<UML.Classes.Kernel.EnumerationLiteral>(this.owner.subsetElement,this.sourceLiteral.name);
+			}
+			else
+			{
+				if (this.subSetLiteral.name != this.sourceLiteral.name)
+				{
+					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+                                              ,string.Format("Literal value '{0}' has been renamed from '{1}' since the last schema generation"
+                                  					,this.sourceLiteral.owner.name + "." + this.sourceLiteral.name
+                                  					,this.subSetLiteral.name)
+                                              ,((UTF_EA.ElementWrapper)sourceLiteral.owner).id
+                                              , LogTypeEnum.warning);
+				}
 			}
 			this.subSetLiteral.name = this.sourceLiteral.name;
 			this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;

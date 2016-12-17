@@ -278,7 +278,8 @@ namespace EAAddinFramework.SchemaBuilder
         	else
         	{
         		//TODO: check and report differences
-        		subSetAssociation = existingAssociation;
+//        		if (this._sourceAssociation.sourceEnd.multiplicity != subSetAssociation.
+	      		subSetAssociation = existingAssociation;
         	}
            	//update name
             subSetAssociation.name = this.sourceAssociation.name;

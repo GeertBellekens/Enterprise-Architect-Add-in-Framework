@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Utilities;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -196,7 +197,16 @@ namespace EAAddinFramework.SchemaBuilder
             }
 			else
 			{
-				//TODO: check and report differences
+				//report change of name of the element
+				if (this.sourceElement.name != this.subsetElement.name)
+				{
+					EAOutputLogger.log(this.model,this.owner.settings.outputName
+                                              ,string.Format("Element '{0}' has changed name from '{1}' since the last schema generation"
+                                  					,this.sourceElement.name
+                                  					,this.subsetElement.name)
+                                              ,((UTF_EA.ElementWrapper)sourceElement).id
+                                              , LogTypeEnum.warning);						
+				}
 			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;

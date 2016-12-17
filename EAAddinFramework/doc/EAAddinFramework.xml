@@ -3330,6 +3330,16 @@
             <param name="model">the model this output applies to</param>
             <param name="outputName"></param>
         </member>
+        <member name="M:EAAddinFramework.Utilities.EAOutputLogger.log(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String,System.String,System.Int32,EAAddinFramework.Utilities.LogTypeEnum)">
+            <summary>
+            log a message to the EA output window. If requested the message will also be logged to the logfile
+            </summary>
+            <param name="model">the model on which to show the output</param>
+            <param name="outputName">the name of the output window</param>
+            <param name="message">the message to show</param>
+            <param name="elementID">the element ID to associate with the message. Can be used by add-ins when they implement EA_OnOutput...</param>
+            <param name="logType">the type of logging to the logfile</param>
+        </member>
         <member name="T:EAAddinFramework.Utilities.EASearchOutput">
             <summary>
             Description of EASearchOutput.
@@ -3362,6 +3372,11 @@
         <member name="P:EAAddinFramework.Utilities.Logger.logFileName">
             <summary>
             the logfile full pathname
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Utilities.LogTypeEnum">
+            <summary>
+            Description of LogTypeEnum.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Utilities.ConnectorType">

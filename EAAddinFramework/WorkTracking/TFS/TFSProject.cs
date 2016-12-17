@@ -296,6 +296,11 @@ namespace EAAddinFramework.WorkTracking.TFS
 					settings.defaultPassword = getAuthorizationForm.passWord;
 					authenticationHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(getAuthorizationForm.userName + ":" + settings.defaultPassword)));
 				}
+				else
+				{
+					settings.defaultPassword = null;
+					throw new OperationCanceledException("User pressed cancel");
+				}
 			}
 			return authenticationHeader;
 		}

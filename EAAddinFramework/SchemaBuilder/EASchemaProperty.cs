@@ -73,9 +73,23 @@ namespace EAAddinFramework.SchemaBuilder
 					//report rename
 					if (this.subSetProperty.name != this.sourceProperty.name)
 					{
-						EAAddinFramework.Utilities.EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-						                                              ,string.Format("Attribute {0} has been renamed from {1} since the last schema generation",this.sourceProperty.owner.name + "." + this.sourceProperty.name,this.subSetProperty.name)
-						                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id);
+						EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+						                                              ,string.Format("Attribute '{0}' has been renamed from '{1}' since the last schema generation"
+						                                  					,this.sourceProperty.owner.name + "." + this.sourceProperty.name
+						                                  					,this.subSetProperty.name)
+						                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id
+						                                              , LogTypeEnum.warning);
+					}
+					//report different type
+					if (this.subSetProperty.type.name != this.sourceProperty.type.name)
+					{
+						EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+						                                              ,string.Format("Attribute '{0}' has changed type from '{1}' to '{2}' since the last schema generation"
+						                                  					,this.sourceProperty.owner.name + "." + this.sourceProperty.name
+						                                  					,this.subSetProperty.type.name
+						                                  					,this.sourceProperty.type.name)
+						                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id
+						                                              , LogTypeEnum.warning);						
 					}
 				}
 				this.subSetProperty.name = this.sourceProperty.name;
