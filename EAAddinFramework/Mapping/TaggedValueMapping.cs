@@ -17,5 +17,13 @@ namespace EAAddinFramework.Mapping
 		{
 			this.wrappedTaggedValue = wrappedTaggedValue;
 		}
+		public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath,ElementWrapper targetRootElement):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath,targetRootElement)
+		{
+			this.wrappedTaggedValue = wrappedTaggedValue;
+		}
+		public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath,string targetBasePath):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath,targetBasePath)
+		{
+			this.wrappedTaggedValue = wrappedTaggedValue;
+		}
 	}
 }

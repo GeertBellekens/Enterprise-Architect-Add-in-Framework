@@ -21,5 +21,9 @@ namespace EAAddinFramework.Mapping
 		{
 			this.wrappedConnector = wrappedConnector;
 		}
+		public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath,string targetBasePath):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath,targetBasePath)
+		{
+			this.wrappedConnector = wrappedConnector;
+		}
 	}
 }

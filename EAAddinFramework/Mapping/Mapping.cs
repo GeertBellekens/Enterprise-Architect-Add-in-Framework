@@ -28,6 +28,8 @@ namespace EAAddinFramework.Mapping
 			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement)){}
 		public Mapping(Element sourceElement, Element targetElement,string basepath, ElementWrapper targetRoot)
 			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement,targetRoot)){}
+		public Mapping(Element sourceElement, Element targetElement,string basepath,string targetBasePath)
+			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement,targetBasePath)){}
 
 		#region Mapping implementation
 
