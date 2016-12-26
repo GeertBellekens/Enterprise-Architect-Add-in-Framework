@@ -213,7 +213,9 @@
     <Compile Include="SchemaBuilder\EASchemaLiteral.cs" />
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
-    <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
+    <Compile Include="Utilities\AbortableBackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Utilities\AddinSettings.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\Logger.cs" />
@@ -226,21 +228,7 @@
     <Compile Include="WorkTracking\TFS\TFSWorkItem.cs" />
     <Compile Include="WorkTracking\WorkItem.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Databases\Compare" />
-    <Folder Include="Databases\Transformation" />
-    <Folder Include="Databases\Transformation\DB2" />
-    <Folder Include="EAWrappers" />
-    <Folder Include="EASpecific" />
-    <Folder Include="EAWrappers\BehaviorStateMachines" />
-    <Folder Include="Licensing" />
-    <Folder Include="Databases" />
-    <Folder Include="Mapping" />
-    <Folder Include="WorkTracking" />
-    <Folder Include="SchemaBuilder" />
-    <Folder Include="Utilities" />
-    <Folder Include="WorkTracking\TFS" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="EAWrappers\README" />
     <None Include="packages.config" />
