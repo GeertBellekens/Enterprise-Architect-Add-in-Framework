@@ -354,7 +354,7 @@ namespace EAAddinFramework.SchemaBuilder
                 if (updateTaggedValue)
                 {
                     target.addTaggedValue(sourceTaggedValue.name,
-                        sourceTaggedValue.eaStringValue);
+                        sourceTaggedValue.eaStringValue, sourceTaggedValue.comment);
                 }
             }
         }

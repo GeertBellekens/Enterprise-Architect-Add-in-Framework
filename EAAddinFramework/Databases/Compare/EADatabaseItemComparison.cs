@@ -29,13 +29,58 @@ namespace EAAddinFramework.Databases.Compare
 			if (newDatabaseItem != null) newDatabaseItem.position = i;
 			if (existingDatabaseItem != null) existingDatabaseItem.position = i;
 		}
+
+		DatabaseItemComparison _ownerComparison;
+		public DatabaseItemComparison ownerComparison {
+			get {
+				return _ownerComparison;
+			}
+			set {
+				_ownerComparison = value;
+			}
+		}
+
+
+		List<DatabaseItemComparison> _ownedComparisons = new List<DatabaseItemComparison>();
+		public List<DatabaseItemComparison> ownedComparisons {
+			get {
+				return _ownedComparisons;
+			}
+			set {
+				_ownedComparisons = value;
+			}
+		}
+
+		public DatabaseItemComparison addOwnedComparison(DB.DatabaseItem existingItem, DB.DatabaseItem newItem)
+		{
+			var newComparison = new EADatabaseItemComparison(existingItem,newItem);
+			this.ownedComparisons.Add(newComparison);
+			newComparison.ownerComparison = this;
+			return newComparison;
+		}
+
+		public void rename(string newName)
+		{
+			
+			if (this.newDatabaseItem != null)
+			{
+				this.newDatabaseItem.name = newName;
+				//set renamed for columns
+				var newColumn = this.newDatabaseItem as Column;
+				if (newColumn != null) newColumn.isRenamed = true;
+			}
+		}
+
 		public void save(DB.Database existingDatabase)
 		{
 			switch (this.comparisonStatus) 
 			{
 				case DatabaseComparisonStatusEnum.equal:
 					//make sure the translation sticks
-					if (this.newDatabaseItem.logicalElement != null) this.newDatabaseItem.logicalElement.save();
+					foreach (var logical in newDatabaseItem.logicalElements) 
+					{
+						if (logical != null) logical.save();
+					}
 					//make sure the position is saved
 					this.existingDatabaseItem.save();
 					break;
@@ -57,14 +102,33 @@ namespace EAAddinFramework.Databases.Compare
 					this.existingDatabaseItem.delete();
 					break;					
 				case DatabaseComparisonStatusEnum.newItem:
-					this.newDatabaseItem.createAsNewItem(existingDatabase);
+					if (ownerComparison != null
+					   && ownerComparison.existingDatabaseItem != null)
+					{
+						this.newDatabaseItem.createAsNewItem(ownerComparison.existingDatabaseItem);
+					}
+					else
+					{
+						this.newDatabaseItem.createAsNewItem(existingDatabase);
+					}
 					break;				
 			}
+
 		}
 
 
 		private void compare()
 		{
+			//rename new column if existing column was renamed
+			var existingColumn = this.existingDatabaseItem as Column;
+			var newColumn = this.newDatabaseItem as Column;
+			if (existingColumn != null 
+			    && existingColumn.isRenamed
+			    && newColumn != null 
+			    && newColumn.name != existingColumn.name)
+			{
+				newDatabaseItem.name = existingDatabaseItem.name;
+			}
 			//if the status is already overridden then don't bother
 			if (this.comparisonStatus != DatabaseComparisonStatusEnum.dboverride)
 			{

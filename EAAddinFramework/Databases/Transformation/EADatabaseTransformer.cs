@@ -161,18 +161,25 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			if (logicalPackage != null)
 			{
-				foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>()) 
+				//not for abstract classes
+				foreach (UTF_EA.Class classElement in logicalPackage.ownedElements.OfType<UTF_EA.Class>())
 				{
 					addTable(classElement);
 				}
 				//set table names for tables that don't have a name yet;
 				nameUnnamedTables();
-				
+				removeAbstractTables();
 			}
 		}
 		protected abstract void addTable(UTF_EA.Class classElement);
 		
 		protected abstract void nameUnnamedTables();
+		/// <summary>
+		/// abstract tables need to be removed. All foreign keys to these tables have to be replaced by foreign key's to the tables for the 
+		/// subclasses of the logical class
+		/// </summary>
+		protected abstract void removeAbstractTables();
+			
 		
 		#endregion
 	}

@@ -5,6 +5,7 @@ using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Databases
 {
@@ -30,9 +31,16 @@ namespace EAAddinFramework.Databases
 			this._owner = owner;
 			this.databaseOwner.addTable(this);
 		}
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public  override List<UML.Classes.Kernel.Element> logicalElements {
 			get {
-				return this.logicalClasses.FirstOrDefault();
+				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
+			}
+		}
+		public bool isAbstract
+		{
+			get
+			{
+				return this.logicalClasses.Any(x => x.isAbstract || x.generalizations.Any(y => x.Equals(y.target)));
 			}
 		}
 		#region implemented abstract members of DatabaseItem
@@ -159,13 +167,17 @@ namespace EAAddinFramework.Databases
 		public override void delete()
 		{
 			if (_wrappedClass != null) _wrappedClass.delete();
+			//remove from the database
+			this.databaseOwner.removeTable(this);
 		}	
 
 
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
+			Database existingDatabase = owner as Database;
 			var newTable = new Table((Database)existingDatabase,this.name);
-			newTable._logicalClasses = new List<Class>(_logicalClasses);
+			newTable._logicalClasses = new List<Class>(logicalClasses);
+			newTable.derivedFromItem = this;
 			if (save) newTable.save(); 
 			return newTable;
 		}
@@ -202,7 +214,7 @@ namespace EAAddinFramework.Databases
 		/// <returns>the corresponding column</returns>
 		public Column getCorrespondingColumn(Column newColumn, List<Column> alreadyMappedColumns)
 		{
-			var correspondingColumn = this._columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
+			var correspondingColumn = this.columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
 			                                                       && !alreadyMappedColumns.Contains(x));
 			if (correspondingColumn == null) correspondingColumn = 
 											this._columns.FirstOrDefault( x => x.logicalAttribute != null
@@ -210,7 +222,7 @@ namespace EAAddinFramework.Databases
 				                						&& !alreadyMappedColumns.Contains(x));
 			if (correspondingColumn == null && alreadyMappedColumns != null && alreadyMappedColumns.Count > 0) 
 				correspondingColumn = getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
-			return correspondingColumn;
+			return correspondingColumn as Column;
 		}
 		/// <summary>
 		/// 
@@ -247,11 +259,19 @@ namespace EAAddinFramework.Databases
 			if (this.columns != null) this._columns.Add((Column) column);
 		}
 
+		public void removeColumn(DB.Column column)
+		{
+			if (this.columns != null)this._columns.Remove((Column)column);
+		}
 		public void addConstraint(DB.Constraint constraint)
 		{
 			if (this.constraints != null) this._constraints.Add((Constraint) constraint);
 		}
 
+		public void removeConstraint(DB.Constraint constraint)
+		{
+			if (this.constraints != null) this._constraints.Remove((Constraint) constraint);
+		}
 		public override string itemType {
 			get {return "Table";}
 		}
@@ -354,16 +374,6 @@ namespace EAAddinFramework.Databases
 		}
 
 
-		//Table can't be overriden
-		public bool isOverridden 
-		{
-			get 
-			{
-				return false;
-			}
-			set {
-				//do nothing
-			}
-		}
+
 	}
 }

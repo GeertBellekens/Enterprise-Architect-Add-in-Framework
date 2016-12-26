@@ -241,15 +241,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		/// <param name="filePath">the filepath to save the xmi file to</param>
 		public void exportToXMI(string filePath)
 		{
-			this.model.getWrappedModel().SuppressEADialogs = true;
-			var projectInterface = this.model.getWrappedModel().GetProjectInterface();
+			this.model.wrappedModel.SuppressEADialogs = true;
+			var projectInterface = this.model.wrappedModel.GetProjectInterface();
 			string xmlGUID = projectInterface.GUIDtoXML(this.guid);
 			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,1,0,filePath);
-			this.model.getWrappedModel().SuppressEADialogs = false;
+			this.model.wrappedModel.SuppressEADialogs = false;
 		}
 		public void refresh()
 		{
-			this.model.getWrappedModel().RefreshModelView(this.packageID);
+			this.model.wrappedModel.RefreshModelView(this.packageID);
 		}
 	}
 }

@@ -8,21 +8,22 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML=TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.WorkTracking
 {
 	/// <summary>
 	/// Description of Project.
 	/// </summary>
-	public class Project:WT.Project
+	public abstract class Project:WT.Project
 	{
-		RootPackage _wrappedRootPackage;
-		internal RootPackage wrappedRootPackage {
+		Package _wrappedPackage;
+		internal Package wrappedPackage {
 			get {
-				return _wrappedRootPackage;
+				return _wrappedPackage;
 			}
 			set {
-				_wrappedRootPackage = value;
+				_wrappedPackage = value;
 				this.resetProperties();
 			}
 		}
@@ -30,14 +31,48 @@ namespace EAAddinFramework.WorkTracking
 		/// default constructor
 		/// </summary>
 		public Project(){}
-		public Project(RootPackage wrappedRootPackage)
+		public Project(Package wrappedPackage)
 		{
-			this._wrappedRootPackage = wrappedRootPackage;
+			this._wrappedPackage = wrappedPackage;
 		}
+		protected static Package getCurrentProjectPackage(Element currentElement)
+		{
+			//if the current element is null then we can't find the project
+			if (currentElement == null) return null;
+			//get the owning package
+			if (!( currentElement is Package)) currentElement = currentElement.owningPackage as Element;
+			if (currentElement is RootPackage)
+			{
+				if (currentElement.notes.Contains("project=")) return currentElement as Package;
+			}
+			//no rootPackage
+			if (currentElement.taggedValues.Any( x => x.name == "project" && x.tagValue.ToString().Length > 0))
+			{
+				return currentElement as Package;
+			}
+			//no project found on this level, go one level up
+			return getCurrentProjectPackage(currentElement.owningPackage as Element);
+		}
+
+		/// <summary>
+		/// returns all owned workitems for this package and if requested for all owned packages recursively
+		/// </summary>
+		/// <param name="ownerPackage">the owner package</param>
+		/// <param name="recursive">indicates whether or not we should recursively search workitems in owned packages</param>
+		/// <returns>a list of owned workitems for the given package</returns>
+		public abstract List<WT.Workitem> getOwnedWorkitems(UML.Classes.Kernel.Package ownerPackage, bool recursive);
+		
 
 		void resetProperties()
 		{
-			this.wrappedRootPackage.notes ="project=" + _name;
+			if (this.wrappedPackage is RootPackage)
+			{
+				this.wrappedPackage.notes ="project=" + _name;
+			}
+			else
+			{
+				this.wrappedPackage.addTaggedValue("project",_name);
+			}
 		}
 		#region Project implementation
 
@@ -58,21 +93,39 @@ namespace EAAddinFramework.WorkTracking
 		{
 			get 
 			{
-				if (this.wrappedRootPackage != null)
+				if (this.wrappedPackage != null)
 				{
-					var keyValue = this.wrappedRootPackage.notes.Split('=');
-					if (keyValue.Count() == 2)
+					if (wrappedPackage is RootPackage)
 					{
-						_name = keyValue[1];
+						var keyValue = this.wrappedPackage.notes.Split('=');
+						if (keyValue.Count() == 2)
+						{
+							_name = keyValue[1];
+						}
+					}
+					else
+					{
+						var projectTag = wrappedPackage.getTaggedValue("project");
+						if (projectTag != null)
+						{
+							_name = projectTag.eaStringValue;
+						}
 					}
 				}
 				return _name;
 			}
 			set 
 			{
-				if (this.wrappedRootPackage != null)
+				if (this.wrappedPackage != null)
 				{
-					this.wrappedRootPackage.notes ="project=" + value;
+					if (wrappedPackage is RootPackage)
+					{
+						this.wrappedPackage.notes ="project=" + value;
+					}
+					else
+					{
+						this.wrappedPackage.addTaggedValue("project",value);
+					}
 				}
 				_name = value;
 			}

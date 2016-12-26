@@ -33,7 +33,11 @@ namespace EAAddinFramework.Databases
 				return __factory;
 			}
 		}
-		
+
+		public void complete(string ddl)
+		{
+			//TODO: implement method to parse the dll and complete the database with the missing/incomplete items
+		}
 		#region implemented abstract members of DatabaseItem
 
 
@@ -47,11 +51,11 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
-		public override UML.Classes.Kernel.Element logicalElement {
+		public override List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
 				//TODO: return logical package if ever needed
-				return null;
+				return new List<UML.Classes.Kernel.Element>();
 			}
 		}
 		#endregion
@@ -65,6 +69,10 @@ namespace EAAddinFramework.Databases
 			this._tables.Add(table as Table);
 		}
 
+		public void removeTable(DB.Table table)
+		{
+			this._tables.Remove((Table)table);
+		}
 		#region implemented abstract members of DatabaseItem
 		internal override void createTraceTaggedValue()
 		{
@@ -80,7 +88,7 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
 			//TODO: figure out how to handle creation of new databases
 			return null;

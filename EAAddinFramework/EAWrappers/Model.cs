@@ -13,7 +13,7 @@ using UML = TSF.UmlToolingFramework.UML;
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Model : UML.Extended.UMLModel 
   {
-    private global::EA.Repository wrappedModel;
+    private global::EA.Repository _wrappedModel;
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
     private static string _applicationFullPath;
@@ -22,6 +22,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Boolean isLiteEdition {get {return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite;}}
     public string currentUserID {get{return this.wrappedModel.GetCurrentLoginUser(true);}}
     
+    internal string convertFromEANotes(string EANotes, string newFormat)
+    {
+    	return this.wrappedModel.GetFormatFromField(newFormat,EANotes);
+    }
+    internal string convertToEANotes(string externalNotes, string externalFormat)
+    {
+    	return this.wrappedModel.GetFieldFromFormat(externalFormat,externalNotes);
+    }
+    	
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>
@@ -112,7 +121,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <param name="eaRepository">the ea repository object</param>
 	public void initialize(global::EA.Repository eaRepository)
 	{
-      wrappedModel = eaRepository;
+      _wrappedModel = eaRepository;
     }
     /// constructor creates EAModel based on the given repository
     public Model(global::EA.Repository eaRepository){
@@ -1408,9 +1417,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// returns the repository object
 	/// </summary>
 	/// <returns>the wrapped repository object</returns>
-	public global::EA.Repository getWrappedModel()
+	public global::EA.Repository wrappedModel
 	{
-		return this.wrappedModel;
+		get{ return this._wrappedModel;}
 	}
 	
 	

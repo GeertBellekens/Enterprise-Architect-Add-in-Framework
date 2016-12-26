@@ -5,6 +5,7 @@ using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 namespace EAAddinFramework.Databases
 {
 	/// <summary>
@@ -31,9 +32,10 @@ namespace EAAddinFramework.Databases
 			return "FK";
 		}
 		#endregion
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
-			get {
-				return this.logicalAssociation;
+		public override List<UML.Classes.Kernel.Element> logicalElements{
+			get 
+			{
+				return new List<UML.Classes.Kernel.Element>(){ this.logicalAssociation};
 			}
 		}
 		public override void save()
@@ -68,11 +70,20 @@ namespace EAAddinFramework.Databases
 		#region implemented abstract members of DatabaseItem
 
 
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
-			//look for corresponding table in existingDatabase
-			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
-			var newForeignTable = existingDatabase.tables.FirstOrDefault(x => x.name == this._foreignTable.name);
+			Table newTable = owner as Table;
+			Database existingDatabase = owner as Database;
+			if (newTable != null)
+			{
+				existingDatabase = newTable.databaseOwner as Database;
+			}
+			if (newTable == null)
+			{
+				//look for corresponding table in existingDatabase
+				newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			}
+			var newForeignTable = existingDatabase.tables.FirstOrDefault(x => x.name == this.foreignTable.name);
 			if (newTable != null && newForeignTable != null)
 			{
 				var newForeignKey = new ForeignKey(newTable,this._involvedColumns);
@@ -80,6 +91,7 @@ namespace EAAddinFramework.Databases
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
 				newForeignKey.isOverridden = isOverridden;
+				newForeignKey.derivedFromItem = this;
 				if (save) newForeignKey.save();
 				return newForeignKey;
 			}

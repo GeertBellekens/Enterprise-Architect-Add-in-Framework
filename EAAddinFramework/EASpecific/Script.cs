@@ -131,7 +131,7 @@ namespace EAAddinFramework.EASpecific
 			//create new scriptcontroller
 			this.scriptController = new ScriptControl();
 			this.scriptController.Language = this.language.name;
-			this.scriptController.AddObject("Repository", model.getWrappedModel());
+			this.scriptController.AddObject("Repository", model.wrappedModel);
 			//Add the actual code. This must be done in a try/catch because a syntax error in the script will result in an exception from AddCode
 			try
 			{

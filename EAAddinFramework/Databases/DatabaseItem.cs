@@ -43,7 +43,11 @@ namespace EAAddinFramework.Databases
 		{
 			if (this.wrappedElement != null) this.wrappedElement.select();
 		}
-		public abstract UML.Classes.Kernel.Element logicalElement {get;}
+		public abstract List<UML.Classes.Kernel.Element> logicalElements {get;}
+		public UML.Classes.Kernel.Element logicalElement
+		{
+			get{ return this.logicalElements.FirstOrDefault();}
+		}
 
 		public abstract bool isValid{get;}
 
@@ -59,7 +63,8 @@ namespace EAAddinFramework.Databases
 				//default implementation: do nothing
 			}
 		}
-		public abstract DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true);
+		public DB.DatabaseItem derivedFromItem {get;set;}
+		public abstract DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true);
 
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory

@@ -23,7 +23,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			this._foreignKey = new ForeignKey((Table) table, FKInvolvedColumns);
 			this._foreignKey.foreignTable = dependingTransformer.table;
 			resetName();
-			this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
+			if (dependingTransformer.associationEnd != null) this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
 			table.constraints.Add(this._foreignKey);
 		}
 		#region implemented abstract members of EAForeignKeyTransformer

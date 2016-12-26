@@ -20,6 +20,10 @@ namespace EAAddinFramework.WorkTracking.TFS
         string defaultProject{get;set;}
         string defaultUserName{get;set;}
         string defaultPassword {get;set;}
-
+        List<string> mappedElementTypes{get;}
+        List<string> mappedStereotypes{get;}
+        string defaultWorkitemType {get;set;}
+        string defaultStatus {get;set;}
+        string TFSFilterTag {get;set;}
 	}
 }

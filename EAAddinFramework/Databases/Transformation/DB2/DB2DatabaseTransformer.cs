@@ -56,14 +56,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		protected override void addTable(UTF_EA.Class classElement)
 		{
-			//only add table if this class has no subclasses
-			if (!classElement.generalizations.Any(x => classElement.Equals(x.target)))
-			{
 				addDB2Table(classElement);
-			}
 		}
 		protected DB2TableTransformer addDB2Table(UTF_EA.AssociationEnd associationEnd)
 		{
+			
 			DB2TableTransformer transformer = addDB2Table(associationEnd.type as UTF_EA.Class);
 			if (transformer == null)
 			{
@@ -105,11 +102,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				//now do the external tables linked to this classElement
 				foreach (var dependingAssociationEnd in transformer.getDependingAssociationEnds()) 
 				{
-					transformer.dependingTransformers.Add(addDB2Table(dependingAssociationEnd));
+					var dependingEndTransformer = addDB2Table(dependingAssociationEnd);
+					if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingEndTransformer);
 				}
 				//add the remote columns and primary and foreign keys
 				transformer.addRemoteColumnsAndKeys();
-				
 			}
 			return transformer;
 		}
@@ -117,7 +114,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			int nameCounter = getTableNameCounter();
 			string fixedTableString = this.getFixedTableString();
-			foreach (var tableTransformer in this._tableTransformers.Where(x => string.IsNullOrEmpty(x._table.name)) )
+			foreach (var tableTransformer in this._tableTransformers.Where(x => string.IsNullOrEmpty(x._table.name)
+			                                                               && !x.table.isAbstract) )
 			{
 				nameCounter++;
 				tableTransformer.setTableName(fixedTableString,nameCounter);
@@ -162,6 +160,55 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				return counter;
 		    }
 			return getCounterFromString(name, lenght -1);
+		}
+				/// <summary>
+		/// abstract tables need to be removed. All foreign keys to these tables have to be replaced by foreign key's to the tables for the 
+		/// subclasses of the logical class
+		/// </summary>
+		protected override void removeAbstractTables()
+		{
+			foreach (var abstractTableTransformer in this.tableTransformers.Where(x => x.table.isAbstract))
+			{
+				//check if there are any foreign keys pointing to this table
+				foreach (var foreignTabletransformers in this._tableTransformers
+				         .Where(x => x.foreignKeyTransformers
+				          .Any(y => y.foreignKey.foreignTable == abstractTableTransformer.table)))
+				{
+					//if there are any subclasses then there should be a foreign key transformer to each of the subclasses be added
+					//then the original foreignKeyTransformer should be removed
+					foreach (var foreignKeyTransformer in foreignTabletransformers.foreignKeyTransformers.Where(x => x.foreignKey.foreignTable == abstractTableTransformer.table)) 
+					{
+						foreach (var subclasses in abstractTableTransformer.logicalClasses.Select(x => x.subClasses))
+						{
+							foreach (var subclass in subclasses) 
+							{
+								var subTabletransformer = this.tableTransformers.FirstOrDefault(x => x.table.logicalElements.Any(y => subclass.Equals(y)));
+								//get corresponding columns from subtable
+								var correspondingsubColumns = getCorrespondingColumn(foreignKeyTransformer.foreignKey.involvedColumns,subTabletransformer.table);
+								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,this._nameTranslator);
+							}
+						}
+						//delete the original foereign key
+						foreignKeyTransformer.foreignKey.delete();
+						foreignTabletransformers.foreignKeyTransformers.Remove(foreignKeyTransformer);
+					}
+				}
+				//delete abstract table and its transformer
+	
+				abstractTableTransformer.table.delete();
+				this.tableTransformers.Remove(abstractTableTransformer);
+				
+			}
+		}
+		private List<Column> getCorrespondingColumn(List<DB.Column> originalColumns, DB.Table newTable)
+		{
+			var newColumns = new List<Column>();
+			foreach (Column originalcolumn in originalColumns) 
+			{
+				Column newColumn = newTable.columns.FirstOrDefault(x => x.name == originalcolumn.name) as Column;
+				if (newColumn != null) newColumns.Add(newColumn);
+			}
+			return newColumns;
 		}
 
 		#endregion

@@ -89,7 +89,7 @@ namespace EAAddinFramework.Databases
 		public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
 		{
 			Dictionary<string, BaseDataType> datatypes = new Dictionary<string, BaseDataType>();
-			foreach (global::EA.Datatype eaDataType in model.getWrappedModel().Datatypes)
+			foreach (global::EA.Datatype eaDataType in model.wrappedModel.Datatypes)
 			{
 				if (eaDataType.Product.Equals(databaseType,StringComparison.InvariantCultureIgnoreCase)
 				    && eaDataType.Type == "DDL")

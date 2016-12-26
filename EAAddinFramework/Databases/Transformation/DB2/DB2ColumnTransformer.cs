@@ -75,7 +75,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			else
 			{
 				//otherwise we override on database level to allow for a different name
-				this.column.isOverridden = true;
+				this.column.isRenamed = true;
 			}
 		}
 

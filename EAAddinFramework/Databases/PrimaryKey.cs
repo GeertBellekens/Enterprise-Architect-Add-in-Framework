@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Databases
 {
@@ -33,22 +34,31 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public override List<UML.Classes.Kernel.Element> logicalElements{
 			get {
-				var firstColumn = this.involvedColumns.FirstOrDefault();
-				if (firstColumn != null) return firstColumn.logicalElement;
-				return null;
+				var _logicalElements = new List<UML.Classes.Kernel.Element>();
+				foreach (var involvedColumn in involvedColumns) 
+				{
+					_logicalElements.AddRange(involvedColumn.logicalElements);
+				}
+				return _logicalElements;
 			}
 		}
-		public override DB.DatabaseItem createAsNewItem(DB.Database existingDatabase, bool save = true)
+		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
-			//look for corresponding table in existingDatabase
-			Table newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.owner.name);
+			Table newTable = owner as Table;
+			Database existingDatabase = owner as Database;
+			if (newTable == null)
+			{
+				//look for corresponding table in existingDatabase
+				newTable = (Table)existingDatabase.tables.FirstOrDefault(x => x.name == this.ownerTable.name);
+			}
 			if (newTable != null && newTable.primaryKey == null ) //only create it if htere is not already one
 			{
 				var newPrimaryKey = new PrimaryKey(newTable,this._involvedColumns);
 				newPrimaryKey.name = name;
-				newPrimaryKey.isOverridden = this.isOverridden;
+				//newPrimaryKey.isOverridden = this.isOverridden;
+				newPrimaryKey.derivedFromItem = this;
 				if (save) newPrimaryKey.save();
 				return newPrimaryKey;
 			}

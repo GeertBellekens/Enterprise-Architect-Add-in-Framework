@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -156,6 +157,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { 
 			//only implemented to remove all parameters
 			if (value.Count > 0) throw new NotImplementedException();
+			this.wrappedOperation.Parameters.Refresh();
 			for (short i = (short)(this.wrappedOperation.Parameters.Count-1); i >= 0; i--)
 			{
 				this.wrappedOperation.Parameters.DeleteAt(i,false);

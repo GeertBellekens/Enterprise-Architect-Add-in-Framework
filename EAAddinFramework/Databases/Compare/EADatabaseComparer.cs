@@ -28,7 +28,7 @@ namespace EAAddinFramework.Databases.Compare
 		public void save()
 		{
 			//both existing and new database should exist to even begin
-			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existign and new database should exist in order to save the database!");
+			if (_existingDatabase == null || _newDatabase == null) throw new Exception("Both existing and new database should exist in order to save the database!");
 			//first save all valid tables
 			var tableComparers = this.comparedItems.Where(x =>x.itemType.Equals("Table",StringComparison.InvariantCultureIgnoreCase)
 			                                              && (x.newDatabaseItem == null
@@ -42,10 +42,8 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				//then save all columns
 				int i = 1;
-				foreach (var columnCompareItem in this.comparedItems.Where(
-					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)
-					&&( x.existingDatabaseItem != null && tableCompareItem.existingDatabaseItem != null && ((DB.Column)x.existingDatabaseItem).ownerTable.name == tableCompareItem.existingDatabaseItem.name 
-					   ||	x.newDatabaseItem != null && tableCompareItem.newDatabaseItem != null && ((DB.Column)x.newDatabaseItem).ownerTable.name == tableCompareItem.newDatabaseItem.name )))
+				foreach (var columnCompareItem in tableCompareItem.ownedComparisons.Where(
+					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)))
 				{
 					columnCompareItem.updatePosition(i);
 					columnCompareItem.save(_existingDatabase);
@@ -92,7 +90,11 @@ namespace EAAddinFramework.Databases.Compare
 					//if the existingTable does not exist in the comparedItems then add it.
 					if (! tableComparisons.Any(x => x.existingDatabaseItem == existingTable))
 					{
-						tableComparisons.Add(new EADatabaseItemComparison(null,existingTable));
+						//maybe this table is derived from the same logical class as another table 
+						// in that case we add the oter table as new item
+						Table newTable = null;
+						if (_newDatabase != null) newTable = (Table)_newDatabase.getCorrespondingTable(existingTable);
+						tableComparisons.Add(new EADatabaseItemComparison(newTable,existingTable));
 					}
 				}
 			}
@@ -106,13 +108,13 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				addTableComparison(tableComparison);
 			}
+			//check and update overriden items
+			this.updateOverrides(comparedItems);
 		}
 		private void addTableComparison(EADatabaseItemComparison tableComparison)
 		{
 			addToComparison(tableComparison);
 			var tableComparisons = this.addComparisonDetails(tableComparison);
-			//check overriden items
-			this.updateOverrides(tableComparisons);
 			//add them to the comparison
 			addToComparison(tableComparisons);
 		}
@@ -120,46 +122,47 @@ namespace EAAddinFramework.Databases.Compare
 		/// for each overridden existing item we update the new item, but only if this is the only existing item  referencing the new item.
 		/// If there are more then we need to duplicate the columns in the new database
 		/// </summary>
-		void updateOverrides(List<DatabaseItemComparison> tableComparisons )
+		public void updateOverrides(List<DatabaseItemComparison> tableComparisons )
 		{
 			List<DB.DatabaseItem> updatedNewItems = new List<DB.DatabaseItem>();
 			//get all elements that are overridden on the existing table side
 			foreach (var overrideCompare in tableComparisons.Where(x => x.existingDatabaseItem != null
 			                                                      && x.existingDatabaseItem.isOverridden))
 			{
-				//check if an equal exists. In that case we need to create a duplicate in the new database
-				bool equalExists = tableComparisons.Any(x => x != overrideCompare  
-				                                       && x.newDatabaseItem == overrideCompare.newDatabaseItem
-				                                        && x.comparisonStatus == DatabaseComparisonStatusEnum.equal);
-				//check if we have already updated the new item
-				bool alreadyUpdated = updatedNewItems.Contains(overrideCompare.newDatabaseItem);
-				
-				//and equal exists or the new item is already updated then we need to create a duplicate
-				if (equalExists || alreadyUpdated )
-				{
-					//create a duplicate of the existing item and set it as the new item
-					overrideCompare.newDatabaseItem = overrideCompare.existingDatabaseItem.createAsNewItem(this.newDatabase,false);
-				}
-				else if (overrideCompare.newDatabaseItem != null)
-				{
-					//update new item to match the existing item
-					overrideCompare.newDatabaseItem.update(overrideCompare.existingDatabaseItem, false);
-					updatedNewItems.Add(overrideCompare.newDatabaseItem);	
-				}
+				this.setOverride(overrideCompare,true, updatedNewItems);
 			} 
+		}
+		public void setOverride(DatabaseItemComparison overrideCompare, bool overrideValue,List<DB.DatabaseItem>updatedNewItems = null)
+		{
+			if (overrideValue)
+			{
+				//set the comparisonstatus just in case
+				overrideCompare.comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+				if (overrideCompare.existingDatabaseItem != null)
+				{
+					overrideCompare.existingDatabaseItem.isOverridden = true;
+				}
+				else
+				{
+					overrideCompare.newDatabaseItem.isOverridden = true;
+				}
+			}
+			else
+			{
+				//un-override item
+				// existing item
+				if (overrideCompare.existingDatabaseItem != null 
+				    && overrideCompare.existingDatabaseItem.isOverridden) 
+						overrideCompare.existingDatabaseItem.isOverridden = false;
+				// new item
+				if (overrideCompare.newDatabaseItem != null 
+				    && overrideCompare.newDatabaseItem.isOverridden) 
+						overrideCompare.newDatabaseItem.isOverridden = false;
+			}
+			
 		}
 		private void addToComparison(DatabaseItemComparison comparedItem)
 		{
-			//if new item alrady compared then make it null
-			if (comparedItems.Any(x => x.newDatabaseItem == comparedItem.newDatabaseItem))
-			{
-				comparedItem.newDatabaseItem = null;
-			}
-			//if existing item already compared then make it null
-			if ( comparedItems.Any(x => x.existingDatabaseItem == comparedItem.existingDatabaseItem))
-			{
-				comparedItem.existingDatabaseItem = null;
-			}
 			//only add the commparison if not both of them are null
 			if (comparedItem.existingDatabaseItem != null 
 			    || comparedItem.newDatabaseItem != null)
@@ -191,17 +194,40 @@ namespace EAAddinFramework.Databases.Compare
 						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
 						alreadMappedcolumns.Add(newColumn);
 					}
-					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,existingColumn));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,existingColumn));
 				}
 				//now the new columns that don't have a corresponding existing column
 				if (newTable != null)
 				{
+					List<Column> columnsToDelete = new List<Column>();
 					foreach (Column newColumn in newTable.columns) 
 					{
-						if (! addedComparedItems.Any(x => x.newDatabaseItem == newColumn))
+						//if not already mapped
+						if (addedComparedItems.All(x => x.newDatabaseItem != newColumn)) 
 						{
-							addedComparedItems.Add(new EADatabaseItemComparison(newColumn, null));
+							//and there is no other column with the same name that maps to the same physical column and has exactly the same properties and name
+							var newColumnsToDelete = addedComparedItems.Where(y => 
+														y.existingDatabaseItem != null							                                                  
+							                            && y.existingDatabaseItem.logicalElements.Contains(newColumn.logicalElement)
+							                            && y.newDatabaseItem != null
+							                            && y.newDatabaseItem.name == newColumn.name
+							                            && y.newDatabaseItem.properties == newColumn.properties)
+														.Select(z => z.newDatabaseItem as Column);
+							if (newColumnsToDelete.Any()) 
+							{
+								columnsToDelete.AddRange(newColumnsToDelete);
+							} 
+							else
+							{
+								//no duplicates so add to the comparison						    	
+								addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn, null));
+							}
 						}
+					}
+					//delete the columns that were identified as duplicates
+					foreach (var columnToDelete in columnsToDelete) 
+					{
+						columnToDelete.delete();
 					}
 				}
 				//add all existing constraints
@@ -218,7 +244,7 @@ namespace EAAddinFramework.Databases.Compare
 						{
 							newConstraint = (Constraint)newTable.primaryKey ;
 						}
-						addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,existingConstraint));
+						addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,existingConstraint));
 					}
 				}
 				//then add the new constraints don't have a corresponding existing constraint
@@ -228,7 +254,7 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						if (! addedComparedItems.Any(x => x.newDatabaseItem == newConstraint))
 						{
-							addedComparedItems.Add(new EADatabaseItemComparison(newConstraint, null));
+							addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint, null));
 						}
 					}
 				}
@@ -238,11 +264,11 @@ namespace EAAddinFramework.Databases.Compare
 				//no existing table, everything is new
 				foreach (var newColumn in newTable.columns) 
 				{
-					addedComparedItems.Add(new EADatabaseItemComparison(newColumn,null));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,null));
 				}
 				foreach (var newConstraint in newTable.constraints) 
 				{
-					addedComparedItems.Add(new EADatabaseItemComparison(newConstraint,null));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,null));
 				}
 			}
 			return addedComparedItems;

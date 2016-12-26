@@ -1,8 +1,10 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 namespace EAAddinFramework.Databases
 {
 	/// <summary>
@@ -27,6 +29,9 @@ namespace EAAddinFramework.Databases
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 		}
+
+
+
 		public void delete()
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
@@ -36,11 +41,11 @@ namespace EAAddinFramework.Databases
 		{
 			//you cannot select a Base Datatype
 		}
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element logicalElement {
+		public List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
 				//base datatypes don't have logical elements
-				return null;
+				return new List<UML.Classes.Kernel.Element>();
 			}
 		}
 		public bool isValid {
@@ -50,7 +55,7 @@ namespace EAAddinFramework.Databases
 				return ! string.IsNullOrEmpty(this.name);
 			}
 		}
-		public DB.DatabaseItem createAsNewItem(DB.Database existingDatabase,bool save = true)
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner,bool save = true)
 		{
 			//do nothing. deleting or adding of base datatypes should happen manually in the EA GUI
 			return null;
@@ -65,6 +70,14 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public DB.DatabaseItem derivedFromItem {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//don't think we ever need this one

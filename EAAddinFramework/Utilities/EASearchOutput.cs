@@ -39,7 +39,7 @@ namespace EAAddinFramework.Utilities
                 this.formatResults();
             }
             //actually show the results in EA
-            this._model.getWrappedModel().RunModelSearch(this.name, "searchTerm", "searchOptions", this.formattedResults.InnerXml);
+            this._model.wrappedModel.RunModelSearch(this.name, "searchTerm", "searchOptions", this.formattedResults.InnerXml);
         }
         private void formatResults()
         {

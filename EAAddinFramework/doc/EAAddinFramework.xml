@@ -14,6 +14,11 @@
             Description of Column.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.DatabaseItem">
+            <summary>
+            Description of DatabaseItem.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Compare.EADatabaseComparer">
             <summary>
             Description of EADatabaseComparer.
@@ -123,14 +128,14 @@
             Description of DB2TableTransformer.
             </summary>
         </member>
-        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.#ctor(EAAddinFramework.Databases.Database,EAAddinFramework.Databases.Transformation.NameTranslator)">
+        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2DatabaseTransformer.createNewDatabase">
             <summary>
             constructor
             </summary>
             <param name="database">the database the table should belong to</param>
             <param name="nameTranslator">the nametranslator</param>
         </member>
-        <member name="M:EAAddinFramework.Databases.Transformation.DB2.DB2TableTransformer.getDependingAssociationEnds">
+        <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2ForeignKeyTransformer">
             <summary>
             gets the Class Elements that are needed for this logical element.
             This means the classes to which this element has an association to with
@@ -1543,10 +1548,14 @@
             
             </summary>
         </member>
-        <member name="P:EAAddinFramework.SchemaBuilder.EASchemaAssociation.relatedElements">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.addTaggedValue(System.String,System.String,System.Boolean)">
             <summary>
             the related elements are the owner element and the element on the other side
             </summary>
+            <param name="name">the name fo the tagged value to add</param>
+            <param name="tagValue">the value of the tagged value</param>
+            <param name = "addDuplicate"></param>
+            <returns>the added (or updated) tagged value</returns>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaAssociation.createSubsetAssociation">
             <summary>
@@ -1717,7 +1726,41 @@
             <param name="literal">the literal to match</param>
             <returns>the corresponding SchemaLiteral</returns>
         </member>
-        <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.getMatchingSchemaProperty(TSF.UmlToolingFramework.Wrappers.EA.Attribute)">
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.isAbstract">
+            indicates whether this element is abstract.
+            In the EA API this is stored as a string with the values "0" or "1"
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.visibility">
+            the visibility indicates the scope of the element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedAttributes">
+            returns the attributes owned by this class
+            This seems to be a subset of the classifiers attributes property, but 
+            is is unclear what exactly the difference is.
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.id">
+            represents the internal EA's elementID
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.superClasses">
+            EA provides a shortcut tot the superclasses through its 
+            element.BaseClasses
+            Normally we would get those via the element.generalizations.general
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.generalizations">
+            the generalisations (inheritance relations) of this element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.ownedOperations">
+            the operations owned by this element
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.clientDependencies">
+            from Dependencies.Named Element.
+            contains the dependencies that have this element as client
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.supplierDependencies">
+            from Dependencies.Named Element.
+            contains the dependencies that have this element as supplier
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Action.context">
             <summary>
             finds the corresponding Schema property for the given attribut
             </summary>
@@ -2557,15 +2600,13 @@
             (submachine). Default value is false.
             </summary>
         </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connections">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getWrappedModel">
             <summary>
-            The entry and exit connection points used in conjunction with this (submachine) state, i.e., as targets and sources,
-            respectively, in the region with the submachine state. A connection point reference references the corresponding
-            definition of a connection point pseudostate in the statemachine referenced by the submachinestate. {Subsets
-            Namespace::ownedMember}
+            returns the repository object
             </summary>
+            <returns>the wrapped repository object</returns>
         </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.State.connectionPoints">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Model.getUserSelectedPackage">
             <summary>
             The entry and exit pseudostates of a composite state. These can only be entry or exit Pseudostates, and they must have
             different names. They can only be defined for composite states. {Subsets Namespace::ownedMember}
@@ -2629,6 +2670,12 @@
             <summary>
             Description of StateMachine.
             </summary>
+        </member>
+        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Model.wrappedModel">
+            <summary>
+            returns the repository object
+            </summary>
+            <returns>the wrapped repository object</returns>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines.StateMachine.#ctor(TSF.UmlToolingFramework.Wrappers.EA.Model,EA.Element)">
             <summary>
@@ -2771,35 +2818,38 @@
             Description of ClassDiagram.
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram">
+        <member name="T:EAAddinFramework.Mapping.AssociationMappingEnd">
             <summary>
-            Description of CommunicationDiagram.
+            Description of AssociationMappingEnd.
             </summary>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.CommunicationDiagram.getRelations">
+        <member name="T:EAAddinFramework.Mapping.MappingEnd">
             <summary>
             gets all relations that are specific to this sequence diagram.
             </summary>
             <returns>all messages and other relations of the diagram</returns>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ComponentDiagram">
+        <member name="T:EAAddinFramework.Mapping.AttributeAssociationEnd">
             <summary>
-            Description of ComponentDiagram.
+            Description of AttributeAssociationEnd.
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.CompositeStructureDiagram">
+        <member name="T:EAAddinFramework.Mapping.Mapping">
             <summary>
-            Description of CompositeStructureDiagram.
+            Description of Mapping.
             </summary>
+            <param name="key">the key to searche for</param>
+            <param name = "source">the source string to search in</param>
+            <returns>the value correspondign to the given key</returns>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.DataType">
             <summary>
             Description of DataType.
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.EnumerationLiteral">
+        <member name="T:EAAddinFramework.Mapping.MappingSet">
             <summary>
-            Description of EnumerationLiteral.
+            Description of MappingSet.
             </summary>
         </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.InformationItem">
@@ -3168,7 +3218,6 @@
             copies the tagged values from the source as tagged values of this element
             if a tagged value already exists the value is copied. Else a new tagged value is created
             </summary>
-            <param name="sourceElement">the element to copy the tagged values from</param>
         </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.getTaggedValue(System.String)">
             <summary>
@@ -3207,7 +3256,7 @@
             return the unique ID of this element
             </summary>
         </member>
-        <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.uniqueID">
+        <member name="T:EAAddinFramework.Utilities.ConnectorType">
             <summary>
             return the unique ID of this element
             </summary>
@@ -3724,7 +3773,7 @@
             Description of rootPackage.
             </summary>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.RootPackage.GetHashCode">
+        <member name="T:EAAddinFramework.WorkTracking.TFS.ListofWorkItemsResponse">
             <summary>
             return the hashcode based on the elements guid
             </summary>
@@ -3736,7 +3785,7 @@
             </summary>
             <returns>an empty list</returns>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.SequenceDiagram">
+        <member name="T:EAAddinFramework.WorkTracking.TFS.TFSSettings">
             <summary>
             Description of SequenceDiagram.
             </summary>
@@ -3774,18 +3823,17 @@
             select the tagged value. Tagged values cannot be selected individually so we select its owner.
             </summary>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.openProperties">
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.ID">
             <summary>
-            opens the properties dialog in EA. 
-            For tagged values the properties dialog of the owner will be opened
+            mapped to tagged value TFS_ID
             </summary>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.addToCurrentDiagram">
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.type">
             <summary>
-            add the owner of the tagged value to the current diagram
+            mapped to tagged value TFS_type
             </summary>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.TaggedValue.selectInCurrentDiagram">
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.title">
             <summary>
             select the owner of this tagged value in the current diagram
             </summary>
@@ -3795,12 +3843,12 @@
             Description of TimingDiagram.
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UnlimitedNatural">
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.description">
             <summary>
-            Description of UnlimitedNatural.
+            mapped to notes of wrapped element
             </summary>
         </member>
-        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.UseCaseDiagram">
+        <member name="P:EAAddinFramework.WorkTracking.WorkItem.assignedTo">
             <summary>
             Description of UseCaseDiagram.
             </summary>
@@ -3816,6 +3864,21 @@
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.WindowWrapper">
             <summary>
             Wrapper needed to be able to open properties dialog in EA
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.ID">
+            <summary>
+            mapped to tagged value TFS_ID
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.description">
+            <summary>
+            mapped to notes of wrapped element
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.WorkTracking.TFS.TFSWorkItem.type">
+            <summary>
+            mapped to tagged value TFS_type
             </summary>
         </member>
     </members>

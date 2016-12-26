@@ -457,9 +457,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		public void autoLayout()
 		{
 			//get the xml variant of the diagrams GUID
-			string XMLdiagramID = this.model.getWrappedModel().GetProjectInterface().GUIDtoXML(this.wrappedDiagram.DiagramGUID);
+			string XMLdiagramID = this.model.wrappedModel.GetProjectInterface().GUIDtoXML(this.wrappedDiagram.DiagramGUID);
 			//layout the diagram
-			this.model.getWrappedModel().GetProjectInterface().LayoutDiagramEx(XMLdiagramID, global::EA.ConstLayoutStyles.lsDiagramDefault, 4,20,20,false);
+			this.model.wrappedModel.GetProjectInterface().LayoutDiagramEx(XMLdiagramID, global::EA.ConstLayoutStyles.lsDiagramDefault, 4,20,20,false);
 			//save the diagram
 			this.reFresh();
 		}

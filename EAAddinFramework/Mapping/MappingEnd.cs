@@ -9,17 +9,51 @@ namespace EAAddinFramework.Mapping
 	/// <summary>
 	/// Description of MappingEnd.
 	/// </summary>
-	public abstract class MappingEnd:MP.MappingEnd
+	public  class MappingEnd:MP.MappingEnd
 	{
 		
-		protected MappingEnd(Element mappedElement,string path)
+		public MappingEnd(Element mappedElement,string path)
 		{
 			this.mappedEnd = mappedElement;
-			this.ownerPath = path;
+			this.mappingPath = path;
+		}
+		public MappingEnd(Element mappedElement)
+		{
+			this.mappedEnd = mappedElement;
+			this.mappingPath = strippedFQN();
+		}
+		public MappingEnd(Element mappedElement,ElementWrapper rootElement)
+		{
+			this.mappedEnd = mappedElement;
+			this.mappingPath = strippedFQN();
+			if (rootElement != null && mappingPath.StartsWith(rootElement.fqn))
+			{
+				this.mappingPath = mappingPath.Remove(0,rootElement.fqn.Length - rootElement.name.Length);
+			}
 		}
 		#region MappingEnd implementation
-		public abstract TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
-		public virtual string ownerPath { get;set;}
+		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
+		public virtual string mappingPath { get;set;}
+		public virtual string fullMappingPath 
+		{
+			get
+			{
+				return this.mappingPath + "." + this.mappedEnd.name;
+			}
+		}
+		private string strippedFQN()
+		{
+			if (this.mappedEnd != null)
+			{
+				var fullFQN = mappedEnd.fqn;
+				if (fullFQN.Length > mappedEnd.name.Length +1)
+				{
+					return fullFQN.Substring(0,fullFQN.Length - mappedEnd.name.Length -1);
+				}
+				return fullFQN;
+			}
+			return string.Empty;
+		}
 	
 		#endregion
 		

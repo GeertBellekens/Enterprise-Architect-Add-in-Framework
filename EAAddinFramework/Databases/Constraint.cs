@@ -103,6 +103,7 @@ namespace EAAddinFramework.Databases
 		public override void delete()
 		{
 			if (this._wrappedOperation != null) this._wrappedOperation.delete();
+			this.ownerTable.removeConstraint(this);
 		}
 
 		public override bool isOverridden {
