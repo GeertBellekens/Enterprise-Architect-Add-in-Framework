@@ -3151,6 +3151,11 @@
             <param name="source">the source element</param>
             <param name="target">the target element</param>
         </member>
+        <member name="P:EAAddinFramework.SchemaBuilder.EASchema.name">
+            <summary>
+            the name of the schema
+            </summary>
+        </member>
         <member name="P:EAAddinFramework.SchemaBuilder.EASchema.elements">
             <summary>
             the SchemaElements owned by this Schema

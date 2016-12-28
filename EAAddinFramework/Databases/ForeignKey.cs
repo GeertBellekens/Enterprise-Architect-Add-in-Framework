@@ -55,9 +55,9 @@ namespace EAAddinFramework.Databases
 					this._wrappedAssociation.target = this._foreignTable._wrappedClass;
 					this.wrappedAssociation.sourceEnd.name = this.name;
 					if (this._foreignTable.primaryKey != null) this.wrappedAssociation.targetEnd.name = this._foreignTable.primaryKey.name;
-					this.wrappedAssociation.sourceEnd.multiplicity = new Multiplicity("0..*");
+					this.wrappedAssociation.sourceEnd.EAMultiplicity = new Multiplicity("0..*");
 					//TODO: implement multiplicities correctly by implementing isNotNullable on FK
-					this.wrappedAssociation.targetEnd.multiplicity = new Multiplicity("1..1");
+					this.wrappedAssociation.targetEnd.EAMultiplicity = new Multiplicity("1..1");
 					this.wrappedAssociation.save();
 				}
 				else

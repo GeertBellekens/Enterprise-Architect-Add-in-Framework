@@ -9,7 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
 	/// it is usually represented as [lower limit]..[upper limit] e.g. 0..1, 1..1, 0..*
 	/// </summary>
-	public class Multiplicity
+	public class Multiplicity:UML.Classes.Kernel.Multiplicity
 	{
 		public uint lower {get;set;}
 		public UML.Classes.Kernel.UnlimitedNatural upper {get;set;}

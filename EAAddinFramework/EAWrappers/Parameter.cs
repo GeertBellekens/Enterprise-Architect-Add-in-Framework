@@ -20,7 +20,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	get { return this.owner as UML.Classes.Kernel.Operation; }
      	set { throw new NotImplementedException(); }
     }
-    public abstract UML.Classes.Kernel.UnlimitedNatural upper { get; set; }
+
+	public abstract UML.Classes.Kernel.Multiplicity multiplicity { get; set; }
+	public abstract UML.Classes.Kernel.UnlimitedNatural upper { get; set; }
     public abstract UML.Classes.Kernel.Type type { get; set; }
     public abstract UML.Classes.Kernel.VisibilityKind visibility { get; set; }
     public abstract UML.Classes.Kernel.Namespace owningNamespace {get; set; }            

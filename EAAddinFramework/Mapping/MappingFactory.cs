@@ -60,10 +60,10 @@ namespace EAAddinFramework.Mapping
 			}
 			//add the mappings for the type of the attribute
 			var attributeType = attribute.type as ElementWrapper;
-			if (attributeType != null) returnedMappings.AddRange(createOwnedMappings(attributeType,basepath + "." + attribute.name));
+			if (attributeType != null) returnedMappings.AddRange(createOwnedMappings(attributeType,basepath + "." + attribute.name,false));
 			return returnedMappings;
 		}
-		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,ElementWrapper targetRootElement)
+		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,ElementWrapper targetRootElement,bool includeOwnedElements)
 		{
 			List<Mapping> returnedMappings = new List<Mapping>();
 			//connectors to an attribute
@@ -80,23 +80,36 @@ namespace EAAddinFramework.Mapping
 			{
 				returnedMappings.AddRange(createNewMappings(ownedAttribute,basepath, targetRootElement));
 			}
+			//loop owned Elements
+			if (includeOwnedElements)
+			{
+				foreach (var ownedElement in ownerElement.ownedElements.OfType<ElementWrapper>()) 
+				{
+					returnedMappings.AddRange(createOwnedMappings(ownedElement,basepath + "." + ownedElement.name,targetRootElement,includeOwnedElements));
+				}
+			}
 			return returnedMappings;
 		}
-		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath)
+		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,bool includeOwnedElements )
 		{
-			return createOwnedMappings( ownerElement, basepath,null);
+			return createOwnedMappings( ownerElement, basepath,null,includeOwnedElements);
 		}
-		public static List<Mapping> createRootMappings(ElementWrapper root,string basePath)
+		public static List<Mapping> createRootMappings(ElementWrapper root,string basepath)
 		{
 			//get the owned mappings
-			var returnedMappings =  MappingFactory.createOwnedMappings(root,basePath);
+			var returnedMappings =  MappingFactory.createOwnedMappings(root,basepath,false);
 			//get the mappings of all associated elements
 			foreach (var assocation in root.relationships
 			         					.OfType<Association>()
 			         					.Where (x => x.source.Equals(root))) 
 			{
 				var targetElement = assocation.target as ElementWrapper;
-				if (targetElement != null) returnedMappings.AddRange(createRootMappings(targetElement,basePath + "." + getConnectorString(assocation)));
+				if (targetElement != null) returnedMappings.AddRange(createRootMappings(targetElement,basepath + "." + getConnectorString(assocation)));
+			}
+			//get the owned mappings of all owned elements
+			foreach (var ownedElement in root.ownedElements.OfType<ElementWrapper>()) 
+			{
+				returnedMappings.AddRange(createRootMappings(ownedElement,basepath + "." + ownedElement.name));
 			}
 			return returnedMappings;
 		}

@@ -183,7 +183,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     
 	public UML.Classes.Kernel.UnlimitedNatural upper 
     {
-      get {return this.multiplicity.upper;}
+      get {return this.EAMultiplicity.upper;}
       set 
       { 
       	this.WrappedAttribute.UpperBound = value.ToString();
@@ -192,13 +192,24 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 
     public uint lower 
     {
-      get { return this.multiplicity.lower ;}
+      get { return this.EAMultiplicity.lower ;}
       set 
       { 
       	this.WrappedAttribute.LowerBound = value.ToString();
       }
     }
-    public Multiplicity multiplicity 
+    public UML.Classes.Kernel.Multiplicity multiplicity 
+	{
+		get 
+		{
+			return this.EAMultiplicity;
+		}
+		set 
+		{
+			this.EAMultiplicity = (Multiplicity)value;
+		}
+	}
+    public Multiplicity EAMultiplicity 
     {
     	get
     	{

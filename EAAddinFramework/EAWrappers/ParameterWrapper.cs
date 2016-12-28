@@ -84,7 +84,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+
+	public override UML.Classes.Kernel.Multiplicity multiplicity 
+	{
+		get { throw new NotImplementedException(); }
+      	set { throw new NotImplementedException(); }
+	}    
     public override UML.Classes.Kernel.UnlimitedNatural upper {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }

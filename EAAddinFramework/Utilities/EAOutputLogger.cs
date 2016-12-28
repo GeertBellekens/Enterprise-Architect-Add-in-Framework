@@ -56,7 +56,7 @@ namespace EAAddinFramework.Utilities
 		public static void log(Model model,string outputName, string message, int elementID = 0,LogTypeEnum logType = LogTypeEnum.none)
 		{
 			var logger = getOutputLogger(model, outputName);
-			logger.logToOutput(message,elementID);
+			
 			//log to logfile if needed
 			switch (logType) 
 			{
@@ -64,12 +64,16 @@ namespace EAAddinFramework.Utilities
 					Logger.log(message);
 					break;
 				case LogTypeEnum.warning:
+					message = "Warning: " + message;
 					Logger.logWarning(message);
 					break;
 				case LogTypeEnum.error:
+					message = "Error: " + message;
 					Logger.logError(message);
 					break;
 			}
+			//log to output
+			logger.logToOutput(message,elementID);
 		}
 		public static void clearLog(Model model,string outputName)
 		{

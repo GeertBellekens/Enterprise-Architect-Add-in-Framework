@@ -240,23 +240,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     public UML.Classes.Kernel.UnlimitedNatural upper 
     {
-      get {return this.multiplicity.upper;}
+      get {return this.EAMultiplicity.upper;}
       set 
       { 
-      	Multiplicity newMultiplicity = this.multiplicity;
+      	Multiplicity newMultiplicity = this.EAMultiplicity;
       	newMultiplicity.upper = value;
-      	this.multiplicity = newMultiplicity;
+      	this.EAMultiplicity = newMultiplicity;
       }
     }
 
     public uint lower 
     {
-      get { return this.multiplicity.lower ;}
+      get { return this.EAMultiplicity.lower ;}
       set 
       { 
-      	Multiplicity newMultiplicity = this.multiplicity;
+      	Multiplicity newMultiplicity = this.EAMultiplicity;
       	newMultiplicity.lower = value;
-      	this.multiplicity = newMultiplicity;
+      	this.EAMultiplicity = newMultiplicity;
       }
     }
 
@@ -330,8 +330,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
       }
     }
-    
-    public Multiplicity multiplicity 
+
+	public UML.Classes.Kernel.Multiplicity multiplicity 
+	{
+		get 
+		{
+			return this.EAMultiplicity;
+		}
+		set 
+		{
+			this.EAMultiplicity = (Multiplicity)value;
+		}
+	}
+    public Multiplicity EAMultiplicity 
     {
     	get
     	{

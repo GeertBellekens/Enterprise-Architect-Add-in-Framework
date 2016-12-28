@@ -32,6 +32,18 @@ namespace EAAddinFramework.SchemaBuilder
 			this.wrappedComposer = composer;
 			this.settings = settings;
 		}
+		
+		/// <summary>
+		/// the name of the schema
+		/// </summary>
+		public string name 
+		{
+			get 
+			{
+				return this.wrappedComposer.SchemaName;
+			}
+		}
+
 		/// <summary>
 		/// the SchemaElements owned by this Schema
 		/// </summary>

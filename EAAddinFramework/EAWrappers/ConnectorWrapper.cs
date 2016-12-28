@@ -322,7 +322,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       set { throw new NotImplementedException(); }
     }
     
-    public string name {
+    public override string name {
       get { return this.wrappedConnector.Name;  }
       set { this.wrappedConnector.Name = value; }
     }
