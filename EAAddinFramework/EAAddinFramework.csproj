@@ -199,15 +199,12 @@
     <Compile Include="EAWrappers\VisibilityKind.cs" />
     <Compile Include="EAWrappers\WindowWrapper.cs" />
     <Compile Include="Licensing\License.cs" />
-    <Compile Include="Mapping\ConnectorMapping.cs" />
-    <Compile Include="Mapping\ElementMappingSet.cs" />
+    <Compile Include="Mapping\AssociationMappingEnd.cs" />
+    <Compile Include="Mapping\AttributeAssociationEnd.cs" />
     <Compile Include="Mapping\Mapping.cs" />
     <Compile Include="Mapping\MappingEnd.cs" />
-    <Compile Include="Mapping\MappingFactory.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />
     <Compile Include="Mapping\MappingSet.cs" />
-    <Compile Include="Mapping\PackageMappingSet.cs" />
-    <Compile Include="Mapping\TaggedValueMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaBuilder\EASchemaAssociation.cs" />
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
@@ -216,41 +213,22 @@
     <Compile Include="SchemaBuilder\EASchemaLiteral.cs" />
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
-    <Compile Include="Utilities\AbortableBackgroundWorker.cs" />
+    <Compile Include="Utilities\AbortableBackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Utilities\AddinSettings.cs" />
-    <Compile Include="Utilities\EAOutputLogger.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\Logger.cs" />
-    <Compile Include="Utilities\LogTypeEnum.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="WorkTracking\Project.cs" />
-    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.cs" />
-    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.Designer.cs">
-      <DependentUpon>GetAuthorizationForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="WorkTracking\TFS\ListOfWorkItemResponse.cs" />
     <Compile Include="WorkTracking\TFS\TFSProject.cs" />
     <Compile Include="WorkTracking\TFS\TFSHelperClasses.cs" />
     <Compile Include="WorkTracking\TFS\TFSSettings.cs" />
     <Compile Include="WorkTracking\TFS\TFSWorkItem.cs" />
-    <Compile Include="WorkTracking\TFS\WorkItemPatchResponse.cs" />
     <Compile Include="WorkTracking\WorkItem.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Databases\Compare" />
-    <Folder Include="Databases\Transformation" />
-    <Folder Include="Databases\Transformation\DB2" />
-    <Folder Include="EAWrappers" />
-    <Folder Include="EASpecific" />
-    <Folder Include="EAWrappers\BehaviorStateMachines" />
-    <Folder Include="Licensing" />
-    <Folder Include="Databases" />
-    <Folder Include="Mapping" />
-    <Folder Include="WorkTracking" />
-    <Folder Include="SchemaBuilder" />
-    <Folder Include="Utilities" />
-    <Folder Include="WorkTracking\TFS" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="EAWrappers\README" />
     <None Include="packages.config" />
@@ -287,11 +265,6 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx">
-      <DependentUpon>GetAuthorizationForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

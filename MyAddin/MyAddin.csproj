@@ -87,7 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MyAddinClass.cs" />
-    <Compile Include="MyEAControl.cs" />
+    <Compile Include="MyEAControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MyEAControl.Designer.cs">
       <DependentUpon>MyEAControl.cs</DependentUpon>
     </Compile>
