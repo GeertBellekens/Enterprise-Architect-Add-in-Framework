@@ -3359,6 +3359,11 @@
             Description of EASearchOutput.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Utilities.EventPropertiesHelper">
+            <summary>
+            Description of EventPropertiesHelper.
+            </summary>
+        </member>
         <member name="M:EAAddinFramework.Utilities.Logger.setLogFileName(System.String)">
             <summary>
             set the log file name
