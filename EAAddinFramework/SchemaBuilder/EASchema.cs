@@ -40,7 +40,8 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				return this.wrappedComposer.SchemaName;
+				return string.Empty;
+				//return this.wrappedComposer.SchemaName; from version 13.???
 			}
 		}
 

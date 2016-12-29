@@ -243,7 +243,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       		return new Attribute(this.model as Model, attributeToWrap);
     	}
     }
-
+    /// <summary>
+    /// checks if this element is an associationclass.
+    /// Associationclasses have the connectorID in the Miscdata[3] (PDATA4)
+    /// We have to use this because elementToWrap.IsAssocationClass() throws an exception when used in a background trhead
+    /// </summary>
+    /// <param name="elementToWrap">the element to check</param>
+    /// <returns>true if it is an associationclass</returns>
+    private bool isAssociationClass (global::EA.Element elementToWrap)
+    {
+    	int connectorID;
+    	if (int.TryParse(elementToWrap.MiscData[3].ToString(),out connectorID))
+    	{
+    		return (elementToWrap.Type == "Class" && connectorID > 0 );
+    	}
+    	return false;
+    }
     /// creates a new EAElementWrapper based on the given EA.Element
     internal ElementWrapper createEAElementWrapper
       (global::EA.Element elementToWrap) 
@@ -259,7 +274,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     			else
     			{
     				//check if associationclass
-    				if (elementToWrap.IsAssociationClass())
+    				//elementToWrap.IsAssocationClass() returns an exception when used in a background thread so we use our own method to figure out if its an associationClass.
+    				if (isAssociationClass(elementToWrap))
     				{
     					return new AssociationClass(this.model as Model, elementToWrap);
     				}
