@@ -92,7 +92,7 @@ namespace EAAddinFramework.SchemaBuilder
 						                                              , LogTypeEnum.warning);						
 					}
 					//report report different multiplicity
-					if (this.subSetProperty.multiplicity != this.sourceProperty.multiplicity)
+					if (((UTF_EA.Attribute)this.subSetProperty).EAMultiplicity != this.multiplicity)
 					{
 						EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
 						                                              ,string.Format("Attribute '{0}' has changed multiplicity from '{1}' to '{2}' since the last schema generation"
@@ -106,7 +106,7 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.name = this.sourceProperty.name;
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
-				((UTF_EA.Attribute)this.subSetProperty).EAMultiplicity = this.multiplicity;
+				this.subSetProperty.multiplicity = this.multiplicity;
 				//notes only update them if they are empty
 				if (this.subSetProperty.ownedComments.Count == 0 || ! this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
 				{

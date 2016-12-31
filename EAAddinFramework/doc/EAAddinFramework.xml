@@ -2532,6 +2532,15 @@
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAAttributeWrapper(EA.Attribute)">
             creates a new EAAttribute based on the given EA.Attribute
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.isAssociationClass(EA.Element)">
+            <summary>
+            checks if this element is an associationclass.
+            Associationclasses have the connectorID in the Miscdata[3] (PDATA4)
+            We have to use this because elementToWrap.IsAssocationClass() throws an exception when used in a background trhead
+            </summary>
+            <param name="elementToWrap">the element to check</param>
+            <returns>true if it is an associationclass</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Factory.createEAElementWrapper(EA.Element)">
             creates a new EAElementWrapper based on the given EA.Element
         </member>
