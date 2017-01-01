@@ -79,6 +79,8 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			this.subSetLiteral.name = this.sourceLiteral.name;
 			this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;
+			//alias
+			((UTF_EA.EnumerationLiteral)subSetLiteral).alias = ((UTF_EA.EnumerationLiteral)sourceLiteral).alias;
 			//notes only update them if they are empty
 			if (this.subSetLiteral.ownedComments.Count == 0 || ! this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
 			{

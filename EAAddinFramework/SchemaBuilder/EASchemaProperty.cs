@@ -107,6 +107,8 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				this.subSetProperty.multiplicity = this.multiplicity;
+				//alias
+				((UTF_EA.Attribute)this.subSetProperty).alias = ((UTF_EA.Attribute)sourceProperty).alias;
 				//notes only update them if they are empty
 				if (this.subSetProperty.ownedComments.Count == 0 || ! this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
 				{

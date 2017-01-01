@@ -93,6 +93,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.wrappedConnector.ConnectorGUID;
 		}
 	}
+	public string alias
+	{
+		get{return this.wrappedConnector.Alias;}
+		set{this.wrappedConnector.Alias = value;}
+	}
 	/// <summary>
 	/// 
 	/// </summary>

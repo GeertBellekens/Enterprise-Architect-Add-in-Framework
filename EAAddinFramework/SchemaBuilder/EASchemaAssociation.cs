@@ -292,7 +292,6 @@ namespace EAAddinFramework.SchemaBuilder
 						                                              , LogTypeEnum.warning);
         		}
         		//different target rolname
-        		//different multiplicity
         		if (((UTF_EA.Association)subSetAssociation).targetEnd.name != this.otherEnd.name)
         		{
         			EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
@@ -304,10 +303,11 @@ namespace EAAddinFramework.SchemaBuilder
 						                                              ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
 						                                              , LogTypeEnum.warning);
         		}
-        		//TODO different target? or should that be reported elsewhere?
         	}
            	//update name
             subSetAssociation.name = this.sourceAssociation.name;
+            //alias
+            ((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
             //notes only update them if they are empty
 			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
 			{
