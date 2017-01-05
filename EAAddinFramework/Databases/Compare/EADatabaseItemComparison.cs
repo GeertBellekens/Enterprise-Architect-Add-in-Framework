@@ -61,14 +61,30 @@ namespace EAAddinFramework.Databases.Compare
 
 		public void rename(string newName)
 		{
-			
 			if (this.newDatabaseItem != null)
 			{
-				this.newDatabaseItem.name = newName;
-				//set renamed for columns
-				var newColumn = this.newDatabaseItem as Column;
-				if (newColumn != null) newColumn.isRenamed = true;
+				//don't rename new item if there are physical duplicates
+				if (!hasPhysicalDuplicate())
+				{
+					this.newDatabaseItem.name = newName;
+				}
+				else
+				{
+					//in that case only rename the physical item
+					if (this.existingDatabaseItem != null) this.existingDatabaseItem.name = newName;
+					this.newDatabaseItem.isRenamed = true;
+				}
 			}
+		}
+		bool hasPhysicalDuplicate()
+		{
+			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && !x.existingDatabaseItem.Equals(this._existingDatabaseItem) 
+			                                           && x.newDatabaseItem != null &&  x.newDatabaseItem.Equals(this._newDatabaseItem));
+		}
+		public bool hasLogicalDuplicate()
+		{
+			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && x.existingDatabaseItem.Equals(this._existingDatabaseItem) 
+			                                           && x.newDatabaseItem != null && ! x.newDatabaseItem.Equals(this._newDatabaseItem));
 		}
 
 		public void save(DB.Database existingDatabase)
@@ -251,5 +267,18 @@ namespace EAAddinFramework.Databases.Compare
 
 
 		#endregion
+		public override bool Equals(object obj)
+		{
+			EADatabaseItemComparison other = obj as EADatabaseItemComparison;
+			if (other == null) return false;
+			bool existingEqual = false;
+			bool newEqual = false;
+			existingEqual = (this.existingDatabaseItem != null && this.existingDatabaseItem.Equals(other.existingDatabaseItem))
+				|| this.existingDatabaseItem == null && other.existingDatabaseItem == null;
+			newEqual = (this.newDatabaseItem != null && this.newDatabaseItem.Equals(other.newDatabaseItem))
+				|| this.newDatabaseItem == null && other.newDatabaseItem == null;
+			return existingEqual && newEqual;
+		}
+
 	}
 }

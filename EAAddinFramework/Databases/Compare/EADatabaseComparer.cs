@@ -19,6 +19,7 @@ namespace EAAddinFramework.Databases.Compare
 	{
 		internal Database _newDatabase;
 		internal Database _existingDatabase;
+		List<Column> deletedNewColumns = new List<Column>();
 		public EADatabaseComparer(Database newDatabase, Database existingDatabase)
 		{
 			this._newDatabase = newDatabase;
@@ -192,6 +193,9 @@ namespace EAAddinFramework.Databases.Compare
 					if (newTable != null) 
 					{
 						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
+					}
+					if (newColumn != null)
+					{
 						alreadMappedcolumns.Add(newColumn);
 					}
 					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,existingColumn));
@@ -206,12 +210,12 @@ namespace EAAddinFramework.Databases.Compare
 						if (addedComparedItems.All(x => x.newDatabaseItem != newColumn)) 
 						{
 							//and there is no other column with the same name that maps to the same physical column and has exactly the same properties and name
-							var newColumnsToDelete = addedComparedItems.Where(y => 
-														y.existingDatabaseItem != null							                                                  
+							var newColumnsToDelete = addedComparedItems.Where(y =>
+														y.existingDatabaseItem is DB_EA.Column														
 							                            && y.existingDatabaseItem.logicalElements.Contains(newColumn.logicalElement)
-							                            && y.newDatabaseItem != null
+							                            && y.newDatabaseItem is DB_EA.Column	
 							                            && y.newDatabaseItem.name == newColumn.name
-							                            && y.newDatabaseItem.properties == newColumn.properties)
+							                            && ((Column)y.newDatabaseItem).type.name == newColumn.type.name)
 														.Select(z => z.newDatabaseItem as Column);
 							if (newColumnsToDelete.Any()) 
 							{
@@ -224,6 +228,8 @@ namespace EAAddinFramework.Databases.Compare
 							}
 						}
 					}
+					//add the deleted columns to the list of deleted columns
+					this.deletedNewColumns.AddRange(columnsToDelete);
 					//delete the columns that were identified as duplicates
 					foreach (var columnToDelete in columnsToDelete) 
 					{
