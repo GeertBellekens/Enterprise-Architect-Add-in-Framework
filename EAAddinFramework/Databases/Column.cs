@@ -131,56 +131,7 @@ namespace EAAddinFramework.Databases
 			if (logicalAttribute != null) logicalAttribute.save(); 
 				
 		}
-		bool? _isRenamed;
-		public bool isRenamed 
-		{
-			get 
-			{
-				//renamed only makes sense on remote columns
-				if (!isRemote) return false;
-				if (! _isRenamed.HasValue)
-				{
-					//get the tagged value
-					if (this.wrappedElement != null)
-					{
-						_isRenamed = this.wrappedElement.taggedValues
-							.Any( x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)
-							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
-					}
-					else
-					{
-						return false;
-					}
-				}
-				return _isRenamed.Value;
-			}
-			set
-			{
-				//renamed only makes sense if the column is remote
-				if (this.isRemote)
-				{
-					this._isRenamed = value;
-					//create tagged value if needed
-					if (this.wrappedElement != null)
-					{
-						if (value)
-						{
-							wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
-						}
-						else
-						{
-							//if the tagged value exists then set it to false
-							if (wrappedElement.taggedValues
-								.Any(x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)))
-							{
-								wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
-							}
-						}
-						
-					}
-				}
-			}
-		}
+		
 		public override List<UML.Classes.Kernel.Element> logicalElements 
 		{
 			get 
@@ -386,6 +337,7 @@ namespace EAAddinFramework.Databases
 			}
 			set 
 			{
+				if (this.isRemote && !string.IsNullOrEmpty(_name) && _name != value) this.isRenamed = true;
 				_name = value;
 				if (_wrappedattribute != null) this._wrappedattribute.name = _name;
 				if (this.logicalAttribute != null && !this.isRemote) this.logicalAttribute.alias = value;

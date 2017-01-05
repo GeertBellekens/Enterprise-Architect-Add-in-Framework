@@ -16,6 +16,49 @@ namespace EAAddinFramework.Databases
 		internal abstract TaggedValue traceTaggedValue {get;set;}
 		internal abstract void createTraceTaggedValue();
 		internal bool? _isOverridden;
+		bool? _isRenamed;
+		public bool isRenamed 
+		{
+			get 
+			{
+				if (! _isRenamed.HasValue)
+				{
+					//get the tagged value
+					if (this.wrappedElement != null)
+					{
+						_isRenamed = this.wrappedElement.taggedValues
+							.Any( x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)
+							     && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
+					}
+					else
+					{
+						return false;
+					}
+				}
+				return _isRenamed.Value;
+			}
+			set
+			{
+				this._isRenamed = value;
+				//create tagged value if needed
+				if (this.wrappedElement != null)
+				{
+					if (value)
+					{
+						wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
+					}
+					else
+					{
+						//if the tagged value exists then set it to false
+						if (wrappedElement.taggedValues
+							.Any(x => x.name.Equals("dbrename",StringComparison.InvariantCultureIgnoreCase)))
+						{
+							wrappedElement.addTaggedValue("dbrename",value.ToString().ToLower());
+						}
+					}
+				}
+			}
+		}
 		public virtual DB.DataBaseFactory factory 
 		{
 			get 
@@ -30,7 +73,8 @@ namespace EAAddinFramework.Databases
 		{
 			//check if types are the same
 			if (newDatabaseItem.itemType != this.itemType) throw new Exception(string.Format("Cannot update object of type {0} with object of type {1}",this.itemType, newDatabaseItem.itemType));
-			this.name = newDatabaseItem.name;
+			//only take over name if the new item is not renamed
+			if (!((DatabaseItem)newDatabaseItem).isRenamed) this.name = newDatabaseItem.name;
 			this.isOverridden = newDatabaseItem.isOverridden;
 			this.updateDetails(newDatabaseItem);
 			if (save)
@@ -135,6 +179,21 @@ namespace EAAddinFramework.Databases
 		public abstract string itemType {get;}
 
 		public abstract string properties {get;}
-		
+		public override bool Equals(object obj)
+		{
+			DatabaseItem other = obj as DatabaseItem;
+			if (other == null) return false;
+			bool ownerEqual = false;
+			ownerEqual = this.owner != null && this.owner.Equals(other.owner) || this.owner == null && other.owner == null;
+			bool wrappedElementEqual = false;
+			wrappedElementEqual = this.wrappedElement != null && this.wrappedElement.Equals(other.wrappedElement)
+				|| this.wrappedElement == null && other.wrappedElement == null;
+			bool logicalElementsEqual = false;
+			logicalElementsEqual = this.logicalElements.All(x => other.logicalElements.Any(y => y.Equals(x)))
+				|| this.logicalElements.Count == 0 && other.logicalElements.Count == 0;
+			bool itemTypeEquals = this.itemType == other.itemType;
+			bool nameEquals = this.name == other.name;
+			return ownerEqual && wrappedElementEqual && logicalElementsEqual && itemTypeEquals && nameEquals;
+		}
 	}
 }

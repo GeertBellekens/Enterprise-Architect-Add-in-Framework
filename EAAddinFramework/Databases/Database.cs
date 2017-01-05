@@ -271,43 +271,6 @@ namespace EAAddinFramework.Databases
 				//do nothing
 			}
 		}
-		#region Equals and GetHashCode implementation
-		public override bool Equals(object obj)
-		{
-			Database other = obj as Database;
-				if (other == null)
-					return false;
-						return object.Equals(this._wrappedPackage, other._wrappedPackage) && object.Equals(this._factory, other._factory) && this._name == other._name;
-		}
 
-		public override int GetHashCode()
-		{
-			int hashCode = 0;
-			unchecked {
-				if (_wrappedPackage != null)
-					hashCode += 1000000007 * _wrappedPackage.GetHashCode();
-				if (_factory != null)
-					hashCode += 1000000009 * _factory.GetHashCode();
-				if (_tables != null)
-					hashCode += 1000000021 * _tables.GetHashCode();
-				if (_name != null)
-					hashCode += 1000000033 * _name.GetHashCode();
-			}
-			return hashCode;
-		}
-
-		public static bool operator ==(Database lhs, Database rhs) {
-			if (ReferenceEquals(lhs, rhs))
-				return true;
-			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
-				return false;
-			return lhs.Equals(rhs);
-		}
-
-		public static bool operator !=(Database lhs, Database rhs) {
-			return !(lhs == rhs);
-		}
-
-		#endregion
 	}
 }

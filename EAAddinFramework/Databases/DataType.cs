@@ -134,5 +134,13 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public bool isRenamed {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

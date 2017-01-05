@@ -402,7 +402,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			//to add this to a diagram we first need to make a new element of type UMLDiagram
 			//then we have to add that element tot he diagram.
-			this.model.currentDiagram.addToDiagram(this);			
+			UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
+			if (currentDiagram != null)
+			{
+				currentDiagram.addToDiagram(this);			
+			}
 		}
 	  	/// <summary>
 	  	/// select this diagram in the current diagram

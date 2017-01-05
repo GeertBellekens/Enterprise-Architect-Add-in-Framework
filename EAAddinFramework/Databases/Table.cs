@@ -214,12 +214,27 @@ namespace EAAddinFramework.Databases
 		/// <returns>the corresponding column</returns>
 		public Column getCorrespondingColumn(Column newColumn, List<Column> alreadyMappedColumns)
 		{
+			//find exact match
 			var correspondingColumn = this.columns.FirstOrDefault( x => x.name + x.properties == newColumn.name + newColumn.properties
 			                                                       && !alreadyMappedColumns.Contains(x));
-			if (correspondingColumn == null) correspondingColumn = 
-											this._columns.FirstOrDefault( x => x.logicalAttribute != null
-				                						&& x.logicalAttribute.Equals(newColumn.logicalAttribute)
-				                						&& !alreadyMappedColumns.Contains(x));
+			//find based on the same logical elements
+			if (correspondingColumn == null)
+			{
+				foreach (var mycolumn in this.columns) 
+				{
+					if (! alreadyMappedColumns.Contains(mycolumn))
+					{
+						foreach (var logical in mycolumn.logicalElements) 
+						{
+							if (newColumn.logicalElements.Any(logical.Equals))
+						    {
+								correspondingColumn = mycolumn;
+						    }
+						}
+					}
+				}
+			}
+			//if not found search again without the already mapped columns
 			if (correspondingColumn == null && alreadyMappedColumns != null && alreadyMappedColumns.Count > 0) 
 				correspondingColumn = getCorrespondingColumn(newColumn, new List<Column>());//try again without the list of already mapped columns
 			return correspondingColumn as Column;
