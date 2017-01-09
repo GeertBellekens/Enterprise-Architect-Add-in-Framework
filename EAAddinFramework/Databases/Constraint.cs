@@ -36,7 +36,49 @@ namespace EAAddinFramework.Databases
 			var newConstraint = (Constraint)newDatabaseItem;
 			this.involvedColumns = newConstraint.involvedColumns;
 		}
-		
+		/// <summary>
+		/// remove the given column from the involved columns
+		/// </summary>
+		/// <param name="column">the column to remove</param>
+		public void removeColumn(DB.Column column)
+		{
+			if (involvedColumns.Contains(column))
+			{
+				_involvedColumns.Remove((Column)column);
+			}
+		}
+		/// <summary>
+		/// remove the given columns from the involved columns and replace it by the replacement
+		/// </summary>
+		/// <param name="column"></param>
+		/// <param name="replacement"></param>
+		public void removeColumn(DB.Column column, DB.Column replacement)
+		{
+			int columnIndex = -1;
+			int replacementIndex = -1;
+			for (int i = 0; i < this.involvedColumns.Count; i++) 
+			{
+				var currentColumn = involvedColumns[i];
+				if (currentColumn == column) columnIndex = i;
+				if (currentColumn == replacement) replacementIndex = i;
+				if (columnIndex > -1 && replacementIndex > -1) break; //found both don't bother continuing
+			}
+			if (columnIndex > -1 && columnIndex != replacementIndex)
+			{
+				//check if the replacement is not already there
+				if (replacementIndex > -1)
+				{
+					_involvedColumns.RemoveAt(columnIndex);
+				}
+				else
+				{
+					//replace column by its replacement
+					this._involvedColumns[columnIndex] = (Column)replacement;
+				}
+				
+			}
+		}
+
 		internal abstract override TaggedValue traceTaggedValue {get;set;}
 		#endregion
 		public override void save()

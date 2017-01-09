@@ -45,6 +45,19 @@
             Description of Constraint.
             </summary>
         </member>
+        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column)">
+            <summary>
+            remove the given column from the involved columns
+            </summary>
+            <param name="column">the column to remove</param>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column,DatabaseFramework.Column)">
+            <summary>
+            remove the given columns from the involved columns and replace it by the replacement
+            </summary>
+            <param name="column"></param>
+            <param name="replacement"></param>
+        </member>
         <member name="T:EAAddinFramework.Databases.Database">
             <summary>
             Description of Database.
@@ -97,6 +110,13 @@
             </summary>
             <param name="newForeignKey"></param>
             <returns></returns>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Table.removeColumn(DatabaseFramework.Column,DatabaseFramework.Column)">
+            <summary>
+            remove the given column from the table and replace it in constraints by the replacement columns
+            </summary>
+            <param name="column">the column to remove</param>
+            <param name="replacement">the column to be used as replacement in constraints</param>
         </member>
         <member name="T:EAAddinFramework.Databases.Transformation.DB2.DB2ColumnTransformer">
             <summary>

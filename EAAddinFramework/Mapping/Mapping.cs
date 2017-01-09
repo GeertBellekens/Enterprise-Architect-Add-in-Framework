@@ -10,7 +10,7 @@ namespace EAAddinFramework.Mapping
 	/// <summary>
 	/// Description of Mapping.
 	/// </summary>
-	public class Mapping:MP.Mapping
+	public abstract class Mapping:MP.Mapping
 	{
 		internal MappingEnd _source;
 		internal MappingEnd _target;
@@ -51,14 +51,8 @@ namespace EAAddinFramework.Mapping
 			}
 		}
 
-		public MP.MappingLogic mappingLogic {
-			get {
-				return _mappingLogic;
-			}
-			set {
-				_mappingLogic = (MappingLogic)value;
-			}
-		}
+		public abstract MP.MappingLogic mappingLogic {get;set;}
+
 
 		#endregion
 	}

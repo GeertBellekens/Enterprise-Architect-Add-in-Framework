@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
@@ -178,7 +178,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	        }
 	        else
 	        {
-	        	this._target = this.model.getElementWrapperByID(this.wrappedConnector.SupplierID);
+	        	var targetElementWrapper = this.model.getElementWrapperByID(this.wrappedConnector.SupplierID); 
+	        	this._target = targetElementWrapper;			
+	       		//in case the source is linked to a connector there's a dummy element with type ProxyConnector
+				if (targetElementWrapper.EAElementType == "ProxyConnector")
+				{
+					//get the source connector
+					this._source = this.model.getRelationByID(targetElementWrapper.wrappedElement.ClassifierID);
+				}
 	        }
       	}
       	return this._target;
@@ -197,7 +204,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}      	
       }
     }
-    
+	public override List<UML.Classes.Kernel.Relationship> relationships {
+		get 
+		{
+			string sqlGetRelationships = @"select c.Connector_ID
+											from (t_connector c
+											inner join t_object o on (o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
+											and o.Object_Type = 'ProxyConnector'))
+											where o.Classifier_guid = '"+this.uniqueID+"'";
+			return this.model.getRelationsByQuery(sqlGetRelationships).Cast<UML.Classes.Kernel.Relationship>().ToList();
+		}
+		set 
+		{
+			base.relationships = value;;
+		}
+	}
+
     public UML.Classes.Kernel.Element source {
       get 
       {
@@ -211,7 +233,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	        }
 	        else
 	        {
-	        	this._source = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
+				var sourceElementWrapper = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);	        	
+				this._source = sourceElementWrapper;
+				//in case the source is linked to a connector there's a dummy element with type ProxyConnector
+				if (sourceElementWrapper.EAElementType == "ProxyConnector")
+				{
+					//get the source connector
+					this._source = this.model.getRelationByID(sourceElementWrapper.wrappedElement.ClassifierID);
+				}
 	        }
       	}
       	return this._source;

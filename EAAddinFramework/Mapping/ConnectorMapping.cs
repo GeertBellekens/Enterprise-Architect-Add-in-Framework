@@ -25,5 +25,30 @@ namespace EAAddinFramework.Mapping
 		{
 			this.wrappedConnector = wrappedConnector;
 		}
+
+
+		#region implemented abstract members of Mapping
+
+		public override MP.MappingLogic mappingLogic {
+			get 
+			{
+				if (_mappingLogic == null)
+				{
+					foreach (var connector in this.wrappedConnector.relationships.OfType<ConnectorWrapper>())
+					{
+						var wrappedLogicElement = connector.target as ElementWrapper;
+						if (wrappedLogicElement != null)
+							_mappingLogic = new MappingLogic(wrappedLogicElement);
+					}
+				}
+				return _mappingLogic;
+			}
+			set 
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
 	}
 }

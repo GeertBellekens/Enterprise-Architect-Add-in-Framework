@@ -203,7 +203,7 @@ namespace EAAddinFramework.Databases.Compare
 				//now the new columns that don't have a corresponding existing column
 				if (newTable != null)
 				{
-					List<Column> columnsToDelete = new List<Column>();
+					Dictionary<Column,Column> columnsToDelete = new Dictionary<Column,Column>();
 					foreach (Column newColumn in newTable.columns) 
 					{
 						
@@ -221,7 +221,7 @@ namespace EAAddinFramework.Databases.Compare
 							if (duplicateColumns.Any()) 
 							{
 								//a duplicate is already compared. remove this one from the table
-								columnsToDelete.Add(newColumn);
+								columnsToDelete.Add(newColumn,duplicateColumns.First());
 							} 
 							else
 							{
@@ -231,9 +231,9 @@ namespace EAAddinFramework.Databases.Compare
 						}
 					}
 					//actually remove the duplicate columns
-					foreach (var columnToDelete in columnsToDelete) 
+					foreach (var columnToDelete in columnsToDelete.Keys) 
 					{
-						columnToDelete.delete();
+						columnToDelete.ownerTable.removeColumn(columnToDelete,columnsToDelete[columnToDelete]);
 					}
 					
 				}

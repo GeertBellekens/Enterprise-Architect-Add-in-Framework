@@ -79,11 +79,11 @@ namespace EAAddinFramework.Databases.Compare
 		bool hasPhysicalDuplicate()
 		{
 			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && !x.existingDatabaseItem.Equals(this._existingDatabaseItem) 
-			                                           && x.newDatabaseItem != null &&  x.newDatabaseItem.Equals(this._newDatabaseItem));
+			                                           && x.newDatabaseItem != null &&  x.newDatabaseItem == this._newDatabaseItem);
 		}
 		public bool hasLogicalDuplicate()
 		{
-			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && x.existingDatabaseItem.Equals(this._existingDatabaseItem) 
+			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && x.existingDatabaseItem == this._existingDatabaseItem 
 			                                           && x.newDatabaseItem != null && ! x.newDatabaseItem.Equals(this._newDatabaseItem));
 		}
 

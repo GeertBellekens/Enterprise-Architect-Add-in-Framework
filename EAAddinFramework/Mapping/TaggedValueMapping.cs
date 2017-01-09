@@ -25,5 +25,19 @@ namespace EAAddinFramework.Mapping
 		{
 			this.wrappedTaggedValue = wrappedTaggedValue;
 		}
+
+		#region implemented abstract members of Mapping
+		public override MP.MappingLogic mappingLogic 
+		{
+			get 
+			{
+				throw new NotImplementedException();
+			}
+			set 
+			{
+				throw new NotImplementedException();
+			}
+		}
+		#endregion
 	}
 }

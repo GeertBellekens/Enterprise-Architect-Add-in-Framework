@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -125,7 +125,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public virtual List<T> getRelationships<T>() 
       where T : UML.Classes.Kernel.Relationship 
     {
-      return new List<T>();
+    	return this.relationships.OfType<T>().ToList();
     }
 
 

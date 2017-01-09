@@ -277,7 +277,25 @@ namespace EAAddinFramework.Databases
 		public void removeColumn(DB.Column column)
 		{
 			if (this.columns != null)this._columns.Remove((Column)column);
+			foreach (var constraint in this.constraints.Where(x => x.involvedColumns.Contains(column)))
+			{
+				constraint.removeColumn(column);
+			}
 		}
+		/// <summary>
+		/// remove the given column from the table and replace it in constraints by the replacement columns
+		/// </summary>
+		/// <param name="column">the column to remove</param>
+		/// <param name="replacement">the column to be used as replacement in constraints</param>
+		public void removeColumn(DB.Column column, DB.Column replacement)
+		{
+			if (this.columns != null)this._columns.Remove((Column)column);
+			foreach (var constraint in this.constraints.Where(x => x.involvedColumns.Contains(column)))
+			{
+				constraint.removeColumn(column,replacement);
+			}
+		}
+
 		public void addConstraint(DB.Constraint constraint)
 		{
 			if (this.constraints != null) this._constraints.Add((Constraint) constraint);
