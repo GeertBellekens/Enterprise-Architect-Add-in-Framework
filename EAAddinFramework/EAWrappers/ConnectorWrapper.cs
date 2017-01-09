@@ -219,7 +219,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			base.relationships = value;;
 		}
 	}
-
+  
+    /// <summary>
+    /// returns a list of elements that are linked to this relationship (but not the related elements)
+    /// these are the notes or constrains linked to the relation, or the elments linked to this relation through another relation
+    /// </summary>
+    /// <returns>the list of elements that are somehow related tot this relation direction (without being the source or target)</returns>
+	public List<UML.Classes.Kernel.Element> getLinkedElements()
+	{
+		List<UML.Classes.Kernel.Element> foundElements = new List<UML.Classes.Kernel.Element>();
+		//add the elements linked to this relation via another connector
+		foundElements.AddRange(this.relationships.OfType<ConnectorWrapper>().Where(x => x.target != this).Select(y => y.target));	
+		foundElements.AddRange(this.relationships.OfType<ConnectorWrapper>().Where(x => x.source != this).Select(y => y.source));
+		//then add the notes/constrains that are linked to this relation via a notelink
+		string selecNoteLinkElements = "select o.Object_ID from t_object o where o.pdata4 like '%idref_=" + this.id + ";%'";
+		foundElements.AddRange(this.model.getElementWrappersByQuery(selecNoteLinkElements));
+		//return the found elements
+		return foundElements;
+	}
     public UML.Classes.Kernel.Element source {
       get 
       {

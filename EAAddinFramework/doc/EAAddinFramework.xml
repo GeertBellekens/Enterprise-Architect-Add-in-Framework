@@ -1665,6 +1665,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getLinkedElements">
+            <summary>
+            returns a list of elements that are linked to this relationship (but not the related elements)
+            these are the notes or constrains linked to the relation, or the elments linked to this relation through another relation
+            </summary>
+            <returns>the list of elements that are somehow related tot this relation direction (without being the source or target)</returns>
+        </member>
         <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ConnectorWrapper.getInformationFlows">
             <summary>
             convenience method to return the information flows that realize this Relationship

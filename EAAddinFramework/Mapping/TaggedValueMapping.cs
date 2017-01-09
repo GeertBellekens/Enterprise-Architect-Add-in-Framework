@@ -30,8 +30,22 @@ namespace EAAddinFramework.Mapping
 		public override MP.MappingLogic mappingLogic 
 		{
 			get 
-			{
-				throw new NotImplementedException();
+			{	
+				if (_mappingLogic == null)
+				{
+					Guid mappingElementGUID;
+					string mappingLogicString = MappingFactory.getValueForKey("mappingLogic",this.wrappedTaggedValue.comment);
+					if (Guid.TryParse(mappingLogicString,out mappingElementGUID))
+					{
+						ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;
+						if (mappingLogicElement != null) _mappingLogic = new MappingLogic(mappingLogicElement);
+					}
+					if (_mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
+					{
+						_mappingLogic = new MappingLogic(mappingLogicString);
+					}
+				}
+				return _mappingLogic;				                            
 			}
 			set 
 			{

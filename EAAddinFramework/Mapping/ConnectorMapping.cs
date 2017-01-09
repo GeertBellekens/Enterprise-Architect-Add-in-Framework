@@ -34,12 +34,10 @@ namespace EAAddinFramework.Mapping
 			{
 				if (_mappingLogic == null)
 				{
-					foreach (var connector in this.wrappedConnector.relationships.OfType<ConnectorWrapper>())
-					{
-						var wrappedLogicElement = connector.target as ElementWrapper;
-						if (wrappedLogicElement != null)
-							_mappingLogic = new MappingLogic(wrappedLogicElement);
-					}
+					//check links to notes or constraints
+					//TODO: make a difference between regular notes and mapping logic?
+					var connectedElement = this.wrappedConnector.getLinkedElements().OfType<ElementWrapper>().FirstOrDefault(x => x.notes.Length > 0);
+					if (connectedElement != null) _mappingLogic = new MappingLogic(connectedElement);
 				}
 				return _mappingLogic;
 			}

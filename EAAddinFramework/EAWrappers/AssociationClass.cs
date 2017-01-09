@@ -110,5 +110,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			return this.relatedAssociation.getInformationFlows();
 		}
+
+		public List<UML.Classes.Kernel.Element> getLinkedElements()
+		{
+			return this.relatedAssociation.getLinkedElements();
+		}
+
 	}
 }
