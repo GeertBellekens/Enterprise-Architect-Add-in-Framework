@@ -73,6 +73,12 @@ namespace EAAddinFramework.Databases
 		{
 			throw new NotImplementedException();
 		}
+
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, string newName, bool save = true)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void update(DB.DatabaseItem newDatabaseItem, bool save = true)
 		{
 			//don't think we need it here
@@ -141,6 +147,15 @@ namespace EAAddinFramework.Databases
 			set {
 				throw new NotImplementedException();
 			}
+		}
+
+		public string renamedName {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}			
 		}
 	}
 }

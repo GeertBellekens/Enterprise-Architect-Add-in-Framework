@@ -18,11 +18,52 @@ namespace EAAddinFramework.Databases.Compare
 	{
 		DB.DatabaseItem _existingDatabaseItem;
 		DB.DatabaseItem _newDatabaseItem;
+		string _renamedName = string.Empty;
+		public string renamedName 
+		{
+			get 
+			{
+				return _renamedName;
+			}
+		}
+		bool? _isRenamed = null;
+
+		public bool isRenamed 
+		{
+			get
+			{
+				if (! _isRenamed.HasValue)
+				{
+					determineRenamed();
+				}
+				if (_isRenamed.HasValue) return _isRenamed.Value;
+				return false;
+			}
+		}
+		private void determineRenamed()
+		{
+			//check if the existing item is renamed
+			if (this.newDatabaseItem != null && this.newDatabaseItem.isRenamed)
+			{
+				_isRenamed = true;
+				this._renamedName = this.newDatabaseItem.renamedName;
+			}
+			if (this.existingDatabaseItem != null && this.existingDatabaseItem.isRenamed)
+			{
+				_isRenamed = true;
+				this._renamedName = this.existingDatabaseItem.renamedName;
+			}
+
+		}
 		
 		public EADatabaseItemComparison(DB.DatabaseItem newDatabaseItem, DB.DatabaseItem existingDatabaseItem)
 		{
-			this.newDatabaseItem = newDatabaseItem;
-			this.existingDatabaseItem = existingDatabaseItem;
+			this._newDatabaseItem = newDatabaseItem;
+			this._existingDatabaseItem = existingDatabaseItem;
+			//determine if this item was renamed
+			determineRenamed();
+			//compare the new against the existing item
+			this.compare();
 		}
 		public void updatePosition(int i)
 		{
@@ -67,13 +108,18 @@ namespace EAAddinFramework.Databases.Compare
 				if (!hasPhysicalDuplicate())
 				{
 					this.newDatabaseItem.name = newName;
-				}
-				else
-				{
-					//in that case only rename the physical item
-					if (this.existingDatabaseItem != null) this.existingDatabaseItem.name = newName;
 					this.newDatabaseItem.isRenamed = true;
+					this.newDatabaseItem.renamedName = newName;
 				}
+				//set renamed
+				this._isRenamed = true;
+				this._renamedName =newName;
+				if (this.existingDatabaseItem != null )
+				{
+					this.existingDatabaseItem.isRenamed = true;
+					this.existingDatabaseItem.renamedName = newName;
+				}
+
 			}
 		}
 		bool hasPhysicalDuplicate()
@@ -89,6 +135,11 @@ namespace EAAddinFramework.Databases.Compare
 
 		public void save(DB.Database existingDatabase)
 		{
+			//take care of the renames
+			if (this.isRenamed && this.existingDatabaseItem != null)
+			{
+				this.existingDatabaseItem.name = this.renamedName;
+			}
 			switch (this.comparisonStatus) 
 			{
 				case DatabaseComparisonStatusEnum.equal:
@@ -121,11 +172,25 @@ namespace EAAddinFramework.Databases.Compare
 					if (ownerComparison != null
 					   && ownerComparison.existingDatabaseItem != null)
 					{
-						this.newDatabaseItem.createAsNewItem(ownerComparison.existingDatabaseItem);
+						if (isRenamed)
+						{
+							this.newDatabaseItem.createAsNewItem(ownerComparison.existingDatabaseItem, this.renamedName);
+						}
+						else
+						{
+							this.newDatabaseItem.createAsNewItem(ownerComparison.existingDatabaseItem);
+						}
 					}
 					else
 					{
-						this.newDatabaseItem.createAsNewItem(existingDatabase);
+						if (this.isRenamed)
+						{
+							this.newDatabaseItem.createAsNewItem(existingDatabase, this.renamedName);
+						}
+						else
+						{
+							this.newDatabaseItem.createAsNewItem(existingDatabase);
+						}
 					}
 					break;				
 			}
@@ -138,13 +203,13 @@ namespace EAAddinFramework.Databases.Compare
 			//rename new column if existing column was renamed
 			var existingColumn = this.existingDatabaseItem as Column;
 			var newColumn = this.newDatabaseItem as Column;
-			if (existingColumn != null 
-			    && existingColumn.isRenamed
-			    && newColumn != null 
-			    && newColumn.name != existingColumn.name)
-			{
-				newDatabaseItem.name = existingDatabaseItem.name;
-			}
+//			if (existingColumn != null 
+//			    && existingColumn.isRenamed
+//			    && newColumn != null 
+//			    && newColumn.name != existingColumn.name)
+//			{
+//				newDatabaseItem.name = existingDatabaseItem.name;
+//			}
 			//if the status is already overridden then don't bother
 			if (this.comparisonStatus != DatabaseComparisonStatusEnum.dboverride)
 			{
@@ -187,6 +252,11 @@ namespace EAAddinFramework.Databases.Compare
 						if (newDatabaseItem.isOverridden && existingDatabaseItem.isOverridden)
 						{
 							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
+						}
+						else if (this.isRenamed
+						        && this.existingDatabaseItem.name + existingDatabaseItem.properties == this.renamedName + newDatabaseItem.properties) 
+						{
+							comparisonStatus = DatabaseComparisonStatusEnum.equal;
 						}
 						else if (existingDatabaseItem.name + existingDatabaseItem.properties == newDatabaseItem.name + newDatabaseItem.properties)
 						{

@@ -134,5 +134,19 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, string newName, bool save = true)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string renamedName {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

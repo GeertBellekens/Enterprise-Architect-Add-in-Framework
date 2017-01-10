@@ -16,6 +16,22 @@ namespace EAAddinFramework.Databases
 		internal abstract TaggedValue traceTaggedValue {get;set;}
 		internal abstract void createTraceTaggedValue();
 		internal bool? _isOverridden;
+		string _renamedName = string.Empty;
+		public string renamedName 
+		{
+			get 
+			{
+				if (string.IsNullOrEmpty(_renamedName) && isRenamed)
+				{
+					_renamedName = name;
+				}
+				return _renamedName;
+			}
+			set
+			{
+				_renamedName = value;
+			}
+		}
 		bool? _isRenamed;
 		public bool isRenamed 
 		{
@@ -110,6 +126,18 @@ namespace EAAddinFramework.Databases
 		public DB.DatabaseItem derivedFromItem {get;set;}
 		public abstract DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true);
 
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, string newName, bool save = true)
+		{
+			//temporarily rename this item to the new name
+			string originalName = this.name;
+			this.name = newName;
+			//create the new items
+			var newItem = this.createAsNewItem(owner, save);
+			//rename back to original
+			this.name = originalName;
+			//return the new item
+			return newItem;
+		}
 		protected abstract void updateDetails(DB.DatabaseItem newDatabaseItem);
 		internal DatabaseFactory _factory
 		{
