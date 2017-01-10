@@ -222,7 +222,7 @@ namespace EAAddinFramework.Databases
 			{
 				foreach (var mycolumn in this.columns) 
 				{
-					if (! alreadyMappedColumns.Contains(mycolumn))
+					if (alreadyMappedColumns.All(x => x != mycolumn))
 					{
 						foreach (var logical in mycolumn.logicalElements) 
 						{
