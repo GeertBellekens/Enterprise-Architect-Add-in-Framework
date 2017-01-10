@@ -228,7 +228,46 @@ namespace EAAddinFramework.Databases
 						{
 							if (newColumn.logicalElements.Any(logical.Equals))
 						    {
-								correspondingColumn = mycolumn;
+								//check if a better match has already been found
+								if (correspondingColumn != null)
+								{
+									//if the name of the original corresponding column doesn't match and we find a better match based on the name
+									if ( correspondingColumn.name != newColumn.name || correspondingColumn.isRenamed && correspondingColumn.renamedName == newColumn.name)
+									{
+										//there is a better match in name
+										if (mycolumn.name == newColumn.name || mycolumn.isRenamed && mycolumn.renamedName == newColumn.name)
+										{
+											correspondingColumn = mycolumn;
+										}
+										else
+										{
+											//we have a better match in properties
+											if (mycolumn.properties == newColumn.properties)
+											{
+												correspondingColumn = mycolumn;
+											}
+										}
+									}
+									else
+									{
+										//name corresponds
+										if (correspondingColumn.properties != newColumn.properties)
+										{
+											//but there is a better match in properties
+											if ((mycolumn.name == newColumn.name || mycolumn.isRenamed && mycolumn.renamedName == newColumn.name)
+											    && mycolumn.properties == newColumn.properties)
+											{
+												correspondingColumn = mycolumn;
+											}
+										}
+									}
+									
+								}
+								else
+								{
+									correspondingColumn = mycolumn;
+								}
+								
 						    }
 						}
 					}

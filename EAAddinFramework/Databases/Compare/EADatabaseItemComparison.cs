@@ -52,6 +52,12 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				_isRenamed = true;
 				this._renamedName = this.existingDatabaseItem.renamedName;
+				if (!hasPhysicalDuplicate())
+				{
+					this.newDatabaseItem.name = _renamedName;
+					this.newDatabaseItem.isRenamed = true;
+					this.newDatabaseItem.renamedName = _renamedName;
+				}
 			}
 
 		}
@@ -124,14 +130,12 @@ namespace EAAddinFramework.Databases.Compare
 		}
 		bool hasPhysicalDuplicate()
 		{
-			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && !x.existingDatabaseItem.Equals(this._existingDatabaseItem) 
+			return this.ownerComparison != null 
+			        && this.ownerComparison.ownedComparisons != null
+			        && this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && !x.existingDatabaseItem.Equals(this._existingDatabaseItem)
 			                                           && x.newDatabaseItem != null &&  x.newDatabaseItem == this._newDatabaseItem);
 		}
-		public bool hasLogicalDuplicate()
-		{
-			return this._ownerComparison.ownedComparisons.Any(x => x.existingDatabaseItem != null && x.existingDatabaseItem == this._existingDatabaseItem 
-			                                           && x.newDatabaseItem != null && ! x.newDatabaseItem.Equals(this._newDatabaseItem));
-		}
+
 
 		public void save(DB.Database existingDatabase)
 		{
