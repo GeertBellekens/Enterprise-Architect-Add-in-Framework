@@ -155,6 +155,7 @@ namespace EAAddinFramework.Databases
 				                                      && logicalClass.Equals(((ConnectorWrapper)y).target))))
 	           {
 					var newTrace = this._factory._modelFactory.createNewElement<Abstraction>(_wrappedClass, string.Empty);
+					newTrace.addStereotype(this._factory._modelFactory.createStereotype(newTrace, "trace"));
 					newTrace.target = logicalClass;
 					newTrace.save();
 	           }
