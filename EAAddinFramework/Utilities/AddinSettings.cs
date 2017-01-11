@@ -9,6 +9,7 @@
 using System;
 using System.Configuration;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace EAAddinFramework.Utilities
 {
@@ -78,6 +79,54 @@ namespace EAAddinFramework.Utilities
 		protected void setValue(string key, string value)
 		{
 			this.currentConfig.AppSettings.Settings[key].Value = value;
+		}
+		protected bool getBooleanValue(string key)
+		{
+			bool result;
+			return bool.TryParse(this.getValue(key), out result) ? result : true;
+		}
+		protected void setBooleanValue(string key, bool boolValue)
+		{
+			this.setValue(key,boolValue.ToString());
+		}
+		protected Dictionary<string,string> getDictionaryValue(string key)
+		{
+			var returnedDictionary = new Dictionary<string,string>();
+			foreach (var keyValues in this.getListValue(key))
+			{
+				var keyValue = keyValues.Split(new char[]{';'},StringSplitOptions.RemoveEmptyEntries);
+				if (keyValue.Count() == 2)
+				{
+					returnedDictionary.Add(keyValue[0],keyValue[1]);
+				}
+			}
+			return returnedDictionary;
+		}
+		protected void setDictionaryValue(string key, Dictionary<string,string> dictionaryValue)
+		{
+			var keyValues = new List<string>();
+			foreach (var keyValuePair in dictionaryValue) 
+			{
+				keyValues.Add(string.Join(";",keyValuePair.Key,keyValuePair.Value));
+			}
+			this.setListValue(key,keyValues);
+		}
+		protected List<string> getListValue(string key)
+		{
+			return this.getValue(key).Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries).ToList<string>();
+		}
+		protected void setListValue(string key, List<string> listValue)
+		{
+			this.setValue(key,string.Join(",",listValue));
+		}
+		protected int getIntValue(string key)
+		{
+			int returnInteger;
+			return  int.TryParse(this.getValue(key),out returnInteger) ? returnInteger:0;
+		}
+		protected void setIntValue(string key, int intValue)
+		{
+			this.setValue(key,intValue.ToString());
 		}
 		/// <summary>
 		/// saves the settings to the config file
