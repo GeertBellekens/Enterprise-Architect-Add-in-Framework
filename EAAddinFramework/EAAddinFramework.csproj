@@ -248,6 +248,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DDL-Parser\DDL-Parser.csproj">
+      <Project>{52156b88-f7a1-4007-b0e6-7e0ecc8b0b88}</Project>
+      <Name>DDL-Parser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\DatabaseFramework\DatabaseFramework.csproj">
       <Project>{033c0df8-5bb0-496f-b024-4443b9fcf2dc}</Project>
       <Name>DatabaseFramework</Name>

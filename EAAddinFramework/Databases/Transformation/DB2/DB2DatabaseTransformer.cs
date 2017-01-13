@@ -8,6 +8,7 @@ using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using DB_EA = EAAddinFramework.Databases;
 using EAAddinFramework.Utilities;
+using DDL_Parser;
 
 namespace EAAddinFramework.Databases.Transformation.DB2
 {
@@ -210,6 +211,17 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			}
 			return newColumns;
 		}
+
+    public void complete(Database database, DDL withDDL) {
+      EAOutputLogger.log(
+        this._model,
+        "DB2DatabaseTransformer::complete",
+        string.Format(
+          "completing {0} statements with {1} errors",
+          withDDL.statements.Count, withDDL.errors.Count
+        )
+      );
+    }
 
 		#endregion
 	}
