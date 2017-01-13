@@ -221,6 +221,52 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           withDDL.statements.Count, withDDL.errors.Count
         )
       );
+
+      this.fixUniqueIndexes(database, withDDL);
+    }
+
+    private void fixUniqueIndexes(Database database, DDL withDDL) {
+      // find all unique indexes
+      var indexes =  from index in withDDL.statements.OfType<CreateIndexStatement>()
+                    where index.Parameters.Keys.Contains("UNIQUE")
+                       && index.Parameters["UNIQUE"] == "True"
+                   select index;
+
+      foreach(var index in indexes) {
+        EAOutputLogger.log(
+          this._model,
+          "DB2DatabaseTransformer::complete",
+          "checking index " + index.Name + " on " + index.Table
+        );
+
+        // find table
+      	var table =
+      		(Table)database.tables.FirstOrDefault(x => index.Table.EndsWith(x.name));
+  			if( table != null ) {
+  			  // find constraint
+          var constraint =
+          	(Constraint)table.constraints.FirstOrDefault(x => index.Name.EndsWith(x.name));
+          if( constraint != null ) {
+            EAOutputLogger.log(
+              this._model,
+              "DB2DatabaseTransformer::complete",
+              "FOUND index " + index.Name
+            );
+          } else {
+            EAOutputLogger.log(
+              this._model,
+              "DB2DatabaseTransformer::complete",
+              "WARNING: index " + index.Name + " not found "
+            );
+          }
+        } else {
+          EAOutputLogger.log(
+            this._model,
+            "DB2DatabaseTransformer::complete",
+            "WARNING: table " + index.Table + " not found "
+          );
+        }
+      }
     }
 
 		#endregion
