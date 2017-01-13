@@ -391,7 +391,12 @@ namespace EAAddinFramework.Databases
 							else if (operation.stereotypes.Any(x=> x.name.Equals("FK",StringComparison.InvariantCultureIgnoreCase)))
 							{
 								_constraints.Add(new ForeignKey(this, (Operation) operation));
-							}
+              } else if( operation.stereotypes.Any( x =>
+                  x.name.Equals("index",
+                                StringComparison.InvariantCultureIgnoreCase)))
+              {
+                _constraints.Add(new Index(this, (Operation) operation));
+              }
 							
 						}
 					}
