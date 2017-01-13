@@ -90,6 +90,11 @@
             Description of PrimaryKey.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Databases.Index">
+            <summary>
+            Description of Index.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Databases.Table">
             <summary>
             Description of Table.
