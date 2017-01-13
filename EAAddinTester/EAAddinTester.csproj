@@ -124,10 +124,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\BalsamiqConnector\BalsamiqConnector.csproj">
-      <Project>{31C912A3-A16F-4D18-AB74-B985309B545C}</Project>
-      <Name>BalsamiqConnector</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EANavigator\EANavigator.csproj">
       <Project>{2BFBE8B8-528D-4844-BE0D-ECC68FE1CD1D}</Project>
       <Name>EANavigator</Name>
