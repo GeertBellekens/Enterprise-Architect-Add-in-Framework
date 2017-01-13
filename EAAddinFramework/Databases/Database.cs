@@ -34,10 +34,6 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public void complete(string ddl)
-		{
-			//TODO: implement method to parse the dll and complete the database with the missing/incomplete items
-		}
 		#region implemented abstract members of DatabaseItem
 
 
