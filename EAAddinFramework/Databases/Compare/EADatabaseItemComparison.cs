@@ -52,7 +52,7 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				_isRenamed = true;
 				this._renamedName = this.existingDatabaseItem.renamedName;
-				if (!hasPhysicalDuplicate())
+				if (this.newDatabaseItem != null && !hasPhysicalDuplicate())
 				{
 					this.newDatabaseItem.name = _renamedName;
 					this.newDatabaseItem.isRenamed = true;

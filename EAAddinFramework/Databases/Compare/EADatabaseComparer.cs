@@ -193,6 +193,8 @@ namespace EAAddinFramework.Databases.Compare
 					if (newTable != null) 
 					{
 						newColumn = newTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
+						//in case the existing column is derived from another table then we add the column the new table
+						if (newColumn == null) newColumn = getRemoteColumn(existingColumn,newTable,alreadMappedcolumns);
 					}
 					if (newColumn != null)
 					{
@@ -237,34 +239,28 @@ namespace EAAddinFramework.Databases.Compare
 					}
 					
 				}
-				//add all existing constraints
-				foreach (var existingConstraint in existingTable.constraints) 
+				//add all foreignkeys
+				foreach (ForeignKey existingForeignkey in existingTable.foreignKeys) 
 				{
-					Constraint newConstraint = null;
-					if (newTable != null)
-					{
-						if (existingConstraint is ForeignKey)
-						{
-							newConstraint = newTable.getCorrespondingForeignKey((ForeignKey)existingConstraint);
-						}
-						else
-						{
-							newConstraint = (Constraint)newTable.primaryKey ;
-						}
-						addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,existingConstraint));
-					}
+					ForeignKey newForeignkey = null;
+					newForeignkey = newTable.getCorrespondingForeignKey(existingForeignkey);
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newForeignkey,existingForeignkey));
 				}
-				//then add the new constraints don't have a corresponding existing constraint
+				//then add the new foreign keys that don't have an existing foreign key
 				if (newTable != null)
 				{
-					foreach (var newConstraint in newTable.constraints) 
+					foreach (var newForeignkey in newTable.foreignKeys) 
 					{
-						if (! addedComparedItems.Any(x => x.newDatabaseItem == newConstraint))
+						if (addedComparedItems.All(x => x.newDatabaseItem != newForeignkey)) 
 						{
-							addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint, null));
+							addedComparedItems.Add(comparedItem.addOwnedComparison(newForeignkey, null));
 						}
 					}
 				}
+				//add the primary key comparison
+				var existingPrimaryKey = existingTable.primaryKey;
+				DB.PrimaryKey newPrimaryKey = newTable != null ? newTable.primaryKey : null;
+				addedComparedItems.Add(comparedItem.addOwnedComparison(newPrimaryKey,existingPrimaryKey));
 			}
 			else
 			{
@@ -273,12 +269,41 @@ namespace EAAddinFramework.Databases.Compare
 				{
 					addedComparedItems.Add(comparedItem.addOwnedComparison(newColumn,null));
 				}
-				foreach (var newConstraint in newTable.constraints) 
+				foreach (var newForeignkey in newTable.foreignKeys) 
 				{
-					addedComparedItems.Add(comparedItem.addOwnedComparison(newConstraint,null));
+					addedComparedItems.Add(comparedItem.addOwnedComparison(newForeignkey,null));
 				}
+				//add the primary key
+				if (newTable.primaryKey != null) addedComparedItems.Add(comparedItem.addOwnedComparison(newTable.primaryKey,null));
 			}
 			return addedComparedItems;
+		}
+
+		Column getRemoteColumn(Column existingColumn,Table newTable, List<Column> alreadMappedcolumns)
+		{
+			//get the table of the existing column
+			var existingTable = existingColumn.ownerTable;
+			//get the logical elements that are not in the list of logical elemnts of the newtable
+			var otherLogicalElements = existingTable.logicalElements.Where( x => ! newTable.logicalElements.Contains(x));
+			//get the tables in the new database corresponding to the other logical elements
+			List<Table> otherTables = new List<Table>();
+			foreach (var otherLogicalElement in otherLogicalElements) 
+			{
+				otherTables.AddRange(this.newDatabase.tables.Where( x => x.logicalElements.Contains(otherLogicalElement)).Cast<Table>());
+			}
+			//loop the other tables to find a column that corresponds to the existing column
+			foreach (var otherTable in otherTables) 
+			{
+				var newColumn = otherTable.getCorrespondingColumn(existingColumn,alreadMappedcolumns);
+				if (newColumn != null)
+				{
+					//add a similar column to the new table
+					var addedColumn = newColumn.createAsNewItem(newTable,false);
+					return (Column) addedColumn;
+				}
+					
+			}
+			return null;
 		}
 		public DB.Database newDatabase {
 			get { return _newDatabase;}
