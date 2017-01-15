@@ -213,15 +213,10 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		}
 
     public void complete(Database database, DDL withDDL) {
-      EAOutputLogger.log(
-        this._model,
-        "DB2DatabaseTransformer::complete",
-        string.Format(
-          "completing {0} statements with {1} errors",
-          withDDL.statements.Count, withDDL.errors.Count
-        )
-      );
-
+      this.log( string.Format(
+        "completing {0} statements with {1} errors",
+        withDDL.statements.Count, withDDL.errors.Count
+      ));
       this.fixUniqueIndexes(database, withDDL);
     }
 
@@ -232,13 +227,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
                        && index.Parameters["UNIQUE"] == "True"
                    select index;
 
+      int fixes = 0;
       foreach(var index in indexes) {
-        // EAOutputLogger.log(
-        //   this._model,
-        //   "DB2DatabaseTransformer::complete",
-        //   "checking index " + index.SimpleName + " on " + index.Table.Name
-        // );
-
         // find table
         var table = (Table)database.getTable(index.Table.Name);
   			if( table != null ) {
@@ -247,27 +237,24 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           if( constraint != null ) {
             if( ! constraint.isUnique ) {
               constraint.isUnique = true;
-              EAOutputLogger.log(
-                this._model,
-                "DB2DatabaseTransformer::complete",
-                "FIXED index " + index.Name + " missing UNIQUE constraint."
-              );
+              fixes++;
+              this.log( "FIXED " + index.Name + "'s missing UNIQUE constraint");
             }
           } else {
-            EAOutputLogger.log(
-              this._model,
-              "DB2DatabaseTransformer::complete",
-              "WARNING: index " + index.Name + " not found "
-            );
+            this.log( "WARNING: index " + index.Name + " not found" );
           }
         } else {
-          EAOutputLogger.log(
-            this._model,
-            "DB2DatabaseTransformer::complete",
-            "WARNING: table " + index.Table + " not found "
-          );
+          this.log( "WARNING: table " + index.Table + " not found" );
         }
       }
+      this.log(string.Format(
+        "RESULT: Fix unique index: fixed {0}/{1}",
+        fixes, indexes.Count()
+      ));
+    }
+
+    private void log(string msg) {
+      EAOutputLogger.log( this._model, "DB2DatabaseTransformer.complete", msg );
     }
 
 		#endregion
