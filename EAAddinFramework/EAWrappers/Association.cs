@@ -39,17 +39,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		get
 		{
 			//TODO use the EA.Connector.AssociationClass property once fixed by Sparx
-			if (_associationClass == null)
-			{
-				int associationClassID;
-				if (int.TryParse(this.WrappedConnector.MiscData[0].ToString(),out associationClassID))
-				{
-					if (associationClassID > 0)
-					{
-						this._associationClass = this.model.getElementWrapperByID(associationClassID) as AssociationClass;
-					}
-				}
-			}
+      // if (_associationClass == null)
+      // {
+      //   int associationClassID;
+      //   if (int.TryParse(this.WrappedConnector.MiscData,out associationClassID))
+      //   {
+      //     if (associationClassID > 0)
+      //     {
+      //       this._associationClass = this.model.getElementWrapperByID(associationClassID) as AssociationClass;
+      //     }
+      //   }
+      // }
 			return _associationClass;
 		}
 	}

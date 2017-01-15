@@ -538,7 +538,7 @@ namespace EAAddinFramework.EASpecific
 		/// <returns>whathever (if anything) the function returns</returns>
 		internal object executeFunction(string functionName, object[] parameters)
 		{
-			return this.scriptController.Run(functionName,parameters);
+			return this.scriptController.Run(functionName, ref parameters);
 		}
 		/// <summary>
 		/// executes the function with the given name
@@ -547,7 +547,8 @@ namespace EAAddinFramework.EASpecific
 		/// <returns>whathever (if anything) the function returns</returns>
 		internal object executeFunction(string functionName)
 		{
-			return this.scriptController.Run(functionName, new object[0]);
+      object[] x = new object[0];
+			return this.scriptController.Run(functionName, ref x);
 		}
 		/// <summary>
 		/// add a function with based on the given operation

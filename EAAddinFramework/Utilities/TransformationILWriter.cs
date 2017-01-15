@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.PerformanceData;
+// using System.Diagnostics.PerformanceData;
 using System.Drawing.Text;
 using System.IO;
 using TSF.UmlToolingFramework.UML;
