@@ -10,7 +10,7 @@ namespace EAAddinFramework.Databases
 	/// <summary>
 	/// Description of Index.
 	/// </summary>
-	public class Index : Constraint, DB.PrimaryKey
+	public class Index : Constraint, DB.Index
 	{
 		public Index(Table owner,Operation operation) :
       base(owner, operation) {}
@@ -21,6 +21,11 @@ namespace EAAddinFramework.Databases
 		public override string itemType {
 			get { return "Index"; }
 		}
+
+    // TODO: lazy load value ?!
+    // TODO: persist setting ?!
+    public bool isUnique    { get; set; }
+    public bool isClustered { get; set; }
 
 		#region implemented abstract members of Constraint
 		protected override string getStereotype()
