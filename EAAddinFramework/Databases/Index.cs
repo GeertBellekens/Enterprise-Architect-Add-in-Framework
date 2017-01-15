@@ -22,10 +22,44 @@ namespace EAAddinFramework.Databases
 			get { return "Index"; }
 		}
 
-    // TODO: lazy load value ?!
-    // TODO: persist setting ?!
-    public bool isUnique    { get; set; }
-    public bool isClustered { get; set; }
+    public bool isUnique    {
+      get {
+        foreach(var item in this._wrappedOperation.taggedValues) {
+          if( item.name.Equals("Unique") ) {
+            return item.tagValue.ToString().Equals("1");
+          }
+        }
+        return false;
+      }
+      set {
+        foreach(var item in this._wrappedOperation.taggedValues) {
+          if( item.name.Equals("Unique") ) {
+            // TODO this is not writing through...
+            item.tagValue = value ? "1" : "0";
+            return;
+          }
+        } 
+      }
+    }
+    public bool isClustered {
+      get {
+        foreach(var item in this._wrappedOperation.taggedValues) {
+          if( item.name.Equals("Clustered") ) {
+            return item.tagValue.ToString().Equals("1");
+          }
+        }
+        return false;
+      }
+      set {
+        foreach(var item in this._wrappedOperation.taggedValues) {
+          if( item.name.Equals("Clustered") ) {
+            // TODO this is not writing through...
+            item.tagValue = value ? "1" : "0";
+            return;
+          }
+        }        
+      }
+    }
 
 		#region implemented abstract members of Constraint
 		protected override string getStereotype()
