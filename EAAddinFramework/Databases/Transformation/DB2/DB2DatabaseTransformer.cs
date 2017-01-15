@@ -233,25 +233,26 @@ namespace EAAddinFramework.Databases.Transformation.DB2
                    select index;
 
       foreach(var index in indexes) {
-        EAOutputLogger.log(
-          this._model,
-          "DB2DatabaseTransformer::complete",
-          "checking index " + index.Name + " on " + index.Table
-        );
+        // EAOutputLogger.log(
+        //   this._model,
+        //   "DB2DatabaseTransformer::complete",
+        //   "checking index " + index.SimpleName + " on " + index.Table.Name
+        // );
 
         // find table
-      	var table =
-      		(Table)database.tables.FirstOrDefault(x => index.Table.EndsWith(x.name));
+        var table = (Table)database.getTable(index.Table.Name);
   			if( table != null ) {
   			  // find constraint
-          var constraint =
-          	(Constraint)table.constraints.FirstOrDefault(x => index.Name.EndsWith(x.name));
+          var constraint = (Index)table.getConstraint(index.SimpleName);
           if( constraint != null ) {
-            EAOutputLogger.log(
-              this._model,
-              "DB2DatabaseTransformer::complete",
-              "FOUND index " + index.Name
-            );
+            if( ! constraint.isUnique ) {
+              constraint.isUnique = true;
+              EAOutputLogger.log(
+                this._model,
+                "DB2DatabaseTransformer::complete",
+                "FIXED index " + index.Name + " missing UNIQUE constraint."
+              );
+            }
           } else {
             EAOutputLogger.log(
               this._model,
