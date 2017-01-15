@@ -345,10 +345,14 @@ namespace EAAddinFramework.Databases
 		{
 			if (this.constraints != null) this._constraints.Remove((Constraint) constraint);
 		}
+
+    public DB.Constraint getConstraint(string name) {
+      return this.constraints.FirstOrDefault(x => x.name == name);
+    }
+
 		public override string itemType {
 			get {return "Table";}
 		}
-
 
 		public override string properties {
 			get { return string.Empty;}

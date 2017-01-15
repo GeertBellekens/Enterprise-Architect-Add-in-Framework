@@ -232,7 +232,11 @@ namespace EAAddinFramework.Databases
 			}
 			return correspondingTable;
 		}
-		
+
+    public DB.Table getTable(string name) {
+      return this.tables.FirstOrDefault(x => x.name == name);
+    }
+
 		private List<Table> getTablesFromPackage(Package package)
 		{
 			
