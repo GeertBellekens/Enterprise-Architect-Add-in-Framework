@@ -377,8 +377,16 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           var constraint = (Index)table.getConstraint(index.SimpleName);
           if( constraint != null ) {
             string columnName = index.Parameters["INCLUDE"];
+            // step 1: remove involved column
+            var column = (Column)constraint.getInvolvedColumn(columnName);
+            if( column != null ) {
+              // mark the column as included in the constraint
+              constraint.markAsIncluded(column);
+            } else {
+              this.log( "WARNING: column " + columnName + " not found" );
+            }
             fixes++;
-            this.log( "TODO " + index.Name + "'s INCLUDE column " + columnName);
+            this.log( "MARKED " + index.Name + "'s INCLUDE column");
           } else {
             this.log( "WARNING: index " + index.Name + " not found" );
           }
