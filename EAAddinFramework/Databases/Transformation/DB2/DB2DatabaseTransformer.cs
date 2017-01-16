@@ -376,19 +376,20 @@ namespace EAAddinFramework.Databases.Transformation.DB2
   			  // find constraint
           var constraint = (Index)table.getConstraint(index.SimpleName);
           if( constraint != null ) {
-            // find (included) involved column
             string columnName = index.Parameters["INCLUDE"];
+            // step 1: remove involved column
             var column = (Column)constraint.getInvolvedColumn(columnName);
             if( column != null ) {
-              // step 1: remove involved column
-              // TODO
-              // step 2: added included column elsewhere
-              // TODO
-              fixes++;
-              this.log( "FIXED " + index.Name + "'s INCLUDE column");
+              if( ! constraint.removeInvolvedColumn(column) ) {
+                this.log( "WARNING: column " + columnName + " not removed" );
+              }
             } else {
               this.log( "WARNING: column " + columnName + " not found" );
             }
+            // step 2: added included column elsewhere
+            // TODO
+            fixes++;
+            this.log( "FIXED " + index.Name + "'s INCLUDE column");
           } else {
             this.log( "WARNING: index " + index.Name + " not found" );
           }
