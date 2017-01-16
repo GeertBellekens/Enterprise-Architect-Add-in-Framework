@@ -418,13 +418,13 @@ namespace EAAddinFramework.Databases
     public ValueSpecification InitialValue {
       get {
         if( this._initialValue == null ) {
-          this._initialValue =
-            (ValueSpecification)this._wrappedattribute.defaultValue;
+          this._initialValue = (ValueSpecification)
+            this._wrappedattribute.defaultValue;
         }
         return this._initialValue;
       }
       set {
-        this._initialValue = value;
+        this._initialValue = (ValueSpecification)value;
       }
     }
 

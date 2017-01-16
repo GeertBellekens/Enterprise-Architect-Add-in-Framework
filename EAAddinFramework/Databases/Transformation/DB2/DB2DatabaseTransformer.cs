@@ -9,6 +9,7 @@ using DB=DatabaseFramework;
 using DB_EA = EAAddinFramework.Databases;
 using EAAddinFramework.Utilities;
 using DDL_Parser;
+using TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace EAAddinFramework.Databases.Transformation.DB2
 {
@@ -348,8 +349,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           // find field
           var column = (Column)table.getColumn(field.SimpleName);
           if( column != null ) {
-            column.InitialValue =
-              this.factory.modelfactory.createValueSpecification("DEFAULT");
+            ValueSpecification initialValue = column.InitialValue;
+            if( ! initialValue.Value.Equals("DEFAULT") ) {
+              initialValue.Value = "DEFAULT";
+              column.InitialValue = initialValue;
+              fixes++;
+            }
           } else {
             this.log( "WARNING: field " + field.Name + " not found" );
           }

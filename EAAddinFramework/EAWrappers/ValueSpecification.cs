@@ -8,7 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// <summary>
 	/// Description of ValueSpecification.
 	/// </summary>
-	public abstract class ValueSpecification:UML.Classes.Kernel.ValueSpecification
+	public class ValueSpecification:UML.Classes.Kernel.ValueSpecification
 	{
 		#region Element implementation
 	public void addStereotype(UML.Profiles.Stereotype stereotype)
@@ -219,6 +219,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 	}
+  
+  public string Type  { get; set; }
+  public string Value { get; set; }
+
 	#endregion
 	
 	}

@@ -69,8 +69,15 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     }
 
     public UML.Classes.Kernel.ValueSpecification defaultValue {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get {
+        return new ValueSpecification() {
+          Value = this.wrappedAttribute.Default,
+          Type  = this.wrappedAttribute.Type
+        };
+      }
+      set {
+        this.wrappedAttribute.Default = value.Value;
+      }
     }
     
     public HashSet<UML.Classes.Kernel.Property> redefinedProperties {
