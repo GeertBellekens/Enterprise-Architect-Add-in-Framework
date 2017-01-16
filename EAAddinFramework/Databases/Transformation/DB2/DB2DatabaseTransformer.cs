@@ -377,19 +377,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           var constraint = (Index)table.getConstraint(index.SimpleName);
           if( constraint != null ) {
             string columnName = index.Parameters["INCLUDE"];
-            // step 1: remove involved column
-            var column = (Column)constraint.getInvolvedColumn(columnName);
-            if( column != null ) {
-              if( ! constraint.removeInvolvedColumn(column) ) {
-                this.log( "WARNING: column " + columnName + " not removed" );
-              }
-            } else {
-              this.log( "WARNING: column " + columnName + " not found" );
-            }
-            // step 2: added included column elsewhere
-            // TODO
             fixes++;
-            this.log( "FIXED " + index.Name + "'s INCLUDE column");
+            this.log( "TODO " + index.Name + "'s INCLUDE column " + columnName);
           } else {
             this.log( "WARNING: index " + index.Name + " not found" );
           }
@@ -398,7 +387,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
         }
       }
       this.log(string.Format(
-        "RESULT: Fix Included Column in Index: fixed {0}/{1}",
+        "RESULT: Fix Included Column in Index: TODOs {0}/{1}",
         fixes, indexes.Count()
       ));
     }

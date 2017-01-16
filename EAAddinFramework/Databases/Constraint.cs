@@ -253,16 +253,6 @@ namespace EAAddinFramework.Databases
       return (Column)this.involvedColumns.FirstOrDefault(x => x.name == name);
     }
 
-    public bool removeInvolvedColumn(Column column) {
-      int removed = this.involvedColumns.RemoveAll(x => x == column);
-      this.save();
-      // TODO: doesn't seem to be enough to make and persist change
-      //       after execution, the index is modified, still includes the column
-      //       has lost its stereotype. after inspecting it, it is "refreshed"
-      //       to the old situation.
-      return removed == 1;
-    }
-
 		private void getInvolvedColumns()
 		{
 			_involvedColumns = new List<Column>();
