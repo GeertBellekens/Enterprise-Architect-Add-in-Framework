@@ -348,7 +348,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           // find field
           var column = (Column)table.getColumn(field.SimpleName);
           if( column != null ) {
-            // TODO
+            column.InitialValue =
+              this.factory.modelfactory.createValueSpecification("DEFAULT");
           } else {
             this.log( "WARNING: field " + field.Name + " not found" );
           }

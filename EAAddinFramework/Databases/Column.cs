@@ -125,7 +125,8 @@ namespace EAAddinFramework.Databases
 				//logical attribute tag value
 				if (traceTaggedValue == null) createTraceTaggedValue();
 				
-
+        // InitialValue
+        this._wrappedattribute.defaultValue = this._initialValue;
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 
@@ -412,6 +413,20 @@ namespace EAAddinFramework.Databases
 				
 			}
 		}
+
+    internal ValueSpecification _initialValue;
+    public ValueSpecification InitialValue {
+      get {
+        if( this._initialValue == null ) {
+          this._initialValue =
+            (ValueSpecification)this._wrappedattribute.defaultValue;
+        }
+        return this._initialValue;
+      }
+      set {
+        this._initialValue = value;
+      }
+    }
 
 		#endregion
 
