@@ -218,6 +218,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
         withDDL.statements.Count, withDDL.errors.Count
       ));
       this.fixUniqueIndexes(database, withDDL);
+      this.fixClusteredIndexes(database, withDDL);
     }
 
     private void fixUniqueIndexes(Database database, DDL withDDL) {
@@ -249,6 +250,39 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       }
       this.log(string.Format(
         "RESULT: Fix unique index: fixed {0}/{1}",
+        fixes, indexes.Count()
+      ));
+    }
+
+    private void fixClusteredIndexes(Database database, DDL withDDL) {
+      // find all Clustered indexes
+      var indexes =  from index in withDDL.statements.OfType<CreateIndexStatement>()
+                    where index.Parameters.Keys.Contains("CLUSTER")
+                       && index.Parameters["CLUSTER"] == "True"
+                   select index;
+
+      int fixes = 0;
+      foreach(var index in indexes) {
+        // find table
+        var table = (Table)database.getTable(index.Table.Name);
+  			if( table != null ) {
+  			  // find constraint
+          var constraint = (Index)table.getConstraint(index.SimpleName);
+          if( constraint != null ) {
+            if( ! constraint.isClustered ) {
+              constraint.isClustered = true;
+              fixes++;
+              this.log( "FIXED " + index.Name + "'s missing CLUSTERED constraint");
+            }
+          } else {
+            this.log( "WARNING: index " + index.Name + " not found" );
+          }
+        } else {
+          this.log( "WARNING: table " + index.Table + " not found" );
+        }
+      }
+      this.log(string.Format(
+        "RESULT: Fix Clustered index: fixed {0}/{1}",
         fixes, indexes.Count()
       ));
     }
