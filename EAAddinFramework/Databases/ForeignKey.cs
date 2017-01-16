@@ -46,7 +46,7 @@ namespace EAAddinFramework.Databases
           this._onDelete = "";
           // lazy load
           foreach(var item in this._wrappedOperation.taggedValues) {
-            if( item.name.Equals("On Delete") ) {
+            if( item.name.Equals("Delete") ) {
               this._onDelete = (string)item.tagValue;
             }
           }
@@ -58,10 +58,10 @@ namespace EAAddinFramework.Databases
         // create tagged value if needed
         // if not overridden then we don't need the tagged value;
         if( this.wrappedElement != null ) {
-          this.wrappedElement.addTaggedValue("On Delete", this._onDelete);
+          this.wrappedElement.addTaggedValue("Delete", this._onDelete);
         } else if( this.logicalElement != null ) {
             ((Element)this.logicalElement).addTaggedValue(
-              "On Delete",
+              "Delete",
               this._onDelete
             );
         }
