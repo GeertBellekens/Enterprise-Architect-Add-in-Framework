@@ -883,6 +883,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   		if (objectToWrap is int) return new LiteralInteger((int)objectToWrap);
   		if (objectToWrap is bool) return new LiteralBoolean((bool)objectToWrap);
   		if (objectToWrap is string) return new LiteralString((string)objectToWrap);
+  		if (objectToWrap is UnlimitedNatural) return new LiteralUnlimitedNatural((UnlimitedNatural)objectToWrap);
   		//if its something else then we don't now
   		return null;
   	}
