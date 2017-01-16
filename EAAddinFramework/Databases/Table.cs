@@ -20,6 +20,7 @@ namespace EAAddinFramework.Databases
 		internal List<Constraint> _constraints;
 		internal List<Class> _logicalClasses;
 		private string _name;
+		public string _tableSpace;
 		public Table(Database owner,Class wrappedClass)
 		{
 			this._wrappedClass = wrappedClass;
@@ -36,6 +37,33 @@ namespace EAAddinFramework.Databases
 				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
 			}
 		}
+		
+		public string tableSpace {
+			get 
+			{
+				if (_tableSpace == null)
+				{
+					//get the tagged value if it exists
+					if (this.wrappedElement != null)
+					{
+						var tableSpaceTag = this.wrappedElement.taggedValues
+							.FirstOrDefault( x => x.name.Equals("TableSpace",StringComparison.InvariantCultureIgnoreCase));
+						_tableSpace = tableSpaceTag != null ? tableSpaceTag.tagValue.ToString() : null;
+					}
+				}
+				return _tableSpace;
+			}
+			set
+			{
+				this._tableSpace = value;
+				//create tagged value if needed if not overridden then we don't need the tagged value;
+				if (this.wrappedElement != null)
+				{
+					wrappedElement.addTaggedValue("Tablespace",value);
+				}
+			}
+		}
+
 		public bool isAbstract
 		{
 			get
@@ -135,9 +163,10 @@ namespace EAAddinFramework.Databases
 					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
 					_wrappedClass.setStereotype("table");
 					_wrappedClass.save();
-					//set override and rename
+					//set override and rename and tableSpace
 					this.isOverridden = this.isOverridden;
 					this.isRenamed = this.isRenamed;
+					this.tableSpace = this.tableSpace;
 					//add trace relation to logical class(ses)
 					setTracesToLogicalClasses();
 				}
@@ -182,6 +211,7 @@ namespace EAAddinFramework.Databases
 			var newTable = new Table((Database)existingDatabase,this.name);
 			newTable._logicalClasses = new List<Class>(logicalClasses);
 			newTable.derivedFromItem = this;
+			newTable.tableSpace = this.tableSpace;
 			if (save) newTable.save(); 
 			return newTable;
 		}

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
@@ -40,7 +41,9 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			this._logicalClasses.Add(classElement);
 			this.table = new Table(_database, classElement.alias);
+			setTableSpaceName();
 		}
+		
 		protected override Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
 			var columnTransformer = new DB2ColumnTransformer(this._table,this._nameTranslator);
@@ -58,6 +61,16 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			this.table.name = newName;
 			this.logicalClass.alias = newName;
+			setTableSpaceName();
+		}
+		//TableSpaceName is exactly the same as the tabelName except for the fact that the third character is an "S" iso a "T"
+		private void setTableSpaceName()
+		{
+			if (this.table.name.Length > 3)
+			{
+				StringBuilder nameStringBuilder = new StringBuilder(this.table.name);
+				this.table.tableSpace = nameStringBuilder.ToString();
+			}
 		}
 		#endregion
 		#region implemented abstract members of EATableTransformer
