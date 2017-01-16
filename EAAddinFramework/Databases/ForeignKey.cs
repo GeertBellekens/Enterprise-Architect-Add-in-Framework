@@ -38,9 +38,48 @@ namespace EAAddinFramework.Databases
 				return new List<UML.Classes.Kernel.Element>(){ this.logicalAssociation};
 			}
 		}
+
+		internal string _onDelete;
+    public virtual string onDelete {
+      get {
+        if( this._onDelete == null ) {
+          this._onDelete = "";
+          // lazy load
+          foreach(var item in this._wrappedOperation.taggedValues) {
+            if( item.name.Equals("On Delete") ) {
+              this._onDelete = (string)item.tagValue;
+            }
+          }
+        }
+        return this._onDelete;
+      }
+      set {
+        this._onDelete = value;
+        // create tagged value if needed
+        // if not overridden then we don't need the tagged value;
+        if( this.wrappedElement != null ) {
+          this.wrappedElement.addTaggedValue("On Delete", this._onDelete);
+        } else if( this.logicalElement != null ) {
+            ((Element)this.logicalElement).addTaggedValue(
+              "On Delete",
+              this._onDelete
+            );
+        }
+      }
+    }
+
 		public override void save()
 		{
 			base.save();
+
+      // TODO: check this, compare to Index.save, which doesn't call base.save()
+      if(this._wrappedOperation == null ) {
+        this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+        this._wrappedOperation.setStereotype(this.getStereotype());
+      }
+      this._wrappedOperation.save();
+      this.onDelete = this.onDelete;
+
 			if (this.traceTaggedValue == null) createTraceTaggedValue();
 			//check if association to correct table
 			if (this._wrappedAssociation == null)
