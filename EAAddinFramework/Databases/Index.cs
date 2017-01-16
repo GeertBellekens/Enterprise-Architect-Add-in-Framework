@@ -22,25 +22,33 @@ namespace EAAddinFramework.Databases
 			get { return "Index"; }
 		}
 
-    public bool isUnique    {
+		internal bool? _isUnique;
+    public virtual bool isUnique {
       get {
-        foreach(var item in this._wrappedOperation.taggedValues) {
-          if( item.name.Equals("Unique") ) {
-            return item.tagValue.ToString().Equals("1");
+        if( ! this._isUnique.HasValue ) {
+          this._isUnique = false;
+          // lazy load
+          foreach(var item in this._wrappedOperation.taggedValues) {
+            if( item.name.Equals("Unique") ) {
+              this._isUnique = item.tagValue.ToString().Equals("1");
+            }
           }
         }
-        return false;
+        return (bool)this._isUnique;
       }
       set {
-        foreach(var item in this._wrappedOperation.taggedValues) {
-          if( item.name.Equals("Unique") ) {
-            // TODO this is not writing through...
-            item.tagValue = value ? "1" : "0";
-            return;
-          }
-        } 
+        this._isUnique = value;
+        string strValue = (bool)this._isUnique ? "1" : "0";
+        // create tagged value if needed
+        // if not overridden then we don't need the tagged value;
+        if( this.wrappedElement != null ) {
+          this.wrappedElement.addTaggedValue("Unique", strValue);
+        } else if( this.logicalElement != null ) {
+            ((Element)this.logicalElement).addTaggedValue( "Unique", strValue );
+        }
       }
     }
+
     public bool isClustered {
       get {
         foreach(var item in this._wrappedOperation.taggedValues) {
@@ -99,11 +107,14 @@ namespace EAAddinFramework.Databases
 			return null;
 		}
 
-		public override void save()
-		{
-			base.save();
-      // TODO ?
-		}
+    public override void save() {
+     if(this._wrappedOperation == null ) {
+       this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+       this._wrappedOperation.setStereotype(this.getStereotype());
+     }
+     this._wrappedOperation.save();
+     this.isUnique = this.isUnique;
+   }
 
 		internal override void createTraceTaggedValue()
 		{
