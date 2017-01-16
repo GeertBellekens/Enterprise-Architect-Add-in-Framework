@@ -248,7 +248,11 @@ namespace EAAddinFramework.Databases
 
 			}
 		}
-		
+
+    public Column getInvolvedColumn(string name) {
+      return (Column)this.involvedColumns.FirstOrDefault(x => x.name == name);
+    }
+
 		private void getInvolvedColumns()
 		{
 			_involvedColumns = new List<Column>();
