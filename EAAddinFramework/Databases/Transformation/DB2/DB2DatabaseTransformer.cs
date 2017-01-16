@@ -217,8 +217,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
         "completing {0} statements (parsed with {1} errors)",
         withDDL.statements.Count, withDDL.errors.Count
       ));
-      this.fixUniqueIndexes(database, withDDL);
-      this.fixClusteredIndexes(database, withDDL);
+      
+      // perform several fixes to complete the schema according to the DDL
+      this.fixUniqueIndexes               (database, withDDL);
+      this.fixClusteredIndexes            (database, withDDL);
+      this.fixOnDeleteRestrictForeignKeys (database, withDDL);
     }
 
     private void fixUniqueIndexes(Database database, DDL withDDL) {
@@ -287,6 +290,42 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       ));
     }
 
+    private void fixOnDeleteRestrictForeignKeys(Database database, DDL withDDL) {
+      var keys = from alter in withDDL.statements.OfType<AlterTableAddConstraintStatement>()
+                where alter.Constraint is ForeignKeyConstraint
+                   && alter.Constraint.Parameters.Keys.Contains("ON_DELETE")
+                   && alter.Constraint.Parameters["ON_DELETE"] == "RESTRICT"
+               select new {
+                 Table      = alter.Table,
+                 Name       = alter.Constraint.Name,
+                 SimpleName = alter.Constraint.SimpleName
+               };
+
+      int fixes = 0;
+      foreach(var key in keys) {
+        // find table
+        var table = (Table)database.getTable(key.Table.Name);
+        if( table != null ) {
+          // find constraint
+          var constraint = (ForeignKey)table.getConstraint(key.SimpleName);
+          if( constraint != null ) {
+            if( ! constraint.onDelete.Equals("Restrict") ) {
+              constraint.onDelete = "Restrict";
+              fixes++;
+              this.log( "FIXED " + key.Name + "'s missing On Delete Restrict constraint");
+            }
+          } else {
+            this.log( "WARNING: foreign key " + key.Name + " not found" );
+          }
+        } else {
+          this.log( "WARNING: table " + key.Table + " not found" );
+        }
+      }
+      this.log(string.Format(
+        "RESULT: Fix On Delete Restrict foreign keys: fixed {0}/{1}",
+        fixes, keys.Count()
+      ));
+    }
     private void log(string msg) {
       EAOutputLogger.log( this._model, "DB2DatabaseTransformer.complete", msg );
     }
