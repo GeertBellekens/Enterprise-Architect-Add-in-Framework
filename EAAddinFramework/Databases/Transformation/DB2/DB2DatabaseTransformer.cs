@@ -214,7 +214,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
     public void complete(Database database, DDL withDDL) {
       this.log( string.Format(
-        "completing {0} statements with {1} errors",
+        "completing {0} statements (parsed with {1} errors)",
         withDDL.statements.Count, withDDL.errors.Count
       ));
       this.fixUniqueIndexes(database, withDDL);
