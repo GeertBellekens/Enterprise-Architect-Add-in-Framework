@@ -49,23 +49,30 @@ namespace EAAddinFramework.Databases
       }
     }
 
-    public bool isClustered {
+		internal bool? _isClustered;
+    public virtual bool isClustered {
       get {
-        foreach(var item in this._wrappedOperation.taggedValues) {
-          if( item.name.Equals("Clustered") ) {
-            return item.tagValue.ToString().Equals("1");
+        if( ! this._isClustered.HasValue ) {
+          this._isClustered = false;
+          // lazy load
+          foreach(var item in this._wrappedOperation.taggedValues) {
+            if( item.name.Equals("Clustered") ) {
+              this._isClustered = item.tagValue.ToString().Equals("1");
+            }
           }
         }
-        return false;
+        return (bool)this._isClustered;
       }
       set {
-        foreach(var item in this._wrappedOperation.taggedValues) {
-          if( item.name.Equals("Clustered") ) {
-            // TODO this is not writing through...
-            item.tagValue = value ? "1" : "0";
-            return;
-          }
-        }        
+        this._isClustered = value;
+        string strValue = (bool)this._isClustered ? "1" : "0";
+        // create tagged value if needed
+        // if not overridden then we don't need the tagged value;
+        if( this.wrappedElement != null ) {
+          this.wrappedElement.addTaggedValue("Clustered", strValue);
+        } else if( this.logicalElement != null ) {
+            ((Element)this.logicalElement).addTaggedValue( "Clustered", strValue );
+        }
       }
     }
 
@@ -113,7 +120,8 @@ namespace EAAddinFramework.Databases
        this._wrappedOperation.setStereotype(this.getStereotype());
      }
      this._wrappedOperation.save();
-     this.isUnique = this.isUnique;
+     this.isUnique    = this.isUnique;
+     this.isClustered = this.isClustered;
    }
 
 		internal override void createTraceTaggedValue()
