@@ -222,6 +222,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       this.fixUniqueIndexes               (database, withDDL);
       this.fixClusteredIndexes            (database, withDDL);
       this.fixOnDeleteRestrictForeignKeys (database, withDDL);
+      this.fixWithDefaultFields           (database, withDDL);
     }
 
     private void fixUniqueIndexes(Database database, DDL withDDL) {
@@ -326,6 +327,40 @@ namespace EAAddinFramework.Databases.Transformation.DB2
         fixes, keys.Count()
       ));
     }
+
+    private void fixWithDefaultFields(Database database, DDL withDDL) {
+      var fields =  from table in withDDL.statements.OfType<CreateTableStatement>()
+                    from field in table.Fields
+                   where field.Parameters.Keys.Contains("DEFAULT")
+                      && field.Parameters["DEFAULT"] == "True"
+                  select new {
+                    Table      = table.Name,
+                    Name       = field.Name,
+                    SimpleName = field.SimpleName
+                  };
+
+      int fixes = 0;
+      foreach(var field in fields) {
+        // find table
+        var table = (Table)database.getTable(field.Table.Name);
+  			if( table != null ) {
+          // find field
+          var column = (Column)table.getColumn(field.SimpleName);
+          if( column != null ) {
+            // TODO
+          } else {
+            this.log( "WARNING: field " + field.Name + " not found" );
+          }
+        } else {
+          this.log( "WARNING: table " + field.Table + " not found" );
+        }
+      }
+      this.log(string.Format(
+        "RESULT: Fix With Default field: fixed {0}/{1}",
+        fixes, fields.Count()
+      ));
+    }
+
     private void log(string msg) {
       EAOutputLogger.log( this._model, "DB2DatabaseTransformer.complete", msg );
     }
