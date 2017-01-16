@@ -223,6 +223,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       this.fixClusteredIndexes            (database, withDDL);
       this.fixOnDeleteRestrictForeignKeys (database, withDDL);
       this.fixWithDefaultFields           (database, withDDL);
+      this.fixIncludedFieldsInIndex       (database, withDDL);
     }
 
     private void fixUniqueIndexes(Database database, DDL withDDL) {
@@ -358,6 +359,46 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       this.log(string.Format(
         "RESULT: Fix With Default field: fixed {0}/{1}",
         fixes, fields.Count()
+      ));
+    }
+
+    private void fixIncludedFieldsInIndex(Database database, DDL withDDL) {
+      // find all Clustered indexes
+      var indexes =  from index in withDDL.statements.OfType<CreateIndexStatement>()
+                    where index.Parameters.Keys.Contains("INCLUDE")
+                   select index;
+
+      int fixes = 0;
+      foreach(var index in indexes) {
+        // find table
+        var table = (Table)database.getTable(index.Table.Name);
+  			if( table != null ) {
+  			  // find constraint
+          var constraint = (Index)table.getConstraint(index.SimpleName);
+          if( constraint != null ) {
+            // find (included) involved column
+            string columnName = index.Parameters["INCLUDE"];
+            var column = (Column)constraint.getInvolvedColumn(columnName);
+            if( column != null ) {
+              // step 1: remove involved column
+              // TODO
+              // step 2: added included column elsewhere
+              // TODO
+              fixes++;
+              this.log( "FIXED " + index.Name + "'s INCLUDE column");
+            } else {
+              this.log( "WARNING: column " + columnName + " not found" );
+            }
+          } else {
+            this.log( "WARNING: index " + index.Name + " not found" );
+          }
+        } else {
+          this.log( "WARNING: table " + index.Table + " not found" );
+        }
+      }
+      this.log(string.Format(
+        "RESULT: Fix Included Column in Index: fixed {0}/{1}",
+        fixes, indexes.Count()
       ));
     }
 
