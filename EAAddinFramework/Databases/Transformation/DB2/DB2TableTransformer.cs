@@ -69,6 +69,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			if (this.table.name.Length > 3)
 			{
 				StringBuilder nameStringBuilder = new StringBuilder(this.table.name);
+				nameStringBuilder[2] = 'S';
 				this.table.tableSpace = nameStringBuilder.ToString();
 			}
 		}
