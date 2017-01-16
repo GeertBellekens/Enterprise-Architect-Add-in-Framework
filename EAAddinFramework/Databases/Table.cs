@@ -382,6 +382,10 @@ namespace EAAddinFramework.Databases
     public DB.Constraint getConstraint(string name) {
       return this.constraints.FirstOrDefault(x => x.name == name);
     }
+    
+    public DB.Column getColumn(string name) {
+      return this.columns.FirstOrDefault(x => x.name == name);
+    }
 
 		public override string itemType {
 			get {return "Table";}
