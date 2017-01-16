@@ -92,6 +92,7 @@ namespace EAAddinFramework.Databases
 			{
 				this._wrappedOperation.save();
 				this.isOverridden = this.isOverridden;
+				this.isRenamed = this.isRenamed;
 				//get the corresponding columns from this table
 				this.involvedColumns = this.ownerTable.columns.Where (x => _involvedColumns.Any(y => y.name == x.name)).ToList();
 				if (this._wrappedOperation != null)

@@ -135,6 +135,9 @@ namespace EAAddinFramework.Databases
 					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
 					_wrappedClass.setStereotype("table");
 					_wrappedClass.save();
+					//set override and rename
+					this.isOverridden = this.isOverridden;
+					this.isRenamed = this.isRenamed;
 					//add trace relation to logical class(ses)
 					setTracesToLogicalClasses();
 				}
