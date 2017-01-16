@@ -268,6 +268,23 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
+
+    // mark a column as included by adding it's GUID to "includes" TaggedValue
+    public void markAsIncluded(Column column) {
+      if( this.wrappedElement != null ) {
+        String guid = column._wrappedattribute.guid;
+        TaggedValue tag = this.wrappedElement.getTaggedValue("includes");
+        if(tag == null) {
+          this.wrappedElement.addTaggedValue("includes", guid);
+        } else {
+          this.wrappedElement.addTaggedValue(
+            "includes",
+            tag.tagValue.ToString() + "," + guid
+          );
+        }
+      }
+    }
+
 		#endregion
 
 	}
