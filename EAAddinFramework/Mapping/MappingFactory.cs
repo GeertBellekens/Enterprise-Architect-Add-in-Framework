@@ -3,6 +3,7 @@ using System.Linq;
 using System;
 using UML=TSF.UmlToolingFramework.UML;
 using TSF.UmlToolingFramework.Wrappers.EA;
+using FileHelpers;
 
 namespace EAAddinFramework.Mapping
 {
@@ -143,6 +144,25 @@ namespace EAAddinFramework.Mapping
 				}
 			}
 			//if nothing found then return null;
+			return null;
+		}
+		/// <summary>
+		/// create a mappingSet based on the data in the CSV file
+		/// </summary>
+		/// <param name="model">the model that contains the elements</param>
+		/// <param name="filePath">the path to the CSV file</param>
+		/// <returns>a mapping set representing the mapping in the file</returns>
+		public static MappingSet createMappingSet(Model model, string filePath, Element sourceElement = null, Element targetElement = null)
+		{
+			
+			var engine = new FileHelperEngine<CSVMappingRecord>();
+			var parsedFile = engine.ReadFile(filePath);
+			foreach (CSVMappingRecord mappingRecord in parsedFile) 
+			{
+				//find source
+				//find target				
+			}
+			//TODO
 			return null;
 		}
 	}

@@ -2432,6 +2432,36 @@
             Description of Action.
             </summary>
         </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.LiteralBoolean">
+            <summary>
+            Description of LiteralString.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.ValueSpecification">
+            <summary>
+            Description of ValueSpecification.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.LiteralInteger">
+            <summary>
+            Description of LiteralString.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.LiteralNull">
+            <summary>
+            Description of LiteralString.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.LiteralString">
+            <summary>
+            Description of LiteralString.
+            </summary>
+        </member>
+        <member name="T:TSF.UmlToolingFramework.Wrappers.EA.LiteralUnlimitedNatural">
+            <summary>
+            Description of LiteralString.
+            </summary>
+        </member>
         <member name="T:TSF.UmlToolingFramework.Wrappers.EA.Multiplicity">
             <summary>
             Multiplicity is an interval with a lower limit of type Unsigned Integer (Natural), and a upper limit of type UnlimitedNatural
@@ -3012,6 +3042,11 @@
             Description of Mapping.
             </summary>
         </member>
+        <member name="T:EAAddinFramework.Mapping.CSVMappingRecord">
+            <summary>
+            Description of CSVMappingRecord.
+            </summary>
+        </member>
         <member name="T:EAAddinFramework.Mapping.ElementMappingSet">
             <summary>
             Description of ElementMappingSet.
@@ -3040,6 +3075,14 @@
             <param name="key">the key to searche for</param>
             <param name = "source">the source string to search in</param>
             <returns>the value correspondign to the given key</returns>
+        </member>
+        <member name="M:EAAddinFramework.Mapping.MappingFactory.createMappingSet(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String,TSF.UmlToolingFramework.Wrappers.EA.Element,TSF.UmlToolingFramework.Wrappers.EA.Element)">
+            <summary>
+            create a mappingSet based on the data in the CSV file
+            </summary>
+            <param name="model">the model that contains the elements</param>
+            <param name="filePath">the path to the CSV file</param>
+            <returns>a mapping set representing the mapping in the file</returns>
         </member>
         <member name="T:EAAddinFramework.Mapping.MappingLogic">
             <summary>
