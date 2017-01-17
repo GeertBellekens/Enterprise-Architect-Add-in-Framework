@@ -214,6 +214,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			return newColumns;
 		}
 
+
     public void complete(Database database, DDL withDDL) 
     {
     	EAOutputLogger.clearLog(this._model,this.outputName);
@@ -228,10 +229,59 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       this.fixOnDeleteRestrictForeignKeys (database, withDDL);
       this.fixWithDefaultFields           (database, withDDL);
       this.fixIncludedFieldsInIndex       (database, withDDL);
-      //save the changes
-      database.save();
-    }
+      this.fixCheckConstraints			  (database, withDDL);
 
+    }
+	
+	void fixCheckConstraints(Database database, DDL withDDL)
+	{
+      var fieldsWithConstraints =  from table in withDDL.statements.OfType<CreateTableStatement>()
+            from field in table.Fields
+      		from constraint in field.Constraints.OfType<DDL_Parser.CheckConstraint>()
+          select new {
+            Table      = table.SimpleName,
+            FieldName       = field.SimpleName,
+            Constraintname = constraint.Field.Name,
+            ConstraintRules = constraint.Rules
+          };
+      int fixes = 0;
+      foreach(var field in fieldsWithConstraints) {
+        // find table
+        var table = (Table)database.getTable(field.Table);
+  			if( table != null ) {
+          // find field
+          var column = (Column)table.getColumn(field.FieldName);
+          if( column != null ) 
+          {
+          	var checkConstraint = table.constraints.OfType<CheckConstraint>()
+          		.FirstOrDefault( x => x.name.Equals(field.Constraintname,StringComparison.InvariantCultureIgnoreCase));
+            if(checkConstraint == null) 
+            {
+            	checkConstraint = new CheckConstraint(field.Constraintname, column,field.ConstraintRules);
+            	checkConstraint.save();
+                fixes++;
+            }
+            else
+            {
+            	if (checkConstraint.rule != field.ConstraintRules)
+            	{
+            		checkConstraint.rule = field.ConstraintRules;
+            		checkConstraint.save();
+            		fixes++;
+            	}
+            }
+          } else {
+            this.log( "WARNING: field " + table.name + "."  + field.FieldName + " not found" );
+          }
+        } else {
+          this.log( "WARNING: table " + field.Table + " not found" );
+        }
+      }
+      this.log(string.Format(
+        "RESULT: Fix check constraints: fixed {0}/{1}",
+        fixes, fieldsWithConstraints.Count()
+      ));
+	}
     private void fixUniqueIndexes(Database database, DDL withDDL) {
       // find all unique indexes
       var indexes =  from index in withDDL.statements.OfType<CreateIndexStatement>()

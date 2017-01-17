@@ -35,7 +35,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return this.model.factory.createElement(this.wrappedOperation.Parameters.AddNew(name, "Parameter")) as Parameter;
 	}
-
+	public string code
+	{
+		get
+		{
+			return this.wrappedOperation.Code;
+		}
+		set
+		{
+			this.wrappedOperation.Code = value;
+		}
+	}
 	/// <summary>
     /// return the unique ID of this element
     /// </summary>

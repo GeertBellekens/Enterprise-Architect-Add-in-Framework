@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Databases\BaseDataType.cs" />
+    <Compile Include="Databases\CheckConstraint.cs" />
     <Compile Include="Databases\Column.cs" />
     <Compile Include="Databases\Compare\EADatabaseComparer.cs" />
     <Compile Include="Databases\Compare\EADatabaseItemComparison.cs" />

@@ -9,14 +9,37 @@
             Description of BaseDataType.
             </summary>
         </member>
-        <member name="T:EAAddinFramework.Databases.Column">
+        <member name="T:EAAddinFramework.Databases.CheckConstraint">
             <summary>
-            Description of Column.
+            Description of CheckConstraint.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Constraint">
+            <summary>
+            Description of Constraint.
             </summary>
         </member>
         <member name="T:EAAddinFramework.Databases.DatabaseItem">
             <summary>
             Description of DatabaseItem.
+            </summary>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column)">
+            <summary>
+            remove the given column from the involved columns
+            </summary>
+            <param name="column">the column to remove</param>
+        </member>
+        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column,DatabaseFramework.Column)">
+            <summary>
+            remove the given columns from the involved columns and replace it by the replacement
+            </summary>
+            <param name="column"></param>
+            <param name="replacement"></param>
+        </member>
+        <member name="T:EAAddinFramework.Databases.Column">
+            <summary>
+            Description of Column.
             </summary>
         </member>
         <member name="P:EAAddinFramework.Databases.Column.isRemote">
@@ -39,24 +62,6 @@
             <summary>
             Description of EADatabaseItemComparison.
             </summary>
-        </member>
-        <member name="T:EAAddinFramework.Databases.Constraint">
-            <summary>
-            Description of Constraint.
-            </summary>
-        </member>
-        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column)">
-            <summary>
-            remove the given column from the involved columns
-            </summary>
-            <param name="column">the column to remove</param>
-        </member>
-        <member name="M:EAAddinFramework.Databases.Constraint.removeColumn(DatabaseFramework.Column,DatabaseFramework.Column)">
-            <summary>
-            remove the given columns from the involved columns and replace it by the replacement
-            </summary>
-            <param name="column"></param>
-            <param name="replacement"></param>
         </member>
         <member name="T:EAAddinFramework.Databases.Database">
             <summary>
