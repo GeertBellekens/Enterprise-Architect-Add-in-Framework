@@ -19,6 +19,9 @@ namespace EAAddinFramework.Databases
 			this.rule = rule;
 			this.name = name;
 		}
+		public CheckConstraint(Table ownerTable, Operation wrappedOperation):base(ownerTable,wrappedOperation)
+		{
+		}
 		private string _rule;
 		public string rule 
 		{
