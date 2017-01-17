@@ -126,7 +126,7 @@ namespace EAAddinFramework.Databases
 				if (traceTaggedValue == null) createTraceTaggedValue();
 				
         // InitialValue
-        this._wrappedattribute.defaultValue = this._initialValue;
+        this._wrappedattribute.setDefaultValue(this._initialValue);
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 
@@ -414,18 +414,26 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-    internal ValueSpecification _initialValue;
-    public ValueSpecification InitialValue {
-      get {
-        if( this._initialValue == null ) {
-          this._initialValue = (ValueSpecification)
-            this._wrappedattribute.defaultValue;
-        }
-        return this._initialValue;
-      }
-      set {
-        this._initialValue = (ValueSpecification)value;
-      }
+    internal string _initialValue;
+    public string initialValue 
+    {
+		get 
+		{
+			if( this._initialValue == null
+			&& this._wrappedattribute != null )
+			{
+				this._initialValue = this._wrappedattribute.defaultValue.ToString();
+			}
+			return this._initialValue;
+		}
+		set 
+		{
+			this._initialValue = value;
+			if (this._wrappedattribute != null)
+			{
+				_wrappedattribute.setDefaultValue(value);
+			}
+		}
     }
 
 		#endregion

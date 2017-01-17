@@ -14,5 +14,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			this._value = _value;
 		}
 		public int _value {get;set;}
+		public override string ToString()
+		{
+			return _value.ToString();
+		}
 	}
 }

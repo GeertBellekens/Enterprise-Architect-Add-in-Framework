@@ -37,6 +37,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				return numericValue.ToString();
 			}
 		}
+		public static bool TryParse(string stringRepresenation, out UnlimitedNatural result)
+		{
+			try 
+			{
+				result = new UnlimitedNatural(stringRepresenation);
+				return true;
+			}
+			catch(Exception)
+			{
+				result = null;
+				return false;
+			}
+		}
 
 	}
 }

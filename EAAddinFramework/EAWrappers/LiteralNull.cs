@@ -9,5 +9,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// </summary>
 	public class LiteralNull:ValueSpecification,UML.Classes.Kernel.LiteralNull
 	{
+		public override string ToString()
+		{
+			return "NULL";
+		}
 	}
 }

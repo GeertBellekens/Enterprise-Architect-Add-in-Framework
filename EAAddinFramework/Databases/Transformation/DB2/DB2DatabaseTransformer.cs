@@ -18,6 +18,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	/// </summary>
 	public class DB2DatabaseTransformer:EADatabaseTransformer
 	{
+		private string outputName = "DB2DatabaseTransformer.complete";
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
 		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage,NameTranslator nameTranslator):this(logicalPackage.model, nameTranslator)
@@ -213,7 +214,9 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			return newColumns;
 		}
 
-    public void complete(Database database, DDL withDDL) {
+    public void complete(Database database, DDL withDDL) 
+    {
+    	EAOutputLogger.clearLog(this._model,this.outputName);
       this.log( string.Format(
         "completing {0} statements (parsed with {1} errors)",
         withDDL.statements.Count, withDDL.errors.Count
@@ -225,6 +228,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
       this.fixOnDeleteRestrictForeignKeys (database, withDDL);
       this.fixWithDefaultFields           (database, withDDL);
       this.fixIncludedFieldsInIndex       (database, withDDL);
+      //save the changes
+      database.save();
     }
 
     private void fixUniqueIndexes(Database database, DDL withDDL) {
@@ -248,7 +253,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
               this.log( "FIXED " + index.Name + "'s missing UNIQUE constraint");
             }
           } else {
-            this.log( "WARNING: index " + index.Name + " not found" );
+            this.log( "WARNING: index " + table.name+ "." + index.Name + " not found" );
           }
         } else {
           this.log( "WARNING: table " + index.Table + " not found" );
@@ -281,7 +286,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
               this.log( "FIXED " + index.Name + "'s missing CLUSTERED constraint");
             }
           } else {
-            this.log( "WARNING: index " + index.Name + " not found" );
+            this.log( "WARNING: index "+ table.name+ "." + index.Name + " not found" );
           }
         } else {
           this.log( "WARNING: table " + index.Table + " not found" );
@@ -318,7 +323,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
               this.log( "FIXED " + key.Name + "'s missing On Delete Restrict constraint");
             }
           } else {
-            this.log( "WARNING: foreign key " + key.Name + " not found" );
+            this.log( "WARNING: foreign key " + table.name + "." + key.Name + " not found" );
           }
         } else {
           this.log( "WARNING: table " + key.Table + " not found" );
@@ -349,14 +354,13 @@ namespace EAAddinFramework.Databases.Transformation.DB2
           // find field
           var column = (Column)table.getColumn(field.SimpleName);
           if( column != null ) {
-            ValueSpecification initialValue = column.InitialValue;
-            if( ! initialValue.Value.Equals("DEFAULT") ) {
-              initialValue.Value = "DEFAULT";
-              column.InitialValue = initialValue;
+            if( ! column.initialValue.Equals("DEFAULT") ) {
+              column.initialValue = "DEFAULT";
+              column.save();
               fixes++;
             }
           } else {
-            this.log( "WARNING: field " + field.Name + " not found" );
+            this.log( "WARNING: field " + table.name + "."  + field.Name + " not found" );
           }
         } else {
           this.log( "WARNING: table " + field.Table + " not found" );
@@ -389,12 +393,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
               // mark the column as included in the constraint
               constraint.markAsIncluded(column);
             } else {
-              this.log( "WARNING: column " + columnName + " not found" );
+              this.log( "WARNING: column " + table.name + "."  + columnName + " not found" );
             }
             fixes++;
             this.log( "MARKED " + index.Name + "'s INCLUDE column");
           } else {
-            this.log( "WARNING: index " + index.Name + " not found" );
+            this.log( "WARNING: index " + table.name + "."  + index.Name + " not found" );
           }
         } else {
           this.log( "WARNING: table " + index.Table + " not found" );
@@ -407,7 +411,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
     }
 
     private void log(string msg) {
-      EAOutputLogger.log( this._model, "DB2DatabaseTransformer.complete", msg );
+      EAOutputLogger.log( this._model, this.outputName, msg );
     }
 
 		#endregion

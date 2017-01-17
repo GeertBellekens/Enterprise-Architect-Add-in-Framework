@@ -25,5 +25,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				__value = (UnlimitedNatural)value ;
 			}
 		}
+		public override string ToString()
+		{
+			return __value.ToString();
+		}
 	}
 }

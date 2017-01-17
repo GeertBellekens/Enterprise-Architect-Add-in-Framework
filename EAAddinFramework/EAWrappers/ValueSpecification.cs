@@ -220,8 +220,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 	}
   
-  public string Type  { get; set; }
-  public string Value { get; set; }
 
 	#endregion
 	
