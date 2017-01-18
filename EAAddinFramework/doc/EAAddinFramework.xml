@@ -3299,6 +3299,7 @@
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.addGeneralizations">
             <summary>
             Adds generalizations if the parent of the generalization is in the subset elements as well
+            or if the settings allow us to copy generalizations
             </summary>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchemaElement.matchSubsetAttributes">

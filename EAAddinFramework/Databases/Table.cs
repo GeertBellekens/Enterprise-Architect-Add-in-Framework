@@ -439,7 +439,7 @@ namespace EAAddinFramework.Databases
 							{
 								_constraints.Add(new ForeignKey(this, (Operation) operation));
               				} 
-							//indexes and check constraints are not noded in compareOnly mode
+							//indexes and check constraints are not needed in compareOnly mode because they won't exist in the new database, and so we don't compare them.
 							else if( ! compareOnly && operation.stereotypes.Any( x => x.name.Equals("index",StringComparison.InvariantCultureIgnoreCase)))
 				            {
 				                _constraints.Add(new Index(this, (Operation) operation));
@@ -448,13 +448,13 @@ namespace EAAddinFramework.Databases
 				            {
 				                _constraints.Add(new CheckConstraint(this, (Operation) operation));
 				            }
-							
 						}
 					}
 				}
 				return _constraints.Cast<DB.Constraint>().ToList();
 			}
-			set {
+			set 
+			{
 				throw new NotImplementedException();
 			}
 		}

@@ -347,6 +347,7 @@ namespace EAAddinFramework.SchemaBuilder
 		}
 		/// <summary>
 		/// Adds generalizations if the parent of the generalization is in the subset elements as well
+		/// or if the settings allow us to copy generalizations
 		/// </summary>
 		public void addGeneralizations()
 		{
@@ -380,8 +381,10 @@ namespace EAAddinFramework.SchemaBuilder
 							{
 								//Enumerations should always keep their external Generalizations
 								//Datatypes should only keep their external Generalizatons if the settings is on
+								//classes can keep their external generalizations if the setting allows it
 								if (! (this.sourceElement is UML.Classes.Kernel.Enumeration)
-								    && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations))
+								    && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
+								    && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyGeneralizations))
 								//The generalization should not be there
 								subsetGeneralization.delete();
 							}
@@ -421,7 +424,8 @@ namespace EAAddinFramework.SchemaBuilder
 						//Enumerations should always get their external Generalizations
 						//Datatypes should only get their external Generalizatons if the settings is on
 						if ((this.sourceElement is UML.Classes.Kernel.Enumeration
-						    || (this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations))
+						    || (this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
+						   || this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyGeneralizations)
 						&& ! subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target)))
 						{
 							//generalization doesn't exist yet. Add it
