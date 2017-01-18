@@ -37,7 +37,13 @@ namespace EAAddinFramework.Databases
 				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
 			}
 		}
-		
+		internal bool compareOnly
+		{
+			get
+			{	
+				return ((Database)databaseOwner).compareonly;
+			}
+		}
 		public string tableSpace {
 			get 
 			{
@@ -433,11 +439,12 @@ namespace EAAddinFramework.Databases
 							{
 								_constraints.Add(new ForeignKey(this, (Operation) operation));
               				} 
-							else if( operation.stereotypes.Any( x => x.name.Equals("index",StringComparison.InvariantCultureIgnoreCase)))
+							//indexes and check constraints are not noded in compareOnly mode
+							else if( ! compareOnly && operation.stereotypes.Any( x => x.name.Equals("index",StringComparison.InvariantCultureIgnoreCase)))
 				            {
 				                _constraints.Add(new Index(this, (Operation) operation));
 				            }
-							else if( operation.stereotypes.Any( x => x.name.Equals("check",StringComparison.InvariantCultureIgnoreCase)))
+							else if(! compareOnly && operation.stereotypes.Any( x => x.name.Equals("check",StringComparison.InvariantCultureIgnoreCase)))
 				            {
 				                _constraints.Add(new CheckConstraint(this, (Operation) operation));
 				            }

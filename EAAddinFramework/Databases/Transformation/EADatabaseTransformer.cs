@@ -20,12 +20,14 @@ namespace EAAddinFramework.Databases.Transformation
 		internal Database _newDatabase;
 		internal Database _existingDatabase;
 		internal UTF_EA.Package _logicalPackage;
+		internal bool compareOnly {get;set;}
 		protected List<EATableTransformer> _tableTransformers = new List<EATableTransformer>();
 
-		public EADatabaseTransformer(DatabaseFactory factory, UTF_EA.Model model,NameTranslator nameTranslator):base(nameTranslator)
+		public EADatabaseTransformer(DatabaseFactory factory, UTF_EA.Model model,NameTranslator nameTranslator,bool compareOnly = false):base(nameTranslator)
 		{
 			this._factory = factory;
 			this._model = model;
+			this.compareOnly = compareOnly;
 		}
 
 		public DatabaseFactory factory {
@@ -93,17 +95,19 @@ namespace EAAddinFramework.Databases.Transformation
 		{
 			get 
 			{
-				if (this._existingDatabase == null
-				   && logicalPackage != null)
+				if (this._existingDatabase == null)
 				{
-					var traces = logicalPackage.relationships.Where(x => x.stereotypes.Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase))).Cast<UTF_EA.ConnectorWrapper>();
-					foreach (var trace in traces) {
-						if (trace.target.Equals(_logicalPackage)
-					    && trace.source is UTF_EA.Package
-					    && trace.source.stereotypes.Any(x => x.name.Equals("Database",StringComparison.InvariantCultureIgnoreCase)))
-						{
-							_existingDatabase = factory.createDataBase(trace.source as UTF_EA.Package);
-							break;//return only one
+				   if( logicalPackage != null)
+					{
+						var traces = logicalPackage.relationships.Where(x => x.stereotypes.Any(y => y.name.Equals("trace",StringComparison.InvariantCultureIgnoreCase))).Cast<UTF_EA.ConnectorWrapper>();
+						foreach (var trace in traces) {
+							if (trace.target.Equals(_logicalPackage)
+						    && trace.source is UTF_EA.Package
+						    && trace.source.stereotypes.Any(x => x.name.Equals("Database",StringComparison.InvariantCultureIgnoreCase)))
+							{
+								_existingDatabase = factory.createDataBase(trace.source as UTF_EA.Package,this.compareOnly);
+								break;//return only one
+							}
 						}
 					}
 				}

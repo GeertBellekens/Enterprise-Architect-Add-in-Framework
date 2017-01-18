@@ -100,9 +100,15 @@ namespace EAAddinFramework.Databases
 			}
 			return datatypes;
 		}
-		public Database createDataBase(Package package)
+		/// <summary>
+		/// creates a database based on the given package
+		/// </summary>
+		/// <param name="package">the «database»package containing the database</param>
+		/// <param name="compareOnly">if true then no indexes or check constraints are generated because we don't need them when comparing</param>
+		/// <returns>the created database</returns>
+		public Database createDataBase(Package package,bool compareOnly = false)
 		{
-			return new Database(package, this);
+			return new Database(package, this, compareOnly);
 		}
 		public Database createDatabase(string name)
 		{

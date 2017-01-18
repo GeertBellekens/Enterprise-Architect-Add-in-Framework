@@ -80,6 +80,14 @@
             <param name="type">the type of the factory</param>
             <param name="datatypes">the base datatypes for this factory</param>
         </member>
+        <member name="M:EAAddinFramework.Databases.DatabaseFactory.createDataBase(TSF.UmlToolingFramework.Wrappers.EA.Package,System.Boolean)">
+            <summary>
+            creates a database based on the given package
+            </summary>
+            <param name="package">the «database»package containing the database</param>
+            <param name="compareOnly">if true then no indexes or check constraints are generated because we don't need them when comparing</param>
+            <returns>the created database</returns>
+        </member>
         <member name="T:EAAddinFramework.Databases.DataType">
             <summary>
             Description of DataType.

@@ -21,14 +21,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		private string outputName = "DB2DatabaseTransformer.complete";
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
-		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage,NameTranslator nameTranslator):this(logicalPackage.model, nameTranslator)
+		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage,NameTranslator nameTranslator, bool compareOnly = false):this(logicalPackage.model, nameTranslator,compareOnly)
 		{
 			this._logicalPackage = logicalPackage;
 		}
-		public DB2DatabaseTransformer(UTF_EA.Model model,NameTranslator nameTranslator):this(getFactory(model),model,nameTranslator)
+		public DB2DatabaseTransformer(UTF_EA.Model model,NameTranslator nameTranslator,bool compareOnly = false):this(getFactory(model),model,nameTranslator,compareOnly)
 		{
 		}
-		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model,NameTranslator nameTranslator):base(factory,model,nameTranslator)
+		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model,NameTranslator nameTranslator,bool compareOnly = false):base(factory,model,nameTranslator,compareOnly)
 		{
 			this._externalDatabase = factory.createDatabase("external");
 		}

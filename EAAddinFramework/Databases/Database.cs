@@ -17,10 +17,12 @@ namespace EAAddinFramework.Databases
 		internal List<Table> _tables;
 		private string _name;
 		private DatabaseFactory __factory;
-		public Database(Package package,DatabaseFactory factory)
+		internal bool compareonly{get;set;}
+		public Database(Package package,DatabaseFactory factory,bool compareOnly = false)
 		{
 			this._wrappedPackage = package;
 			this.__factory = factory;
+			this.compareonly = compareOnly;
 		}
 		public Database(string name,DatabaseFactory factory)
 		{
