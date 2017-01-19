@@ -889,7 +889,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	}
 	public override UML.Classes.Kernel.ValueSpecification createValueSpecificationFromString(string stringRepresentation)
 	{
-		if (stringRepresentation.Equals("null",StringComparison.InvariantCultureIgnoreCase))
+		if (stringRepresentation != null &&
+		    stringRepresentation.Equals( "null",StringComparison.InvariantCultureIgnoreCase))
 		    return createValueSpecification(null);
 		int integerRepresentation;
 		if (int.TryParse(stringRepresentation,out integerRepresentation))

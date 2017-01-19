@@ -16,7 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public string _value {get;set;}
 		public override string ToString()
 		{
-			return _value;
+			return _value ?? string.Empty;
 		}
 	}
 }
