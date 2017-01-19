@@ -342,8 +342,11 @@ namespace EAAddinFramework.Databases
 			}
 			set 
 			{
+				if (!string.IsNullOrEmpty(_name) && _name != value) this.isRenamed = true;
 				this._name = value;
 				if (this._wrappedClass != null) this._wrappedClass.name = this._name;
+				//set the alias
+				if (this.logicalElement != null ) ((Class)this.logicalElement).alias = value;
 			}
 		}
 
