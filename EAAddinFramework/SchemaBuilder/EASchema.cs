@@ -148,44 +148,52 @@ namespace EAAddinFramework.SchemaBuilder
 			//loop the elements to create the subSetElements
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
-				//only create subset elements for classes, not for datatypes
-				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
-				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
+				//do not copy elements that are shared
+				if (! schemaElement.isShared)
 				{
-                    schemaElement.createSubsetElement(destinationPackage);
-                    //Logger.log("after EASchema::creating single subset element");
-                }
-                else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && this.settings.copyDataTypes)
-                {
-                	//if the datatypes are limited then only the ones in the list should be copied
-                	if (!this.settings.limitDataTypes
-                	    || this.settings.dataTypesToCopy.Contains(schemaElement.sourceElement.name))
-                    schemaElement.createSubsetElement(destinationPackage);
-                }
+					//only create subset elements for classes, not for datatypes
+					if (schemaElement.sourceElement is UML.Classes.Kernel.Class
+					   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
+					{
+	                    schemaElement.createSubsetElement(destinationPackage);
+	                    //Logger.log("after EASchema::creating single subset element");
+	                }
+	                else if (schemaElement.sourceElement is UML.Classes.Kernel.DataType && this.settings.copyDataTypes)
+	                {
+	                	//if the datatypes are limited then only the ones in the list should be copied
+	                	if (!this.settings.limitDataTypes
+	                	    || this.settings.dataTypesToCopy.Contains(schemaElement.sourceElement.name))
+	                    schemaElement.createSubsetElement(destinationPackage);
+	                }
+				}
 			}
 			//Logger.log("after EASchema::creating subsetelements");
 			// then loop them again to create the associations
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
-				//only create subset elements for classes and enumerations and datatypes
-				if (schemaElement.sourceElement is UML.Classes.Kernel.Class
-				   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
-                    || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
+				if (! schemaElement.isShared)
 				{
-					schemaElement.createSubsetAssociations();
-					//Logger.log("after EASchema::creating single subset association");
-					// and to resolve the attributes types to subset types if required
-					schemaElement.createSubsetAttributes();
-					//Logger.log("after EASchema::createSubsetAttributes ");
-					schemaElement.createSubsetLiterals();
-					//and add a dependency from the schemaElement to the type of the attributes
-					schemaElement.addAttributeTypeDependencies();
-					//Logger.log("after EASchema::addAttributeTypeDependencies");
-					//add generalizations if both elements are in the subset
-					schemaElement.addGeneralizations();
+					//only create subset elements for classes and enumerations and datatypes
+					if (schemaElement.sourceElement is UML.Classes.Kernel.Class
+					   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
+	                    || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
+					{
+						schemaElement.createSubsetAssociations();
+						//Logger.log("after EASchema::creating single subset association");
+						// and to resolve the attributes types to subset types if required
+						schemaElement.createSubsetAttributes();
+						//Logger.log("after EASchema::createSubsetAttributes ");
+						schemaElement.createSubsetLiterals();
+						//and add a dependency from the schemaElement to the type of the attributes
+						schemaElement.addAttributeTypeDependencies();
+						//Logger.log("after EASchema::addAttributeTypeDependencies");
+						//add generalizations if both elements are in the subset
+						schemaElement.addGeneralizations();
+					}
 				}
 			}
-			//then loop them the last time to remove those subset elements that don't have any attributes or associations
+			//then loop them the last time to remove those subset elements that don't have any attributes or associations 
+			// or generalizations, or are used as type
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
 				if (schemaElement.subsetElement != null)
@@ -194,9 +202,10 @@ namespace EAAddinFramework.SchemaBuilder
 					//reload the element because otherwise the API does not return any attributes or associations
 			    	var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
 					if  (reloadedElement != null
-					   && reloadedElement.attributes.Count == 0
-					   && reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Count == 0
-					   && reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Count == 0)
+			    	     && ! reloadedElement.attributes.Any()
+					   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
+					   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
+					   && ! reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any())
 					{
 						schemaElement.subsetElement.delete();
 					}
@@ -211,12 +220,26 @@ namespace EAAddinFramework.SchemaBuilder
 	    public void updateSubsetModel(Classifier messageElement)
 		{
 			//match the subset existing subset elements
-			//Logger.log("starting EASchema::updateSubsetModel");
 			matchSubsetElements(messageElement);
-			//Logger.log("after EASchema::matchSubsetElements");
-			
-			foreach (EASchemaElement schemaElement in this.schemaElements) 
-			{
+			matchAndUpdateSubsetModel(messageElement.owningPackage);
+		}
+	    
+
+	    
+	    /// <summary>
+	    /// updates the subset model linked to given messageElement
+	    /// </summary>
+	    /// <param name="destinationPackage">the package to create the subset in</param>
+	    public void updateSubsetModel(Package destinationPackage)
+		{
+			//match the subset existing subset elements
+			matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+			matchAndUpdateSubsetModel(destinationPackage);
+		}
+
+		void matchAndUpdateSubsetModel(Package destinationPackage)
+		{
+			foreach (EASchemaElement schemaElement in this.schemaElements) {
 				//match the attributes
 				schemaElement.matchSubsetAttributes();
 				//Logger.log("after EASchema::matchSubsetAttributes");
@@ -225,9 +248,10 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaElement.matchSubsetAssociations();
 				//Logger.log("after EASchema::matchSubsetAssociations");
 			}
-			this.createSubsetModel(messageElement.owningPackage);
+			this.createSubsetModel(destinationPackage);
 			//Logger.log("after EASchema::createSubsetModel");
 		}
+
 		/// <summary>
 		/// Finds all subset elements linked to the given message element and links those to the schema elements.
 		/// If a subset element could not be matched, and it is in the same package as the given messageElement, then it is deleted
@@ -237,23 +261,23 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
 			//match each subset element to a schema element
-			foreach (UML.Classes.Kernel.Classifier subsetElement in subsetElements) 
-			{
+			matchSubsetElements(messageElement.owningPackage, subsetElements);
+		}
+
+		void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
+		{
+			foreach (UML.Classes.Kernel.Classifier subsetElement in subsetElements) {
 				//get the corrsponding schema element
 				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
 				//found a corresponding schema element
-				if (schemaElement != null 
-				    && shouldElementExistAsDatatype(subsetElement))
-				{
+				if (schemaElement != null && shouldElementExistAsDatatype(subsetElement)) {
 					schemaElement.matchSubsetElement(subsetElement);
-				} 
-				else
-				{
+				} else {
 					//if it doesn't correspond with a schema element we delete it?
 					//only if the subset element is located in the same folder as the message element
 					//and it doesn't have one of stereotypes to be ignored
-					if (subsetElement.owner.Equals(messageElement.owner)
-					    && ! this.settings.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any())
+					if (destinationPackage.getNestedPackageTree(true).Any( x => x.Equals(subsetElement.owningPackage)) 
+					    && !this.settings.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any()) 
 					{
 						subsetElement.delete();
 					}
@@ -293,17 +317,23 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="messageElement">the message element</param>
 		/// <returns>all subset elements in the subset model for this message element</returns>
-		private HashSet<UML.Classes.Kernel.Classifier> getSubsetElementsfromMessage(UML.Classes.Kernel.Classifier messageElement)
+		private HashSet<UML.Classes.Kernel.Classifier> getSubsetElementsfromMessage(Classifier messageElement)
 		{
 			var subsetElements = new HashSet<UML.Classes.Kernel.Classifier>();
 			this.addRelatedSubsetElements(messageElement,subsetElements);
 			//we also add all classes in the package of the subset element
-			foreach (var element in messageElement.owningPackage.ownedElements) 
-			{
-				//we only do classes or enumerations
-				var classElement = element as UML.Classes.Kernel.Classifier;
-				
-				this.addToSubsetElements(classElement, subsetElements);
+			foreach (var element in getSubsetElementsfromPackage( messageElement.owningPackage))
+			{			
+				this.addToSubsetElements(element, subsetElements);
+			}
+			return subsetElements;
+		}
+		private HashSet<Classifier> getSubsetElementsfromPackage(Package destinationPackage)
+		{
+			var subsetElements = new HashSet<Classifier>();
+			foreach (var element in destinationPackage.getAllOwnedElements().OfType<Classifier>())
+			{			
+				this.addToSubsetElements(element, subsetElements);
 			}
 			return subsetElements;
 		}

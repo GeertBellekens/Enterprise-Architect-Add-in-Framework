@@ -1651,6 +1651,13 @@
             </summary>
             <returns>the name of the user currently locking this element</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.findOwnedItem(System.String)">
+            <summary>
+            finds the element based on the given descriptor
+            </summary>
+            <param name="itemDescriptor">the itemdescriptor</param>
+            <returns></returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.Element.position">
             <summary>
             default implementation
@@ -3212,6 +3219,12 @@
             updates the subset model linked to given messageElement
             </summary>
             <param name="messageElement">The message element that is the root for the message subset model</param>
+        </member>
+        <member name="M:EAAddinFramework.SchemaBuilder.EASchema.updateSubsetModel(TSF.UmlToolingFramework.UML.Classes.Kernel.Package)">
+            <summary>
+            updates the subset model linked to given messageElement
+            </summary>
+            <param name="destinationPackage">the package to create the subset in</param>
         </member>
         <member name="M:EAAddinFramework.SchemaBuilder.EASchema.matchSubsetElements(TSF.UmlToolingFramework.UML.Classes.Kernel.Classifier)">
             <summary>

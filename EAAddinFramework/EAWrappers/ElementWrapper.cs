@@ -15,6 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private HashSet<UML.Classes.Kernel.Property> _attributes;
     private List<UML.Classes.Kernel.Relationship> _allRelationships;
     private HashSet<AttributeWrapper> _attributeWrappers;
+    private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -851,6 +852,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //lock found, don't even try it.
                 return false;
             }
+		}
+		public HashSet<UML.Classes.Kernel.EnumerationLiteral> ownedLiterals 
+		{
+			get 
+			{
+		      	if (this._ownedLiterals == null)
+		      	{
+		      		this._ownedLiterals = new HashSet<UML.Classes.Kernel.EnumerationLiteral>(this.attributeWrappers.OfType<UML.Classes.Kernel.EnumerationLiteral>());
+		      	}
+		        return this._ownedLiterals;
+			}
+			set {
+				throw new NotImplementedException();
+			}
 		}
   }
 }

@@ -12,6 +12,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// </summary>
 	public class Package:ElementWrapper, UML.Classes.Kernel.Package
 	{
+		
+
 		private string _fqn = string.Empty;
 		internal global::EA.Package wrappedPackage {get;set;}
 		public int packageID
@@ -69,9 +71,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 		}
 		
-		public HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Package> nestedPackages {
-			get {
-				throw new NotImplementedException();
+		public HashSet<UML.Classes.Kernel.Package> nestedPackages 
+		{
+			get 
+			{
+				return new HashSet<UML.Classes.Kernel.Package>(this.ownedElements.OfType<UML.Classes.Kernel.Package>());
 			}
 			set {
 				throw new NotImplementedException();
@@ -251,5 +255,86 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.model.wrappedModel.RefreshModelView(this.packageID);
 		}
+		public override UML.Extended.UMLItem findOwnedItem(string itemDescriptor)
+		{
+			UML.Extended.UMLItem foundItem = null;
+			//first try to find it in a faster way
+			//get the idstrings of this package and all its owned packages
+			string packageTreeIDString = this.getPackageIDString(getNestedPackageTree(true));
+			//get the individual parts
+			var descriptorParts = itemDescriptor.Split('.').ToList();
+			//we start bottom up
+			descriptorParts.Reverse();
+			//if there's only one part then look for an element with that name, then for a diagram
+			if (descriptorParts.Count == 1) 
+			{
+				//look for element
+				foundItem = getOwnedElement(descriptorParts[0], packageTreeIDString);
+				//look for a diagram
+				if (foundItem == null) foundItem = getOwnedDiagram(descriptorParts[0],packageTreeIDString);
+			}
+			else if (descriptorParts.Count > 1)
+			{
+				//we take the first two items and try to find a match
+				//first look for an attribute
+				//then look for a nested class or linked class
+				//then look for an operation
+				//then look for an association
+				
+			}
+
+			
+			return base.findOwnedItem(itemDescriptor);
+		}
+		public ElementWrapper getOwnedElement(string elementName, string packageIDList)
+		{
+			string sqlGetOwnedElement = "select o.Object_ID from t_object o " +
+										" where " +
+										" o.Name = '" + elementName + "' " +
+				" and o.Package_ID in (" + packageIDList + ") ";
+			return this.model.getElementWrappersByQuery(sqlGetOwnedElement).FirstOrDefault();
+		}
+		public ElementWrapper getOwnedDiagram(string diagramName, string packageIDList)
+		{
+			string sqlGetOwnedDiagram = "select d._diagram from t_object d " +
+										" where " +
+										" d.Name = '" + diagramName + "' " +
+				" and d.Package_ID in (" + packageIDList + ") ";
+			return this.model.getElementWrappersByQuery(sqlGetOwnedDiagram).FirstOrDefault();
+		}
+		public HashSet<UML.Classes.Kernel.Package> getNestedPackageTree(bool includeThis)
+		{
+			var nestedPackageTree = this.nestedPackages;
+			//add this package if needed
+			if (includeThis) nestedPackageTree.Add(this);
+			foreach (var subPackage in this.nestedPackages) 
+			{
+				foreach (var subSubPackage in subPackage.getNestedPackageTree(false)) 
+				{
+					nestedPackageTree.Add(subSubPackage);
+				}
+			}
+			return nestedPackageTree;
+		}
+
+		public HashSet<UML.Classes.Kernel.Element> getAllOwnedElements()
+		{
+			var allOwnedElements = this.ownedElements;
+			foreach (var subPackage in this.getNestedPackageTree(false)) 
+			{
+				foreach (var element in subPackage.ownedElements) 
+				{
+					allOwnedElements.Add(element);
+				}
+			}
+			return allOwnedElements;
+		}
+
+		public string getPackageIDString(ICollection<UML.Classes.Kernel.Package> packages)
+		{
+			return string.Join(",",packages);
+		}
+		
+		
 	}
 }

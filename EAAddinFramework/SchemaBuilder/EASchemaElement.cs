@@ -29,6 +29,29 @@ namespace EAAddinFramework.SchemaBuilder
 			this.ownerSchema = owner;
 			this.wrappedSchemaType = objectToWrap;
 		}
+
+		public bool isShared 
+		{
+			get
+			{
+				if (sourceElement != null)
+				{
+					if (isSharedElement(sourceElement))
+					{
+						return true;
+					}
+					//if not on element level we check on package level
+					return isSharedElement(sourceElement.owningPackage);                                
+				}
+				return false;
+			}
+		}
+		private bool isSharedElement(Element element)
+		{
+			return element.taggedValues.Any(x => x.name.Equals("shared",StringComparison.InvariantCultureIgnoreCase)
+			                                && x.tagValue.ToString().Equals("true",StringComparison.InvariantCultureIgnoreCase));
+		}
+
 		/// <summary>
 		/// the name of the Schema element. In most cases this is equal to the name of the source element, unless the element has been redefined.
 		/// </summary>
@@ -472,10 +495,10 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				var subsetEnumeration = this.subsetElement as UTF_EA.Enumeration;
-				if (subsetEnumeration != null)
+				var subsetElementWrapper = subsetElement as UTF_EA.ElementWrapper;
+				if (subsetElementWrapper != null)
 				{
-					foreach (UTF_EA.EnumerationLiteral literal in subsetEnumeration.ownedLiterals) 
+					foreach (UTF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals) 
 					{
 						EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
 						if (matchingLiteral != null)

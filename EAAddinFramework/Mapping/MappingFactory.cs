@@ -152,7 +152,7 @@ namespace EAAddinFramework.Mapping
 		/// <param name="model">the model that contains the elements</param>
 		/// <param name="filePath">the path to the CSV file</param>
 		/// <returns>a mapping set representing the mapping in the file</returns>
-		public static MappingSet createMappingSet(Model model, string filePath, Element sourceElement = null, Element targetElement = null)
+		public static MappingSet createMappingSet(Model model, string filePath, Element sourceRootElement = null, Element targetRootElement = null)
 		{
 			
 			var engine = new FileHelperEngine<CSVMappingRecord>();
@@ -160,10 +160,35 @@ namespace EAAddinFramework.Mapping
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
 				//find source
+				var source = findElement(model, mappingRecord.source, sourceRootElement);
 				//find target				
 			}
 			//TODO
 			return null;
+		}
+		public static Element findElement(Model model, string elementDescriptor, Element rootElement)
+		{
+			Element foundElement = null;
+			if (rootElement == null)
+			{
+				//the elementDescriptor must be a fully qualified name
+				foundElement = model.getItemFromFQN(elementDescriptor) as Element;
+			}
+			else
+			{
+				var rootPackage = rootElement as Package;
+				if (rootPackage != null)
+				{
+					//try combining the FQN of the package with the elementDescriptor
+					foundElement = model.getItemFromFQN(rootPackage.fqn + "." + elementDescriptor) as Element;
+					if (foundElement == null)
+					{
+						foundElement = rootPackage.findOwnedItem(elementDescriptor) as Element;
+					}
+				}
+			}
+			return foundElement;
+				
 		}
 	}
 }
