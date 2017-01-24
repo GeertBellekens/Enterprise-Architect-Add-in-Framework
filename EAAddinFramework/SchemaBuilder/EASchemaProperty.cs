@@ -81,13 +81,14 @@ namespace EAAddinFramework.SchemaBuilder
 						                                              , LogTypeEnum.warning);
 					}
 					//report different type
-					if (this.subSetProperty.type.name != this.sourceProperty.type.name)
-					{
+					string newTypeName = (this.redefinedElement != null) ? this.redefinedElement.name : this.sourceProperty.type.name;
+					if (this.subSetProperty.type.name != newTypeName)
+					{													
 						EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
 						                                              ,string.Format("Attribute '{0}' has changed type from '{1}' to '{2}' since the last schema generation"
 						                                  					,this.sourceProperty.owner.name + "." + this.sourceProperty.name
 						                                  					,this.subSetProperty.type.name
-						                                  					,this.sourceProperty.type.name)
+						                                  					,newTypeName)
 						                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id
 						                                              , LogTypeEnum.warning);						
 					}

@@ -120,7 +120,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			get 
 			{
 	    		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
-	    		foreach ( global::EA.Diagram eaDiagram in this.wrappedPackage.Diagrams)
+	    		foreach ( var eaDiagram in this.wrappedPackage.Diagrams)
 	    		{
 	    			diagrams.Add(((Factory)this.model.factory).createDiagram(eaDiagram));
 	    		}
