@@ -58,7 +58,7 @@ public class AttributeTag : TaggedValue
 	public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner {
 		get 
 		{
-			return this.model.getAttributeByID(this.wrappedTaggedValue.AttributeID);
+			return this.model.getAttributeWrapperByID(this.wrappedTaggedValue.AttributeID);
 		}
 		set {
 			throw new NotImplementedException();

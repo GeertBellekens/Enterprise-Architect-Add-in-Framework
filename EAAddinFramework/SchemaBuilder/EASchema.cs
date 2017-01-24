@@ -194,22 +194,26 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			//then loop them the last time to remove those subset elements that don't have any attributes or associations 
 			// or generalizations, or are used as type
-			foreach (EASchemaElement schemaElement in this.elements) 
+			if (this.settings.deleteUnusedSchemaElements)
 			{
-				if (schemaElement.subsetElement != null)
+				foreach (EASchemaElement schemaElement in this.elements) 
 				{
-					//remove those subset elements that don't have any attributes or associations
-					//reload the element because otherwise the API does not return any attributes or associations
-			    	var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
-					if  (reloadedElement != null
-			    	     && ! reloadedElement.attributes.Any()
-					   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
-					   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
-					   && ! reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any())
+					if (schemaElement.subsetElement != null)
 					{
-						schemaElement.subsetElement.delete();
-					}
-				 }
+						//remove those subset elements that don't have any attributes or associations
+						//reload the element because otherwise the API does not return any attributes or associations
+				    	var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
+						if  (reloadedElement != null
+				    	     && ! reloadedElement.attributes.Any()
+						   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
+						   && ! reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
+						   && ! reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
+						   && (reloadedElement is UTF_EA.ElementWrapper && ! ((UTF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
+						{
+							schemaElement.subsetElement.delete();
+						}
+					 }
+				}
 			}
 		}
 

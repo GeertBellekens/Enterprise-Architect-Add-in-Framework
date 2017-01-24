@@ -373,13 +373,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <summary>
     /// gets the Attribute with the given ID
     /// </summary>
-    /// <param name="attributID">the attribute's ID</param>
+    /// <param name="attributeID">the attribute's ID</param>
     /// <returns>the Attribute with the given ID</returns>
-    public Attribute getAttributeByID (int attributID)
+    public Attribute getAttributeByID (int attributeID)
     {
     	try
     	{
-    		return this.factory.createElement(this.wrappedModel.GetAttributeByID(attributID)) as Attribute;
+    		return this.getAttributeWrapperByID(attributeID) as Attribute;
+    	}catch (Exception)
+    	{
+    		// attribute not found, return null
+    		return null;
+    	}
+    	
+    }
+     /// <summary>
+    /// gets the Attribute with the given ID
+    /// </summary>
+    /// <param name="attributeID">the attribute's ID</param>
+    /// <returns>the Attribute with the given ID</returns>
+    public AttributeWrapper getAttributeWrapperByID (int attributeID)
+    {
+    	try
+    	{
+    		return this.factory.createElement(this.wrappedModel.GetAttributeByID(attributeID)) as AttributeWrapper;
     	}catch (Exception)
     	{
     		// attribute not found, return null
@@ -1079,7 +1096,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    	int objectID ;
 	    	if (int.TryParse(elementNode.InnerText,out objectID))
 	    	{
-	    		Attribute owner = this.getAttributeByID(objectID);
+	    		AttributeWrapper owner = this.getAttributeWrapperByID(objectID);
 	    		if(owner != null)
 	    		{
 		    		foreach (TaggedValue taggedValue in owner.taggedValues) 

@@ -22,7 +22,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
       this.wrappedElement = wrappedElement;
     }
-
+	
     public override string name {
       get { return this.wrappedElement.Name;  }
       set { this.wrappedElement.Name = value; }
@@ -36,6 +36,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		get{return this.wrappedElement.Status;}
 		set{this.wrappedElement.Status = value;}
+	}
+	public string genLinks
+	{
+		get{return this.wrappedElement.Genlinks;}
+		set{this.wrappedElement.Genlinks = value;}
+	}
+	public List<string> primitiveParentNames
+	{
+		get
+		{
+			var parentNames = new List<string>();
+			if (this.genLinks.Contains("Parent="))
+			{
+				foreach (string genLink in this.wrappedElement.Genlinks.Split(';'))
+				{
+					var parentTuple = genLink.Split('=');
+					if (parentTuple.Count() == 2
+					    && parentTuple[0] == "Parent"
+					    && ! string.IsNullOrEmpty(parentTuple[1]))
+					{
+						parentNames.Add(parentTuple[1]);
+					}
+				}
+			}
+			return parentNames;
+		}
 	}
 	public string phase
 	{

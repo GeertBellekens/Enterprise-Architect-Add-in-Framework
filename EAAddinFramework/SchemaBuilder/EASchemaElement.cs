@@ -235,6 +235,8 @@ namespace EAAddinFramework.SchemaBuilder
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//alias
 			((UTF_EA.ElementWrapper)subsetElement).alias = ((UTF_EA.ElementWrapper)sourceElement).alias;
+			//genlinks
+			((UTF_EA.ElementWrapper)subsetElement).genLinks = ((UTF_EA.ElementWrapper)sourceElement).genLinks;
 			//notes only update them if they are empty
 			if (this.subsetElement.ownedComments.Count == 0 || ! this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
 			{
