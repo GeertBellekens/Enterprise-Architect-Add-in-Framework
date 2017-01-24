@@ -867,5 +867,94 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				throw new NotImplementedException();
 			}
 		}
+
+		List<Attribute> getOwnedAttributes(string attributeName)
+		{
+			//owner.Attribute
+			string sqlGetAttributes = "select a.ea_guid from t_attribute a " +
+									" where a.Object_ID = " + this.id +
+									" and a.name = '" + attributeName + "'";
+			return this.model.getAttributesByQuery(sqlGetAttributes);
+		}
+
+		public List<ElementWrapper> getOwnedElements(string elementName)
+		{
+			string sqlGetOwnedElement = "select o.Object_ID from t_object o " +
+										" where " +
+										" o.Name = '" + elementName + "' " +
+										" and o.ParentID = " + this.id;
+			return this.model.getElementWrappersByQuery(sqlGetOwnedElement);
+		}
+		public List<Diagram> getOwnedDiagrams(string diagramName)
+		{
+			string sqlGetOwnedDiagram = "select d.Diagram_ID from t_diagram d " +
+										" where " +
+										" d.Name = '" + diagramName + "' " +
+										" and d.ParentID = " + this.id;
+			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
+		}
+		public List<AssociationEnd> getRelatedAssociationEnds(string rolename)
+		{
+			var assocationEnds = new List<AssociationEnd>();
+			//first get the assocations, then get the end that corresponds with the rolename
+			string sqlGetConnectorWrappers = "select c.Connector_ID from t_connector c " +
+										" where c.Start_Object_ID = " + this.id + 
+										" and c.DestRole = '" + rolename + "' " +
+										" union " +
+										" select c.Connector_ID from t_connector c " +
+										" where c.End_Object_ID = " + this.id + 
+										" and c.SourceRole = '" + rolename + "' ";
+			var connectorWrappers = this.model.getRelationsByQuery(sqlGetConnectorWrappers);
+			//loop the associations to get the ends
+			foreach (var connectorWrapper in connectorWrappers)
+			{
+				if (connectorWrapper.sourceEnd != null 
+				    && connectorWrapper.sourceEnd.name == rolename
+				    && ! this.Equals(connectorWrapper.source))
+				{
+					assocationEnds.Add(connectorWrapper.sourceEnd);
+				}
+				if (connectorWrapper.targetEnd != null 
+				    && connectorWrapper.targetEnd.name == rolename
+				    && ! this.Equals(connectorWrapper.target))
+				{
+					assocationEnds.Add(connectorWrapper.targetEnd);
+				}
+			}
+			return assocationEnds;
+		}
+		#region implemented abstract members of Element
+
+		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
+		{
+			List<UML.Extended.UMLItem> ownedItems =new List<UML.Extended.UMLItem>();
+			if (descriptionParts.Count > 0)
+			{
+				string firstpart = descriptionParts[0];
+					//start by finding an element with the given name
+				var directOwnedElements = getOwnedElements(firstpart);
+				if (descriptionParts.Count > 1)
+				{
+					//loop the owned elements and get their owned items 
+					foreach (var element in directOwnedElements) 
+					{
+						//remove the first part
+						descriptionParts.RemoveAt(0);         
+						//go one level down
+						ownedItems.AddRange(element.findOwnedItems(descriptionParts));
+					}
+				}
+				else
+				{
+					//only one item so add the direct owned elements
+					ownedItems.AddRange(directOwnedElements);
+					//Add also the diagrams owned by this package
+					ownedItems.AddRange(getOwnedDiagrams(firstpart));
+				}
+			}
+			return ownedItems;
+		}
+
+		#endregion
   }
 }

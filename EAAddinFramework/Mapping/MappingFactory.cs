@@ -183,7 +183,7 @@ namespace EAAddinFramework.Mapping
 					foundElement = model.getItemFromFQN(rootPackage.fqn + "." + elementDescriptor) as Element;
 					if (foundElement == null)
 					{
-						foundElement = rootPackage.findOwnedItem(elementDescriptor) as Element;
+						foundElement = rootPackage.findOwnedItems(elementDescriptor).OfType<Element>().FirstOrDefault();
 					}
 				}
 			}

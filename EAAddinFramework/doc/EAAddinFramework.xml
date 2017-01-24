@@ -1651,7 +1651,7 @@
             </summary>
             <returns>the name of the user currently locking this element</returns>
         </member>
-        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.findOwnedItem(System.String)">
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.Element.findOwnedItems(System.String)">
             <summary>
             finds the element based on the given descriptor
             </summary>

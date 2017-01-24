@@ -382,10 +382,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
     /// <param name="itemDescriptor">the itemdescriptor</param>
     /// <returns></returns>
-    public virtual UML.Extended.UMLItem findOwnedItem(string itemDescriptor)
+    public virtual List<UML.Extended.UMLItem> findOwnedItems(string itemDescriptor)
     {
     	//default implementation, search based on the fully qualified name
-    	return this.model.getItemFromFQN(this.fqn + "." + itemDescriptor);
+    	var ownedItems = new List<UML.Extended.UMLItem>();
+    	var item = this.model.getItemFromFQN(this.fqn + "." + itemDescriptor);
+    	if (item != null) ownedItems.Add(item);
+    	return ownedItems;
+    }
+    public virtual List<UML.Extended.UMLItem> findOwnedItems(List<String> descriptionParts)
+    {
+    	//default implementation returns empty collection
+    	return new List<UML.Extended.UMLItem>();
     }
   }
 }

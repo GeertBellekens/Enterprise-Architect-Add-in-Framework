@@ -255,52 +255,101 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.model.wrappedModel.RefreshModelView(this.packageID);
 		}
-		public override UML.Extended.UMLItem findOwnedItem(string itemDescriptor)
+		public override List<UML.Extended.UMLItem> findOwnedItems(string itemDescriptor)
 		{
-			UML.Extended.UMLItem foundItem = null;
+			List<UML.Extended.UMLItem> foundItems = new List<UML.Extended.UMLItem>();
 			//first try to find it in a faster way
 			//get the idstrings of this package and all its owned packages
 			string packageTreeIDString = this.getPackageIDString(getNestedPackageTree(true));
 			//get the individual parts
 			var descriptorParts = itemDescriptor.Split('.').ToList();
-			//we start bottom up
-			descriptorParts.Reverse();
 			//if there's only one part then look for an element with that name, then for a diagram
 			if (descriptorParts.Count == 1) 
 			{
 				//look for element
-				foundItem = getOwnedElement(descriptorParts[0], packageTreeIDString);
+				foundItems.AddRange(getOwnedElements(descriptorParts[0], packageTreeIDString));
 				//look for a diagram
-				if (foundItem == null) foundItem = getOwnedDiagram(descriptorParts[0],packageTreeIDString);
+				foundItems.AddRange(getOwnedDiagrams(descriptorParts[0],packageTreeIDString));
 			}
-			else if (descriptorParts.Count > 1)
+			else if (descriptorParts.Count == 2)
 			{
 				//we take the first two items and try to find a match
+				string ownerName = descriptorParts[0];
+				string attributeName = descriptorParts[1];
 				//first look for an attribute
-				//then look for a nested class or linked class
-				//then look for an operation
-				//then look for an association
-				
+				foundItems.AddRange(getOwnedAttributes(ownerName,attributeName,packageTreeIDString));
+				//TODO then look for a nested class or linked class
+				//TODO then look for an operation
+				//TODO then look for an association
 			}
-
-			
-			return base.findOwnedItem(itemDescriptor);
+			else if (descriptorParts.Count > 2)
+			{
+				//top down approach
+				//look for the first part and start searching from there
+				foundItems.AddRange(findOwnedItems(descriptorParts));
+			}
+			//if still nothing found then get the base implemetation
+			if (foundItems.Count == 0) foundItems.AddRange(base.findOwnedItems(itemDescriptor));
+			return foundItems;
 		}
-		public ElementWrapper getOwnedElement(string elementName, string packageIDList)
+		
+		public override List<UML.Extended.UMLItem> findOwnedItems(List<String> descriptionParts)
+		{
+			List<UML.Extended.UMLItem> ownedItems =new List<UML.Extended.UMLItem>();
+			if (descriptionParts.Count > 0)
+			{
+				string firstpart = descriptionParts[0];
+					//start by finding an element with the given name
+				var directOwnedElements = getOwnedElements(firstpart,this.packageID.ToString());
+				if (descriptionParts.Count > 1)
+				{
+					//loop the owned elements and get their owned items 
+					foreach (var element in directOwnedElements) 
+					{
+						//remove the first part
+						descriptionParts.RemoveAt(0);         
+						//go one level down
+						ownedItems.AddRange(element.findOwnedItems(descriptionParts));
+					}
+				}
+				else
+				{
+					//only one item so add the direct owned elements
+					ownedItems.AddRange(directOwnedElements);
+					//Add also the diagrams owned by this package
+					ownedItems.AddRange(getOwnedDiagrams(firstpart,this.packageID.ToString()));
+				}
+			}
+			return ownedItems;
+		}
+		
+		public List<Attribute> getOwnedAttributes(string ownerName,string attributeName, string packageIDList)
+		{
+			//owner.Attribute
+			string sqlGetAttributes = @"select a.ea_guid from (t_attribute a
+										inner join t_object o on o.Object_ID = a.Object_ID)
+										where a.Name = '" + attributeName + @"'
+										and o.Name = '" + ownerName + @"'
+										and o.Package_ID in (" + packageIDList + @")";
+
+			return this.model.getAttributesByQuery(sqlGetAttributes);
+		}
+
+		public List<ElementWrapper> getOwnedElements(string elementName, string packageIDList)
 		{
 			string sqlGetOwnedElement = "select o.Object_ID from t_object o " +
 										" where " +
 										" o.Name = '" + elementName + "' " +
 				" and o.Package_ID in (" + packageIDList + ") ";
-			return this.model.getElementWrappersByQuery(sqlGetOwnedElement).FirstOrDefault();
+			return this.model.getElementWrappersByQuery(sqlGetOwnedElement);
 		}
-		public ElementWrapper getOwnedDiagram(string diagramName, string packageIDList)
+		public List<Diagram> getOwnedDiagrams(string diagramName, string packageIDList)
 		{
-			string sqlGetOwnedDiagram = "select d._diagram from t_object d " +
+			string sqlGetOwnedDiagram = "select d.Diagram_ID from t_diagram d " +
 										" where " +
 										" d.Name = '" + diagramName + "' " +
-				" and d.Package_ID in (" + packageIDList + ") ";
-			return this.model.getElementWrappersByQuery(sqlGetOwnedDiagram).FirstOrDefault();
+										" and d.Package_ID in (" + packageIDList + ") ";
+			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
 		}
 		public HashSet<UML.Classes.Kernel.Package> getNestedPackageTree(bool includeThis)
 		{

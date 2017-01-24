@@ -256,7 +256,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="EAWrappers\README" />
-    <None Include="Files\EATFSConnectorLogo.ico" />
     <None Include="Files\LogoFINAL.ico" />
     <None Include="packages.config" />
   </ItemGroup>
