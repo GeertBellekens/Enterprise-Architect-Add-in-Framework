@@ -220,6 +220,7 @@
     <Compile Include="Mapping\MappingFactory.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />
     <Compile Include="Mapping\MappingSet.cs" />
+    <Compile Include="Mapping\MappingSettings.cs" />
     <Compile Include="Mapping\PackageMappingSet.cs" />
     <Compile Include="Mapping\TaggedValueMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

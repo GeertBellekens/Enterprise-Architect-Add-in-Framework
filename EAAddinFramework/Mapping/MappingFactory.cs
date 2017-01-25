@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using FileHelpers;
@@ -152,19 +153,46 @@ namespace EAAddinFramework.Mapping
 		/// <param name="model">the model that contains the elements</param>
 		/// <param name="filePath">the path to the CSV file</param>
 		/// <returns>a mapping set representing the mapping in the file</returns>
-		public static MappingSet createMappingSet(Model model, string filePath, Element sourceRootElement = null, Element targetRootElement = null)
+		public static MappingSet createMappingSet(Model model, string filePath,MappingSettings settings, Element sourceRootElement = null, Element targetRootElement = null)
 		{
-			
+			MappingSet newMappingSet = null;
 			var engine = new FileHelperEngine<CSVMappingRecord>();
 			var parsedFile = engine.ReadFile(filePath);
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
+				//get the proper descriptors for source and target
+				string sourceDescriptor = mappingRecord.source;
+				if (! string.IsNullOrEmpty(mappingRecord.sourcePath)) sourceDescriptor = mappingRecord.sourcePath + "." + mappingRecord.source;
+				string targetDescriptor = mappingRecord.target;
+				if (! string.IsNullOrEmpty(mappingRecord.targetPath)) targetDescriptor = mappingRecord.targetPath + "." + mappingRecord.target;
+				
 				//find source
-				var source = findElement(model, mappingRecord.source, sourceRootElement);
-				//find target				
+				var source = findElement(model, sourceDescriptor, sourceRootElement);
+				//find target
+				var target = findElement(model, targetDescriptor,targetRootElement);
+				if (source == null )
+				{
+					EAOutputLogger.log(model,settings.outputName
+					                   ,string.Format("Could not find element that matches: '{0}'",sourceDescriptor)
+					                   ,0,LogTypeEnum.error);
+				}
+				else if( target == null)
+				{
+					EAOutputLogger.log(model,settings.outputName
+					                   ,string.Format("Could not find element that matches: '{0}'",targetDescriptor)
+					                   ,0,LogTypeEnum.error);
+				}
+				else
+				{
+					//first check if the mappingSet is already created
+					if (newMappingSet == null)
+					{
+						//determine if this should be a PackageMappingSet or an ElementMappingSet
+					}
+					//TODO: create actual mapping
+				}
 			}
-			//TODO
-			return null;
+			return newMappingSet;
 		}
 		public static Element findElement(Model model, string elementDescriptor, Element rootElement)
 		{
@@ -176,16 +204,7 @@ namespace EAAddinFramework.Mapping
 			}
 			else
 			{
-				var rootPackage = rootElement as Package;
-				if (rootPackage != null)
-				{
-					//try combining the FQN of the package with the elementDescriptor
-					foundElement = model.getItemFromFQN(rootPackage.fqn + "." + elementDescriptor) as Element;
-					if (foundElement == null)
-					{
-						foundElement = rootPackage.findOwnedItems(elementDescriptor).OfType<Element>().FirstOrDefault();
-					}
-				}
+				foundElement = rootElement.findOwnedItems(elementDescriptor).OfType<Element>().FirstOrDefault();
 			}
 			return foundElement;
 				

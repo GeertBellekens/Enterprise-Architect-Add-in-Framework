@@ -1836,6 +1836,14 @@
             <param name="overrideLocks">remove any existing locks</param>
             <returns>true if successful</returns>
         </member>
+        <member name="M:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.getRelatedAssociationEnds(System.String)">
+            <summary>
+            get the associationEnds on the far end that correspond with the given rolename
+            This is either when the rolename matches, or when the rolename is empty and the name of the opposite class matches
+            </summary>
+            <param name="rolename">the name we are looking for</param>
+            <returns>a list of matching association ends</returns>
+        </member>
         <member name="P:TSF.UmlToolingFramework.Wrappers.EA.ElementWrapper.uniqueID">
             <summary>
             return the unique ID of this element
@@ -3103,7 +3111,7 @@
             <param name = "source">the source string to search in</param>
             <returns>the value correspondign to the given key</returns>
         </member>
-        <member name="M:EAAddinFramework.Mapping.MappingFactory.createMappingSet(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String,TSF.UmlToolingFramework.Wrappers.EA.Element,TSF.UmlToolingFramework.Wrappers.EA.Element)">
+        <member name="M:EAAddinFramework.Mapping.MappingFactory.createMappingSet(TSF.UmlToolingFramework.Wrappers.EA.Model,System.String,EAAddinFramework.Mapping.MappingSettings,TSF.UmlToolingFramework.Wrappers.EA.Element,TSF.UmlToolingFramework.Wrappers.EA.Element)">
             <summary>
             create a mappingSet based on the data in the CSV file
             </summary>
@@ -3114,6 +3122,43 @@
         <member name="T:EAAddinFramework.Mapping.MappingLogic">
             <summary>
             Description of MappingLogic.
+            </summary>
+        </member>
+        <member name="T:EAAddinFramework.Mapping.MappingSettings">
+            <summary>
+            Description of MappingSettings.
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.useTaggedValues">
+            <summary>
+            use tagged values as a way to map elements.
+            If false we use relations with "link to element feature"
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.linkedAttributeTagName">
+            <summary>
+            the tagged value to use for attributes when using tagged values for the links (only for newly created items)
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.linkedAssociationTagName">
+            <summary>
+            the tagge value to use for associations when using tagged values for the links (only for newly created items)
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.useInlineMappingLogic">
+            <summary>
+            indicates that we use inline mapping logic (only description) in the comments of the tagged value when adding mapping logic.
+            this only applies when using tagged values for mapping. (only for newly created items)
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.mappingLogicType">
+            <summary>
+            the (EA) type of element to use for the mapping logic (only for newly created items)
+            </summary>
+        </member>
+        <member name="P:EAAddinFramework.Mapping.MappingSettings.outputName">
+            <summary>
+            the name of the output log
             </summary>
         </member>
         <member name="T:EAAddinFramework.Mapping.PackageMappingSet">

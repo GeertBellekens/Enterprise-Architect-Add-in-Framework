@@ -919,32 +919,47 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" and d.ParentID = " + this.id;
 			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
 		}
+		/// <summary>
+		/// get the associationEnds on the far end that correspond with the given rolename
+		/// This is either when the rolename matches, or when the rolename is empty and the name of the opposite class matches
+		/// </summary>
+		/// <param name="rolename">the name we are looking for</param>
+		/// <returns>a list of matching association ends</returns>
 		public List<AssociationEnd> getRelatedAssociationEnds(string rolename)
 		{
 			var assocationEnds = new List<AssociationEnd>();
 			//first get the assocations, then get the end that corresponds with the rolename
+			//this is either when the rolename matches, or when the rolename is empty and the name of the opposite class matches
 			string sqlGetConnectorWrappers = "select c.Connector_ID from t_connector c " +
 										" where c.Start_Object_ID = " + this.id + 
 										" and c.DestRole = '" + rolename + "' " +
 										" union " +
 										" select c.Connector_ID from t_connector c " +
 										" where c.End_Object_ID = " + this.id + 
-										" and c.SourceRole = '" + rolename + "' ";
+										" and c.SourceRole = '" + rolename + "' " +
+										" union " +
+										" select c.Connector_ID from (t_connector c " +
+										" inner join t_object o on c.End_Object_ID = o.Object_ID) " +
+										" where c.Start_Object_ID = " + this.id + 
+										" and c.DestRole is null " +
+										" and o.Name = '" + rolename + "' " +
+										" union " +
+										" select c.Connector_ID from (t_connector c " +
+										" inner join t_object o on c.Start_Object_ID = o.Object_ID) " +
+										" where c.End_Object_ID = " + this.id + 
+										" and c.SourceRole is null " +
+										" and o.name = '" + rolename + "' ";
 			var connectorWrappers = this.model.getRelationsByQuery(sqlGetConnectorWrappers);
-			//loop the associations to get the ends
+			//loop the associations to get the ends at the other side
 			foreach (var connectorWrapper in connectorWrappers)
 			{
-				if (connectorWrapper.sourceEnd != null 
-				    && connectorWrapper.sourceEnd.name == rolename
-				    && ! this.Equals(connectorWrapper.source))
-				{
-					assocationEnds.Add(connectorWrapper.sourceEnd);
-				}
-				if (connectorWrapper.targetEnd != null 
-				    && connectorWrapper.targetEnd.name == rolename
-				    && ! this.Equals(connectorWrapper.target))
+				if (this.Equals(connectorWrapper.source))
 				{
 					assocationEnds.Add(connectorWrapper.targetEnd);
+				}
+				else
+				{
+					assocationEnds.Add(connectorWrapper.sourceEnd);
 				}
 			}
 			return assocationEnds;
@@ -953,19 +968,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
 		{
-			List<UML.Extended.UMLItem> ownedItems =new List<UML.Extended.UMLItem>();
+			List<UML.Extended.UMLItem> ownedItems = new List<UML.Extended.UMLItem>();
 			if (descriptionParts.Count > 0)
 			{
 				string firstpart = descriptionParts[0];
 					//start by finding an element with the given name
-				var directOwnedElements = getOwnedElements(firstpart);
+				var candidateItems = new List<Element>();
+				candidateItems.AddRange(getOwnedElements(firstpart));
+				candidateItems.AddRange(getOwnedAttributes(firstpart));
+				candidateItems.AddRange(getRelatedAssociationEnds(firstpart));
 				if (descriptionParts.Count > 1)
 				{
-					//loop the owned elements and get their owned items 
-					foreach (var element in directOwnedElements) 
+					//remove the first part
+					descriptionParts.RemoveAt(0);         
+					//loop the candidates to get their owned items
+					foreach (var element in candidateItems) 
 					{
-						//remove the first part
-						descriptionParts.RemoveAt(0);         
 						//go one level down
 						ownedItems.AddRange(element.findOwnedItems(descriptionParts));
 					}
@@ -973,7 +991,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				else
 				{
 					//only one item so add the direct owned elements
-					ownedItems.AddRange(directOwnedElements);
+					ownedItems.AddRange(candidateItems);
 					//Add also the diagrams owned by this package
 					ownedItems.AddRange(getOwnedDiagrams(firstpart));
 				}

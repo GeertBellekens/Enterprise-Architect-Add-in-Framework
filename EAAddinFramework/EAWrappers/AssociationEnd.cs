@@ -415,5 +415,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 	
 		#endregion
+		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
+		{
+			//return the owned items of the type of the associationEnd
+			var ownedItems = new List<UML.Extended.UMLItem>();
+			var elementType = this.type as Element;
+			if (elementType != null)
+			{
+				ownedItems.AddRange(((Element)this.type).findOwnedItems(descriptionParts));
+			}
+			return ownedItems;
+		}
   }
 }

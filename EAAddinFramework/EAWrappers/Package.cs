@@ -278,15 +278,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				string attributeName = descriptorParts[1];
 				//first look for an attribute
 				foundItems.AddRange(getOwnedAttributes(ownerName,attributeName,packageTreeIDString));
-				//TODO then look for a nested class or linked class
-				//TODO then look for an operation
-				//TODO then look for an association
 			}
-			else if (descriptorParts.Count > 2)
+			else if (descriptorParts.Count >= 2 
+			         && !foundItems.Any())
 			{
 				//top down approach
-				//look for the first part and start searching from there
+				//start by the elemnts directly owned by the package
 				foundItems.AddRange(findOwnedItems(descriptorParts));
+				if (! foundItems.Any())
+				{
+					//if still nothing found then we start by all elements somewhere in the package tree that match the first part
+					var candidates = this.getOwnedElements(descriptorParts[0], packageTreeIDString);
+					foreach (var candiate in candidates) 
+					{
+						foundItems.AddRange(candiate.findOwnedItems(descriptorParts));
+					}
+				}
+				
 			}
 			//if still nothing found then get the base implemetation
 			if (foundItems.Count == 0) foundItems.AddRange(base.findOwnedItems(itemDescriptor));

@@ -205,7 +205,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 		#endregion
-
+		
 		#region implemented abstract members of Element
 		public override bool makeWritable(bool overrideLocks)
 		{
@@ -220,5 +220,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return ((Element)this.owner).getLockedUserID();
 		}
 		#endregion
+		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
+		{
+			//return the owned items of the type of the attribute
+			var ownedItems = new List<UML.Extended.UMLItem>();
+			var elementType = this.type as Element;
+			if (elementType != null)
+			{
+				ownedItems.AddRange(((Element)this.type).findOwnedItems(descriptionParts));
+			}
+			return ownedItems;
+		}
 	}
 }
