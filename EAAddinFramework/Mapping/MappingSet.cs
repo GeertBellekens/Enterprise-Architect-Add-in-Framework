@@ -39,7 +39,11 @@ namespace EAAddinFramework.Mapping
 				_mappings = value.Cast<Mapping>().ToList();
 			}
 		}
-
+		
+		public void addMapping(MP.Mapping mapping)
+		{
+			this._mappings.Add((Mapping)mapping);
+		}
 		#endregion
 	}
 }

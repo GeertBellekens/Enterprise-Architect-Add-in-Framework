@@ -48,5 +48,14 @@ namespace EAAddinFramework.Mapping
 		}
 
 		#endregion
+
+		#region implemented abstract members of Mapping
+
+		public override void save()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }

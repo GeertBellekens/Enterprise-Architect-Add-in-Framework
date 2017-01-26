@@ -25,6 +25,21 @@ namespace EAAddinFramework.Mapping
 		{
 			this.wrappedTaggedValue = wrappedTaggedValue;
 		}
+		public TaggedValueMapping(Element source, Element target,string sourcePath,string targetPath,MappingSettings settings):base(source,target,sourcePath,targetPath)
+		{
+			string tagName = settings.linkedAttributeTagName;
+			if (target is ConnectorWrapper)
+			{
+				tagName = settings.linkedAssociationTagName;
+			}
+			string tagComments =string.Empty;
+			List<string> commentParts = new List<string>();
+			if (!string.IsNullOrEmpty(sourcePath)) commentParts.Add("mappingSourcePath=" + sourcePath);
+			if (!string.IsNullOrEmpty(targetPath)) commentParts.Add("mappingTargetPath=" + targetPath);
+			tagComments = string.Join(";",commentParts);
+			source.addTaggedValue(tagName,target.uniqueID,tagComments);
+		}
+		
 
 		#region implemented abstract members of Mapping
 		public override MP.MappingLogic mappingLogic 
@@ -52,6 +67,15 @@ namespace EAAddinFramework.Mapping
 				throw new NotImplementedException();
 			}
 		}
+		#endregion
+
+		#region implemented abstract members of Mapping
+
+		public override void save()
+		{
+			this.wrappedTaggedValue.save();
+		}
+
 		#endregion
 	}
 }

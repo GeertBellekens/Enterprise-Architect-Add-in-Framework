@@ -158,8 +158,10 @@ namespace EAAddinFramework.Mapping
 			MappingSet newMappingSet = null;
 			var engine = new FileHelperEngine<CSVMappingRecord>();
 			var parsedFile = engine.ReadFile(filePath);
+			int i = 0;
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
+				i++;
 				//get the proper descriptors for source and target
 				string sourceDescriptor = mappingRecord.source;
 				if (! string.IsNullOrEmpty(mappingRecord.sourcePath)) sourceDescriptor = mappingRecord.sourcePath + "." + mappingRecord.source;
@@ -184,12 +186,63 @@ namespace EAAddinFramework.Mapping
 				}
 				else
 				{
+					Package rootPackage = null;
 					//first check if the mappingSet is already created
 					if (newMappingSet == null)
 					{
 						//determine if this should be a PackageMappingSet or an ElementMappingSet
+						if (sourceRootElement is Package)
+						{
+							rootPackage = sourceRootElement as Package;
+							newMappingSet = new PackageMappingSet(sourceRootElement as Package,true);
+						}
+						else if (sourceRootElement is ElementWrapper)
+						{
+							rootPackage = sourceRootElement.owningPackage as Package;
+							newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper,true);
+						}
+						else
+						{
+							rootPackage = source.owningPackage as Package;
+							newMappingSet = new PackageMappingSet((Package)source.owningPackage,true);
+						}
+						
 					}
-					//TODO: create actual mapping
+					MappingLogic newMappingLogic = null;
+					//check if there is any mapping logic
+					if (! string.IsNullOrEmpty(mappingRecord.mappingLogic))
+					{
+						if (settings.useInlineMappingLogic)
+						{
+							newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
+						}
+						else
+						{
+							//determine where the mapping logic element should be stored
+							//TODO check for existing mapping logic elements
+							//TODO dynamically create based on the type string in the settings
+							 var mappingElement = model.factory.createNewElement<Activity>(rootPackage, "mapping logic " + i);
+							 mappingElement.notes = mappingRecord.mappingLogic;
+							 mappingElement.save();
+							 //create the mappingLogic
+							 newMappingLogic = new MappingLogic(mappingElement);
+							 
+						}
+					}
+					Mapping newMapping = null;
+					//create the new mapping
+					if (settings.useTaggedValues)
+					{
+						//TODO newMapping = new TaggedValueMapping():
+					}
+					else
+					{
+						//TODO newMapping = new ConnectorMapping();
+					}
+					if (newMappingLogic != null) newMapping.mappingLogic = newMappingLogic;
+					newMapping.save();
+					//TODO newMappingSet.addMapping();
+					
 				}
 			}
 			return newMappingSet;

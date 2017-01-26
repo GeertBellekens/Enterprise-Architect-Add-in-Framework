@@ -51,6 +51,7 @@ namespace EAAddinFramework.Mapping
 			}
 		}
 
+		public abstract void save();
 		public abstract MP.MappingLogic mappingLogic {get;set;}
 
 
