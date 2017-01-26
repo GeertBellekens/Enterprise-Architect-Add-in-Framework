@@ -243,7 +243,7 @@ namespace EAAddinFramework.Databases.Compare
 				foreach (ForeignKey existingForeignkey in existingTable.foreignKeys) 
 				{
 					ForeignKey newForeignkey = null;
-					newForeignkey = newTable.getCorrespondingForeignKey(existingForeignkey);
+					if (newTable != null) newForeignkey = newTable.getCorrespondingForeignKey(existingForeignkey);
 					addedComparedItems.Add(comparedItem.addOwnedComparison(newForeignkey,existingForeignkey));
 				}
 				//then add the new foreign keys that don't have an existing foreign key
