@@ -116,7 +116,10 @@ namespace EAAddinFramework.Databases
 				this.isNotNullable = _isNotNullable;
 				//set position
 				_wrappedattribute.position = _position;
-				//save
+				
+				// InitialValue
+				this.initialValue = this.initialValue;
+        		//save
 				_wrappedattribute.save();
 				//set isOverridden
 				this.isOverridden = this.isOverridden;
@@ -125,8 +128,7 @@ namespace EAAddinFramework.Databases
 				//logical attribute tag value
 				if (traceTaggedValue == null) createTraceTaggedValue();
 				
-        // InitialValue
-        this._wrappedattribute.setDefaultValue(this._initialValue);
+        
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 
