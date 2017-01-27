@@ -33,8 +33,13 @@ namespace EAAddinFramework.Databases
 			this.databaseOwner.addTable(this);
 		}
 		public  override List<UML.Classes.Kernel.Element> logicalElements {
-			get {
+			get 
+			{
 				return this.logicalClasses.Cast<UML.Classes.Kernel.Element>().ToList();
+			}
+			set
+			{
+				this._logicalClasses = value.Cast<Class>().ToList();
 			}
 		}
 		internal bool compareOnly
@@ -215,7 +220,7 @@ namespace EAAddinFramework.Databases
 		{
 			Database existingDatabase = owner as Database;
 			var newTable = new Table((Database)existingDatabase,this.name);
-			newTable._logicalClasses = new List<Class>(logicalClasses);
+			newTable.logicalElements = this.logicalElements;
 			newTable.derivedFromItem = this;
 			newTable.tableSpace = this.tableSpace;
 			if (save) newTable.save(); 

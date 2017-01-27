@@ -63,8 +63,14 @@ namespace EAAddinFramework.Databases
 		}
 
 		public override List<UML.Classes.Kernel.Element> logicalElements {
-			get {
-				throw new NotImplementedException();
+			get 
+			{
+				//there is no logical element for an index
+				return new List<UML.Classes.Kernel.Element>();
+			}
+			set
+			{
+				//do nothing as there is not logical element for an index
 			}
 		}
 

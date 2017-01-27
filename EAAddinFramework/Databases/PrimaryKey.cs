@@ -43,6 +43,10 @@ namespace EAAddinFramework.Databases
 				}
 				return _logicalElements;
 			}
+			set
+			{
+				//no nothing, you cannot set the logical element directly but you have to go through the involved columns.
+			}
 		}
 		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{

@@ -20,7 +20,7 @@ namespace EAAddinFramework.Databases
 		private TSF_EA.Attribute _logicalAttribute;
 		private List<TSF_EA.Attribute> _logicalAttributes;
 		private string _name;
-		private bool _isNotNullable;
+		
 		public Column(Table owner, TSF_EA.Attribute attribute)
 		{
 			this._ownerTable = owner;
@@ -63,23 +63,26 @@ namespace EAAddinFramework.Databases
 			get { return _logicalAttribute != null && _logicalAttribute.owner != this._ownerTable.logicalElement;}
 		}
 
-		private int _position;
+		private int? _position;
 		public override int position 
 		{
 			get 
 			{
-				if (_wrappedattribute != null)
+				if (! _position.HasValue)
 				{
-					this._position = _wrappedattribute.position;
+					if (_wrappedattribute != null)
+					{
+						this._position = _wrappedattribute.position;
+					}
 				}
-				return _position;
+				return _position.GetValueOrDefault();
 			}
 			set 
 			{
 				this._position = value;
 				if (_wrappedattribute != null)
 				{
-					_wrappedattribute.position = _position;
+					_wrappedattribute.position = _position.Value;
 				}
 			}
 		}
@@ -113,14 +116,14 @@ namespace EAAddinFramework.Databases
 					_wrappedattribute.length = this.type.length;
 				}
 				//is not nullable
-				this.isNotNullable = _isNotNullable;
+				this.isNotNullable = this.isNotNullable;
 				//set position
-				_wrappedattribute.position = _position;
-				
+				this.position = this.position;
 				// InitialValue
 				this.initialValue = this.initialValue;
         		//save
 				_wrappedattribute.save();
+				//following properties are saved as tagged values so need to be set after saving the wrapped atttribute
 				//set isOverridden
 				this.isOverridden = this.isOverridden;
 				//set renamed
@@ -140,6 +143,10 @@ namespace EAAddinFramework.Databases
 			get 
 			{
 				return logicalAttributes.Cast<UML.Classes.Kernel.Element>().ToList();
+			}
+			set
+			{
+				this._logicalAttributes = value.Cast<TSF_EA.Attribute>().ToList();
 			}
 		}
 		#region implemented abstract members of DatabaseItem
@@ -169,12 +176,14 @@ namespace EAAddinFramework.Databases
 			if (newTable != null)
 			{
 				var newColumn = new Column(newTable,this.name);
-				newColumn.isNotNullable = _isNotNullable;
-				newColumn.type = _type;
-				newColumn.logicalAttribute = _logicalAttribute;
+				newColumn.isNotNullable = isNotNullable;
+				newColumn.type = type;
+				newColumn.logicalAttribute = logicalAttribute;
+				newColumn.logicalElements = logicalElements;
 				newColumn.isOverridden = isOverridden;
 				newColumn.isRenamed = isRenamed;
-				newColumn.position = _position;
+				newColumn.position = position;
+				newColumn.initialValue = initialValue;
 				newColumn.derivedFromItem = this;
 				if (save) newColumn.save();
 				return newColumn;
@@ -364,17 +373,21 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public bool isNotNullable 
+		private bool? _isNotNullable;
+		public bool isNotNullable
 		{
 			get 
 			{
-				if(_wrappedattribute != null) _isNotNullable = _wrappedattribute.allowDuplicates;
-				return _isNotNullable;
+				if (! _isNotNullable.HasValue)
+				{
+					if(_wrappedattribute != null) _isNotNullable = _wrappedattribute.allowDuplicates;
+				}
+				return _isNotNullable.GetValueOrDefault();
 			}
 			set 
 			{
 				_isNotNullable = value;
-				if (_wrappedattribute != null) this._wrappedattribute.allowDuplicates = _isNotNullable;
+				if (_wrappedattribute != null) this._wrappedattribute.allowDuplicates = _isNotNullable.Value;
 			}
 		}
 

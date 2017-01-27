@@ -37,6 +37,10 @@ namespace EAAddinFramework.Databases
 			{
 				return new List<UML.Classes.Kernel.Element>(){ this.logicalAssociation};
 			}
+			set
+			{
+				this.logicalAssociation = value.OfType<Association>().FirstOrDefault();
+			}
 		}
 
 		internal string _onDelete;
@@ -174,6 +178,10 @@ namespace EAAddinFramework.Databases
 			set
 			{
 				_logicalAssociation = value;
+				if (this._wrappedOperation != null)
+				{
+					this._wrappedOperation.addTaggedValue("sourceAssociation",value.uniqueID);
+				}
 			}
 		}
 		internal Association wrappedAssociation

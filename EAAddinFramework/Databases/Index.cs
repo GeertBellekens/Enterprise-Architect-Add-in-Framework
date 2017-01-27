@@ -84,13 +84,14 @@ namespace EAAddinFramework.Databases
 		#endregion
 
 		public override List<UML.Classes.Kernel.Element> logicalElements{
-			get {
-				var _logicalElements = new List<UML.Classes.Kernel.Element>();
-				foreach (var involvedColumn in involvedColumns) 
-				{
-					_logicalElements.AddRange(involvedColumn.logicalElements);
-				}
-				return _logicalElements;
+			get 
+			{
+				//there is no logical element for an index
+				return new List<UML.Classes.Kernel.Element>();
+			}
+			set
+			{
+				//do nothing as there is not logical element for an index
 			}
 		}
 

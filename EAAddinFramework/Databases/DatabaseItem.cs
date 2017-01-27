@@ -103,7 +103,7 @@ namespace EAAddinFramework.Databases
 		{
 			if (this.wrappedElement != null) this.wrappedElement.select();
 		}
-		public abstract List<UML.Classes.Kernel.Element> logicalElements {get;}
+		public abstract List<UML.Classes.Kernel.Element> logicalElements {get;set;}
 		public UML.Classes.Kernel.Element logicalElement
 		{
 			get{ return this.logicalElements.FirstOrDefault();}

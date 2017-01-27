@@ -55,6 +55,10 @@ namespace EAAddinFramework.Databases
 				//TODO: return logical package if ever needed
 				return new List<UML.Classes.Kernel.Element>();
 			}
+			set
+			{
+				//do nothing;
+			}
 		}
 		#endregion
 
