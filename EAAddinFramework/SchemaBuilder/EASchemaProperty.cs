@@ -184,6 +184,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
 					dependency.addRelatedElement(this.subSetProperty.type);
+					dependency.targetEnd.multiplicity = this.subSetProperty.multiplicity;
 					dependency.save();
 				}
 			}
