@@ -30,7 +30,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	return this.wrappedModel.GetFieldFromFormat(externalFormat,externalNotes);
     }
-    	
+
+	public void activateTab(string tabName)
+	{
+		this.wrappedModel.ActivateTab(tabName);
+	}
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>

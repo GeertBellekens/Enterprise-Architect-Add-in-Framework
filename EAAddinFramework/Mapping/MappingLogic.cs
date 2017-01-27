@@ -12,11 +12,12 @@ namespace EAAddinFramework.Mapping
 	public class MappingLogic:MP.MappingLogic
 	{
 		private string _description;
-		private ElementWrapper _wrappedElement;
-		internal ElementWrapper wrappedElement
+		internal ElementWrapper _wrappedElement;
+
+		public UML.Classes.Kernel.Element mappingElement 
 		{
 			get{return _wrappedElement;}
-			set{this._wrappedElement = value;}
+			set{this._wrappedElement = value as ElementWrapper;}
 		}
 		public MappingLogic(string logicDescription)
 		{
@@ -24,7 +25,7 @@ namespace EAAddinFramework.Mapping
 		}
 		public MappingLogic(ElementWrapper wrappedElement)
 		{
-			this.wrappedElement = wrappedElement;
+			this.mappingElement = wrappedElement;
 		}
 
 		#region MappingLogic implementation
@@ -33,17 +34,17 @@ namespace EAAddinFramework.Mapping
 			get 
 			{
 				if (string.IsNullOrEmpty(_description)
-				   && this.wrappedElement != null)
+				   && this.mappingElement != null)
 				{
-					_description = wrappedElement.notes;
+					_description = _wrappedElement.notes;
 				}
 				return _description;
 			}
 			set 
 			{
-				if (wrappedElement != null)
+				if (mappingElement != null)
 				{
-					wrappedElement.notes = value;
+					_wrappedElement.notes = value;
 				}
 				_description = value;
 			}

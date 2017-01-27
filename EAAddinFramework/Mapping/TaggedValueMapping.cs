@@ -33,11 +33,9 @@ namespace EAAddinFramework.Mapping
 				tagName = settings.linkedAssociationTagName;
 			}
 			string tagComments =string.Empty;
-			List<string> commentParts = new List<string>();
-			if (!string.IsNullOrEmpty(sourcePath)) commentParts.Add("mappingSourcePath=" + sourcePath);
-			if (!string.IsNullOrEmpty(targetPath)) commentParts.Add("mappingTargetPath=" + targetPath);
-			tagComments = string.Join(";",commentParts);
-			source.addTaggedValue(tagName,target.uniqueID,tagComments);
+			if (!string.IsNullOrEmpty(sourcePath)) tagComments = MappingFactory.setValueForKey("mappingSourcePath", sourcePath,tagComments);
+			if (!string.IsNullOrEmpty(targetPath)) tagComments = MappingFactory.setValueForKey("mappingTargetPath", targetPath,tagComments);
+			this.wrappedTaggedValue = source.addTaggedValue(tagName,target.uniqueID,tagComments);
 		}
 		
 
@@ -64,7 +62,9 @@ namespace EAAddinFramework.Mapping
 			}
 			set 
 			{
-				throw new NotImplementedException();
+				string logicString = value.description;
+				if (value.mappingElement != null) logicString = value.mappingElement.uniqueID;
+				this.wrappedTaggedValue.comment = MappingFactory.setValueForKey("mappingLogic",mappingLogic.mappingElement.uniqueID,this.wrappedTaggedValue.comment);
 			}
 		}
 		#endregion

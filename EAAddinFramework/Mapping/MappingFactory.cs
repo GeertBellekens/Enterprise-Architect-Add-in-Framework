@@ -147,6 +147,24 @@ namespace EAAddinFramework.Mapping
 			//if nothing found then return null;
 			return null;
 		}
+		public static string setValueForKey(string key,string value,string source)
+		{
+			//first split the string into keyvalue pairs
+			var keyValuePairs = source.Split(';').ToList();
+			foreach (var keyValuePair in keyValuePairs) 
+			{
+				//then split the key and value
+				var keyValues = keyValuePair.Split('=');
+				if (keyValues.Count() >= 2 && keyValues[0] == key)
+				{
+					keyValues[1] = value;
+					return source.Replace(keyValuePair, string.Join("=", keyValues));
+				}
+			}
+			//if nothing found then weadd it
+			keyValuePairs.Add(key + "=" + value);
+			return string.Join(";",keyValuePairs);
+		}
 		/// <summary>
 		/// create a mappingSet based on the data in the CSV file
 		/// </summary>
@@ -219,21 +237,27 @@ namespace EAAddinFramework.Mapping
 						else
 						{
 							//determine where the mapping logic element should be stored
-							//TODO check for existing mapping logic elements
-							//TODO dynamically create based on the type string in the settings
-							 var mappingElement = model.factory.createNewElement<Activity>(rootPackage, "mapping logic " + i);
-							 mappingElement.notes = mappingRecord.mappingLogic;
-							 mappingElement.save();
-							 //create the mappingLogic
-							 newMappingLogic = new MappingLogic(mappingElement);
-							 
+							//TODO check for existing mapping logic elements			
+							 var mappingElement = model.factory.createNewElement(rootPackage, "mapping logic " + i,settings.mappingLogicType) as ElementWrapper;
+							 if (mappingElement != null)
+							 {
+							 	mappingElement.notes = mappingRecord.mappingLogic;
+							 	mappingElement.save();
+							 	//create the mappingLogic
+							 	newMappingLogic = new MappingLogic(mappingElement);
+							 }
+							 else
+							 {
+							 	//else we create an inline mapping logic anyway
+							 	newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
+							 } 
 						}
 					}
 					Mapping newMapping = null;
 					//create the new mapping
 					if (settings.useTaggedValues)
 					{
-						//TODO newMapping = new TaggedValueMapping():
+						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					else
 					{
@@ -241,7 +265,7 @@ namespace EAAddinFramework.Mapping
 					}
 					if (newMappingLogic != null) newMapping.mappingLogic = newMappingLogic;
 					newMapping.save();
-					//TODO newMappingSet.addMapping();
+					newMappingSet.addMapping(newMapping);
 					
 				}
 			}

@@ -389,7 +389,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		public string getPackageIDString(ICollection<UML.Classes.Kernel.Package> packages)
 		{
-			return string.Join(",",packages);
+			return string.Join(",",packages.Select(x => wrappedPackage.PackageID));
 		}
 		
 		
