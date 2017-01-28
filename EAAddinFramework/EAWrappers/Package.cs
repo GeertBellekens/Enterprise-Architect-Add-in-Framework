@@ -279,8 +279,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				//first look for an attribute
 				foundItems.AddRange(getOwnedAttributes(ownerName,attributeName,packageTreeIDString));
 			}
-			else if (descriptorParts.Count >= 2 
-			         && !foundItems.Any())
+			if (descriptorParts.Count >= 2 
+			      && !foundItems.Any())
 			{
 				//top down approach
 				//start by the elemnts directly owned by the package

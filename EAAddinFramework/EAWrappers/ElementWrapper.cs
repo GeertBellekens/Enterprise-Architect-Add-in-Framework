@@ -919,6 +919,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" and d.ParentID = " + this.id;
 			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
 		}
+
+
 		/// <summary>
 		/// get the associationEnds on the far end that correspond with the given rolename
 		/// This is either when the rolename matches, or when the rolename is empty and the name of the opposite class matches
@@ -930,7 +932,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			var assocationEnds = new List<AssociationEnd>();
 			//first get the assocations, then get the end that corresponds with the rolename
 			//this is either when the rolename matches, or when the rolename is empty and the name of the opposite class matches
-			string sqlGetConnectorWrappers = "select c.Connector_ID from t_connector c " +
+			string sqlGetConnectorWrappers = 
+										//association with the given rolename
+										"select c.Connector_ID from t_connector c " +
 										" where c.Start_Object_ID = " + this.id + 
 										" and c.DestRole = '" + rolename + "' " +
 										" union " +
@@ -938,6 +942,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" where c.End_Object_ID = " + this.id + 
 										" and c.SourceRole = '" + rolename + "' " +
 										" union " +
+										//associations without rolename where the other end has the given name
 										" select c.Connector_ID from (t_connector c " +
 										" inner join t_object o on c.End_Object_ID = o.Object_ID) " +
 										" where c.Start_Object_ID = " + this.id + 
@@ -948,7 +953,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" inner join t_object o on c.Start_Object_ID = o.Object_ID) " +
 										" where c.End_Object_ID = " + this.id + 
 										" and c.SourceRole is null " +
-										" and o.name = '" + rolename + "' ";
+										" and o.name = '" + rolename + "' "+
+										//associations with the given name
+										" union " +
+										" select c.Connector_ID from t_connector c " +
+										" where c.Start_Object_ID = " + this.id + 
+										" and c.Name = '" + rolename + "' " +
+										" union " +
+										" select c.Connector_ID from t_connector c " +
+										" where c.End_Object_ID = " + this.id + 
+										" and c.Name = '" + rolename + "' ";
 			var connectorWrappers = this.model.getRelationsByQuery(sqlGetConnectorWrappers);
 			//loop the associations to get the ends at the other side
 			foreach (var connectorWrapper in connectorWrappers)

@@ -257,6 +257,9 @@ namespace EAAddinFramework.Mapping
 					//create the new mapping
 					if (settings.useTaggedValues)
 					{
+						//if the source or target are associationEnds then we replace them by their association
+						if (source is AssociationEnd) source = ((AssociationEnd)source).association as Element;
+						if (target is AssociationEnd) target = ((AssociationEnd)target).association as Element;
 						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					else
