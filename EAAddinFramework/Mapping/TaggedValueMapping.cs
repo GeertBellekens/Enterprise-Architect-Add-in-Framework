@@ -35,7 +35,7 @@ namespace EAAddinFramework.Mapping
 			string tagComments =string.Empty;
 			if (!string.IsNullOrEmpty(sourcePath)) tagComments = MappingFactory.setValueForKey("mappingSourcePath", sourcePath,tagComments);
 			if (!string.IsNullOrEmpty(targetPath)) tagComments = MappingFactory.setValueForKey("mappingTargetPath", targetPath,tagComments);
-			this.wrappedTaggedValue = source.addTaggedValue(tagName,target.uniqueID,tagComments);
+			this.wrappedTaggedValue = source.addTaggedValue(tagName,target.uniqueID,tagComments,true);
 		}
 		
 

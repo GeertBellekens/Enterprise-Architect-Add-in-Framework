@@ -386,8 +386,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	//default implementation, search based on the fully qualified name
     	var ownedItems = new List<UML.Extended.UMLItem>();
-    	var item = this.model.getItemFromFQN(this.fqn + "." + itemDescriptor);
-    	if (item != null) ownedItems.Add(item);
+    	// split descriptor and search fo the parts
+    	var descriptorParts = itemDescriptor.Split('.').ToList();
+    	//normally the first part is the name of this item, so we remove that
+    	if (descriptorParts.Any() && descriptorParts[0] == this.name)
+    	{
+    		descriptorParts.RemoveAt(0);
+    	}
+    	ownedItems.AddRange(findOwnedItems(descriptorParts));
+    	//if not found anything directly then try with FQN
+    	if (!ownedItems.Any())
+    	{
+    		var item = this.model.getItemFromFQN(this.fqn + "." + itemDescriptor);
+    		if (item != null) ownedItems.Add(item);
+    	}
     	return ownedItems;
     }
     public virtual List<UML.Extended.UMLItem> findOwnedItems(List<String> descriptionParts)

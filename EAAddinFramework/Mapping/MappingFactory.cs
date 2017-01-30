@@ -149,16 +149,20 @@ namespace EAAddinFramework.Mapping
 		}
 		public static string setValueForKey(string key,string value,string source)
 		{
+			var keyValuePairs = new List<string>();
 			//first split the string into keyvalue pairs
-			var keyValuePairs = source.Split(';').ToList();
-			foreach (var keyValuePair in keyValuePairs) 
+			if (!string.IsNullOrEmpty(source))
 			{
-				//then split the key and value
-				var keyValues = keyValuePair.Split('=');
-				if (keyValues.Count() >= 2 && keyValues[0] == key)
+				keyValuePairs = source.Split(new char[]{';'},StringSplitOptions.RemoveEmptyEntries).ToList();
+				foreach (var keyValuePair in keyValuePairs) 
 				{
-					keyValues[1] = value;
-					return source.Replace(keyValuePair, string.Join("=", keyValues));
+					//then split the key and value
+					var keyValues = keyValuePair.Split('=');
+					if (keyValues.Count() >= 2 && keyValues[0] == key)
+					{
+						keyValues[1] = value;
+						return source.Replace(keyValuePair, string.Join("=", keyValues));
+					}
 				}
 			}
 			//if nothing found then weadd it
@@ -236,21 +240,25 @@ namespace EAAddinFramework.Mapping
 						}
 						else
 						{
-							//determine where the mapping logic element should be stored
-							//TODO check for existing mapping logic elements			
-							 var mappingElement = model.factory.createNewElement(rootPackage, "mapping logic " + i,settings.mappingLogicType) as ElementWrapper;
-							 if (mappingElement != null)
+							 //Check fo an existing mapping logic
+							 newMappingLogic = getExistingMappingLogic(model, settings, mappingRecord.mappingLogic, rootPackage);
+							 
+							 if (newMappingLogic == null) 
 							 {
-							 	mappingElement.notes = mappingRecord.mappingLogic;
-							 	mappingElement.save();
-							 	//create the mappingLogic
-							 	newMappingLogic = new MappingLogic(mappingElement);
+								 var mappingElement = model.factory.createNewElement(rootPackage, "mapping logic " + i,settings.mappingLogicType) as ElementWrapper;
+								 if (mappingElement != null)
+								 {
+								 	mappingElement.notes = mappingRecord.mappingLogic;
+								 	mappingElement.save();
+								 	//create the mappingLogic
+								 	newMappingLogic = new MappingLogic(mappingElement);
+								 }
+								 else
+								 {
+								 	//else we create an inline mapping logic anyway
+								 	newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
+								 } 
 							 }
-							 else
-							 {
-							 	//else we create an inline mapping logic anyway
-							 	newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
-							 } 
 						}
 					}
 					Mapping newMapping = null;
@@ -260,7 +268,9 @@ namespace EAAddinFramework.Mapping
 						//if the source or target are associationEnds then we replace them by their association
 						if (source is AssociationEnd) source = ((AssociationEnd)source).association as Element;
 						if (target is AssociationEnd) target = ((AssociationEnd)target).association as Element;
-						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
+						var sourcePath = string.Join(".",new [] { mappingRecord.sourcePath,mappingRecord.source});
+						var targetPath = string.Join(".",new [] { mappingRecord.targetPath,mappingRecord.target});
+						newMapping = new TaggedValueMapping(source,target,sourcePath,targetPath,settings);
 					}
 					else
 					{
@@ -274,16 +284,43 @@ namespace EAAddinFramework.Mapping
 			}
 			return newMappingSet;
 		}
+		/// <summary>
+		/// get the existng mapping logic in the given package with the given logic description in order to re-use existing mapping logics
+		/// </summary>
+		/// <param name="model">the model to use</param>
+		/// <param name="settings">maping settings to use</param>
+		/// <param name="logicDescription">the description for the mapping logic</param>
+		/// <param name="ownerPackage">the owner package to look in</param>
+		/// <returns></returns>
+		public static MappingLogic getExistingMappingLogic(Model model, MappingSettings settings, string logicDescription, Package ownerPackage)
+		{
+			string EAMappingType = ((Factory)model.factory).translateTypeName(settings.mappingLogicType);
+			string sqlGetExistingMapping = "select * from t_object o " +
+											" where o.Package_ID =" + ownerPackage.packageID +
+											" and o.Note ='" + logicDescription + "' " +
+											" and o.Object_Type = '" + EAMappingType + "' ";
+			var mappingElement = model.getElementWrappersByQuery(sqlGetExistingMapping).FirstOrDefault();
+			return mappingElement != null ? new MappingLogic(mappingElement) : null; //return null if no mapping element found
+		}
+		/// <summary>
+		/// find an element based on a descriptor
+		/// </summary>
+		/// <param name="model">the model to searc in</param>
+		/// <param name="elementDescriptor">the descriptor to search for</param>
+		/// <param name="rootElement">the root element to start from</param>
+		/// <returns>the element that corresponds to the descriptor</returns>
 		public static Element findElement(Model model, string elementDescriptor, Element rootElement)
 		{
 			Element foundElement = null;
+
 			if (rootElement == null)
 			{
-				//the elementDescriptor must be a fully qualified name
+				//try with fully qualified name
 				foundElement = model.getItemFromFQN(elementDescriptor) as Element;
 			}
 			else
 			{
+				//find as owned item 
 				foundElement = rootElement.findOwnedItems(elementDescriptor).OfType<Element>().FirstOrDefault();
 			}
 			return foundElement;
