@@ -64,7 +64,7 @@ namespace EAAddinFramework.Mapping
 			{
 				string logicString = value.description;
 				if (value.mappingElement != null) logicString = value.mappingElement.uniqueID;
-				this.wrappedTaggedValue.comment = MappingFactory.setValueForKey("mappingLogic",mappingLogic.mappingElement.uniqueID,this.wrappedTaggedValue.comment);
+				this.wrappedTaggedValue.comment = MappingFactory.setValueForKey("mappingLogic",logicString,this.wrappedTaggedValue.comment);
 			}
 		}
 		#endregion

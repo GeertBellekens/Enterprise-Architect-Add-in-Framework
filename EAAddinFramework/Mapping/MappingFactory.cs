@@ -182,6 +182,7 @@ namespace EAAddinFramework.Mapping
 			var engine = new FileHelperEngine<CSVMappingRecord>();
 			var parsedFile = engine.ReadFile(filePath);
 			int i = 0;
+			Package rootPackage = null;
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
 				i++;
@@ -203,7 +204,6 @@ namespace EAAddinFramework.Mapping
 				}
 				else
 				{
-					Package rootPackage = null;
 					//first check if the mappingSet is already created
 					if (newMappingSet == null)
 					{
