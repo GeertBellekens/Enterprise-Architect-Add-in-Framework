@@ -290,7 +290,7 @@ namespace EAAddinFramework.Mapping
 			string EAMappingType = ((Factory)model.factory).translateTypeName(settings.mappingLogicType);
 			string sqlGetExistingMapping = "select * from t_object o " +
 											" where o.Package_ID =" + ownerPackage.packageID +
-											" and o.Note ='" + logicDescription + "' " +
+											" and o.Note like'" + logicDescription + "' " +
 											" and o.Object_Type = '" + EAMappingType + "' ";
 			var mappingElement = model.getElementWrappersByQuery(sqlGetExistingMapping).FirstOrDefault();
 			return mappingElement != null ? new MappingLogic(mappingElement) : null; //return null if no mapping element found
