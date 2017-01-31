@@ -32,7 +32,7 @@ namespace EAAddinFramework.Mapping
 			List<Mapping> returnedMappings = new List<Mapping>();
 			foreach (var classElement in wrappedPackage.ownedElements.OfType<ElementWrapper>()) 
 			{
-				returnedMappings.AddRange(MappingFactory.createOwnedMappings(classElement,wrappedPackage.name + "." + classElement.name,targetRootElement,true));
+				returnedMappings.AddRange(MappingFactory.createOwnedMappings(classElement,classElement.name,targetRootElement,true));
 			}
 			return returnedMappings;
 		}

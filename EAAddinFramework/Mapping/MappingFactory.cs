@@ -45,8 +45,9 @@ namespace EAAddinFramework.Mapping
 				string mappingSourcePath = getValueForKey(mappingSourcePathName,mappedTaggedValue.comment);
 				string targetBasePath = getValueForKey(mappingTargetPathName,mappedTaggedValue.comment);
 
-				//if not filled in or corresponds to the attributeBasePath
-				if (string.IsNullOrEmpty(mappingSourcePath) || mappingSourcePath == basepath)
+				//if not filled in or corresponds to the attributeBasePath or the attributeBasePath + the name of the attribute
+				if (string.IsNullOrEmpty(mappingSourcePath) || mappingSourcePath == basepath 
+				    || mappingSourcePath == basepath + "." + attribute.name)
 				{
 					TaggedValueMapping tagMapping;
 					if (! string.IsNullOrEmpty(targetBasePath))
@@ -184,26 +185,20 @@ namespace EAAddinFramework.Mapping
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
 				i++;
-				//get the proper descriptors for source and target
-				string sourceDescriptor = mappingRecord.source;
-				if (! string.IsNullOrEmpty(mappingRecord.sourcePath)) sourceDescriptor = mappingRecord.sourcePath + "." + mappingRecord.source;
-				string targetDescriptor = mappingRecord.target;
-				if (! string.IsNullOrEmpty(mappingRecord.targetPath)) targetDescriptor = mappingRecord.targetPath + "." + mappingRecord.target;
-				
 				//find source
-				var source = findElement(model, sourceDescriptor, sourceRootElement);
+				var source = findElement(model, mappingRecord.sourcePath, sourceRootElement);
 				//find target
-				var target = findElement(model, targetDescriptor,targetRootElement);
+				var target = findElement(model, mappingRecord.targetPath,targetRootElement);
 				if (source == null )
 				{
 					EAOutputLogger.log(model,settings.outputName
-					                   ,string.Format("Could not find element that matches: '{0}'",sourceDescriptor)
+					                   ,string.Format("Could not find element that matches: '{0}'",mappingRecord.sourcePath)
 					                   ,0,LogTypeEnum.error);
 				}
 				else if( target == null)
 				{
 					EAOutputLogger.log(model,settings.outputName
-					                   ,string.Format("Could not find element that matches: '{0}'",targetDescriptor)
+					                   ,string.Format("Could not find element that matches: '{0}'",mappingRecord.targetPath)
 					                   ,0,LogTypeEnum.error);
 				}
 				else
@@ -268,9 +263,7 @@ namespace EAAddinFramework.Mapping
 						//if the source or target are associationEnds then we replace them by their association
 						if (source is AssociationEnd) source = ((AssociationEnd)source).association as Element;
 						if (target is AssociationEnd) target = ((AssociationEnd)target).association as Element;
-						var sourcePath = string.Join(".",new [] { mappingRecord.sourcePath,mappingRecord.source});
-						var targetPath = string.Join(".",new [] { mappingRecord.targetPath,mappingRecord.target});
-						newMapping = new TaggedValueMapping(source,target,sourcePath,targetPath,settings);
+						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					else
 					{

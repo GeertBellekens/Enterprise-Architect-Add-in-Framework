@@ -11,9 +11,7 @@ namespace EAAddinFramework.Mapping
 	[DelimitedRecord(";")]
 	public class CSVMappingRecord
 	{
-		public string source;
 		public string sourcePath;
-		public string target;
 		public string targetPath;
 		public string mappingLogic;
 	}
