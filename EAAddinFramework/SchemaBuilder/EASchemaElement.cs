@@ -473,6 +473,9 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				foreach (UTF_EA.Attribute attribute in this.subsetElement.attributes) 
 				{
+					//tell the user what we are doing 
+					EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching subset attribute: '" + attribute.name + "' to a schema property"
+					                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 					EASchemaProperty matchingProperty = this.getMatchingSchemaProperty(attribute);
 					if (matchingProperty != null)
 					{
@@ -502,6 +505,9 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					foreach (UTF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals) 
 					{
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching subset literal: '" + literal.name + "' to a schema property"
+					                   ,subsetElementWrapper.id, LogTypeEnum.log);
 						EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
 						if (matchingLiteral != null)
 						{
@@ -582,8 +588,11 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				foreach (UTF_EA.Association association in this.subsetElement.getRelationships<UML.Classes.Kernel.Association>()) 
+				foreach (UTF_EA.Association association in this.subsetElement.getRelationships<Association>()) 
 				{
+					//tell the user what we are doing 
+				EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching relations of subset element: '" + subsetElement.name + "' to a schema element"
+				                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 					//we are only interested in the outgoing associations
 					if (this.subsetElement.Equals(association.source))
 					{

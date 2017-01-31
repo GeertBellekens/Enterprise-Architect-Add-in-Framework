@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -40,9 +41,9 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				if (model.wrappedModel.LibraryVersion >= 1308) 
+				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
 					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
-				return "Unkown Schema Name";
+				return "Unknown Schema Name";
 			}
 		}
 
@@ -148,6 +149,9 @@ namespace EAAddinFramework.SchemaBuilder
 			//loop the elements to create the subSetElements
 			foreach (EASchemaElement schemaElement in this.elements) 
 			{
+				//tell the user what we are doing 
+				EAOutputLogger.log(this.model,this.settings.outputName,"Creating subset element for : '" + schemaElement.name + "'"
+				                   ,0, LogTypeEnum.log);
 				//do not copy elements that are shared
 				if (! schemaElement.isShared)
 				{
@@ -178,15 +182,30 @@ namespace EAAddinFramework.SchemaBuilder
 					   || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
 	                    || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
 					{
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Creating subset associations for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 						schemaElement.createSubsetAssociations();
 						//Logger.log("after EASchema::creating single subset association");
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Creating subset attributes for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 						// and to resolve the attributes types to subset types if required
 						schemaElement.createSubsetAttributes();
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Creating subset literals for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 						//Logger.log("after EASchema::createSubsetAttributes ");
 						schemaElement.createSubsetLiterals();
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Creating attribute depencendies for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 						//and add a dependency from the schemaElement to the type of the attributes
 						schemaElement.addAttributeTypeDependencies();
 						//Logger.log("after EASchema::addAttributeTypeDependencies");
+						//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Creating generalizations for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 						//add generalizations if both elements are in the subset
 						schemaElement.addGeneralizations();
 					}
@@ -210,6 +229,9 @@ namespace EAAddinFramework.SchemaBuilder
 						   && ! reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
 						   && (reloadedElement is UTF_EA.ElementWrapper && ! ((UTF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
 						{
+				    	//tell the user what we are doing 
+						EAOutputLogger.log(this.model,this.settings.outputName,"Deleting subset element for: '" + schemaElement.name + "'"
+						                   ,0, LogTypeEnum.log);
 							schemaElement.subsetElement.delete();
 						}
 					 }
@@ -270,13 +292,20 @@ namespace EAAddinFramework.SchemaBuilder
 
 		void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
 		{
-			foreach (UML.Classes.Kernel.Classifier subsetElement in subsetElements) {
+			foreach (Classifier subsetElement in subsetElements) 
+			{
+				//tell the user what we are doing 
+				EAOutputLogger.log(this.model,this.settings.outputName,"Matching subset element: '" + subsetElement.name + "' to a schema element"
+				                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 				//get the corrsponding schema element
 				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
 				//found a corresponding schema element
-				if (schemaElement != null && shouldElementExistAsDatatype(subsetElement)) {
+				if (schemaElement != null && shouldElementExistAsDatatype(subsetElement)) 
+				{
 					schemaElement.matchSubsetElement(subsetElement);
-				} else {
+				}
+				else 
+				{
 					//if it doesn't correspond with a schema element we delete it?
 					//only if the subset element is located in the same folder as the message element
 					//and it doesn't have one of stereotypes to be ignored

@@ -57,6 +57,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				//do nothing, rotpackages don't have an owner
 			}
 		}
+		public override HashSet<UML.Profiles.Stereotype> stereotypes 
+		{
+			get 
+			{
+				//rootpackges don't have stereotypes
+				return new HashSet<UML.Profiles.Stereotype>();
+			}
+			set 
+			{
+				//do nothing
+			}
+		}
 		public override HashSet<UML.Profiles.TaggedValue> taggedValues 
 		{
 			//in EA the rootpackage can't have tagged values

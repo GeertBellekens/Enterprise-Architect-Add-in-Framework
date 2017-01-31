@@ -2,11 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
+using System.Runtime.CompilerServices;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
- public abstract class Element : UML.Classes.Kernel.Element {
-    public Model model { get;  internal set; }
-
+ public abstract class Element : UML.Classes.Kernel.Element 
+ {
+ 	private Dictionary<string, object> properties = new Dictionary<string, object>();
+ 	protected object getProperty(string propertyName)
+ 	{
+ 		return properties.ContainsKey(propertyName) ? properties[propertyName]:null;
+ 	}
+ 	protected void setProperty(string propertyName, object propertyValue,bool updateValue = true)
+ 	{
+ 		if (properties.ContainsKey(propertyName))
+ 		{
+	 		if (updateValue)
+		    {
+	 			properties[propertyName] = propertyValue;
+	 			this.isDirty = true;
+		    }
+ 		}
+ 		else
+ 		{
+ 			properties.Add(propertyName,propertyValue);
+		}
+ 	}
+ 	public static string getPropertyNameName([CallerMemberName] string name = null) 
+ 	{
+    	return name;
+	}
+ 	                        
+	public Model model { get;  internal set; }
+	
     internal Element(Model model){
       this.model = model;
     }
@@ -34,6 +61,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		set 
 		{
 			//do nothing
+		}
+	}
+	private bool _isDirty = true;
+	public virtual bool isDirty
+	{
+		get
+		{
+			return _isDirty;
+		}
+		set
+		{
+			_isDirty = value;
 		}
 	}
     public virtual HashSet<UML.Classes.Kernel.Comment> ownedComments
@@ -131,8 +170,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     internal abstract void saveElement();
 
-    public virtual void save(){
-      this.saveElement();
+    public virtual void save()
+    {
+      if (isDirty)this.saveElement();
       foreach (UML.Classes.Kernel.Element element in this.ownedElements) {
         ((Element)element).save();
       }
