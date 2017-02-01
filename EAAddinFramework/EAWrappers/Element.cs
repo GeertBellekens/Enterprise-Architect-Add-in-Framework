@@ -7,24 +7,52 @@ using System.Runtime.CompilerServices;
 namespace TSF.UmlToolingFramework.Wrappers.EA {
  public abstract class Element : UML.Classes.Kernel.Element 
  {
- 	private Dictionary<string, object> properties = new Dictionary<string, object>();
+ 	private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
+ 	private class PropertyInfo
+ 	{
+ 		public PropertyInfo(object propertyValue, object initialValue)
+ 		{
+ 			this.propertyValue = propertyValue;
+ 			this.initialValue = initialValue;
+ 		}
+ 		public object propertyValue {get;set;}
+ 		public object initialValue {get;set;}
+ 		public bool isDirty
+ 		{
+ 			get
+ 			{
+ 				if (this.initialValue == null)
+ 				{
+ 					return (this.propertyValue != null);
+ 				}
+ 				else
+ 				{
+ 					return !this.initialValue.Equals(this.propertyValue);
+ 				}
+ 			}
+ 		}
+ 	}
+ 	protected object getProperty(string propertyName, object initialValue)
+ 	{
+ 		if (!properties.ContainsKey(propertyName))
+ 		{
+ 			properties.Add(propertyName,new PropertyInfo(initialValue,initialValue));
+ 		}
+ 		return properties[propertyName].propertyValue;
+ 	}
  	protected object getProperty(string propertyName)
  	{
- 		return properties.ContainsKey(propertyName) ? properties[propertyName]:null;
+ 		return properties.ContainsKey(propertyName) ? properties[propertyName].propertyValue : null;
  	}
- 	protected void setProperty(string propertyName, object propertyValue,bool updateValue = true)
+ 	protected void setProperty(string propertyName, object propertyValue,object initialValue)
  	{
  		if (properties.ContainsKey(propertyName))
  		{
-	 		if (updateValue)
-		    {
-	 			properties[propertyName] = propertyValue;
-	 			this.isDirty = true;
-		    }
+ 			properties[propertyName].propertyValue = propertyValue;
  		}
  		else
  		{
- 			properties.Add(propertyName,propertyValue);
+ 			properties.Add(propertyName,new PropertyInfo(propertyValue,initialValue));
 		}
  	}
  	public static string getPropertyNameName([CallerMemberName] string name = null) 
@@ -68,6 +96,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get
 		{
+			if (this.properties.Any()) _isDirty = this.properties.Values.Any(x => x.isDirty);
 			return _isDirty;
 		}
 		set
@@ -172,7 +201,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     public virtual void save()
     {
-      if (isDirty)this.saveElement();
+      if (isDirty)
+      {
+      	this.saveElement();
+      }
       foreach (UML.Classes.Kernel.Element element in this.ownedElements) {
         ((Element)element).save();
       }

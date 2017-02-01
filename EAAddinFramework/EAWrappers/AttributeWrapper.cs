@@ -23,56 +23,59 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	      this.wrappedAttribute = wrappedAttribute;
 	      var dummy = this.type; //make sure we get the type here to avoid multithreading errors
+	      this.isDirty = false;
 	    }
 	
 	    public global::EA.Attribute WrappedAttribute
 	    {
 	    	get { return wrappedAttribute; }
 	    }
+	    public override string name 
+		{
+	    	get 
+	    	{
+	    		return (string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Name);
+	    	}
+			set 
+			{
+				this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.Name);
+			}
+    	}
 	   	public string alias
 		{
-			get{return this.wrappedAttribute.Alias;}
-			set{this.wrappedAttribute.Alias = value;}
+	    	get 
+	    	{
+	    		return (string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Alias);
+	    	}
+			set 
+			{
+				this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.Alias);
+			}
 		}
 		public override int position 
 		{
-			get 
-			{
-				return this.wrappedAttribute.Pos;
-			}
+	    	get 
+	    	{
+	    		return (int)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Pos);
+	    	}
 			set 
 			{
-				this.wrappedAttribute.Pos = value;
+				this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.Pos);
 			}
 		}
 	    	
-		/// <summary>
-	    /// return the unique ID of this element
-	    /// </summary>
-		public override string uniqueID 
-		{
-			get 
-			{
-				return this.wrappedAttribute.AttributeGUID;
-			}
-		}	
-		public override string name 
-		{
-	      	get { return this.wrappedAttribute.Name;  }
-	      	set { this.wrappedAttribute.Name = value; }
-    	}
 		public UML.Classes.Kernel.Type type 
 	    {
 	      	get 
 	      	{
 	    		if (this._type == null)
-	    		{
-			        this._type = this.model.getElementWrapperByID( this.wrappedAttribute.ClassifierID ) as UML.Classes.Kernel.Type;
+	    		{	
+	    			this._type = this.model.getElementWrapperByID( (int)this.getProperty("ClassifierID",this.wrappedAttribute.ClassifierID)) as UML.Classes.Kernel.Type;
 			        // check if the type is defined as an element in the model.
 			        if(this._type == null ) 
 			        {
 			          // no element, create primitive type based on the name of the type
-			          this._type = this.model.factory.createPrimitiveType(this.wrappedAttribute.Type);
+			          this._type = this.model.factory.createPrimitiveType(this.getProperty("Type",this.wrappedAttribute.Type));
 			        }
 	    		}
 	        	return this._type;
@@ -86,14 +89,60 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		    		ElementWrapper elementWrapper = value as ElementWrapper;
 			    	if( elementWrapper != null) 
 		    		{
-			          this.wrappedAttribute.ClassifierID = ((ElementWrapper)value).id;
+			    		this.setProperty("ClassifierID",((ElementWrapper)value).id,this.wrappedAttribute.ClassifierID);
 			        }
 		    	   	//always set type field
-			        this.wrappedAttribute.Type = value.name;
+			        this.setProperty("Type",value.name,this.wrappedAttribute.Type);
 		    	}
 	
 	      	}
 	    }
+	    public override HashSet<UML.Profiles.Stereotype> stereotypes 
+	    {
+	    	get 
+	    	{
+	    		return ((Factory) this.model.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.StereotypeEx));
+	    	}
+			set 
+			{
+				this.setProperty(getPropertyNameName(),Stereotype.getStereotypeEx(value),this.wrappedAttribute.StereotypeEx);
+			}    	
+	    }
+	   	public override String notes 
+		{
+			get 
+	    	{
+	    		return (string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Notes);
+	    	}
+			set 
+			{
+				this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.Notes);
+			}	
+	    }
+	   	
+	   	internal override void saveElement()
+	   	{
+		   	if (this.getProperty("name") != null) this.wrappedAttribute.Name = (string)this.getProperty("name");
+	    	if (this.getProperty("alias") != null) this.wrappedAttribute.Alias = (string)this.getProperty("alias");
+	    	if (this.getProperty("ClassifierID") != null) this.wrappedAttribute.ClassifierID = (int)this.getProperty("ClassifierID");
+	    	if (this.getProperty("Type") != null) this.wrappedAttribute.Type = (string)this.getProperty("Type");
+	    	if (this.getProperty("notes") != null) this.wrappedAttribute.Notes = (string)this.getProperty("notes");
+	    	if (this.getProperty("position") != null) this.wrappedAttribute.Pos = (int)this.getProperty("position");
+	    	if (this.getProperty("stereotypes") != null) this.wrappedAttribute.StereotypeEx = (string)this.getProperty("stereotypes");
+	      	this.wrappedAttribute.Update();
+	    }
+		/// <summary>
+	    /// return the unique ID of this element
+	    /// </summary>
+		public override string uniqueID 
+		{
+			get 
+			{
+				return this.wrappedAttribute.AttributeGUID;
+			}
+		}	
+
+		
 		public override HashSet<UML.Classes.Kernel.Element> ownedElements {
 	      get { return new HashSet<UML.Classes.Kernel.Element>(); }
 	      set { throw new NotImplementedException(); }
@@ -117,24 +166,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      }
 	    }
 	    
-	    public override HashSet<UML.Profiles.Stereotype> stereotypes {
-	      get {
-	        return ((Factory)this.model.factory).createStereotypes
-	          ( this, this.wrappedAttribute.StereotypeEx );
-	      }
-	      set 
-	      {
-	      	this.wrappedAttribute.StereotypeEx = Stereotype.getStereotypeEx(value);
-	      }
-	    }
-		internal override void saveElement(){
-	      this.wrappedAttribute.Update();
-	    }
+
+		
 	
-	    public override String notes {
-	      get { return this.wrappedAttribute.Notes;  }
-	      set { this.wrappedAttribute.Notes = value; }
-	    }
+
 		public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
 		{
 			UML.Extended.UMLItem item = null;

@@ -99,7 +99,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				throw new NotImplementedException();
 			}
 		}
-				
+
+		public bool isEmpty 
+		{
+			get 
+			{
+				string sqlIsEmpty = @"select 'false' AS isEmpty from t_package p 
+									 where exists (select o.Object_ID from t_object o where o.Package_ID = p.Package_ID)
+									 and exists (select * from t_diagram d where d.Package_ID = p.Package_ID)
+									 and p.Package_ID = " + this.packageID;
+				var isEmptyXml = this.model.SQLQuery(sqlIsEmpty);
+				var isEmptyNode = isEmptyXml.SelectSingleNode(this.model.formatXPath("//isEmpty"));
+				return isEmptyNode == null || isEmptyNode.InnerText != "false";
+			}
+		}
 		/// <summary>
 		/// 
 		/// </summary>
