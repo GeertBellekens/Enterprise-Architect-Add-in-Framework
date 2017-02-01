@@ -12,19 +12,142 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Attribute(Model model, global::EA.Attribute wrappedAttribute) 
       : base(model, wrappedAttribute)
     {}
+    public bool isID 
+	{
+		get 
+    	{
+    		return (bool)this.getProperty(getPropertyNameName(),this.wrappedAttribute.IsID);
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.IsID);
+		}
+	}
     public bool allowDuplicates
     {
-    	get {return this.wrappedAttribute.AllowDuplicates;}
-    	set {this.wrappedAttribute.AllowDuplicates = value;}
+    	get 
+    	{
+    		return (bool)this.getProperty(getPropertyNameName(),this.wrappedAttribute.AllowDuplicates);
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.AllowDuplicates);
+		}
+    }
+    public UML.Classes.Kernel.ValueSpecification defaultValue 
+    {
+		get 
+		{
+			return this.model.factory.createValueSpecificationFromString((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Default));
+		}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value.ToString(),this.wrappedAttribute.Default);
+		}
+    }
+    /// the isStatic property defines context of the attribute.
+    /// If true then the context is the class
+    /// If false then the context is the instance.
+    public bool isStatic 
+    {
+    	get 
+    	{
+    		return (bool)this.getProperty(getPropertyNameName(),this.wrappedAttribute.IsStatic);
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value,this.wrappedAttribute.IsStatic);
+		}
+    }
+    public UML.Classes.Kernel.VisibilityKind visibility 
+    {
+      get 
+      {
+        return VisibilityKind.getUMLVisibilityKind
+        	( (string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Visibility),
+            UML.Classes.Kernel.VisibilityKind._private );
+      }
+      set 
+      {
+      	this.setProperty(getPropertyNameName(),VisibilityKind.getEAVisibility(value),this.wrappedAttribute.Visibility);
+      }
+    }
+
+    public Multiplicity EAMultiplicity 
+    {
+    	get
+    	{
+
+    		return (Multiplicity)this.getProperty(getPropertyNameName(),getInitialMultiplicity());
+    	}
+    	set
+    	{
+    		this.setProperty(getPropertyNameName(),value,getInitialMultiplicity());
+    	}
+    }
+
+	internal override void saveElement()
+	{
+		if (this.getProperty("isID") != null) this.wrappedAttribute.IsID = (bool)this.getProperty("isID");
+		if (this.getProperty("allowDuplicates") != null) this.wrappedAttribute.AllowDuplicates = (bool)this.getProperty("allowDuplicates");
+		if (this.getProperty("defaultValue") != null) this.wrappedAttribute.Default = (string)this.getProperty("defaultValue");
+		if (this.getProperty("isStatic") != null) this.wrappedAttribute.IsStatic = (bool)this.getProperty("isStatic");
+		if (this.getProperty("visibility") != null) this.wrappedAttribute.Visibility = (string)this.getProperty("visibility");
+		//multiplicity is a bit of an exception. We only save the info if it actually has changed
+		var multiplicityProperty = this.getPropertyInfo("EAMultiplicity");
+		if (multiplicityProperty != null && multiplicityProperty.isDirty)
+		{
+			this.WrappedAttribute.LowerBound = ((Multiplicity)multiplicityProperty.propertyValue).lower.ToString();
+    		this.WrappedAttribute.UpperBound = ((Multiplicity)multiplicityProperty.propertyValue).upper.ToString();
+		}
+		base.saveElement();
+	}
+	 public UML.Classes.Kernel.UnlimitedNatural upper 
+    {
+      get {return this.EAMultiplicity.upper;}
+      set {this.EAMultiplicity.upper = value;}
+    }
+
+    public uint lower 
+    {
+      get { return this.EAMultiplicity.lower ;}
+      set {this.EAMultiplicity.lower = value;}
+    }
+    public UML.Classes.Kernel.Multiplicity multiplicity 
+	{
+		get 
+		{
+			return this.EAMultiplicity;
+		}
+		set 
+		{
+			this.EAMultiplicity = (Multiplicity)value;
+		}
+	}
+	private Multiplicity getInitialMultiplicity()
+    {
+	   	//default for attributes is 1..1
+		string lowerString = "1";
+		string upperString = "1";
+		//debug
+		if (this.WrappedAttribute.LowerBound.Length > 0)
+		{
+			lowerString = this.wrappedAttribute.LowerBound;
+		}
+		if (this.WrappedAttribute.UpperBound.Length > 0)
+		{
+			upperString = this.wrappedAttribute.UpperBound;
+		}
+		return new Multiplicity(lowerString, upperString);
     }
 	public override List<UML.Classes.Kernel.Relationship> relationships {
 		get 
 		{
 			string selectRelationsSQL = @"select c.Connector_ID from t_connector c
-,t_attribute a where a.ea_guid = '"+this.wrappedAttribute.AttributeGUID +@"' 
-and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
-+@" and ((c.Start_Object_ID = a.Object_ID and c.End_Object_ID <> a.Object_ID)
-    or (c.Start_Object_ID <> a.Object_ID and c.End_Object_ID = a.Object_ID))";
+							,t_attribute a where a.ea_guid = '"+this.wrappedAttribute.AttributeGUID +@"' 
+							and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
+							+@" and ((c.Start_Object_ID = a.Object_ID and c.End_Object_ID <> a.Object_ID)
+							    or (c.Start_Object_ID <> a.Object_ID and c.End_Object_ID = a.Object_ID))";
 			return this.model.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
     	}
 		set { throw new NotImplementedException(); }
@@ -48,37 +171,13 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-	public void setStereotype(string stereotype)
-    {
-    	this.wrappedAttribute.StereotypeEx = stereotype;
-    }
-	public bool isID 
-	{
-		get 
-		{
-			return this.wrappedAttribute.IsID;
-		}
-		set 
-		{
-			this.wrappedAttribute.IsID = value;
-		}
-	}
+
     public UML.Classes.Kernel.AggregationKind aggregation {
       get { return UML.Classes.Kernel.AggregationKind.none; }
       set { /* do nothing */ }
     }
 
-    public UML.Classes.Kernel.ValueSpecification defaultValue 
-    {
-      get 
-      {
-      	return this.model.factory.createValueSpecificationFromString(this.wrappedAttribute.Default);
-      }
-      set 
-      {
-      	this.wrappedAttribute.Default = value.ToString();
-      }
-    }
+
 	public void setDefaultValue(string defaultStringValue)
 	{
 		this.defaultValue = this.model.factory.createValueSpecificationFromString(defaultStringValue);
@@ -130,13 +229,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-    /// the isStatic property defines context of the attribute.
-    /// If true then the context is the class
-    /// If false then the context is the instance.
-    public bool isStatic {
-      get { return this.wrappedAttribute.IsStatic;  }
-      set { this.wrappedAttribute.IsStatic = value; }
-    }
+
 
     public HashSet<UML.Classes.Kernel.Classifier> featuringClassifiers {
       get { throw new NotImplementedException(); }
@@ -159,17 +252,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
     }
 
 
-    public UML.Classes.Kernel.VisibilityKind visibility {
-      get {
-        return VisibilityKind.getUMLVisibilityKind
-          ( this.wrappedAttribute.Visibility, 
-            UML.Classes.Kernel.VisibilityKind._private );
-      }
-      set {
-        this.wrappedAttribute.Visibility = 
-          VisibilityKind.getEAVisibility(value);
-      }
-    }
+
     
     public String qualifiedName {
       get { throw new NotImplementedException(); }
@@ -193,59 +276,7 @@ and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
       set { throw new NotImplementedException(); }
     }
     
-	public UML.Classes.Kernel.UnlimitedNatural upper 
-    {
-      get {return this.EAMultiplicity.upper;}
-      set 
-      { 
-      	this.WrappedAttribute.UpperBound = value.ToString();
-      }
-    }
-
-    public uint lower 
-    {
-      get { return this.EAMultiplicity.lower ;}
-      set 
-      { 
-      	this.WrappedAttribute.LowerBound = value.ToString();
-      }
-    }
-    public UML.Classes.Kernel.Multiplicity multiplicity 
-	{
-		get 
-		{
-			return this.EAMultiplicity;
-		}
-		set 
-		{
-			this.EAMultiplicity = (Multiplicity)value;
-		}
-	}
-    public Multiplicity EAMultiplicity 
-    {
-    	get
-    	{
-    		//default for attributes is 1..1
-    		string lowerString = "1";
-    		string upperString = "1";
-    		//debug
-    		if (this.WrappedAttribute.LowerBound.Length > 0)
-    		{
-    			lowerString = this.WrappedAttribute.LowerBound;
-    		}
-    		if (this.WrappedAttribute.UpperBound.Length > 0)
-    		{
-    			upperString = this.WrappedAttribute.UpperBound;
-    		}
-
-    		return new Multiplicity(lowerString, upperString);
-    	}
-    	set
-    	{
-    		this.WrappedAttribute.LowerBound = value.lower.ToString();
-    		this.WrappedAttribute.UpperBound = value.upper.ToString();
-    	}
-    }
+	
     
     public UML.Classes.Kernel.ValueSpecification upperValue {
       get { throw new NotImplementedException(); }

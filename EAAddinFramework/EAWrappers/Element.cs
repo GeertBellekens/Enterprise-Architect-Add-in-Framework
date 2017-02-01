@@ -8,7 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
  public abstract class Element : UML.Classes.Kernel.Element 
  {
  	private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
- 	private class PropertyInfo
+ 	protected class PropertyInfo
  	{
  		public PropertyInfo(object propertyValue, object initialValue)
  		{
@@ -43,6 +43,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
  	protected object getProperty(string propertyName)
  	{
  		return properties.ContainsKey(propertyName) ? properties[propertyName].propertyValue : null;
+ 	}
+ 	protected PropertyInfo getPropertyInfo(string propertyName)
+ 	{
+ 		return properties.ContainsKey(propertyName) ? properties[propertyName]: null;
  	}
  	protected void setProperty(string propertyName, object propertyValue,object initialValue)
  	{

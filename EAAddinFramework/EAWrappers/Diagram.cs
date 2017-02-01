@@ -479,6 +479,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         /// <returns>true if the given element is shown on this diagram, false otherwise</returns>
 		public bool contains(UML.Classes.Kernel.Element element)
 		{
+			var elementWrapper = element as ElementWrapper;
+			//check very quickly if this element is on the diagram
+			if (elementWrapper != null)
+			{
+				string sqlContainsElement = "select 'true' AS ElementExists from t_diagramobjects do " +
+										 " where do.Diagram_ID = " + this.DiagramID +
+									   	" and do.Object_ID = " + elementWrapper.id;
+				var containsElementXml = this.model.SQLQuery(sqlContainsElement);
+				var containsNode = containsElementXml.SelectSingleNode(this.model.formatXPath("//ElementExists"));
+				return containsNode != null && containsNode.InnerText == "true";
+			}
+			//use the standard technique
 			return this.getDiagramElement(element) != null;
 		}
 		/// <summary>

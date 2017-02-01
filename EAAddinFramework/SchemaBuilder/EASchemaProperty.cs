@@ -187,6 +187,15 @@ namespace EAAddinFramework.SchemaBuilder
 					dependency.targetEnd.multiplicity = this.subSetProperty.multiplicity;
 					dependency.save();
 				}
+				else
+				{
+					//check if the multiplicity is still ok
+					if (dependency.targetEnd.multiplicity != this.subSetProperty.multiplicity)
+					{
+						dependency.targetEnd.multiplicity = this.subSetProperty.multiplicity;
+						dependency.save();
+					}
+				}
 			}
 		}
 	}

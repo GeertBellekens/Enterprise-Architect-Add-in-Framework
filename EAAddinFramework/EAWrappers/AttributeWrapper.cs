@@ -108,6 +108,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				this.setProperty(getPropertyNameName(),Stereotype.getStereotypeEx(value),this.wrappedAttribute.StereotypeEx);
 			}    	
 	    }
+    	public void setStereotype(string stereotype)
+    	{	
+    		var newStereotypes = new HashSet<UML.Profiles.Stereotype>();
+    		newStereotypes.Add(new Stereotype(this.model,this,stereotype));
+    		this.stereotypes = newStereotypes;
+	    }
 	   	public override String notes 
 		{
 			get 

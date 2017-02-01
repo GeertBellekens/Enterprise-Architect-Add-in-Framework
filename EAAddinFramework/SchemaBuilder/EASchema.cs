@@ -114,23 +114,33 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="subsetElement">the element to search a match for</param>
 		/// <returns>the corresponding SchemaElement</returns>
-		internal EASchemaElement getSchemaElementForSubsetElement(UML.Classes.Kernel.Classifier subsetElement)
+		internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement)
+		{
+			return getSchemaElementForSubsetElement(subsetElement,this.elements.ToList());
+		}
+		internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement,List<SBF.SchemaElement> currentSchemaElements)
 		{
 			EASchemaElement result = null;
 			if (subsetElement != null)
 			{
-				foreach (EASchemaElement schemaElement in this.elements) 
+				foreach (EASchemaElement schemaElement in currentSchemaElements) 
 				{
 					if (schemaElement.name == subsetElement.name)
 					{
 						//check if the subset element has a dependency to the source element of the schema
-						foreach (var dependency in subsetElement.clientDependencies) 
+						string sqlCheckTrace = @"select c.Connector_ID from t_connector c
+												where 
+												c.Connector_Type = 'Abstraction'
+												and c.Stereotype = 'trace'
+												and c.Start_Object_ID = " +((UTF_EA.ElementWrapper)subsetElement).id +
+												" and c.End_Object_ID = " +((UTF_EA.ElementWrapper)schemaElement.sourceElement).id;
+						var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
+						var connectorIDNode = checkTraceXML.SelectSingleNode(this.model.formatXPath("//Connector_ID"));
+						int connectorID;
+						if (connectorIDNode != null && int.TryParse(connectorIDNode.InnerText,out connectorID))
 						{
-							if (schemaElement.sourceElement.Equals(dependency.supplier))
-							{
-								result = schemaElement;
-								break;
-							}
+							result = schemaElement;
+							break;
 						}
 					}
 				}
@@ -292,13 +302,20 @@ namespace EAAddinFramework.SchemaBuilder
 
 		void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
 		{
-			foreach (Classifier subsetElement in subsetElements) 
+			//make a copy of the schema elements
+			List<SBF.SchemaElement> currentSchemaElements = new List<SBF.SchemaElement>(this.elements);
+			//order by name
+			currentSchemaElements.OrderBy(x => x.name);
+			//loop subset elements ordered by name
+			foreach (Classifier subsetElement in subsetElements.OrderBy(x => name))
 			{
 				//tell the user what we are doing 
 				EAOutputLogger.log(this.model,this.settings.outputName,"Matching subset element: '" + subsetElement.name + "' to a schema element"
 				                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 				//get the corrsponding schema element
-				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
+				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement,currentSchemaElements);
+				//if the schema element is found then we remove it from the list, making the list smaller
+				currentSchemaElements.Remove(schemaElement);
 				//found a corresponding schema element
 				if (schemaElement != null && shouldElementExistAsDatatype(subsetElement)) 
 				{
