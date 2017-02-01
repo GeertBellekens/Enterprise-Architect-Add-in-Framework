@@ -116,14 +116,10 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <returns>the corresponding SchemaElement</returns>
 		internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement)
 		{
-			return getSchemaElementForSubsetElement(subsetElement,this.elements.ToList());
-		}
-		internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement,List<SBF.SchemaElement> currentSchemaElements)
-		{
 			EASchemaElement result = null;
 			if (subsetElement != null)
 			{
-				foreach (EASchemaElement schemaElement in currentSchemaElements) 
+				foreach (EASchemaElement schemaElement in this.elements) 
 				{
 					if (schemaElement.name == subsetElement.name)
 					{
@@ -302,10 +298,7 @@ namespace EAAddinFramework.SchemaBuilder
 
 		void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
 		{
-			//make a copy of the schema elements
-			List<SBF.SchemaElement> currentSchemaElements = new List<SBF.SchemaElement>(this.elements);
-			//order by name
-			currentSchemaElements.OrderBy(x => x.name);
+
 			//loop subset elements ordered by name
 			foreach (Classifier subsetElement in subsetElements.OrderBy(x => name))
 			{
@@ -313,9 +306,8 @@ namespace EAAddinFramework.SchemaBuilder
 				EAOutputLogger.log(this.model,this.settings.outputName,"Matching subset element: '" + subsetElement.name + "' to a schema element"
 				                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 				//get the corrsponding schema element
-				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement,currentSchemaElements);
-				//if the schema element is found then we remove it from the list, making the list smaller
-				currentSchemaElements.Remove(schemaElement);
+				EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
+				
 				//found a corresponding schema element
 				if (schemaElement != null && shouldElementExistAsDatatype(subsetElement)) 
 				{
