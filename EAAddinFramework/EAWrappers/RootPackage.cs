@@ -81,10 +81,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				//do nothing
 			}
 		}
-		public override HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
-		{
-			return this.model.getTaggedValuesWithValue(this.wrappedPackage.PackageGUID);
-		}
+		
 		/// <summary>
 		/// Rootpackages don't have relationships
 		/// </summary>

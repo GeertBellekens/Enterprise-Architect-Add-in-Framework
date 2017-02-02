@@ -992,42 +992,43 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 	}
   	
-	public HashSet<UML.Profiles.TaggedValue> getTaggedValuesWithValue(string value)
+	public HashSet<UML.Profiles.TaggedValue> getTaggedValuesWithValue(string searchValue, bool includeWildCards = false)
 	{
 		HashSet<UML.Profiles.TaggedValue> taggedValues = new HashSet<TSF.UmlToolingFramework.UML.Profiles.TaggedValue>();
-		
+		if (includeWildCards) searchValue = "%" + searchValue + "%";
 		//elements
-		foreach (ElementTag elementTag in this.getElementTagsWithValue(value))
+		foreach (ElementTag elementTag in this.getElementTagsWithValue(searchValue))
 		{
 			taggedValues.Add(elementTag);
 		}
 		//attribute
-		foreach (AttributeTag attributeTag in this.getAttributeTagsWithValue(value))
+		foreach (AttributeTag attributeTag in this.getAttributeTagsWithValue(searchValue))
 		{
 			taggedValues.Add(attributeTag);
 		}
 		//operations
-		foreach (OperationTag operationTag in this.getOperationTagsWithValue(value))
+		foreach (OperationTag operationTag in this.getOperationTagsWithValue(searchValue))
 		{
 			taggedValues.Add(operationTag);
 		}
 		//parameters
-		foreach (ParameterTag parameterTag in this.getParameterTagsWithValue(value))
+		foreach (ParameterTag parameterTag in this.getParameterTagsWithValue(searchValue))
 		{
 			taggedValues.Add(parameterTag);
 		}
 		//relations
-		foreach (RelationTag relationTag in this.getRelationTagsWithValue(value))
+		foreach (RelationTag relationTag in this.getRelationTagsWithValue(searchValue))
 		{
 			taggedValues.Add(relationTag);
 		}
 		return taggedValues;
 	}
-	public HashSet<ElementTag> getElementTagsWithValue(string value)
+	public HashSet<ElementTag> getElementTagsWithValue(string searchValue)
 	{
 		HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_objectproperties ot
-								where ot.[Value] like '"+ value + "'";
+								where ot.[Value] like '"+ searchValue + "'"+
+								"or ot.[Notes]  like '"+ searchValue + "'" ;
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1070,11 +1071,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    return elementTag;
 		
 	}
-	public List<AttributeTag> getAttributeTagsWithValue(string value)
+	public List<AttributeTag> getAttributeTagsWithValue(string searchValue)
 	{
 		List<AttributeTag> attributeTags = new List<AttributeTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_attributetag att
-								where att.[VALUE] like '"+ value + "'";
+								where att.[VALUE] like '"+ searchValue + "'"+
+								"or att.[NOTES]  like '"+ searchValue + "'" ;
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1116,11 +1118,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    return attributeTag;
 	}
 	
-	public List<OperationTag> getOperationTagsWithValue(string value)
+	public List<OperationTag> getOperationTagsWithValue(string searchValue)
 	{
 		List<OperationTag> operationTags = new List<OperationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_operationtag opt
-								where opt.[VALUE] like '"+ value + "'";
+								where opt.[VALUE] like '"+ searchValue + "'"+
+								"or opt.[NOTES]  like '"+ searchValue + "'" ;
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
@@ -1161,11 +1164,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    }
 	    return operationTag;
 	}
-	public List<ParameterTag> getParameterTagsWithValue(string value)
+	public List<ParameterTag> getParameterTagsWithValue(string searchValue)
 	{
 		List<ParameterTag> parameterTags = new List<ParameterTag>();
 		string sqlFindGUIDS = @"select propertyid from t_taggedvalue
-								where notes like '"+ value + "'";
+								where notes like '"+ searchValue + "'";
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//propertyid"));
@@ -1206,11 +1209,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    }
 	    return parameterTag;
 	}
-	public List<RelationTag> getRelationTagsWithValue(string value)
+	public List<RelationTag> getRelationTagsWithValue(string searchValue)
 	{
 		List<RelationTag> relationTags = new List<RelationTag>();
 		string sqlFindGUIDS = @"select ea_guid from t_connectortag ct
-								where ct.[VALUE] like '"+ value + "'";
+								where ct.[VALUE] like '"+ searchValue + "'"+
+								"or ct.[NOTES]  like '"+ searchValue + "'" ;
 		// get the nodes with the name "ea_guid"
 	    XmlDocument xmlTagGUIDs = this.SQLQuery(sqlFindGUIDS);
 	    XmlNodeList tagGUIDNodes = xmlTagGUIDs.SelectNodes(formatXPath("//ea_guid"));

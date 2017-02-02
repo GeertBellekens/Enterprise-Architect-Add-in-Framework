@@ -785,10 +785,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		set { throw new NotImplementedException();}
 	}
-	public override HashSet<TSF.UmlToolingFramework.UML.Profiles.TaggedValue> getReferencingTaggedValues()
-	{
-		return this.model.getTaggedValuesWithValue(this.wrappedElement.ElementGUID);
-	}
   	
 	public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram 
 	{

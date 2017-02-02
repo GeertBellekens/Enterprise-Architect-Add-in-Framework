@@ -269,7 +269,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <returns>empty set</returns>
 	public virtual HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
 	{
-		return new HashSet<UML.Profiles.TaggedValue>();
+		return this.model.getTaggedValuesWithValue(this.uniqueID,true);
 	}
 	
 	public virtual string fqn 
