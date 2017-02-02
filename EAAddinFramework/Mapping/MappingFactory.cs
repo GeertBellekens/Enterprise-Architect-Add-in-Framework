@@ -181,11 +181,11 @@ namespace EAAddinFramework.Mapping
 			MappingSet newMappingSet = null;
 			var engine = new FileHelperEngine<CSVMappingRecord>();
 			var parsedFile = engine.ReadFile(filePath);
-			int i = 0;
+			int i = 1;
 			Package rootPackage = null;
 			foreach (CSVMappingRecord mappingRecord in parsedFile) 
 			{
-				i++;
+				
 				//find source
 				var source = findElement(model, mappingRecord.sourcePath, sourceRootElement);
 				//find target
@@ -240,9 +240,12 @@ namespace EAAddinFramework.Mapping
 							 
 							 if (newMappingLogic == null) 
 							 {
+							 	 
 								 var mappingElement = model.factory.createNewElement(rootPackage, "mapping logic " + i,settings.mappingLogicType) as ElementWrapper;
 								 if (mappingElement != null)
 								 {
+								 	//increase counter for new mapping element name
+							 	 	i++;
 								 	mappingElement.notes = mappingRecord.mappingLogic;
 								 	mappingElement.save();
 								 	//create the mappingLogic

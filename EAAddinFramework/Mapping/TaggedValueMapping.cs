@@ -33,10 +33,13 @@ namespace EAAddinFramework.Mapping
 				tagName = settings.linkedAssociationTagName;
 			}
 			string tagComments =string.Empty;
-			if (!string.IsNullOrEmpty(sourcePath)) tagComments = MappingFactory.setValueForKey("mappingSourcePath", sourcePath,tagComments);
-			if (!string.IsNullOrEmpty(targetPath)) tagComments = MappingFactory.setValueForKey("mappingTargetPath", targetPath,tagComments);
+			if (!string.IsNullOrEmpty(sourcePath)) tagComments = 
+				MappingFactory.setValueForKey("mappingSourcePath", this.stripPathFromElementName(source,sourcePath),tagComments);
+			if (!string.IsNullOrEmpty(targetPath)) tagComments = 
+				MappingFactory.setValueForKey("mappingTargetPath", this.stripPathFromElementName(target, targetPath),tagComments);
 			this.wrappedTaggedValue = source.addTaggedValue(tagName,target.uniqueID,tagComments,true);
 		}
+		
 		
 
 		#region implemented abstract members of Mapping

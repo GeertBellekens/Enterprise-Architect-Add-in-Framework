@@ -30,7 +30,23 @@ namespace EAAddinFramework.Mapping
 			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement,targetRoot)){}
 		public Mapping(Element sourceElement, Element targetElement,string basepath,string targetBasePath)
 			:this(new MappingEnd(sourceElement,basepath),new MappingEnd(targetElement,targetBasePath)){}
-
+		
+		/// <summary>
+		/// strips the given path from the element name at the end.
+		/// So if the path ends with .ElementName then that part is stripped off
+		/// </summary>
+		/// <param name="endElement">the element at the end of the mapping</param>
+		/// <param name="path">the path string</param>
+		/// <returns>the stripped path</returns>
+		protected string stripPathFromElementName(Element endElement, string path)
+		{
+			if (path.EndsWith( "." + endElement.name, StringComparison.InvariantCulture))
+			{
+				return path.Substring(0,path.Length - (endElement.name.Length +1));
+			}
+			//else return unchanged
+			return path;
+		}
 		#region Mapping implementation
 
 		public MP.MappingEnd source {
