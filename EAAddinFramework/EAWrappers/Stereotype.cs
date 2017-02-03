@@ -20,7 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	this._ownerDiagram = ownerDiagram;
     }
-    public String name {
+    public override String name {
       get { return this._name;  }
       set { this._name = value; }
     }

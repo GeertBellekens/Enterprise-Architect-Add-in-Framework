@@ -260,12 +260,16 @@ namespace EAAddinFramework.Mapping
 						}
 					}
 					Mapping newMapping = null;
+					var sourceAssociationEnd = source as AssociationEnd;
+					var targetAssociationEnd = target as AssociationEnd;
 					//create the new mapping
-					if (settings.useTaggedValues)
+					//we can't create connector mappings for mappings to or from associations so we have to use tagged value mappings for those.
+					if (settings.useTaggedValues
+					   || sourceAssociationEnd != null || targetAssociationEnd != null)
 					{
 						//if the source or target are associationEnds then we replace them by their association
-						if (source is AssociationEnd) source = ((AssociationEnd)source).association as Element;
-						if (target is AssociationEnd) target = ((AssociationEnd)target).association as Element;
+						if (sourceAssociationEnd != null) source = sourceAssociationEnd.association as Element;
+						if (targetAssociationEnd != null) target = targetAssociationEnd.association as Element;
 						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					else
