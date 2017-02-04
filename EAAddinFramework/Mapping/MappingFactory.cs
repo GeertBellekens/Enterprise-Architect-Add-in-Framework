@@ -284,6 +284,27 @@ namespace EAAddinFramework.Mapping
 			}
 			return newMappingSet;
 		}
+		public static void exportMappingSet(MappingSet mappingSet, string filePath)
+		{
+			if (mappingSet != null)
+			{
+				var engine = new FileHelperEngine<CSVMappingRecord>();
+				List<CSVMappingRecord> csvMappingRecords = new List<CSVMappingRecord>();
+				//create the CSV mapping records
+				foreach (var mapping in mappingSet.mappings)
+				{
+					//create the record
+					var mappingRecord = new CSVMappingRecord();
+					mappingRecord.sourcePath = mapping.source.fullMappingPath;
+					mappingRecord.targetPath = mapping.target.fullMappingPath;
+					mappingRecord.mappingLogic = mapping.mappingLogic != null ? mapping.mappingLogic.description : string.Empty;
+					//add the record to the list
+					csvMappingRecords.Add(mappingRecord);
+				}
+				//write the CSV mapping records to the filename
+				engine.WriteFile(filePath,csvMappingRecords);
+			}
+		}
 		/// <summary>
 		/// get the existng mapping logic in the given package with the given logic description in order to re-use existing mapping logics
 		/// </summary>
