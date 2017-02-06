@@ -164,6 +164,7 @@
     <Compile Include="EAWrappers\LiteralString.cs" />
     <Compile Include="EAWrappers\LiteralUnlimitedNatural.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
+    <Compile Include="EAWrappers\ProxyConnector.cs" />
     <Compile Include="EAWrappers\RepositoryType.cs" />
     <Compile Include="EAWrappers\DeploymentDiagram.cs" />
     <Compile Include="EAWrappers\Enumeration.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="Utilities\EAOutputLogger.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\EventPropertiesHelper.cs" />
+    <Compile Include="Utilities\KeyValuePairsHelper.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\LogTypeEnum.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />

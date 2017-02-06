@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
+using EAAddinFramework.Utilities;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
 {
@@ -151,20 +152,52 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       }
       set { throw new NotImplementedException(); }
     }
-    private UML.Extended.UMLItem getLinkedFeature(bool start)
+    private UML.Extended.UMLItem getLinkedFeature(bool isSource)
     {
-    	string styleEx = this.wrappedConnector.StyleEx;
-    	string key;
     	UML.Extended.UMLItem linkedFeature = null;
     	//determine start or end keyword
-		key = start ? "LFSP=" : "LFEP=";
-   		int guidStart = styleEx.IndexOf(key) + key.Length ;
-   		if (guidStart >= key.Length)
+		string key = isSource ? "LFSP" : "LFEP";
+   		string featureGUID = KeyValuePairsHelper.getValueForKey(key,this.wrappedConnector.StyleEx);
+   		if (!string.IsNullOrEmpty(featureGUID))
     	{
-    		string featureGUID = styleEx.Substring(guidStart,this.WrappedConnector.ConnectorGUID.Length);
+	   		if (featureGUID.EndsWith("}R") 
+	   		    || featureGUID.EndsWith("}L"))
+	   		{
+	   			//remove the last "R" or "L"
+	   			featureGUID = featureGUID.Substring(0,featureGUID.Length -1);
+	   		}
+   			//get the linked feature
     		linkedFeature = this.model.getItemFromGUID(featureGUID);
     	}
     	return linkedFeature;
+    }
+    private void setLinkedFeature(UML.Classes.Kernel.Element linkedFeature, bool isSource)
+    {
+		//check if attribute
+		Element actualEnd = linkedFeature as Attribute;
+		//or maybe operation
+		if (actualEnd == null) actualEnd = linkedFeature as Operation;
+		if (actualEnd != null)
+		{
+			
+			//set the client id to the id of the owner
+			if (isSource)
+			{
+				_source = linkedFeature;
+				this.wrappedConnector.ClientID = ((ElementWrapper)actualEnd.owner).id;
+			}
+			else
+			{
+				_target = linkedFeature;
+				this.wrappedConnector.SupplierID = ((ElementWrapper)actualEnd.owner).id;
+			}
+			//set the linked feature
+			string key = isSource ? "LFSP" : "LFEP";
+			string suffix = isSource ? "R":"L";
+			string styleEx = KeyValuePairsHelper.setValueForKey(key,linkedFeature.uniqueID + suffix,this.wrappedConnector.StyleEx);
+			this.wrappedConnector.StyleEx = styleEx;
+		}
+    	
     }
     public UML.Classes.Kernel.Element target {
       get 
@@ -199,8 +232,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		else
 		{
-			//currently only implemented for ElementWrappers
-			throw new NotImplementedException();
+			this.setLinkedFeature(value,false);
 		}      	
       }
     }
@@ -237,6 +269,44 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		//return the found elements
 		return foundElements;
 	}
+	public void addLinkedElement(ElementWrapper element)
+	{
+		if (element is NoteComment
+		    || element is UML.Classes.Kernel.Constraint)
+		{
+			//set idref to the id of this relation to create the notelink
+			string pdata4 = element.wrappedElement.MiscData[3].ToString();
+			string idRefString = getNextIdRefString(pdata4);
+			pdata4 = KeyValuePairsHelper.setValueForKey(idRefString,this.id.ToString(),pdata4);
+			string sqlUpdateNoteLink = "update t_object set PDATA4 = '"+ pdata4 +"' where ea_guid =" + element.uniqueID;
+			this.model.executeSQL(sqlUpdateNoteLink);
+		}
+		else
+		{
+			//create an element of type ProxyConnector with
+			//t_object.ClassifierGUID = sourceConnectorGUID
+			//t_object.Classifier = sourcConnector.ConnectorID
+			var proxyConnector = this.model.factory.createNewElement<ProxyConnector>(this.owningPackage,string.Empty);
+			proxyConnector.connector = this;
+			proxyConnector.save();
+			//then create a connector between the ProxyConnector Element and the target element
+			var elementLink = this.model.factory.createNewElement<Dependency>(proxyConnector,string.Empty);
+			elementLink.target = element;
+			elementLink.save();
+		}
+	}
+	private string getNextIdRefString(string pdata)
+	{
+		int i = 0;
+		string idRefValue = null;
+		do
+		{
+			i++;
+			idRefValue = KeyValuePairsHelper.getValueForKey("idref" + i,pdata);
+		}
+		while (! string.IsNullOrEmpty(idRefValue));
+		return "idref" + i;
+	}
     public UML.Classes.Kernel.Element source {
       get 
       {
@@ -271,8 +341,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		else
 		{
-			//currently only implemented for ElementWrappers
-			throw new NotImplementedException();
+			this.setLinkedFeature(value,true);
 		}      	
       }
     }
