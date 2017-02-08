@@ -153,7 +153,8 @@ namespace EAAddinFramework.SchemaBuilder
 					else if (element.sourceElement != null && 
 					    element.subsetElement != null &&
 					    this.subSetProperty != null &&
-					    element.sourceElement.Equals(this.subSetProperty.type))
+					    element.sourceElement.Equals(this.subSetProperty.type)
+					   && element.name == this.subSetProperty.type.name)
 					{
 						//replace the type if it matches the source element
 						this.subSetProperty.type = element.subsetElement;

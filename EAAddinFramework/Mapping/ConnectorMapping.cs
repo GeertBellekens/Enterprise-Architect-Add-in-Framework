@@ -42,9 +42,7 @@ namespace EAAddinFramework.Mapping
 				wrappedConnector.source = source;
 				wrappedConnector.target = target;
 				wrappedConnector.save();
-			}
-			
-				
+			}			
 		}
 
 		#region implemented abstract members of Mapping
