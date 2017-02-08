@@ -271,7 +271,7 @@ namespace EAAddinFramework.SchemaBuilder
 
 		void matchAndUpdateSubsetModel(Package destinationPackage)
 		{
-			foreach (EASchemaElement schemaElement in this.schemaElements) {
+			foreach (EASchemaElement schemaElement in this.elements) {
 				//match the attributes
 				schemaElement.matchSubsetAttributes();
 				//Logger.log("after EASchema::matchSubsetAttributes");

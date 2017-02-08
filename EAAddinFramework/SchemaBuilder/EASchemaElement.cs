@@ -396,7 +396,8 @@ namespace EAAddinFramework.SchemaBuilder
 							//the generalization exists on the source, but there is a subset element for the target
 							//we move the generalization to the element in the subset.
 							if (this.owner.settings.redirectGeneralizationsToSubset
-							    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
+							    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement))
+							   	&& schemaParent.subsetElement != null)
 						    {
 								//if the generalization doesn't exist yet we move it tot he subset element
 						    	subsetGeneralization.target = schemaParent.subsetElement;
@@ -432,7 +433,8 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					var schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(sourceGeneralization.target);
 					if (this.owner.settings.redirectGeneralizationsToSubset
-						&& schemaParent != null)
+						&& schemaParent != null
+						&& schemaParent.subsetElement != null)
 					{
 					    if ( schemaParent.subsetElement != null 
 					    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
