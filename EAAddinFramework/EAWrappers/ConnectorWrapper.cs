@@ -298,7 +298,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		    || element is UML.Classes.Kernel.Constraint)
 		{
 			//set idref to the id of this relation to create the notelink
-			string pdata4 = element.wrappedElement.MiscData[3].ToString();
+			string pdata4 = element.wrappedElement.get_MiscData(3).ToString();
 			string idRefString = getNextIdRefString(pdata4);
 			pdata4 = KeyValuePairsHelper.setValueForKey(idRefString,this.id.ToString(),pdata4);
 			string sqlUpdateNoteLink = "update t_object set PDATA4 = '"+ pdata4 +"' where ea_guid =" + element.uniqueID;
