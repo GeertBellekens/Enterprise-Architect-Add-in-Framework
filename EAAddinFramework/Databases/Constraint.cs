@@ -94,7 +94,7 @@ namespace EAAddinFramework.Databases
 				this.isOverridden = this.isOverridden;
 				this.isRenamed = this.isRenamed;
 				//get the corresponding columns from this table
-				this.involvedColumns = this.ownerTable.columns.Where (x => _involvedColumns.Any(y => y.name == x.name)).ToList();
+				this.involvedColumns = getCorrespondingColumns();
 				if (this._wrappedOperation != null)
 				{
 					//first remove all existing parameters
@@ -125,7 +125,24 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
-
+		private List<DB.Column> getCorrespondingColumns()
+		{
+			var correspondingColumns = new List<DB.Column>();
+			foreach (var involvedColumn in _involvedColumns) 
+			{
+				DB.Column correspondingColumn = involvedColumn;
+				if (involvedColumn.ownerTable != this.ownerTable) 
+				{
+					correspondingColumn = this.ownerTable.columns.FirstOrDefault(x => x.name == involvedColumn.name);
+				}
+				if (correspondingColumn != null)
+				{
+					correspondingColumns.Add(correspondingColumn);
+				}
+			}
+			return correspondingColumns;
+		}
+		
 		#region implemented abstract members of DatabaseItem
 
 
