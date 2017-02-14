@@ -5,7 +5,7 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public abstract class Parameter : Element, UML.Classes.Kernel.Parameter {
-    public Parameter(Model model) : base(model) {}
+    protected Parameter(Model model) : base(model) {}
     
     public abstract UML.Classes.Kernel.ParameterDirectionKind direction 
       { get; set; }
@@ -30,6 +30,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public abstract bool isOrdered { get; set; }
     public abstract bool isUnique { get; set; }
     public abstract uint lower { get; set; }
+    public abstract uint position { get; set; }
     
     public abstract String qualifiedName { get; set; }
 

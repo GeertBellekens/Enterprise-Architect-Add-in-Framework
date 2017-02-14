@@ -100,13 +100,16 @@ namespace EAAddinFramework.Databases
 					//first remove all existing parameters
 					
 					this._wrappedOperation.ownedParameters = new HashSet<UML.Classes.Kernel.Parameter>();
+					uint parameterPosition = 0;
 					foreach (var column in _involvedColumns) 
 					{
 						{
 							ParameterWrapper parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name) as ParameterWrapper;
 							parameter.type = ((Column)column)._wrappedattribute.type;
+							parameter.position = parameterPosition;
 							//TODO: this would be nicer if we could keep the parameters in memory and not save them directly
 							parameter.save();
+							parameterPosition++;
 						}
 					}
 				}
@@ -225,7 +228,7 @@ namespace EAAddinFramework.Databases
 				if (this.involvedColumns.Count > 0)
 				{
 					_properties += " (" 
-						+ string.Join(", ",this.involvedColumns.Select( x => x.name).ToArray().OrderBy(x => x.ToString()))
+						+ string.Join(", ",this.involvedColumns.Select( x => x.name).ToArray())
 						+ ")";
 				}
 				return _properties;
@@ -258,7 +261,7 @@ namespace EAAddinFramework.Databases
 			_involvedColumns = new List<Column>();
 			if (this._wrappedOperation != null)
 			{
-				foreach (var parameter in this._wrappedOperation.ownedParameters) 
+				foreach (var parameter in this._wrappedOperation.ownedParameters.OrderBy(x => x.position))
 				{
 					Column involvedColumn = _owner.columns.FirstOrDefault(x => x.name == parameter.name) as Column;
 					if (involvedColumn != null)

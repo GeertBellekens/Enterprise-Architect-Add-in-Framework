@@ -252,6 +252,8 @@ namespace EAAddinFramework.Databases.Compare
 					}
 					else
 					{
+						//in case of a constraint we follow the database when it comes to the order of the involved columns
+						fixInvolvedColumns();
 						//both items exist
 						if (newDatabaseItem.isOverridden && existingDatabaseItem.isOverridden)
 						{
@@ -283,7 +285,28 @@ namespace EAAddinFramework.Databases.Compare
 				}
 			}
 		}
-
+		//fix the order of the columns of the constraints. In case both new and existing constraint exist, the order of the existing item is leading
+		void fixInvolvedColumns()
+		{
+			var existingConstraint = this.existingDatabaseItem as Constraint;
+			var newConstraint = this.newDatabaseItem as Constraint;
+			//only if both constraints exist and they both have the same columns
+			if (existingConstraint != null
+			    && newConstraint != null
+			    && existingConstraint.involvedColumns.Count == newConstraint.involvedColumns.Count
+			    && existingConstraint.involvedColumns.All(x => newConstraint.involvedColumns.Any(y => y.name == x.name)))
+			{
+				var newInvolvedColumns = new List<DB.Column>();
+				foreach (var existingInvolvedColumn in existingConstraint.involvedColumns) 
+				{
+					//get the corresponding new column
+					var newcolumn = newConstraint.involvedColumns.First(x => x.name == existingInvolvedColumn.name);
+					newInvolvedColumns.Add(newcolumn);
+				} 
+				//set the involved columns in the correct order
+				newConstraint.involvedColumns = newInvolvedColumns;
+			}
+		}
 		#region DatabaseItemComparison implementation
 
 		

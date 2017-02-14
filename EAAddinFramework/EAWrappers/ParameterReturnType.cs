@@ -27,7 +27,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+
+	#region implemented abstract members of Parameter
+	public override uint position 
+	{
+		get 
+		{
+			return 0;
+		}
+		set 
+		{
+			//do nothing. position has no meaning in the return type
+		}
+	}
+	#endregion    
     public override UML.Classes.Kernel.ValueSpecification defaultValue {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }

@@ -114,7 +114,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			//check attributes
 			foreach (var attributes in allLogicalClasses.Select(z => z.attributes.Where(x => x.isID)))
 			{
-				foreach (var attribute in attributes) 
+				foreach (var attribute in attributes.OrderBy(x => x.position))
 				{
 					//get the corresponding transformer
 					var columnTransformer = this.columnTransformers.FirstOrDefault( x => attribute.Equals(x.logicalProperty));

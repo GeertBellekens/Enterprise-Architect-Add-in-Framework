@@ -56,7 +56,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       set { throw new NotImplementedException(); }
     }
-    
+
+	#region implemented abstract members of Parameter
+	public override uint position 
+	{
+		get 
+		{
+			uint returnValue;
+			if (! uint.TryParse(this.wrappedParameter.Position.ToString(), out returnValue))
+			{
+				returnValue = 0;
+			}
+			return returnValue;
+		}
+		set 
+		{
+			this.wrappedParameter.Position = (int)value;
+		}
+	}
+	#endregion    
     public override UML.Classes.Kernel.ParameterDirectionKind direction {
       get {
         return ParameterDirectionKind.getUMLParameterDirectionkind

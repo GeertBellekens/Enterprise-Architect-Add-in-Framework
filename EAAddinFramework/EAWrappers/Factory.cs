@@ -342,7 +342,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		case "PrimitiveType": //TODO: fix primitive type so it can handle this
 			return new DataType(this.model as Model, elementToWrap);
 		case "InformationItem":
-			return new InformationItem(this.model as Model, elementToWrap);			
+			return new InformationItem(this.model as Model, elementToWrap);
+		case "ProxyConnector":
+			return new ProxyConnector(this.model as Model, elementToWrap);			
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }
