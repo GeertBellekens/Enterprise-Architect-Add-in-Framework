@@ -24,8 +24,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 	/// </summary>
 	public class TFSProject:Project
 	{
-        //TFS constants
-        const string defaultTfsCollection = "DefaultCollection/";
+        
         //variables
         internal TFSSettings settings {get;set;}
 		internal string TFSUrl {get;set;}
@@ -53,13 +52,13 @@ namespace EAAddinFramework.WorkTracking.TFS
 		public TFSProject(Package packageToWrap,string TFSUrl, TFSSettings settings):base(packageToWrap)
 		{
 			this.settings = settings;
-			this.TFSUrl = TFSUrl + tfsCollection;
+			this.TFSUrl = TFSUrl + this.settings.defaultCollection;
 		}
 		public TFSProject(string projectName,string TFSUrl, TFSSettings settings)
 		{
 			this.settings = settings;
 			this.name = projectName;
-			this.TFSUrl = TFSUrl + tfsCollection;
+			this.TFSUrl = TFSUrl + this.settings.defaultCollection;
 		}
 		public static TFSProject getCurrentProject(Element currentElement,string TFSUrl, TFSSettings settings)
 		{
@@ -91,20 +90,6 @@ namespace EAAddinFramework.WorkTracking.TFS
 			}
 		}
 
-        //Get the DefaultCollection path from the config file (if it exists).
-        private string tfsCollection
-        {
-            get
-            {
-                if (ConfigurationManager.AppSettings.AllKeys.Any(key => key.Equals("DefaultCollection")))
-                {
-
-                    return ConfigurationManager.AppSettings["DefaultCollection"];
-                }
-                //Return the constant.
-                return defaultTfsCollection;
-            }
-        }
 
         /// <summary>
         /// returns all owned workitems for this package and if requested for all owned packages recursively

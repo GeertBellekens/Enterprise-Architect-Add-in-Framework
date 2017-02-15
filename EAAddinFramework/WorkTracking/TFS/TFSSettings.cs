@@ -25,5 +25,6 @@ namespace EAAddinFramework.WorkTracking.TFS
         string defaultWorkitemType {get;set;}
         string defaultStatus {get;set;}
         string TFSFilterTag {get;set;}
+        string defaultCollection {get;set;}
 	}
 }
