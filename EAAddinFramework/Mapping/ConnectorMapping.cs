@@ -76,7 +76,9 @@ namespace EAAddinFramework.Mapping
 				var mappingElementWrapper = value.mappingElement as ElementWrapper;
 				if (mappingElementWrapper != null)
 				{
-					this.wrappedConnector.addLinkedElement(mappingElementWrapper);
+					this.wrappedConnector.addTaggedValue("mappinglogic",mappingElementWrapper.uniqueID);
+					//TODO get this working for at least notes and constraints, for now we go with a tagged value
+					// this.wrappedConnector.addLinkedElement(mappingElementWrapper);
 				}
 				else
 				{
