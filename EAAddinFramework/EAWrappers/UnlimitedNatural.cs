@@ -14,7 +14,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public uint numericValue {get;private set;}
 		public UnlimitedNatural(string valueString)
 		{
-			if (valueString == unlimited)
+			if (valueString == unlimited
+			    || valueString.StartsWith("-"))
 			{
 				this.isUnlimited = true;
 			}
