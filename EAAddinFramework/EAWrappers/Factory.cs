@@ -658,21 +658,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 
     /// create a new element as owned element of the given owner
-    public override T createNewElement<T>
-      ( UML.Classes.Kernel.Element owner, String name )
+    public override T createNewElement<T> ( UML.Classes.Kernel.Element owner, String name )
     {
+    	T returnedValue = null;
       if( owner is ElementWrapper ) 
       {
-        return ((ElementWrapper)owner).addOwnedElement<T>(name);
+        returnedValue = ((ElementWrapper)owner).addOwnedElement<T>(name);
       }else if (owner is Operation)
       {
       	//We can only add Parameters as owned elements to an operation
-      	return ((Operation)owner).addOwnedParameter(name) as T;
+      	returnedValue = ((Operation)owner).addOwnedParameter(name) as T;
       }
 	  else 
 	  {
-        return default(T);
+        returnedValue = default(T);
       }
+	  //new elements are always dirty
+	  var returnedElement = returnedValue as Element;
+	  if (returnedElement != null) returnedElement.isNew = true;
+	  return returnedValue;
     }
 	
     internal T addElementToEACollection<T>( global::EA.Collection collection,

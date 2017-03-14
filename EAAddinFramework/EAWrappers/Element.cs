@@ -95,12 +95,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//do nothing
 		}
 	}
+	//indicates whether or not this element is new
+	internal bool isNew {get;set;}
 	private bool _isDirty = true;
 	public virtual bool isDirty
 	{
 		get
 		{
-			if (this.properties.Any()) _isDirty = this.properties.Values.Any(x => x.isDirty);
+			if (isNew)
+			{
+				_isDirty = true;
+			}
+			else if (this.properties.Any()) _isDirty = this.properties.Values.Any(x => x.isDirty);
 			return _isDirty;
 		}
 		set
@@ -208,6 +214,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       if (isDirty)
       {
       	this.saveElement();
+      	//after saving the element is not new anymore
+      	this.isNew = false;
       }
       foreach (UML.Classes.Kernel.Element element in this.ownedElements) {
         ((Element)element).save();
