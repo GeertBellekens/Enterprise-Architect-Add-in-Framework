@@ -204,7 +204,14 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
-
+		public List<Table> getAllCorrespondingTables(Table externalTable)
+		{
+			var allCorrespondingTables = new List<Table>();
+			//find all tables with the same name
+			allCorrespondingTables.AddRange(this.tables.Where (x => x.name == externalTable.name).Cast<Table>());
+			//add tables derived from the same logical classes? Maybe not needed
+			return allCorrespondingTables;
+		}
 		public DB.Table getCorrespondingTable(DB.Table externalTable)
 		{
 			var _externalTable = (Table) externalTable;

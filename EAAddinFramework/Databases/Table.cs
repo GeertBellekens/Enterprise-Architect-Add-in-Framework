@@ -326,14 +326,33 @@ namespace EAAddinFramework.Databases
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="newForeignKey"></param>
+		/// <param name="foreignKeytoFind"></param>
 		/// <returns></returns>
-		public ForeignKey getCorrespondingForeignKey(ForeignKey newForeignKey)
+		public ForeignKey getCorrespondingForeignKey(ForeignKey foreignKeytoFind,List<Table> searchedTables = null)
 		{
 			var correspondingForeignKey = this.constraints.OfType<ForeignKey>()
-							.FirstOrDefault( x => x.name + x.properties == newForeignKey.name + newForeignKey.properties);
+							.FirstOrDefault( x => x.name + x.properties == foreignKeytoFind.name + foreignKeytoFind.properties);
 			if (correspondingForeignKey == null) correspondingForeignKey = this.constraints.OfType<ForeignKey>()
-				.FirstOrDefault( x => x.logicalAssociation != null && x.logicalAssociation.Equals(newForeignKey.logicalAssociation));
+				.FirstOrDefault( x => x.logicalAssociation != null && x.logicalAssociation.Equals(foreignKeytoFind.logicalAssociation));
+			//if still not found
+			if (correspondingForeignKey == null)
+			{
+				//make sure we don't keep searching in loops in the same tables
+				if (searchedTables == null) searchedTables = new List<Table>();
+				if (! searchedTables.Contains(this)) 
+				{
+					searchedTables.Add(this);
+					//check if there is another new table that is linked to the same table as the foreignkeyToFind
+					foreach (Table otherCorrespondingTable in this.databaseOwner.tables.
+					         Where( x => foreignKeytoFind.ownerTable.logicalElements.Intersect(this.logicalElements).Any()
+					               && ! this.Equals(x)))
+					{
+						
+						correspondingForeignKey = otherCorrespondingTable.getCorrespondingForeignKey(foreignKeytoFind,searchedTables);
+						if (correspondingForeignKey != null) break; //found it, exit for loop
+					}
+				}
+			}
 			return correspondingForeignKey;
 		}
 		#region Table implementation

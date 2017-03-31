@@ -254,6 +254,7 @@ namespace EAAddinFramework.Databases.Compare
 					{
 						//in case of a constraint we follow the database when it comes to the order of the involved columns
 						fixInvolvedColumns();
+
 						//both items exist
 						if (newDatabaseItem.isOverridden && existingDatabaseItem.isOverridden)
 						{

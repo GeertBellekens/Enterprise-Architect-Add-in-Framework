@@ -239,6 +239,8 @@ namespace EAAddinFramework.Databases.Compare
 					}
 					
 				}
+				//in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
+				fixForeignkeysToSameTable();
 				//add all foreignkeys
 				foreach (ForeignKey existingForeignkey in existingTable.foreignKeys) 
 				{
@@ -258,6 +260,7 @@ namespace EAAddinFramework.Databases.Compare
 					}
 				}
 				//add the primary key comparison
+				
 				var existingPrimaryKey = existingTable.primaryKey;
 				DB.PrimaryKey newPrimaryKey = newTable != null ? newTable.primaryKey : null;
 				addedComparedItems.Add(comparedItem.addOwnedComparison(newPrimaryKey,existingPrimaryKey));
@@ -279,6 +282,29 @@ namespace EAAddinFramework.Databases.Compare
 			return addedComparedItems;
 		}
 
+		void fixForeignkeysToSameTable()
+		{
+			//in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
+			//first find all existing tables that correspond to multiple new tables
+			foreach (Table existingTable in this.existingDatabase.tables)
+			{
+				var correspondingTables = this._newDatabase.getAllCorrespondingTables(existingTable);
+				if (correspondingTables.Count > 1)
+				{
+					//if there are more corresponding tables in the new database we remove the foreign keys between those corresponding tables 
+					//(except for foreign keys to the own tables)
+					foreach (var correspondingTable in correspondingTables) 
+					{
+						foreach (var FKToDelete in correspondingTable.foreignKeys
+						         .Where( x => correspondingTables.Contains(x.foreignTable)
+						                && x.foreignTable != correspondingTable))
+						{
+							FKToDelete.delete();
+						}
+					}
+				}
+			}
+		}
 		Column getRemoteColumn(Column existingColumn,Table newTable, List<Column> alreadMappedcolumns)
 		{
 			//get the table of the existing column
