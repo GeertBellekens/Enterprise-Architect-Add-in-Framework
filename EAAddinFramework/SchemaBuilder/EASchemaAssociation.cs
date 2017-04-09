@@ -128,14 +128,14 @@ namespace EAAddinFramework.SchemaBuilder
                         && UTF_EA.AggregationKind.getEAAggregationKind(sourceEnd.aggregation) == this.wrappedProperty.Aggregation)
                     {
                         //the source end properties corresponds with the wrappedProperty properties
-                        this._thisEnd = sourceEnd;
-                        this._otherEnd = targetEnd;
+                        this._thisEnd = targetEnd;
+                        this._otherEnd = sourceEnd;
                     }
                     else
                     {
                         //source end properties don't correspond, so we assume the targetEnd to be this end
-                        this._thisEnd = targetEnd;
-                        this._otherEnd = sourceEnd;
+                        this._thisEnd = sourceEnd;
+                        this._otherEnd = targetEnd;
                     }
                 }
                 else
