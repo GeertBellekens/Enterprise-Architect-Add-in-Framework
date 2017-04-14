@@ -36,7 +36,16 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				return base.isOverridden;
+				
+				var returnValue = base.isOverridden;
+				//if this column is part of a FK that is overridden then this column is considered overridden as well
+				if (this.ownerTable.foreignKeys.Any(x => 
+				                                    x.isOverridden && 
+				                                    x.involvedColumns.Any(y => y.Equals(this))))
+				{
+					returnValue = true;
+				}
+				return returnValue;
 			}
 			set 
 			{

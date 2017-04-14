@@ -42,6 +42,19 @@ namespace EAAddinFramework.Databases
 				this.logicalAssociation = value.OfType<Association>().FirstOrDefault();
 			}
 		}
+		public override bool isOverridden {
+			get {
+				return base.isOverridden;
+			}
+			set {
+				base.isOverridden = value;
+				//set all involved columns overridden
+				foreach (var involvedColumn in this.involvedColumns) 
+				{
+					involvedColumn.isOverridden = value;
+				}
+			}
+		}
 
 		internal string _onDelete;
     public virtual string onDelete {
