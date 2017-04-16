@@ -25,6 +25,8 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			resetName();
 			if (dependingTransformer.associationEnd != null) this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
 			table.constraints.Add(this._foreignKey);
+			//make sure we get the correct override settings for the FK and the involved columns
+			var dummy = this._foreignKey.isOverridden;
 		}
 		#region implemented abstract members of EAForeignKeyTransformer
 

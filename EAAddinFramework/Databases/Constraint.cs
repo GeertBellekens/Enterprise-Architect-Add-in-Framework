@@ -169,12 +169,23 @@ namespace EAAddinFramework.Databases
 			this.ownerTable.removeConstraint(this);
 		}
 
-		public override bool isOverridden {
+		public override bool isOverridden 
+		{
 			get 
 			{
-				return base.isOverridden || this.involvedColumns.Any(x => x.isOverridden);
+				if (!_isOverridden.HasValue)
+				{
+					//get the initial override
+					if (this.involvedColumns.Any(x => ((Column)x).getInitialOverride()))
+					{
+						_isOverridden = true;	
+					}
+
+				}
+				return base.isOverridden;
 			}
-			set {
+			set 
+			{
 				base.isOverridden = value;
 			}
 		}

@@ -32,20 +32,18 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.ownerTable.addColumn(this);
 		}
+		
+		internal bool initialOverride = false;
+		internal bool getInitialOverride()
+		{
+			initialOverride = base.isOverridden;
+			return initialOverride;
+		}
 		public override bool isOverridden 
 		{
 			get 
 			{
-				
-				var returnValue = base.isOverridden;
-				//if this column is part of a FK that is overridden then this column is considered overridden as well
-				if (this.ownerTable.foreignKeys.Any(x => 
-				                                    x.isOverridden && 
-				                                    x.involvedColumns.Any(y => y.Equals(this))))
-				{
-					returnValue = true;
-				}
-				return returnValue;
+				return base.isOverridden;
 			}
 			set 
 			{

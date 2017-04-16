@@ -20,10 +20,11 @@ namespace EAAddinFramework.Databases
 		
 		public ForeignKey(Table owner,Operation operation):base(owner,operation)
 		{
+
 		}
 		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
 		{
-			
+
 		}
 
 		#region implemented abstract members of Constraint
@@ -43,15 +44,29 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		public override bool isOverridden {
-			get {
+			get 
+			{
+				//set all involved columns overridden
+				if (base.isOverridden)
+				{
+					//if the FK is overridden then all the columns should be overridden as well
+					foreach (Column involvedColumn in this.involvedColumns) 
+					{
+						involvedColumn.isOverridden = true;
+					}
+				}
 				return base.isOverridden;
 			}
-			set {
+			set 
+			{
 				base.isOverridden = value;
-				//set all involved columns overridden
-				foreach (var involvedColumn in this.involvedColumns) 
+				if (value) 
 				{
-					involvedColumn.isOverridden = value;
+					//if the FK is overridden then all the columns should be overridden as well
+					foreach (Column involvedColumn in this.involvedColumns) 
+					{
+						involvedColumn.isOverridden = true;
+					}
 				}
 			}
 		}
