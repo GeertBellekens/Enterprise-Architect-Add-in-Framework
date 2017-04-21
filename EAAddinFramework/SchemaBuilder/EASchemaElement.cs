@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Text;
 using EAAddinFramework.Utilities;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
@@ -267,16 +268,23 @@ namespace EAAddinFramework.SchemaBuilder
 				trace.target = this.sourceElement;
 				trace.save();
 			}
-			//copy the generatlizations for enumerations and for datatypes if that setting is set
-//			if (this.sourceElement is UML.Classes.Kernel.Enumeration
-//			   || this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-//			{
-//				this.copyGeneralizations();
-//			}
 			//return the new element
 			return this.subsetElement;
 		}
-		
+		/// <summary>
+		/// orders the associations of this element alphabetically
+		/// </summary>
+		public void orderAssociationsAlphabetically()
+		{
+			int i =1 ;
+			foreach (UTF_EA.Association association in this.subsetElement.getRelationships<Association>()
+			         .Where( y => ((UTF_EA.Association)y).source.Equals(this.subsetElement))
+			         .OrderBy(x => ((UTF_EA.Association)x).targetName))
+			{
+				association.addTaggedValue("position",i.ToString());
+				i++;
+			}
+		}
 		internal void setAssociationClassProperties()
 		{
 			//TODO

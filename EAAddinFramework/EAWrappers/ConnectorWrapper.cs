@@ -54,6 +54,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return null;
     	}
     }
+    public string targetName 
+    {
+    	get
+    	{
+			return string.IsNullOrEmpty(this.targetEnd.name) ? this.targetEnd.name : this.target.name;
+    	}
+    }
+    public string sourceName 
+    {
+    	get
+    	{
+			return string.IsNullOrEmpty(this.sourceEnd.name) ? this.sourceEnd.name : this.source.name;
+    	}
+    }
     public int id
     {
     	get{return this.wrappedConnector.ConnectorID;}

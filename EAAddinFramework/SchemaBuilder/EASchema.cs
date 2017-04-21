@@ -203,11 +203,22 @@ namespace EAAddinFramework.SchemaBuilder
 						                   ,0, LogTypeEnum.log);
 						//Logger.log("after EASchema::createSubsetAttributes ");
 						schemaElement.createSubsetLiterals();
-						//tell the user what we are doing 
-						EAOutputLogger.log(this.model,this.settings.outputName,"Creating attribute depencendies for: '" + schemaElement.name + "'"
-						                   ,0, LogTypeEnum.log);
-						//and add a dependency from the schemaElement to the type of the attributes
-						schemaElement.addAttributeTypeDependencies();
+						if (!this.settings.dontCreateAttributeDependencies)
+						{
+							//tell the user what we are doing 
+							EAOutputLogger.log(this.model,this.settings.outputName,"Creating attribute depencendies for: '" + schemaElement.name + "'"
+							                   ,0, LogTypeEnum.log);
+							//and add a dependency from the schemaElement to the type of the attributes
+							schemaElement.addAttributeTypeDependencies();
+						}
+						if (this.settings.orderAssociationsAlphabetically)
+						{
+							//tell the user what we are doing 
+							EAOutputLogger.log(this.model,this.settings.outputName,"Ordering associations for: '" + schemaElement.name + "'"
+							                   ,0, LogTypeEnum.log);
+							//and add a dependency from the schemaElement to the type of the attributes
+							schemaElement.orderAssociationsAlphabetically();
+						}
 						//Logger.log("after EASchema::addAttributeTypeDependencies");
 						//tell the user what we are doing 
 						EAOutputLogger.log(this.model,this.settings.outputName,"Creating generalizations for: '" + schemaElement.name + "'"
