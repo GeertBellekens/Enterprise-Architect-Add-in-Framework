@@ -197,16 +197,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		return null;
 	}
-	public override HashSet<UML.Profiles.TaggedValue> taggedValues
-	{
-		get 
-		{
-			//make sure we have an up-to date collection
-			this.wrappedParameter.TaggedValues.Refresh();			
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedParameter.TaggedValues));
-		}
-		set { throw new NotImplementedException();}
-	}
   	
 	internal override global::EA.Collection eaTaggedValuesCollection {
 		get {

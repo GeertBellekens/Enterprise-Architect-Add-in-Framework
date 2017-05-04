@@ -847,6 +847,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			newTaggedValue = this.createParameterTag((global::EA.ParamTag)objectToWrap);
 		}
+		else if (objectToWrap is global::EA.RoleTag)
+		{
+			newTaggedValue = this.createRoleTag((global::EA.RoleTag)objectToWrap);
+		}
 		return newTaggedValue;
 	}
 	
@@ -869,6 +873,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	public ParameterTag createParameterTag(global::EA.ParamTag objectToWrap)
 	{
 		return new ParameterTag((Model)this.model,objectToWrap);
+	}
+	public RoleTag createRoleTag(global::EA.RoleTag objectToWrap)
+	{
+		return new RoleTag((Model)this.model,objectToWrap);
 	}
 	public DescriptionComment createDescriptionComment(Element owner)
 	{

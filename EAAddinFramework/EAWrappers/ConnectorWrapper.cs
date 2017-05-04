@@ -54,18 +54,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return null;
     	}
     }
+	public override string orderingName 
+	{
+		get
+		{
+			return this.targetName;
+		}
+	}
     public string targetName 
     {
     	get
     	{
-			return string.IsNullOrEmpty(this.targetEnd.name) ? this.targetEnd.name : this.target.name;
+    		return string.IsNullOrEmpty(this.targetEnd.name) ? this.target.name : this.targetEnd.name;
     	}
     }
     public string sourceName 
     {
     	get
     	{
-			return string.IsNullOrEmpty(this.sourceEnd.name) ? this.sourceEnd.name : this.source.name;
+    		return string.IsNullOrEmpty(this.sourceEnd.name) ? this.source.name : this.sourceEnd.name;
     	}
     }
     public int id
@@ -243,6 +250,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this._target = value;
 			this.WrappedConnector.SupplierID = ((ElementWrapper)value).id;
+			//make sure the target's relationships are reset as well
+			((ElementWrapper)value).resetRelationships();
 		}
 		else
 		{
@@ -352,6 +361,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this._source = value;
 			this.WrappedConnector.ClientID = ((ElementWrapper)value).id;
+			//make sure we reset the cached relations of the source
+			((ElementWrapper)value).resetRelationships();
 		}
 		else
 		{
@@ -538,7 +549,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
 	public override void save()
 	{
+		//debug
+		Logger.log("saving connector with clientID: " + this.wrappedConnector.ClientID + " supplierID: " + this.wrappedConnector.SupplierID + " and type: " + this.wrappedConnector.Type);
+		//save wrapped connector
 		this.WrappedConnector.Update();
+		
 		if (this.sourceEnd.aggregation == UML.Classes.Kernel.AggregationKind.none)
 		{
 			this.sourceEnd.save();
@@ -574,16 +589,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		return this; 
 	}
 	
-	public override HashSet<UML.Profiles.TaggedValue> taggedValues
-	{
-		get 
-		{
-			//make sure we have an up-to date collection
-			this.wrappedConnector.TaggedValues.Refresh();
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedConnector.TaggedValues));
-		}
-		set { throw new NotImplementedException();}
-	}
 
 	#region Equals and GetHashCode implementation
 	public override bool Equals(object obj)

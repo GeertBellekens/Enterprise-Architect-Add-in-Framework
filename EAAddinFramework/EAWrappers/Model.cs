@@ -223,7 +223,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// Finds the EA.Element with the given id and returns an EAElementwrapper 
     /// wrapping this element.
     public ElementWrapper getElementWrapperByID(int id){
-      try{
+      //don't even try if the ID is not a positive number
+      if (id <= 0 ) return null;
+      try
+      {
         return this.factory.createElement
           (this.wrappedModel.GetElementByID(id)) as ElementWrapper;
       } catch( Exception )  {

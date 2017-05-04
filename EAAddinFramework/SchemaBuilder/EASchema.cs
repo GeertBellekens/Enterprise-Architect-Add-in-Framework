@@ -41,6 +41,7 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
+				//TODO: check how to compile this only in certain conditions
 				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
 					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
 				return "Unknown Schema Name";
@@ -143,7 +144,6 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			return result;
 		}
-
 	    /// <summary>
 	    /// creates a subset of the source model with only the properties and associations used in this schema
 	    /// </summary>
@@ -203,6 +203,7 @@ namespace EAAddinFramework.SchemaBuilder
 						                   ,0, LogTypeEnum.log);
 						//Logger.log("after EASchema::createSubsetAttributes ");
 						schemaElement.createSubsetLiterals();
+						//clean up attribute type dependencies we don't need anymore
 						if (!this.settings.dontCreateAttributeDependencies)
 						{
 							//tell the user what we are doing 

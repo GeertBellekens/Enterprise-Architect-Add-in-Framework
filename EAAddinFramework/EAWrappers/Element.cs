@@ -95,6 +95,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//do nothing
 		}
 	}
+	/// <summary>
+	/// the name to be used when ordering elemnts of this type alphabetically
+	/// </summary>
+	public virtual string orderingName
+	{
+		get
+		{
+			return this.name;
+		}
+	}
 	//indicates whether or not this element is new
 	internal bool isNew {get;set;}
 	private bool _isDirty = true;
@@ -263,13 +273,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <summary>
   	/// default empty implementation
   	/// </summary>
-	public virtual HashSet<UML.Profiles.TaggedValue> taggedValues {
-		get {
-			return new HashSet<UML.Profiles.TaggedValue>();
+	public virtual HashSet<UML.Profiles.TaggedValue> taggedValues 
+	{
+		get 
+		{
+			//make sure we have the latest set of tagged values
+			this.eaTaggedValuesCollection.Refresh();
+			//create the tagged values from the EA collection
+			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.eaTaggedValuesCollection));
 		}
-		set {
-			//do nothing
-		}
+		set { throw new NotImplementedException();}
 	}
   	/// <summary>
   	/// default empty implementation

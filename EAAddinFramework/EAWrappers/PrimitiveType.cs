@@ -40,7 +40,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-    
+
+	internal override global::EA.Collection eaTaggedValuesCollection 
+	{
+		get 
+		{
+			throw new NotImplementedException();
+		}
+	}    
     public bool isLeaf {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
@@ -131,9 +138,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		return null;
 	}
   	
-	internal override global::EA.Collection eaTaggedValuesCollection {
-		get {
-			throw new NotImplementedException();
+	public override HashSet<UML.Profiles.TaggedValue> taggedValues 
+	{
+		//in EA the rootpackage can't have tagged values
+		get 
+		{ 
+			return new HashSet<UML.Profiles.TaggedValue>();
+		}
+		set 
+		{
+			//do nothing
 		}
 	}
   	

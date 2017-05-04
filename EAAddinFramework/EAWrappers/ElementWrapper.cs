@@ -4,6 +4,7 @@ using System.Linq;
 
 using System.Reflection;
 using System.Xml;
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
@@ -24,7 +25,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       this.wrappedElement = wrappedElement;
       this.isDirty = false;
     }
-	
+	/// <summary>
+	/// resets the cached relations
+	/// </summary>
+	internal void resetRelationships()
+	{
+		_allRelationships = null;
+	}
+	/// <summary>
+	/// resets the cached attributes
+	/// </summary>
+	internal void resetAttributes()
+	{
+		_attributes = null;
+		_attributeWrappers = null;
+	}
     public override string name 
     {
     	get 
@@ -295,6 +310,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       {
       	if (this._attributes == null)
       	{
+      		//refresh attributes to make sure we have an up-to-date list
+      		this.wrappedElement.Attributes.Refresh();
+      		//get the attributes
       		this._attributes = new HashSet<UML.Classes.Kernel.Property>(this.attributeWrappers.OfType<UML.Classes.Kernel.Property>());
       	}
         return this._attributes;
@@ -308,6 +326,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._attributeWrappers == null)
     		{
+    			//refresh attributes to make sure we have an up-to-date list
+      			this.wrappedElement.Attributes.Refresh();
+      			//get the attribute wrappers
     			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.model)
       		                   .createElements( this.wrappedElement.Attributes).Cast<AttributeWrapper>());
     		}
@@ -524,6 +545,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       if(((Factory)this.model.factory).isEAAtttribute(type)) 
       {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Attributes, name, string.Empty  );
+        //reset the cached attributes
+        this.resetAttributes();
       } 
       else if(((Factory)this.model.factory).isEAOperation(type))
       {
@@ -532,6 +555,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       else if (((Factory)this.model.factory).isEAConnector(type))
       {
         newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
+        //if we add a connector to the element wrapper we have to make sure to reset the connectors
+        this.resetRelationships();
       }
 	  else if (((Factory)this.model.factory).isEAParameter(type))
       {
@@ -775,17 +800,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 	}
-	public override HashSet<UML.Profiles.TaggedValue> taggedValues 
-	{
-		get 
-		{
-			//make sure we have an up-to-date collection
-			this.wrappedElement.TaggedValues.Refresh();
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedElement.TaggedValues));
-		}
-		set { throw new NotImplementedException();}
-	}
-  	
+	  	
 	public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram 
 	{
 		get { return this.model.factory.createDiagram(this.wrappedElement.CompositeDiagram) ;}

@@ -395,17 +395,6 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 		return item; 
 	}
 	
-	public override HashSet<UML.Profiles.TaggedValue> taggedValues
-	{
-		get 
-		{
-			//make sure we have an up-to-date collection
-			this.wrappedOperation.TaggedValues.Refresh();
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.wrappedOperation.TaggedValues));
-		}
-		set { throw new NotImplementedException();}
-	}
-	
 	#region Equals and GetHashCode implementation
 	public override bool Equals(object obj)
 	{
