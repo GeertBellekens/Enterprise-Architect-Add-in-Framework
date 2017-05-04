@@ -204,6 +204,7 @@ namespace EAAddinFramework.SchemaBuilder
 						//Logger.log("after EASchema::createSubsetAttributes ");
 						schemaElement.createSubsetLiterals();
 						//clean up attribute type dependencies we don't need anymore
+						schemaElement.cleanupAttributeDependencies();
 						if (!this.settings.dontCreateAttributeDependencies)
 						{
 							//tell the user what we are doing 

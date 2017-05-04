@@ -276,15 +276,35 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void orderAssociationsAlphabetically()
 		{
-			int i =1 ;
-			foreach (UTF_EA.Association association in this.subsetElement.getRelationships<Association>()
-			         .Where( y => ((UTF_EA.Association)y).source.Equals(this.subsetElement))
-			         .OrderBy(x => ((UTF_EA.Association)x).targetName))
+			var listToBeOrdered = new List<UTF_EA.Element>();
+			//add the associations
+			var allAssociations = this.subsetElement.getRelationships<Association>()
+								.Cast<UTF_EA.Association>();
+			listToBeOrdered.AddRange(allAssociations.Where( y => y.source.Equals(this.subsetElement)));
+			int i;
+			//add attributes depending on the settings
+			if(listToBeOrdered.Count > 0 && this.owner.settings.orderAssociationsAmongstAttributes)
 			{
-				association.addTaggedValue("position",i.ToString());
+				//add attributes
+				listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<UTF_EA.Attribute>());
+				i = 1;
+			}
+			else
+			{
+				//start associations after the attributes
+				i = this.subsetElement.attributes.Count +1;
+			}
+			foreach (var element in listToBeOrdered.OrderBy(x => x.orderingName))
+			{
+				var association = element as UTF_EA.Association;
+				if (association != null)
+				{
+					association.sourceEnd.addTaggedValue("position",i.ToString());
+				}
 				i++;
 			}
 		}
+		
 		internal void setAssociationClassProperties()
 		{
 			//TODO
@@ -368,6 +388,34 @@ namespace EAAddinFramework.SchemaBuilder
 				schemaProperty.addAttributeTypeDependency();
 			}
 		}
+		/// <summary>
+		/// clean up any attribute type dependencies we don't neeed anymore
+		/// </summary>
+		public void cleanupAttributeDependencies()
+		{
+			if (this.subsetElement != null)
+			{
+				foreach (var dependency in this.subsetElement.getRelationships<UTF_EA.Dependency>().Where(x => x.source.Equals(this.subsetElement) 
+				                                                                                          && ! x.stereotypes.Any()))
+				{
+					//if the settings say we don't need to create attribute type dependencies then we delete them all
+					if (this.owner.settings.dontCreateAttributeDependencies)
+					{
+						dependency.delete();
+					}
+					else
+					{
+						//if there are not attributes that have the same name as the depencency and the same type as the target then
+						//the dependency can be deleted
+						if (!this.subsetElement.attributes.Any(x => dependency.target.Equals(x.type) && dependency.name == x.name))
+						{
+							dependency.delete();
+						}
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// matches the given subset element with the schema element, matching attributes and association
 		/// all attributes or associations that do not exist in the schema are deleted
