@@ -155,7 +155,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    }
 	
 	    
-		internal Element _owner;
+		internal ElementWrapper _owner;
 	    public override UML.Classes.Kernel.Element owner 
 	    {
 	      get 
@@ -166,10 +166,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				}
 				return _owner;
 			}
-	      set 
-	      { 
-	      	throw new NotImplementedException();
+	      set
+	      {
+	      		//only used to set the owner object of the attribute in case that was already initialized, not to change the owner of the attribute.
+	      		//in that case create a new attribute with the same properties as this one on the new owner.
+	      		if (this.wrappedAttribute.ParentID != ((ElementWrapper)value).id) 
+	      			throw new NotImplementedException("You cannot change the owner of an Attribute");
+		    	_owner = value as ElementWrapper;	
 	      }
+		      		      
 	    }
 	    
 

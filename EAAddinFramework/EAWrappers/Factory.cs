@@ -134,6 +134,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
       return returnedDiagramElements;
     }
+
+		#region implemented abstract members of UMLFactory
+
+
+	public override UML.Classes.Kernel.Element createElement(object objectToWrap, UML.Classes.Kernel.Element owner)
+	{
+		var newElement = this.createElement(objectToWrap);
+		newElement.owner = owner;
+		return newElement;
+	}
+
+
+	#endregion
+
     /// creates a new UML element based on the given object to wrap
     public override UML.Classes.Kernel.Element createElement
       (Object objectToWrap)

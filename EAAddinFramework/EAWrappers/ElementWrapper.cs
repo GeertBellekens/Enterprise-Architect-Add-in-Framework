@@ -330,7 +330,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       			this.wrappedElement.Attributes.Refresh();
       			//get the attribute wrappers
     			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.model)
-      		                   .createElements( this.wrappedElement.Attributes).Cast<AttributeWrapper>());
+      		                   .createElements( this.wrappedElement.Attributes,this).Cast<AttributeWrapper>());
     		}
     		return this._attributeWrappers;
     	}
@@ -852,6 +852,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				{   
 					this.WrappedElement.Attributes.Delete(i);
 					this.WrappedElement.Attributes.Refresh();
+					this.resetAttributes();
 					break;
 				}
 			}
@@ -865,6 +866,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				{   
 					this.WrappedElement.Connectors.Delete(i);
 					this.WrappedElement.Connectors.Refresh();
+					this.resetRelationships();
 					break;
 				}
 			}
