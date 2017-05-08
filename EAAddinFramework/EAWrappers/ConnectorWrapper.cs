@@ -549,8 +549,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
 	public override void save()
 	{
-		//debug
-		Logger.log("saving connector with clientID: " + this.wrappedConnector.ClientID + " supplierID: " + this.wrappedConnector.SupplierID + " and type: " + this.wrappedConnector.Type);
 		//save wrapped connector
 		this.WrappedConnector.Update();
 		

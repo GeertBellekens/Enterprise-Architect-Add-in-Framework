@@ -184,24 +184,9 @@ namespace EAAddinFramework.SchemaBuilder
 				if (dependency == null)
 				{
 					dependency = this.model.factory.createNewElement<UTF_EA.Dependency>(this.owner.subsetElement,this.subSetProperty.name);
-					//debug
-			        if (dependency != null)
-			        {
-			        	Logger.log("successfully added type dependency for attribute " + this.subSetProperty.name );
-			        }
-			        else
-			        {
-			        	Logger.logError("not able to add type dependency for attribute " + this.subSetProperty.name );
-			        }
 					dependency.addRelatedElement(this.subSetProperty.type);
-					//debug
-					Logger.log("after addRelatedElement with parameter " + this.subSetProperty.type.name);
 					dependency.targetEnd.multiplicity = this.subSetProperty.multiplicity;
-					//debug
-					Logger.log("after setting multiplicity to " + this.subSetProperty.multiplicity.ToString());
 					dependency.save();
-					//debug
-					Logger.log("after dependency.save()");
 				}
 				else
 				{

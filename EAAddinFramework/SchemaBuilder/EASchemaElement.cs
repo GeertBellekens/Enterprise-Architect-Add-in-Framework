@@ -257,16 +257,25 @@ namespace EAAddinFramework.SchemaBuilder
 			((UTF_EA.Element) this.subsetElement).save();
 			//copy tagged values
 			((EASchema) this.owner).copyTaggedValues((UTF_EA.Element)this.sourceElement, (UTF_EA.Element)this.subsetElement);
-			//add a trace relation from the subset element to the source element
-			// check if trace already exists?
-			var trace = this.subsetElement.getRelationships<UML.Classes.Dependencies.Abstraction>()
-						.FirstOrDefault(x => this.sourceElement.Equals(x.supplier)) as UML.Classes.Dependencies.Abstraction;
-			if (trace == null)
+			//set reference to source element
+			if (this.owner.settings.tvInsteadOfTrace)
 			{
-				trace = this.model.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.subsetElement, string.Empty);
-				trace.addStereotype(this.model.factory.createStereotype(trace, "trace"));
-				trace.target = this.sourceElement;
-				trace.save();
+				//add a tagged value from the subset element to the source element
+				((UTF_EA.ElementWrapper)this.subsetElement).addTaggedValue(this.owner.settings.elementTagName,this.sourceElement.uniqueID);
+			}
+			else
+			{
+				//add a trace relation from the subset element to the source element
+				// check if trace already exists?
+				var trace = this.subsetElement.getRelationships<UML.Classes.Dependencies.Abstraction>()
+							.FirstOrDefault(x => this.sourceElement.Equals(x.supplier)) as UML.Classes.Dependencies.Abstraction;
+				if (trace == null)
+				{
+					trace = this.model.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.subsetElement, string.Empty);
+					trace.addStereotype(this.model.factory.createStereotype(trace, "trace"));
+					trace.target = this.sourceElement;
+					trace.save();
+				}
 			}
 			//return the new element
 			return this.subsetElement;
@@ -276,32 +285,35 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void orderAssociationsAlphabetically()
 		{
-			var listToBeOrdered = new List<UTF_EA.Element>();
-			//add the associations
-			var allAssociations = this.subsetElement.getRelationships<Association>()
-								.Cast<UTF_EA.Association>();
-			listToBeOrdered.AddRange(allAssociations.Where( y => y.source.Equals(this.subsetElement)));
-			int i;
-			//add attributes depending on the settings
-			if(listToBeOrdered.Count > 0 && this.owner.settings.orderAssociationsAmongstAttributes)
+			if (this.subsetElement != null)
 			{
-				//add attributes
-				listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<UTF_EA.Attribute>());
-				i = 1;
-			}
-			else
-			{
-				//start associations after the attributes
-				i = this.subsetElement.attributes.Count +1;
-			}
-			foreach (var element in listToBeOrdered.OrderBy(x => x.orderingName))
-			{
-				var association = element as UTF_EA.Association;
-				if (association != null)
+				var listToBeOrdered = new List<UTF_EA.Element>();
+				//add the associations
+				var allAssociations = this.subsetElement.getRelationships<Association>()
+									.Cast<UTF_EA.Association>();
+				listToBeOrdered.AddRange(allAssociations.Where( y => y.source.Equals(this.subsetElement)));
+				int i;
+				//add attributes depending on the settings
+				if(listToBeOrdered.Count > 0 && this.owner.settings.orderAssociationsAmongstAttributes)
 				{
-					association.sourceEnd.addTaggedValue("position",i.ToString());
+					//add attributes
+					listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<UTF_EA.Attribute>());
+					i = 1;
 				}
-				i++;
+				else
+				{
+					//start associations after the attributes
+					i = this.subsetElement.attributes.Count +1;
+				}
+				foreach (var element in listToBeOrdered.OrderBy(x => x.orderingName))
+				{
+					var association = element as UTF_EA.Association;
+					if (association != null)
+					{
+						association.sourceEnd.addTaggedValue("position",i.ToString());
+					}
+					i++;
+				}
 			}
 		}
 		

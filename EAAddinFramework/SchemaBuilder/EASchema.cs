@@ -124,20 +124,33 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					if (schemaElement.name == subsetElement.name)
 					{
-						//check if the subset element has a dependency to the source element of the schema
-						string sqlCheckTrace = @"select c.Connector_ID from t_connector c
-												where 
-												c.Connector_Type = 'Abstraction'
-												and c.Stereotype = 'trace'
-												and c.Start_Object_ID = " +((UTF_EA.ElementWrapper)subsetElement).id +
-												" and c.End_Object_ID = " +((UTF_EA.ElementWrapper)schemaElement.sourceElement).id;
-						var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
-						var connectorIDNode = checkTraceXML.SelectSingleNode(this.model.formatXPath("//Connector_ID"));
-						int connectorID;
-						if (connectorIDNode != null && int.TryParse(connectorIDNode.InnerText,out connectorID))
+						//check on if there is a tagged value that references the source element
+						if (this.settings.tvInsteadOfTrace)
 						{
-							result = schemaElement;
-							break;
+							var traceTag = subsetElement.taggedValues.FirstOrDefault(x => x.name == this.settings.elementTagName);
+							if (traceTag != null
+							    && schemaElement.sourceElement.Equals(traceTag.tagValue))
+							{
+								result = schemaElement;
+							}
+						}
+						else
+						{
+							//check if the subset element has a dependency to the source element of the schema
+							string sqlCheckTrace = @"select c.Connector_ID from t_connector c
+													where 
+													c.Connector_Type = 'Abstraction'
+													and c.Stereotype = 'trace'
+													and c.Start_Object_ID = " +((UTF_EA.ElementWrapper)subsetElement).id +
+													" and c.End_Object_ID = " +((UTF_EA.ElementWrapper)schemaElement.sourceElement).id;
+							var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
+							var connectorIDNode = checkTraceXML.SelectSingleNode(this.model.formatXPath("//Connector_ID"));
+							int connectorID;
+							if (connectorIDNode != null && int.TryParse(connectorIDNode.InnerText,out connectorID))
+							{
+								result = schemaElement;
+								break;
+							}
 						}
 					}
 				}
