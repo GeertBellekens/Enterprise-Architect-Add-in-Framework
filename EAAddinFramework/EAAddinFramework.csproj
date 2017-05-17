@@ -154,6 +154,7 @@
     <Compile Include="EAWrappers\CommunicationDiagram.cs" />
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
+    <Compile Include="EAWrappers\Constraint.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
     <Compile Include="EAWrappers\EnumerationLiteral.cs" />
     <Compile Include="EAWrappers\InformationFlow.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="EAWrappers\LiteralString.cs" />
     <Compile Include="EAWrappers\LiteralUnlimitedNatural.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
+    <Compile Include="EAWrappers\OpaqueExpression.cs" />
     <Compile Include="EAWrappers\ProxyConnector.cs" />
     <Compile Include="EAWrappers\RepositoryType.cs" />
     <Compile Include="EAWrappers\DeploymentDiagram.cs" />

@@ -176,10 +176,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       {
         return this.createPackage(objectToWrap as global::EA.Package);	
       }
+      else if (objectToWrap is global::EA.Constraint)
+      {
+        return this.createConstraint(objectToWrap as global::EA.Constraint);	
+      }
       
       return null;
     }
-    
+	//create a new constraint based on the given EA.Constraint
+	public UML.Classes.Kernel.Element createConstraint(global::EA.Constraint constraint)
+	{
+		return new Constraint(this.model as UTF_EA.Model,constraint);
+	}
+	
     private Package createPackage(global::EA.Package package)
 	{
     	if (package.Element == null)

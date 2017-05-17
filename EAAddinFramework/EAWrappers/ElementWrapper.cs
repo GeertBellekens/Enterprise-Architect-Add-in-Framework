@@ -18,6 +18,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private List<UML.Classes.Kernel.Relationship> _allRelationships;
     private HashSet<AttributeWrapper> _attributeWrappers;
     private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
+    private HashSet<Constraint> _constraints;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -304,7 +305,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get { return this.attributes; }
       set { throw new NotImplementedException(); }
     }
-
+	
+     public HashSet<Constraint> constraints {
+      get 
+      {
+      	if (this._constraints == null)
+      	{
+      		//refresh attributes to make sure we have an up-to-date list
+      		this._constraints = new HashSet<Constraint>();
+      		foreach (var constraint in this.model.factory.createElements(this.wrappedElement.Constraints).Cast<Constraint>())
+      		{
+      			_constraints.Add(constraint);
+      		}
+      	}
+      	return this._constraints;
+      }
+      set { throw new NotImplementedException(); }
+    }
+    
     public HashSet<UML.Classes.Kernel.Property> attributes {
       get 
       {

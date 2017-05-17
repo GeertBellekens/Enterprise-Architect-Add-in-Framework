@@ -147,7 +147,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       { get; set; }
     public abstract HashSet<UML.Profiles.Stereotype> stereotypes 
       { get; set; }
-    public void addStereotype(UML.Profiles.Stereotype stereotype) {
+    public virtual void addStereotype(UML.Profiles.Stereotype stereotype) {
       HashSet<UML.Profiles.Stereotype> newStereotypes = 
         new HashSet<UML.Profiles.Stereotype>(this.stereotypes);
       if (!newStereotypes.Contains(stereotype)) {
@@ -334,7 +334,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <summary>
   	/// selects this element in the current diagram
   	/// </summary>
-	public void selectInCurrentDiagram()
+	public virtual void selectInCurrentDiagram()
 	{
 		UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
 		if (currentDiagram != null)
