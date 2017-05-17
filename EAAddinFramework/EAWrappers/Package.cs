@@ -37,6 +37,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get { return this.wrappedPackage; }
 		}
+		public override UML.Classes.Kernel.Package owningPackage 
+		{
+			get 
+			{
+				return base.owningPackage;
+			}
+			set 
+			{
+				this.wrappedPackage.ParentID = ((Package)value).packageID;
+			}
+		}
 		/// <summary>
 		/// returns the package at the root of this model branch
 		/// </summary>

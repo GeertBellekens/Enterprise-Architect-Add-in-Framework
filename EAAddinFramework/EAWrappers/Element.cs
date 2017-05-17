@@ -421,7 +421,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// the package owning this element (if any)
 	/// this will return null in case of a root package
 	/// </summary>
-	public UML.Classes.Kernel.Package owningPackage 
+	public virtual UML.Classes.Kernel.Package owningPackage 
 	{
 		get
 		{	
