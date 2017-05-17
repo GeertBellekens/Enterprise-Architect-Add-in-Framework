@@ -217,7 +217,7 @@ namespace EAAddinFramework.Databases.Compare
 														y.existingDatabaseItem is DB_EA.Column														
 							                            && y.existingDatabaseItem.logicalElements.Contains(newColumn.logicalElement)
 							                            && y.newDatabaseItem is DB_EA.Column	
-							                            && y.newDatabaseItem.name == newColumn.name
+							                            && (y.newDatabaseItem.name == newColumn.name || y.existingDatabaseItem.isRenamed) // fix 4. GBTOA25.SEQ_NO
 							                            && ((Column)y.newDatabaseItem).type.name == newColumn.type.name)
 														.Select(z => z.newDatabaseItem as Column);
 							if (duplicateColumns.Any()) 

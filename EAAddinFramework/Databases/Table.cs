@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -145,13 +146,23 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
+				bool hasNoName = string.IsNullOrEmpty(this.name);
+				bool hasDuplicateTable = this.databaseOwner.tables.Count(x => x.name == this.name) != 1;
+				//debug
+				foreach (var duplicateTable in this.databaseOwner.tables.Where(x => x.name == this.name && x != this))
+				{
+					Logger.logError("table found with identical name: " + duplicateTable.name + " and is same object is: "+ (duplicateTable == this).ToString());
+				}
+				bool hasInvalidColumns= !this.columns.All(x => x.isValid);
+				foreach (var invalidColumn in this.columns.Where( x => x.isValid == false)) 
+				{
+					Logger.logError("invalid column " + invalidColumn.name + " found in table " + this.name );
+				}
+				bool hasInvalidConstraints = !this.constraints.All(x => x.isValid);
 				//table is valid if it has a name
 				// there is no other table with the same name
 				// all columns and constraints are valid
-				return (! string.IsNullOrEmpty(this.name)
-				        && this.databaseOwner.tables.Count(x => x.name == this.name) == 1
-				        && this.columns.All(x => x.isValid)
-				        && this.constraints.All(x => x.isValid));
+				return !(hasNoName || hasDuplicateTable || hasInvalidColumns || hasInvalidColumns);
 			}
 		}
 		#endregion

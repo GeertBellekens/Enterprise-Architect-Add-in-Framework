@@ -129,7 +129,8 @@ namespace EAAddinFramework.SchemaBuilder
 						{
 							var traceTag = subsetElement.taggedValues.FirstOrDefault(x => x.name == this.settings.elementTagName);
 							if (traceTag != null
-							    && schemaElement.sourceElement.Equals(traceTag.tagValue))
+							    && traceTag.tagValue != null
+							    && traceTag.tagValue.Equals(schemaElement.sourceElement))
 							{
 								result = schemaElement;
 							}
