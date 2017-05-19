@@ -299,6 +299,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 					if (opaqueExpression != null)
 					{
 						_opaqueExpression = opaqueExpression;
+						this.wrappedConstraint.Notes = _opaqueExpression.bodies.FirstOrDefault();
+						this.wrappedConstraint.Type = opaqueExpression.languages.FirstOrDefault();
 					}
 					else
 					{

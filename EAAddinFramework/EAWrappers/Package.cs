@@ -413,7 +413,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		public string getPackageIDString(ICollection<UML.Classes.Kernel.Package> packages)
 		{
-			return string.Join(",",packages.Select(x => wrappedPackage.PackageID));
+			var ids = packages.Select(x => ((Package)x).packageID);
+			string idString = string.Join(",",ids);
+			return idString;
 		}
 		
 		
