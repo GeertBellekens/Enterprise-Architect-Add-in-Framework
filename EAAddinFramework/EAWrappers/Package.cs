@@ -417,6 +417,35 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			string idString = string.Join(",",ids);
 			return idString;
 		}
+		public List<string> getPackageTreeIDs(List<string> parentIDs = null)
+		{
+			List<string> allPackageIDs = new List<string>();
+			List<string>subPackageIDs = new List<string>();
+			if (parentIDs == null)
+			{
+				parentIDs = new List<string>(){this.packageID.ToString()};
+			}
+			//add the current parentID's to the list of all ID's
+			allPackageIDs.AddRange(parentIDs);
+			//get the id's from the subpackages
+			string parentIDString = string.Join(",",parentIDs);
+			string getSubpackageSQL = "select p.Package_ID from t_package p where p.Parent_ID in ("+ parentIDString +")";
+			var queryResult = this.model.SQLQuery(getSubpackageSQL);
+			foreach (XmlNode packageIdNode in queryResult.SelectNodes("//Package_ID")) 
+			{
+				subPackageIDs.Add(packageIdNode.InnerText);
+			}
+			//if subpackages found then go a level deeper
+			if (subPackageIDs.Any())
+			{
+				allPackageIDs.AddRange(getPackageTreeIDs(subPackageIDs));
+			}
+			return allPackageIDs;
+		}
+		public string getPackageTreeIDString()
+		{
+			return string.Join(",",this.getPackageTreeIDs());
+		}
 		
 		
 	}
