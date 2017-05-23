@@ -8,6 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
  public abstract class Element : UML.Classes.Kernel.Element 
  {
  	private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
+ 	internal global::EA.Element wrappedElement {get;set;}
  	protected class PropertyInfo
  	{
  		public PropertyInfo(object propertyValue, object initialValue)
@@ -435,7 +436,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		set
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
+			this.wrappedElement.PackageID = ((Package)value).packageID;
+			
 		}
 	}
 

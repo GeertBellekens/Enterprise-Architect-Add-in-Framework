@@ -86,6 +86,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get 
 			{
+				this.wrappedPackage.Packages.Refresh(); // make sure that the most up to date list of packages
 				return new HashSet<UML.Classes.Kernel.Package>(this.ownedElements.OfType<UML.Classes.Kernel.Package>());
 			}
 			set {
