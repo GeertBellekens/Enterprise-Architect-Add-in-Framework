@@ -206,7 +206,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {	
 	      System.Type type = typeof(T);
 	      T newElement;
-	
+		  
 	      if(((Factory)this.model.factory).isEAAtttribute(type)) 
 	      {
 	      	throw new Exception("Cannot add an Attribute to a Package");
@@ -214,12 +214,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      else if(((Factory)this.model.factory).isEAOperation(type))
 	      {
 	        throw new Exception("Cannot add an Attribute to a Package");
+	      }
+	      else if (((Factory)this.model.factory).isEAPackage(type))
+	      {
+	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	          ( this.wrappedPackage.Packages, name, EAType  );
 	      } 
 	      else if (((Factory)this.model.factory).isEAConnector(type))
 	      {
 	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
 	          ( this.wrappedPackage.Connectors, name, EAType  );
-	      } else {
+	      } 
+	      else 
+	      {
 	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
 	          ( this.wrappedPackage.Elements, name, EAType );
 	      }

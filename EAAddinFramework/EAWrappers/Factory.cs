@@ -741,7 +741,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
           return typeName;
       }
     }
-    
+
+	public bool isEAPackage(Type type)
+	{
+		return type.Name == "Package";
+	}
     internal bool isEAAtttribute(System.Type type)
     {
     	return (type.Name == "Property" 
