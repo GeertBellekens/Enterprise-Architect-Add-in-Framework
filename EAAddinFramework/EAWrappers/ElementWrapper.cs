@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using EAAddinFramework.Utilities;
@@ -19,6 +19,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private HashSet<AttributeWrapper> _attributeWrappers;
     private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
     private HashSet<Constraint> _constraints;
+    private string _linkedDocument;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -40,6 +41,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		_attributes = null;
 		_attributeWrappers = null;
+	}
+	public string linkedDocument
+	{
+		get
+		{
+			if (_linkedDocument != null)
+			{
+				_linkedDocument = this.wrappedElement.GetLinkedDocument();
+			}
+			return _linkedDocument;
+		}
+		set
+		{
+			if (value != _linkedDocument)
+			{
+				//write the value to a temp file
+				string tempFile = Path.GetTempFileName();
+				File.WriteAllText(tempFile,value);
+				//load the new contents in the linked document
+				this.wrappedElement.LoadLinkedDocument(tempFile);
+				//delete the temp file
+				File.Delete(tempFile);
+			}
+			
+		}
 	}
     public override string name 
     {
