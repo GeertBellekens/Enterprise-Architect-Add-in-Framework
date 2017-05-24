@@ -116,10 +116,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get 
 			{
-				string sqlIsEmpty = @"select 'false' AS isEmpty from t_package p 
-									 where exists (select o.Object_ID from t_object o where o.Package_ID = p.Package_ID)
-									 and exists (select * from t_diagram d where d.Package_ID = p.Package_ID)
-									 and p.Package_ID = " + this.packageID;
+				string sqlIsEmpty = @"select case when p.Package_ID is null then 'true' else 'false' end as isEmpty from t_package p
+									left join t_object o on o.Package_ID = p.Package_ID
+									left join t_diagram d on d.Package_ID = p.Package_ID
+									where o.Object_ID is null
+									and d.Diagram_ID is null
+									and  p.Package_ID = " + this.packageID;
 				var isEmptyXml = this.model.SQLQuery(sqlIsEmpty);
 				var isEmptyNode = isEmptyXml.SelectSingleNode(this.model.formatXPath("//isEmpty"));
 				return isEmptyNode == null || isEmptyNode.InnerText != "false";
