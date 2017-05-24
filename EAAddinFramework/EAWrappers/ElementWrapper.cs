@@ -308,8 +308,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	set {this.setProperty(getPropertyNameName(),value,this.wrappedElement.Type);}
     }
     
-    public global::EA.Element WrappedElement {
+    public virtual global::EA.Element WrappedElement {
     	get { return this.wrappedElement; }
+    	set { this.wrappedElement = value;}
     }
 
 	public global::EA._CustomProperty getCustomProperty(string propertyName) {

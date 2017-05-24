@@ -16,6 +16,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		private string _fqn = string.Empty;
 		internal global::EA.Package wrappedPackage {get;set;}
+		public override global::EA.Element WrappedElement 
+		{
+			get 
+			{
+				if(this.wrappedElement == null)
+				{
+					this.wrappedElement = this.model.wrappedModel.GetElementByGuid(this.guid);
+				}
+				return base.wrappedElement;
+			}
+			set {
+				base.WrappedElement = value;
+			}
+		} 
 		public int packageID
 		{
 			get {return this.wrappedPackage.PackageID;}
