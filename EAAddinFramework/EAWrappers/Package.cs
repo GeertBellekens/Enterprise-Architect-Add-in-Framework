@@ -252,7 +252,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		/// <param name="ownedElement">the owned element to delete</param>
 		public override void deleteOwnedElement(Element ownedElement)
 		{
-			if (ownedElement is ElementWrapper)
+			if (ownedElement is Package)
+			{
+				for (short i = 0; i< this.WrappedPackage.Packages.Count; i++)
+				{
+					var eaPackage = this.WrappedPackage.Packages.GetAt(i) as global::EA.Package;
+					if (eaPackage.PackageGUID == ownedElement.guid)
+					{   
+						this.WrappedPackage.Packages.Delete(i);
+						this.WrappedPackage.Packages.Refresh();
+						break;
+					}
+				}
+			}
+			else if (ownedElement is ElementWrapper)
 			{
 				for (short i = 0; i< this.WrappedPackage.Elements.Count; i++)
 				{
