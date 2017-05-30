@@ -79,8 +79,20 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			this.subSetLiteral.name = this.sourceLiteral.name;
 			this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;
-			//alias
-			((UTF_EA.EnumerationLiteral)subSetLiteral).alias = ((UTF_EA.EnumerationLiteral)sourceLiteral).alias;
+			//alias (only if subset alias is empty)
+			if (string.IsNullOrEmpty(((UTF_EA.EnumerationLiteral)subSetLiteral).alias))
+				((UTF_EA.EnumerationLiteral)subSetLiteral).alias = ((UTF_EA.EnumerationLiteral)sourceLiteral).alias;
+			//Check if the subset alias is different from the source alias and issue warning if that is the case
+			if (!string.Equals(((UTF_EA.EnumerationLiteral)subSetLiteral).alias,((UTF_EA.EnumerationLiteral)sourceLiteral).alias))
+			{
+					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+                                              ,string.Format("Literal value '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
+                                  					,this.sourceLiteral.owner.name + "." + this.sourceLiteral.name
+                                  					,((UTF_EA.EnumerationLiteral)subSetLiteral).alias
+                                  					,((UTF_EA.EnumerationLiteral)sourceLiteral).alias)
+                                              ,((UTF_EA.ElementWrapper)sourceLiteral.owner).id
+                                              , LogTypeEnum.warning);				
+			}
 			//notes only update them if they are empty
 			if (this.subSetLiteral.ownedComments.Count == 0 || ! this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
 			{

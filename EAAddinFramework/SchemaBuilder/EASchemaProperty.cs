@@ -109,8 +109,20 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				this.subSetProperty.multiplicity = this.multiplicity;
 				this.subSetProperty.position = this.sourceProperty.position;
-				//alias
-				((UTF_EA.Attribute)this.subSetProperty).alias = ((UTF_EA.Attribute)sourceProperty).alias;
+				//alias (only if subset alias is empty)
+				if (string.IsNullOrEmpty(((UTF_EA.Attribute)this.subSetProperty).alias))
+						((UTF_EA.Attribute)this.subSetProperty).alias = ((UTF_EA.Attribute)sourceProperty).alias;
+				//Check if the subset alias is different from the source alias and issue warning if that is the case
+				if (!string.Equals(((UTF_EA.Attribute)subSetProperty).alias,((UTF_EA.Attribute)sourceProperty).alias))
+				{
+						EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+	                                              ,string.Format("Property '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
+	                                  					,this.sourceProperty.owner.name + "." + this.sourceProperty.name
+	                                  					,((UTF_EA.Attribute)subSetProperty).alias
+	                                  					,((UTF_EA.Attribute)sourceProperty).alias)
+	                                              ,((UTF_EA.ElementWrapper)sourceProperty.owner).id
+	                                              , LogTypeEnum.warning);				
+				}
 				//notes only update them if they are empty
 				if (this.subSetProperty.ownedComments.Count == 0 || ! this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
 				{

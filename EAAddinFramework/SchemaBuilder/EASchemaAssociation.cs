@@ -306,8 +306,21 @@ namespace EAAddinFramework.SchemaBuilder
         	}
            	//update name
             subSetAssociation.name = this.sourceAssociation.name;
-            //alias
-            ((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
+            //alias only if alias in the subset is emtpy
+            if (string.IsNullOrEmpty(((UTF_EA.Association)subSetAssociation).alias))
+            	((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
+            //Check if the subset alias is different from the source alias and issue warning if that is the case
+			if (!string.Equals(((UTF_EA.Association)subSetAssociation).alias,((UTF_EA.Association)sourceAssociation).alias))
+			{
+					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
+                                              ,string.Format("Association between '{0}' and '{1}' has alias {2} in the model and a different alias '{3}' in the subset"
+                                  					,((UTF_EA.Association)subSetAssociation).source.name
+                                  					,((UTF_EA.Association)subSetAssociation).target.name
+                                  					,((UTF_EA.Association)subSetAssociation).alias
+                                  					,((UTF_EA.Association)sourceAssociation).alias)
+                                              ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
+                                              , LogTypeEnum.warning);				
+			}
             //notes only update them if they are empty
 			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
 			{
@@ -355,6 +368,7 @@ namespace EAAddinFramework.SchemaBuilder
             target.isNavigable = source.isNavigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
+            //TODO: copy alias of the AssociationEnd if the alias in the subset is empty.
             target.save();
         }
     }

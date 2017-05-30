@@ -235,7 +235,20 @@ namespace EAAddinFramework.SchemaBuilder
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
 			//alias
-			((UTF_EA.ElementWrapper)subsetElement).alias = ((UTF_EA.ElementWrapper)sourceElement).alias;
+			//only copy alias is the alias in the subset is empty
+			if(string.IsNullOrEmpty(((UTF_EA.ElementWrapper)subsetElement).alias))
+			                        ((UTF_EA.ElementWrapper)subsetElement).alias = ((UTF_EA.ElementWrapper)sourceElement).alias;
+			//Check if the subset alias is different from the source alias and issue warning if that is the case
+			if (!string.Equals(((UTF_EA.ElementWrapper)subsetElement).alias,((UTF_EA.ElementWrapper)sourceElement).alias))
+			{
+					EAOutputLogger.log(this.model,this.owner.settings.outputName
+                                              ,string.Format("Property '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
+                                  					,this.sourceElement.name
+                                  					,((UTF_EA.ElementWrapper)subsetElement).alias
+                                  					,((UTF_EA.ElementWrapper)sourceElement).alias)
+                                              ,((UTF_EA.ElementWrapper)sourceElement).id
+                                              , LogTypeEnum.warning);				
+			}
 			//genlinks
 			((UTF_EA.ElementWrapper)subsetElement).genLinks = ((UTF_EA.ElementWrapper)sourceElement).genLinks;
 			//notes only update them if they are empty
