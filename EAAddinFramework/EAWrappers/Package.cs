@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Runtime.InteropServices;
+
 
 using UML=TSF.UmlToolingFramework.UML;
 
@@ -58,8 +60,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				return base.owningPackage;
 			}
 			set 
-			{
-				this.wrappedPackage.ParentID = ((Package)value).packageID;
+			{ try
+				{
+					this.wrappedPackage.ParentID = ((Package)value).packageID;
+				}
+				catch(COMException )
+				{
+					// sometimes EA thinks the packageID doesn't exist and throws a COMException
+				}
+			
+				
 			}
 		}
 		/// <summary>

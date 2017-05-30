@@ -439,6 +439,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//throw new NotImplementedException();
 			this.wrappedElement.PackageID = ((Package)value).packageID;
 			
+			
 		}
 	}
 
