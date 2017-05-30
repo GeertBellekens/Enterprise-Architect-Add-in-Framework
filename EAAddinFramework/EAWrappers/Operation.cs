@@ -20,7 +20,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
       this.wrappedOperation = wrappedOperation;
     }
-    
+	public override UML.Classes.Kernel.Package owningPackage {
+		get {
+			return base.owningPackage;
+		}
+		set {
+			((ElementWrapper)this.owner).owningPackage = value;
+		}
+	}
     public global::EA.Method WrappedOperation {
     	get {
     		return wrappedOperation;

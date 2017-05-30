@@ -27,6 +27,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       this.wrappedElement = wrappedElement;
       this.isDirty = false;
     }
+		public override UML.Classes.Kernel.Package owningPackage 
+		{
+			get {
+				return base.owningPackage;
+			}
+			set 
+			{
+				((ElementWrapper)this).wrappedElement.PackageID = ((Package)value).packageID;			
+			}
+		}
 	/// <summary>
 	/// resets the cached relations
 	/// </summary>

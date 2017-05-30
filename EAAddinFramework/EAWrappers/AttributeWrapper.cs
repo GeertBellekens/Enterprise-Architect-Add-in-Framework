@@ -17,7 +17,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get{return this.wrappedAttribute.AttributeID;}
 	    }
-
+		public override UML.Classes.Kernel.Package owningPackage {
+			get {
+				return base.owningPackage;
+			}
+			set {
+	    		((ElementWrapper)this.owner).owningPackage = value;
+			}
+		}
 	    public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute) 
 	      : base(model)
 	    {
