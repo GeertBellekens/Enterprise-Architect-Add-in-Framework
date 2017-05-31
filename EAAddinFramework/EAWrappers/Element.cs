@@ -144,6 +144,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		this.notes = newNotes;
     	}
     }
+    protected Element _owner;
     public abstract UML.Classes.Kernel.Element owner 
       { get; set; }
     public abstract HashSet<UML.Profiles.Stereotype> stereotypes 
@@ -426,17 +427,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get
 		{	
-			var ownerPackage = this.owner as Package;
+			var ownerPackage = this.owner as UML.Classes.Kernel.Package;
 			//if the owner is a package then return the owner
-			if (ownerPackage != null) return ownerPackage;
-			//if the owner is not a package and it exists then return the owningPackage of the owner
-			if (this.owner != null) return ((Element)this.owner).owningPackage;
-			//the owner does not exis, so return null as the owningPackage
-			return null;		
+			if (ownerPackage == null) ownerPackage = ((Element)this.owner).owningPackage;
+			return (UML.Classes.Kernel.Package)this.getProperty(getPropertyNameName(), ownerPackage);	
 		}
 		set
 		{
-			//do nothing		
+			//do nothing, implemented at the subclasses		
 		}
 	}
 

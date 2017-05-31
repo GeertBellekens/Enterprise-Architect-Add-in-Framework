@@ -13,7 +13,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
   public class ElementWrapper : Element, UML.Classes.Kernel.NamedElement 
   {
     internal global::EA.Element wrappedElement {get; set; }
-    private UML.Classes.Kernel.Element _owner;
     private HashSet<UML.Classes.Kernel.Property> _attributes;
     private List<UML.Classes.Kernel.Relationship> _allRelationships;
     private HashSet<AttributeWrapper> _attributeWrappers;
@@ -24,17 +23,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
     {
-      this.wrappedElement = wrappedElement;
-      this.isDirty = false;
+      initialize(wrappedElement);
     }
+
+		protected virtual void initialize(global::EA.Element wrappedElement)
+		{
+			this.wrappedElement = wrappedElement;
+			this.isDirty = false;
+		}
+		protected UML.Classes.Kernel.Package _owningPackage;
 		public override UML.Classes.Kernel.Package owningPackage 
 		{
-			get {
+			get 
+			{
+				if (this._owningPackage == null) _owningPackage = base.owningPackage;
 				return base.owningPackage;
 			}
 			set 
 			{
-				((ElementWrapper)this).wrappedElement.PackageID = ((Package)value).packageID;			
+				if (this._owningPackage == null) _owningPackage = base.owningPackage;
+				this.setProperty(getPropertyNameName(),value,_owningPackage);
 			}
 		}
 	/// <summary>
@@ -207,6 +215,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	if (this.getProperty("position") != null) this.wrappedElement.TreePos = (int)this.getProperty("position");
     	if (this.getProperty("visibility") != null) this.wrappedElement.Visibility = (string)this.getProperty("visibility");
     	if (this.getProperty("stereotypes") != null) this.wrappedElement.StereotypeEx = (string)this.getProperty("stereotypes");
+    	if (this.getProperty("owner") != null)
+    	{
+    		if (this.getProperty("owner") is Package)
+    		{
+    			this.wrappedElement.PackageID = ((Package)this.getProperty("owner")).packageID;
+    		}
+    		else
+    		{
+    			this.wrappedElement.ParentID = ((ElementWrapper)this.getProperty("owner")).id;
+    		}
+    	}
+    	if (this.getProperty("owningPackage") != null) this.wrappedElement.PackageID = ((Package)this.getProperty("owningPackage")).packageID;
     	this.wrappedElement.Update();
     }
 	public List<string> primitiveParentNames
@@ -413,23 +433,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     }
     
     
-    public override UML.Classes.Kernel.Element owner {
-      get { 
-    		// if the parentID is filled in then this element is owned by
-    		// another element, otherwise it is owned by a package
-    		    		
-    		if (this.wrappedElement.ParentID > 0)
+    public override UML.Classes.Kernel.Element owner 
+    {
+    	get 
+    	{
+    		//fill in the owner if still empty
+    		if (this._owner == null)
     		{
-    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
-    		}else
-    		{
-    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+	    		if (this.wrappedElement.ParentID > 0)
+	    		{
+	    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
+	    		}else
+	    		{
+	    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+	    		}
     		}
-    		
-			return this._owner;
 			
+    		return (Element)this.getProperty(getPropertyNameName(), this._owner);
     	}
-      set { throw new NotImplementedException(); }
+		set 
+		{
+			this._owner = (Element)value;
+			this.setProperty(getPropertyNameName(),value, this._owner);
+    	}
     }
 
 

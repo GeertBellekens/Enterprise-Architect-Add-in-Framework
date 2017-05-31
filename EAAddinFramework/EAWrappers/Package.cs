@@ -5,6 +5,7 @@ using System.Xml;
 using System.Runtime.InteropServices;
 
 
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
@@ -15,7 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public class Package:ElementWrapper, UML.Classes.Kernel.Package
 	{
 		
-
+		private Boolean dontSave = false;
 		private string _fqn = string.Empty;
 		internal global::EA.Package wrappedPackage {get;set;}
 		public override global::EA.Element WrappedElement 
@@ -42,6 +43,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		public Package(Model model,global::EA.Package package):base(model,package.Element)
 		{
+			this.initialize(package);
+		}
+		protected void initialize(global::EA.Package package)
+		{
+			base.initialize(package.Element);
 			this.wrappedPackage = package;
 		}
 		public override String notes 
@@ -53,6 +59,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get { return this.wrappedPackage; }
 		}
+		public override UML.Classes.Kernel.Element owner {
+			get 
+			{
+				return base.owner;
+			}
+			set 
+			{
+				base.owner = value;
+				this.WrappedPackage.ParentID = ((Package)value).packageID;
+			}
+		}
 		public override UML.Classes.Kernel.Package owningPackage 
 		{
 			get 
@@ -63,14 +80,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{ try
 				{
 					this.wrappedPackage.ParentID = ((Package)value).packageID;
+					//set the owner as well
+					this.owner = value;
 				}
-				catch(COMException )
+				catch(COMException e)
 				{
-					// sometimes EA thinks the packageID doesn't exist and throws a COMException
+					//find the new parent package
+					this.save();
+					var newParent = (Package)this.model.getElementWrapperByPackageID(((Package)value).packageID);
+					if (newParent != null)
+					{
+						string sqlUpdatePackageParent =   "update t_package set Parent_ID = " + newParent.packageID
+							+ " where ea_guid = '"+ this.uniqueID +"'";
+						model.executeSQL(sqlUpdatePackageParent);
+						string sqlUpdateObjectParent =   "update t_object set Package_ID = " + newParent.packageID
+							+ " where ea_guid = '"+ this.uniqueID +"'";
+						model.executeSQL(sqlUpdateObjectParent);
+						//reload from the database
+						this._owner = (Package)value;
+						this.dontSave = true;
+						//DEBUG: reload
+						this.reload();
+					}
 				}
-			
-				
 			}
+		}
+		public void reload()
+		{
+			this.model.wrappedModel.RefreshModelView(0);
+			global::EA.Package eaPackage = this.model.wrappedModel.GetPackageByGuid(this.uniqueID);
+			Logger.log("ParentID of eaPackage "+ eaPackage.Name + " = " +eaPackage.ParentID);
+			this.initialize(eaPackage);
 		}
 		/// <summary>
 		/// returns the package at the root of this model branch
@@ -140,9 +180,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get 
 			{
-				string sqlIsEmpty = @"select 'true' as isEmpty from ((t_package p
+				string sqlIsEmpty = @"select 'true' as isEmpty from (((t_package p
 									left join t_object o on o.Package_ID = p.Package_ID)
 									left join t_diagram d on d.Package_ID = p.Package_ID)
+									left join t_package p_sub on p_sub.[Parent_ID] = p.[Package_ID])
 									where o.Object_ID is null
 									and d.Diagram_ID is null
 									and  p.Package_ID = " + this.packageID;
@@ -270,7 +311,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		public override void save()
 		{
-			this.wrappedPackage.Update();
+			if (! this.dontSave) this.wrappedPackage.Update();
 		}
 		/// <summary>
 		/// deletes an element owned by this Package

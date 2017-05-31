@@ -191,7 +191,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
     private Package createPackage(global::EA.Package package)
 	{
-    	if (package.Element == null)
+    	if (package.ParentID == 0)
     	{
     		return new RootPackage(this.model as Model,package);
     	}
@@ -684,7 +684,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public override T createNewElement<T> ( UML.Classes.Kernel.Element owner, String name )
     {
     	T returnedValue = null;
-      if( owner is ElementWrapper ) 
+      if (owner is Package)
+      {
+      	returnedValue = ((Package)owner).addOwnedElement<T>(name);
+      }
+      else if( owner is ElementWrapper ) 
       {
         returnedValue = ((ElementWrapper)owner).addOwnedElement<T>(name);
       }else if (owner is Operation)
