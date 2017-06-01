@@ -41,9 +41,9 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				//TODO: check how to compile this only in certain conditions
-				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
-					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
+//				//TODO: check how to compile this only in certain conditions
+//				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
+//					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
 				return "Unknown Schema Name";
 			}
 		}
