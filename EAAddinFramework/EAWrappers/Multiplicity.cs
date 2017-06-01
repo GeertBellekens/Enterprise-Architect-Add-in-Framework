@@ -30,6 +30,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				string[] parts = value.Split(new string[]{delimiter},StringSplitOptions.None);
 				if (value.Length > 0 && parts.Length >= 2)
 				{
+					if (string.IsNullOrEmpty(parts[0]))
+				    {
+				    	parts[0] = "0";
+				    }
 					this.lower = uint.Parse(parts[0]);
 					this.upper = new UnlimitedNatural(parts[1]);
 				}

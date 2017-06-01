@@ -241,11 +241,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		public UML.Classes.Kernel.Multiplicity multiplicity {
 			get {
-				UML.Classes.Kernel.Multiplicity mult;
-				//mult.lower = 
-				string m = this.WrappedElement.Multiplicity;	
-				return null;
-				//return (UML.Classes.Kernel.Multiplicity)this.wrappedElement.Multiplicity;
+				if (string.IsNullOrEmpty(this.wrappedElement.Multiplicity))
+				{
+					return Attribute.defaultMultiplicity();
+				}
+				return new Multiplicity(this.WrappedElement.Multiplicity);
 			}
 			set {
 				throw new NotImplementedException();

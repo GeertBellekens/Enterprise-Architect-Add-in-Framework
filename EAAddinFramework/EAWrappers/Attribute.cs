@@ -124,6 +124,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			this.EAMultiplicity = (Multiplicity)value;
 		}
 	}
+    
+    public static Multiplicity defaultMultiplicity()
+    {
+    	//default for attributes is 1..1
+		string lowerString = "1";
+		string upperString = "1";
+		return new Multiplicity(lowerString, upperString);
+    }
+    
 	private Multiplicity getInitialMultiplicity()
     {
 	   	//default for attributes is 1..1
