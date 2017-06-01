@@ -105,7 +105,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 		public UML.Classes.Kernel.Classifier classifier {
 			get {
-				return this.model.getElementWrapperByGUID(this.wrappedElement.MiscData[0].ToString()) as UML.Classes.Kernel.Classifier;
+				return this.model.getElementWrapperByGUID(this.wrappedElement.get_MiscData(0).ToString()) as UML.Classes.Kernel.Classifier;
 				
 			}
 			set {
