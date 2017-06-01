@@ -367,7 +367,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		case "InformationItem":
 			return new InformationItem(this.model as Model, elementToWrap);
 		case "ProxyConnector":
-			return new ProxyConnector(this.model as Model, elementToWrap);			
+			return new ProxyConnector(this.model as Model, elementToWrap);
+		case "Part":
+			return new Property(this.model as Model, elementToWrap);
         default:
           return new ElementWrapper(this.model as Model,elementToWrap);
       }
