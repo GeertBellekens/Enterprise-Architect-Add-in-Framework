@@ -245,7 +245,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				{
 					return Attribute.defaultMultiplicity();
 				}
-				return new Multiplicity(this.WrappedElement.Multiplicity);
+				
+				string multiplicityString = this.wrappedElement.Multiplicity;
+				
+				if (multiplicityString.StartsWith(".."))
+				{
+					multiplicityString = "1" + multiplicityString;
+				}
+				if (multiplicityString.EndsWith(".."))
+                {
+					multiplicityString = multiplicityString + "1";
+                }
+				return new Multiplicity(multiplicityString);
 			}
 			set {
 				throw new NotImplementedException();
