@@ -111,6 +111,23 @@ namespace EAAddinFramework.Databases.Compare
 			}
 			//check and update overriden items
 			this.updateOverrides(comparedItems);
+			//update merged items
+			this.updateMergedItems();
+		}
+		private void updateMergedItems()
+		{
+			foreach (var comparedItem in this.comparedItems) 
+			{
+				//check if there is another comparison with the same logical name, but a different object, and the same physical item
+				var mergedEquivalents = this.comparedItems.Where (x => x.newDatabaseItem != comparedItem.newDatabaseItem
+				                          && x.newDatabaseItem.name == comparedItem.newDatabaseItem.name
+				                          && x.existingDatabaseItem != null
+				                          && x.existingDatabaseItem.Equals(comparedItem.existingDatabaseItem)
+				                          && !comparedItem.newDatabaseItem.mergedEquivalents.Contains(x.newDatabaseItem)).Select (y => y.newDatabaseItem);
+				//add the merged equivalents to the existing database item
+				comparedItem.newDatabaseItem.mergedEquivalents.AddRange(mergedEquivalents);
+				//TODO: do we need to do this for the existingDatabaseItem as well?
+			}
 		}
 		private void addTableComparison(EADatabaseItemComparison tableComparison)
 		{
@@ -146,6 +163,7 @@ namespace EAAddinFramework.Databases.Compare
 				else
 				{
 					overrideCompare.newDatabaseItem.isOverridden = true;
+					overrideCompare.newDatabaseItem.isNotRealized = true;
 				}
 			}
 			else

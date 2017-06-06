@@ -24,6 +24,24 @@ namespace EAAddinFramework.Databases
 			this.hasLength = eaDatatype.Size > 0;
 			this.hasPrecision = eaDatatype.Size == 2;
 		}
+
+		public List<DB.DatabaseItem> mergedEquivalents {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+		public bool isNotRealized {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
 		#region BaseDataType implementation
 		public void save()
 		{

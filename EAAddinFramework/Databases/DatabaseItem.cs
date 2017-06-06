@@ -32,6 +32,22 @@ namespace EAAddinFramework.Databases
 				_renamedName = value;
 			}
 		}
+		List<DB.DatabaseItem> _mergedEquivalents;
+		public List<DB.DatabaseItem> mergedEquivalents
+		{
+			get
+			{
+				if (_mergedEquivalents == null)
+				{
+					_mergedEquivalents = new List<DB.DatabaseItem>();
+				}
+				return _mergedEquivalents;
+			}
+			set
+			{
+				_mergedEquivalents = value;
+			}
+		}
 		bool? _isRenamed;
 		public bool isRenamed 
 		{
@@ -109,7 +125,8 @@ namespace EAAddinFramework.Databases
 			get{ return this.logicalElements.FirstOrDefault();}
 		}
 
-		public abstract bool isValid{get;}
+		public abstract bool isValid {get;}
+		
 
 		public virtual int position 
 		{
@@ -147,6 +164,25 @@ namespace EAAddinFramework.Databases
 			}
 
 		}
+		/// <summary>
+		/// indicates wether this item is not to be realized in the physical database.
+		/// Will be true when a logical item with no physical counterpart is being overridden.
+		/// Thas means that this item will not be realized as a physical item in the database
+		/// </summary>
+		bool _isNotRealized;
+		public bool isNotRealized
+		{
+			get
+			{
+				this._isNotRealized = this.isOverridden && this.wrappedElement == null;
+				return _isNotRealized;
+			}
+			set
+			{
+				this._isNotRealized = value;
+			}
+		}
+		
 		public virtual bool isOverridden 
 		{
 			get 

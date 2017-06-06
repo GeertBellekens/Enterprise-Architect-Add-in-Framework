@@ -147,11 +147,18 @@ namespace EAAddinFramework.Databases
 			get 
 			{
 				bool hasNoName = string.IsNullOrEmpty(this.name);
-				bool hasDuplicateTable = this.databaseOwner.tables.Count(x => x.name == this.name) != 1;
-				//debug
-				foreach (var duplicateTable in this.databaseOwner.tables.Where(x => x.name == this.name && x != this))
+				bool hasDuplicateTable = this.databaseOwner.tables.Any(x => x.name.Equals(this.name,StringComparison.InvariantCulture)
+				                                                       && x != this 
+				                                                       && !this.mergedEquivalents.Contains(x as DatabaseItem)) ;
+				if (hasDuplicateTable)
 				{
-					Logger.logError("table found with identical name: " + duplicateTable.name + " and is same object is: "+ (duplicateTable == this).ToString());
+					//debug
+					foreach (var duplicateTable in this.databaseOwner.tables.Where(x => x.name == this.name 
+					                                                               && x != this 
+					                                                               && !this.mergedEquivalents.Contains(x as DatabaseItem)))
+					{
+						Logger.logError("table found with identical name: " + duplicateTable.name + " and is same object is: "+ (duplicateTable == this).ToString());
+					}
 				}
 				bool hasInvalidColumns= !this.columns.All(x => x.isValid);
 				foreach (var invalidColumn in this.columns.Where( x => x.isValid == false)) 
@@ -166,7 +173,6 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#endregion
-
 
 		public override void save()
 		{

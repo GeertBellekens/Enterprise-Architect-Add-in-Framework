@@ -161,11 +161,11 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				// a column is valid if it has a name, a type, and if there's no other column in the table with the same name
+				// a column is valid if it has a name, a type, and if there's no other column in the table with the same except if that column is not realized
 				return (! string.IsNullOrEmpty(this.name)
 				        && this.type != null
 				        && this.type.isValid
-				        && ownerTable.columns.Count(x => x.name == this.name) == 1);
+				        && ownerTable.columns.Count(x => x.name == this.name && ! x.isNotRealized) == 1);
 				       
 			}
 		}

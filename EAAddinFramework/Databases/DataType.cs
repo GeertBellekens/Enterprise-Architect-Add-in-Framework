@@ -22,6 +22,22 @@ namespace EAAddinFramework.Databases
 
 		public DB.BaseDataType type {get;set;}
 
+		public List<DB.DatabaseItem> mergedEquivalents {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+		public bool isNotRealized {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 		public void save()
 		{
 			throw new NotImplementedException();
