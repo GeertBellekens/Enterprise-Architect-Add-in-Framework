@@ -360,13 +360,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			 return ((Factory)this.model.factory).createStereotypes(this, this.wrappedDiagram.Stereotype );
 		}
 	}
-  	
-        /// <summary>
-        /// adds an element to the diagram
-        /// </summary>
-        /// <param name="element">the element to add</param>
+  		
+
+       
+		/// <summary>
+        /// adds an element to the diagram to the given coördinates
+		/// </summary>
+		/// <param name="element">the element to add</param>
+		/// <param name="x">the x position</param>
+		/// <param name="y">th y position</param>
+		/// <param name="newHeight">the height of the new diagramElement</param>
+		/// <param name="newWidth">the width of the new diagramElement</param>
         /// <returns>the new diagramElement</returns>
-		public UML.Diagrams.DiagramElement addToDiagram(UML.Classes.Kernel.Element element)
+		public UML.Diagrams.DiagramElement addToDiagram(UML.Classes.Kernel.Element element,int x = 0,int y = 0, int newHeight=0, int newWidth=0)
 		{
 			UML.Diagrams.DiagramElement diagramElement = null;
 			if (element != null)
@@ -377,9 +383,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				{
 					if (element is EA.ElementWrapper)
 					{
+						string addNewString = createAddNewString(x ,y , newHeight, newWidth);
 						//first save the diagram to make sure we don't lose any unsaved changes
 						this.model.saveOpenedDiagram(this);
-						global::EA.DiagramObject newDiagramObject = this.wrappedDiagram.DiagramObjects.AddNew("","") as global::EA.DiagramObject;
+						global::EA.DiagramObject newDiagramObject = this.wrappedDiagram.DiagramObjects.AddNew(addNewString,"") as global::EA.DiagramObject;
 						diagramElement = ((Factory)this.model.factory).createDiagramElement(newDiagramObject) ;
 						diagramElement.element = element;
 						//save the element diagramObject
@@ -396,19 +403,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			}
 			return diagramElement;
 		}
-		/// <summary>
-		/// reloads the diagram. Looses any unsaved changes.
-		/// </summary>
-		public void reFresh()
-		{
-			this.model.refreshDiagram(this);
-		}
+				
 		/// <summary>
 		/// add the given diagram to this diagram
 		/// </summary>
 		/// <param name="diagram">the diagram to add</param>
+		/// <param name="x">the x position</param>
+		/// <param name="y">th y position</param>
+		/// <param name="newHeight">the height of the new diagramElement</param>
+		/// <param name="newWidth">the width of the new diagramElement</param>
 		/// <returns>the diagramElement representing the diagram</returns>
-		public UML.Diagrams.DiagramElement addToDiagram(UML.Diagrams.Diagram diagram)
+		public UML.Diagrams.DiagramElement addToDiagram(UML.Diagrams.Diagram diagram,int x = 0,int y = 0, int newHeight=0, int newWidth=0)
 		{	
 			if (this.owner is ElementWrapper)
 			{
@@ -417,10 +422,36 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				//to make the elementDiagram actuall link to the diagram we need to set PDATA1 to the diagramID
 				// and NType = 0 for Frame or 1 for Reference
 				this.model.executeSQL("update t_object set Ntype = 0, PDATA1 = "+ ((Diagram)diagram).DiagramID.ToString() +" where ea_guid = '" + elementDiagram.WrappedElement.ElementGUID + "'");
-				return this.addToDiagram(elementDiagram);
+				return this.addToDiagram(elementDiagram,x,y,newHeight,newWidth);
 			}
 			else return null;
 		}
+		/// <summary>
+		/// creates a string to be used when adding diagramObjects to an EA diagram
+		/// </summary>
+		/// <param name="x">the x coördinate</param>
+		/// <param name="y">the y coördinate</param>
+		/// <param name="newHeight">the height of the new diagramElement</param>
+		/// <param name="newWidth">the width of the new diagramElement</param>
+		/// <returns></returns>
+		private string createAddNewString(int x = 0,int y = 0,  int newHeight=0, int newWidth=0)
+		{
+			//if all all zero then return empty string
+			if (x == 0 && y == 0 && newHeight == 0 && newWidth == 0) return string.Empty;
+			//else create the string to add the new element
+			int r = x + newWidth;
+			int b = y + newHeight;
+			string addNewString = "l=" + x + ";r=" + r + ";t=" + y + ";b=" + b;
+			return addNewString;
+		}
+		/// <summary>
+		/// reloads the diagram. Looses any unsaved changes.
+		/// </summary>
+		public void reFresh()
+		{
+			this.model.refreshDiagram(this);
+		}
+
 		public void addToCurrentDiagram()
 		{
 			//to add this to a diagram we first need to make a new element of type UMLDiagram
