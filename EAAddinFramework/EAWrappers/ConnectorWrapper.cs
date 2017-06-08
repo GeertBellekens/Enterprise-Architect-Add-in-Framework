@@ -84,8 +84,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       : base(model)
     {
       this.wrappedConnector = connector;
-      //set owner already to avoid multithreading issues
-      var dummy = this.owner;
     }
     public global::EA.Connector WrappedConnector {
     	get { return this.wrappedConnector; }
@@ -141,10 +139,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-      	if (this._owner == null)
-      	{
+// removed caching to try and solve multithreading issue.      	
+//      	if (this._owner == null)
+//      	{
       		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
-      	}
+//      	}
       	return this._owner;
       }
       set { throw new NotImplementedException(); }
