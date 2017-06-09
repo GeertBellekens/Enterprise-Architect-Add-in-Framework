@@ -1535,5 +1535,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		//else go up in the hierarchy
 		return (getRoootPackage(item.owner as UML.Classes.Kernel.Element));
 	}
+	/// <summary>
+	/// Returns the Object_ID and the ea_guid for one single object
+	/// </summary>
+	/// <param name="sqlQuery">a select query that returns one single record</param>
+	/// <returns>a KeyValuePair with two strings, Object_ID and ea_guid</returns>
+	public KeyValuePair<string,string> getObjectIdAndGuid(string sqlQuery)
+	{
+		
+		XmlDocument xmlIdGuid = this.SQLQuery(sqlQuery);
+		
+		//get the node with the name "Object_ID'
+		XmlNode ObjectIDNode = xmlIdGuid.SelectSingleNode(formatXPath("//Object_ID"));
+		//get the node with the name "ea_guid"
+		XmlNode EAGuidNode = xmlIdGuid.SelectSingleNode(formatXPath("//ea_guid"));
+		
+		string Object_ID = ObjectIDNode.InnerText;
+		string ea_guid = EAGuidNode.InnerText;
+		
+		return new KeyValuePair<string, string>(Object_ID, ea_guid);
+	}
   }
 }
