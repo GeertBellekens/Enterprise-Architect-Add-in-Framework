@@ -14,6 +14,9 @@ namespace EAAddinFramework.Mapping
 	public class TaggedValueMapping:Mapping
 	{
 		internal  TaggedValue wrappedTaggedValue{get;private set;}
+    public TaggedValueMapping(MappingEnd source, MappingEnd target)
+      : base(source, target) {}
+    
 		public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath)
 		{
 			this.wrappedTaggedValue = wrappedTaggedValue;
@@ -51,7 +54,10 @@ namespace EAAddinFramework.Mapping
 				if (_mappingLogic == null)
 				{
 					Guid mappingElementGUID;
-					string mappingLogicString = KeyValuePairsHelper.getValueForKey("mappingLogic",this.wrappedTaggedValue.comment);
+					string mappingLogicString = "";
+          if(this.wrappedTaggedValue != null) { 
+            mappingLogicString = KeyValuePairsHelper.getValueForKey("mappingLogic",this.wrappedTaggedValue.comment);
+          }
 					if (Guid.TryParse(mappingLogicString,out mappingElementGUID))
 					{
 						ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;

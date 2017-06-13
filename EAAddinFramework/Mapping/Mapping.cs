@@ -70,6 +70,9 @@ namespace EAAddinFramework.Mapping
 		public abstract void save();
 		public abstract MP.MappingLogic mappingLogic {get;set;}
 
+    public override string ToString() {
+      return this.source.fullMappingPath + " - " + this.target.fullMappingPath;
+    }
 
 		#endregion
 	}
