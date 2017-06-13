@@ -168,5 +168,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return this.diagram.isReadOnly;
 		}
 	}
+
+	public void setOrientation(bool vertical)
+	{
+		//do nothing
+	}
   }
 }

@@ -163,5 +163,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			return this.diagram.isReadOnly;
 		}
 	}
+	public void setOrientation(bool vertical)
+	{
+		string currentStyle = this.wrappedDiagramObject.Style.ToString();
+		string vPartitionValue;
+		vPartitionValue = vertical ? "1":"0";
+		this.wrappedDiagramObject.SetStyleEx("VPartition",vPartitionValue);
+		string styleAfter = this.wrappedDiagramObject.Style.ToString();
+	}
   }
 }
