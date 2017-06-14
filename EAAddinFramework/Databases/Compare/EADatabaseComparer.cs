@@ -121,6 +121,7 @@ namespace EAAddinFramework.Databases.Compare
 				//check if there is another comparison with the same logical name, but a different object, and the same physical item
 				var mergedEquivalentsComparedItems = this.comparedItems.Where (x => x.newDatabaseItem != comparedItem.newDatabaseItem
 				                          && x.newDatabaseItem != null
+				                          && comparedItem.newDatabaseItem != null
 				                          && x.newDatabaseItem.name == comparedItem.newDatabaseItem.name
 				                          && x.existingDatabaseItem != null
 				                          && x.existingDatabaseItem.Equals(comparedItem.existingDatabaseItem)
