@@ -159,6 +159,7 @@
     <Compile Include="EAWrappers\EnumerationLiteral.cs" />
     <Compile Include="EAWrappers\InformationFlow.cs" />
     <Compile Include="EAWrappers\InformationItem.cs" />
+    <Compile Include="EAWrappers\LinkStyle.cs" />
     <Compile Include="EAWrappers\LiteralBoolean.cs" />
     <Compile Include="EAWrappers\LiteralInteger.cs" />
     <Compile Include="EAWrappers\LiteralNull.cs" />

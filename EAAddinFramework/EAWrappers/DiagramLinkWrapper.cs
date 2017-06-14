@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
@@ -55,6 +56,80 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       }
     }
 
+	public void setStyle(LinkStyle linkStyle)
+	{
+		string lineStyleString = this.wrappedDiagramLink.Style;
+		string mode = getMode(linkStyle);
+		string tree = getTree(linkStyle);
+		//set the Mode
+		lineStyleString = KeyValuePairsHelper.setValueForKey("Mode",mode,lineStyleString);
+		//set the TREE
+		if (string.IsNullOrEmpty(tree))
+		{
+			lineStyleString = KeyValuePairsHelper.RemoveKey("TREE", lineStyleString);
+		}
+		else
+		{
+			lineStyleString = KeyValuePairsHelper.setValueForKey("TREE",tree,lineStyleString);
+		}
+		this.wrappedDiagramLink.Style = lineStyleString;
+	}
+	private string getMode(LinkStyle linkStyle)
+	{
+		switch (linkStyle) 
+		{
+			case LinkStyle.lsDirectMode:
+				return "1";
+			case LinkStyle.lsAutoRouteMode:
+				return "2";
+			case LinkStyle.lsCustomMode:
+			case LinkStyle.lsTreeVerticalTree:
+			case LinkStyle.lsTreeHorizontalTree:
+			case LinkStyle.lsLateralHorizontalTree:
+			case LinkStyle.lsLateralVerticalTree:
+			case LinkStyle.lsOrthogonalSquareTree:
+			case LinkStyle.lsOrthogonalRoundedTree:
+				return "3";
+			default: 
+				return "3";
+		}
+		
+	}
+	private string getTree(LinkStyle linkStyle)
+	{
+		switch (linkStyle) 
+		{
+			case LinkStyle.lsDirectMode:
+			case LinkStyle.lsAutoRouteMode:
+			case LinkStyle.lsCustomMode:
+				return string.Empty;
+			case LinkStyle.lsTreeVerticalTree:
+				return "V";
+			case LinkStyle.lsTreeHorizontalTree:
+				return "H";
+			case LinkStyle.lsLateralHorizontalTree:
+				return "LH";
+			case LinkStyle.lsLateralVerticalTree:
+				return "LC";
+			case LinkStyle.lsOrthogonalSquareTree:
+				return "OS";
+			case LinkStyle.lsOrthogonalRoundedTree:
+				return "OR";
+			default:
+				return "OR";
+		}
+		
+	}
+	public string typeString
+	{
+		get
+		{
+			//get the relation
+			var relation = this.model.getRelationByID(this.wrappedDiagramLink.ConnectorID);
+			//return it's type
+			return relation != null ? relation.WrappedConnector.Type: string.Empty;
+		}
+	}
     public UML.Classes.Kernel.Element element {
       get { return this.relation; }
       set { this.relation = value as ConnectorWrapper; }

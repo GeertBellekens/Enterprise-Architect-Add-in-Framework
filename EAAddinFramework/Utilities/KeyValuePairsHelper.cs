@@ -53,5 +53,28 @@ namespace EAAddinFramework.Utilities
 			keyValuePairs.Add(key + "=" + value);
 			return string.Join(";",keyValuePairs);
 		}
+		public static string RemoveKey(string key,string source)
+		{
+			var keyValuePairs = new List<string>();
+			//first split the string into keyvalue pairs
+			if (!string.IsNullOrEmpty(source))
+			{
+				keyValuePairs = source.Split(new char[]{';'},StringSplitOptions.RemoveEmptyEntries).ToList();
+				foreach (var keyValuePair in keyValuePairs) 
+				{
+					//then split the key and value
+					var keyValues = keyValuePair.Split('=');
+					if (keyValues.Count() >= 2 && keyValues[0] == key)
+					{
+						//if the key if found remove it
+						keyValuePairs.Remove(keyValuePair);
+					}
+				}
+				//then return the joined string
+				return string.Join(";",keyValuePairs);
+			}
+			//if empty or null return unchanged
+			return source;
+		}
 	}
 }
