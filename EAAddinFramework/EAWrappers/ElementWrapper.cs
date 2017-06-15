@@ -19,6 +19,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
     private HashSet<Constraint> _constraints;
     private string _linkedDocument;
+    private string _uniqueID;
 
     public ElementWrapper(Model model, global::EA.Element wrappedElement) 
       : base(model)
@@ -30,6 +31,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.wrappedElement = wrappedElement;
 			this.isDirty = false;
+			this._uniqueID = wrappedElement.ElementGUID;
+			
 		}
 		protected UML.Classes.Kernel.Package _owningPackage;
 		public override UML.Classes.Kernel.Package owningPackage 
@@ -85,11 +88,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			
 		}
 	}
+
+	void reloadWrappedElement()
+	{
+		this.wrappedElement = this.model.wrappedModel.GetElementByGuid(this._uniqueID);
+	}
+
     public override string name 
     {
     	get 
     	{
-    		return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
+    		try
+    		{
+    			return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
+    		}
+    		catch(System.InvalidCastException)
+    		{
+    			this.reloadWrappedElement();
+    			return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
+    		}
     	}
 		set 
 		{

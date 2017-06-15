@@ -32,7 +32,15 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		public override void resetName()
 		{
-			this._foreignKey.name = "FK_" + this.foreignKey.ownerTable.name + "_" + this.foreignKey.foreignTable.name + "_1" ; //TODO: sequence number for multple foreign keys
+			if (this.logicalAssociation != null
+			    && ! string.IsNullOrEmpty(((UTF_EA.Association)this.logicalAssociation).alias))
+			{
+				this._foreignKey.name =  ((UTF_EA.Association)this.logicalAssociation).alias;
+			}
+			else
+			{
+				this._foreignKey.name = "FK_" + this.foreignKey.ownerTable.name + "_" + this.foreignKey.foreignTable.name + "_1" ; //TODO: sequence number for multple foreign keys
+			}				
 		}
 
 		#endregion
