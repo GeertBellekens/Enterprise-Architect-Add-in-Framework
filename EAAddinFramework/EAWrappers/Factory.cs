@@ -191,7 +191,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
     private Package createPackage(global::EA.Package package)
 	{
-    	if (package.ParentID == 0)
+    	if (package.ParentID == 0
+    	    || Package.getElementForPackage((Model)this.model, package) == null)
     	{
     		return new RootPackage(this.model as Model,package);
     	}

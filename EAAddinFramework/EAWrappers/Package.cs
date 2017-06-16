@@ -41,14 +41,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get {return this.wrappedPackage.PackageGUID;}
 		}
-		public Package(Model model,global::EA.Package package):base(model,package.Element)
+		public Package(Model model,global::EA.Package package):base(model,Package.getElementForPackage(model,package))
 		{
 			this.initialize(package);
 		}
+		public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
+		{
+			global::EA.Element foundElement = package.Element;
+			//if for some reason the Element is not filled in we get it using the package GUID.
+			if (foundElement == null)
+			{
+				foundElement = model.wrappedModel.GetElementByGuid(package.PackageGUID);
+			}
+			return foundElement;
+		}
 		protected void initialize(global::EA.Package package)
 		{
-			base.initialize(package.Element);
+			base.initialize(Package.getElementForPackage(this.model,package));
 			this.wrappedPackage = package;
+			if (string.IsNullOrEmpty(this._uniqueID)) this._uniqueID = package.PackageGUID;
 		}
 		public override String notes 
 		{

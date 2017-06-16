@@ -19,20 +19,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
     private HashSet<Constraint> _constraints;
     private string _linkedDocument;
-    private string _uniqueID;
+    protected string _uniqueID;
 
-    public ElementWrapper(Model model, global::EA.Element wrappedElement) 
-      : base(model)
-    {
-      initialize(wrappedElement);
-    }
+	    public ElementWrapper(Model model, global::EA.Element wrappedElement) 
+	      : base(model)
+	    {
+	      initialize(wrappedElement);
+	    }
 
 		protected virtual void initialize(global::EA.Element wrappedElement)
 		{
 			this.wrappedElement = wrappedElement;
 			this.isDirty = false;
-			this._uniqueID = wrappedElement.ElementGUID;
-			
+			if (wrappedElement != null) this._uniqueID = wrappedElement.ElementGUID;
 		}
 		protected UML.Classes.Kernel.Package _owningPackage;
 		public override UML.Classes.Kernel.Package owningPackage 

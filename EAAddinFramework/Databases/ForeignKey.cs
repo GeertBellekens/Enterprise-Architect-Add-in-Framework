@@ -72,45 +72,62 @@ namespace EAAddinFramework.Databases
 		}
 
 		internal string _onDelete;
-    public virtual string onDelete {
-      get {
-        if( this._onDelete == null ) {
-          this._onDelete = "";
-          // lazy load
-          foreach(var item in this._wrappedOperation.taggedValues) {
-            if( item.name.Equals("Delete") ) {
-              this._onDelete = (string)item.tagValue;
-            }
-          }
-        }
-        return this._onDelete;
-      }
-      set {
-        this._onDelete = value;
-        // create tagged value if needed
-        // if not overridden then we don't need the tagged value;
-        if( this.wrappedElement != null ) {
-          this.wrappedElement.addTaggedValue("Delete", this._onDelete);
-        } else if( this.logicalElement != null ) {
-            ((Element)this.logicalElement).addTaggedValue(
-              "Delete",
-              this._onDelete
-            );
-        }
-      }
-    }
+	    public virtual string onDelete {
+	      get {
+	        if( this._onDelete == null ) {
+	          this._onDelete = "";
+	          // lazy load
+	          foreach(var item in this._wrappedOperation.taggedValues) {
+	            if( item.name.Equals("Delete") ) {
+	              this._onDelete = (string)item.tagValue;
+	            }
+	          }
+	        }
+	        return this._onDelete;
+	      }
+	      set {
+	        this._onDelete = value;
+	        // create tagged value if needed
+	        // if not overridden then we don't need the tagged value;
+	        if( this.wrappedElement != null ) {
+	          this.wrappedElement.addTaggedValue("Delete", this._onDelete);
+	        } else if( this.logicalElement != null ) {
+	            ((Element)this.logicalElement).addTaggedValue(
+	              "Delete",
+	              this._onDelete
+	            );
+	        }
+	      }
+	    }
+		public override string name 
+		{
+			get 
+			{
+				return base.name;
+			}
+			set 
+			{
+				base.name = value;
+				//also set the sourceRolename of the association that corresponds to this foreign key
+				if (this.wrappedAssociation != null)
+				{
+					this.wrappedAssociation.sourceEnd.name = value;
+				}
+			}
+		}
 
 		public override void save()
 		{
 			base.save();
 
-      // TODO: check this, compare to Index.save, which doesn't call base.save()
-      if(this._wrappedOperation == null ) {
-        this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
-        this._wrappedOperation.setStereotype(this.getStereotype());
-      }
-      this._wrappedOperation.save();
-      this.onDelete = this.onDelete;
+			// TODO: check this, compare to Index.save, which doesn't call base.save()
+			if(this._wrappedOperation == null ) 
+			{
+				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+				this._wrappedOperation.setStereotype(this.getStereotype());
+			}
+			this._wrappedOperation.save();
+			this.onDelete = this.onDelete;
 
 			if (this.traceTaggedValue == null) createTraceTaggedValue();
 			//check if association to correct table
@@ -121,7 +138,7 @@ namespace EAAddinFramework.Databases
 			}
 			if (this._wrappedAssociation != null)
 			{
-				if (this._foreignTable._wrappedClass != null)
+				if (((Table)this.foreignTable)._wrappedClass != null)
 				{
 					this._wrappedAssociation.target = this._foreignTable._wrappedClass;
 					this.wrappedAssociation.sourceEnd.name = this.name;
