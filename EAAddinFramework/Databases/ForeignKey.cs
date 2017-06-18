@@ -111,7 +111,7 @@ namespace EAAddinFramework.Databases
 				//also set the sourceRolename of the association that corresponds to this foreign key
 				if (this.wrappedAssociation != null)
 				{
-					this.wrappedAssociation.sourceEnd.name = value;
+					this.setLogicalName(false);
 				}
 			}
 		}
@@ -142,10 +142,16 @@ namespace EAAddinFramework.Databases
 				{
 					this._wrappedAssociation.target = this._foreignTable._wrappedClass;
 					this.wrappedAssociation.sourceEnd.name = this.name;
+					this.setLogicalName(true);
 					if (this._foreignTable.primaryKey != null) this.wrappedAssociation.targetEnd.name = this._foreignTable.primaryKey.name;
 					this.wrappedAssociation.sourceEnd.EAMultiplicity = new Multiplicity("0..*");
-					//TODO: implement multiplicities correctly by implementing isNotNullable on FK
-					this.wrappedAssociation.targetEnd.EAMultiplicity = new Multiplicity("1..1");
+					if (this.logicalAssociation != null)
+					{
+						//get the correct end
+						var correspondingEnd = this.logicalAssociation.memberEnds.FirstOrDefault(x => this.foreignTable.logicalElements.Contains(x.type));
+						this.wrappedAssociation.targetEnd.EAMultiplicity = correspondingEnd != null ? (Multiplicity)correspondingEnd.multiplicity : new Multiplicity("1..1");
+					}
+					
 					this.wrappedAssociation.save();
 				}
 				else
@@ -155,6 +161,17 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		void setLogicalName(bool save)
+		{
+			if (this.logicalAssociation != null)
+			{
+				if (this.logicalAssociation.alias != this.name)
+				{
+					this.logicalAssociation.alias = this.name;
+				}
+				if (save) this.logicalAssociation.save();
+			}
+		}
 		#region implemented abstract members of DatabaseItem
 
 
@@ -178,6 +195,7 @@ namespace EAAddinFramework.Databases
 				newForeignKey.name = name;
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
+				this.setLogicalName(save);
 				newForeignKey.isOverridden = isOverridden;
 				newForeignKey.derivedFromItem = this;
 				if (save) newForeignKey.save();

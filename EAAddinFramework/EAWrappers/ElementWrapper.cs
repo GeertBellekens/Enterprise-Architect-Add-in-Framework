@@ -658,7 +658,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       } 
       else if(((Factory)this.model.factory).isEAOperation(type))
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Methods, name, EAType  );
+        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Methods, name, string.Empty  );
       }
       else if (((Factory)this.model.factory).isEAConnector(type))
       {
