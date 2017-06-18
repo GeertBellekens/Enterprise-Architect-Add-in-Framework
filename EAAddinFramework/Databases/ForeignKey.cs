@@ -151,7 +151,8 @@ namespace EAAddinFramework.Databases
 						var correspondingEnd = this.logicalAssociation.memberEnds.FirstOrDefault(x => this.foreignTable.logicalElements.Contains(x.type));
 						this.wrappedAssociation.targetEnd.EAMultiplicity = correspondingEnd != null ? (Multiplicity)correspondingEnd.multiplicity : new Multiplicity("1..1");
 					}
-					
+					//set FKINFO in StyleEx of association
+					this._wrappedAssociation.wrappedConnector.StyleEx = "FKINFO=SRC="+this.name+":DST="+this.wrappedAssociation.targetEnd.name+":;";
 					this.wrappedAssociation.save();
 				}
 				else
