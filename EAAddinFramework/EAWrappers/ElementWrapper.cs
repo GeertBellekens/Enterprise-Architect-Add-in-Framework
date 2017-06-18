@@ -47,52 +47,62 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				this.setProperty(getPropertyNameName(),value,_owningPackage);
 			}
 		}
-	/// <summary>
-	/// resets the cached relations
-	/// </summary>
-	internal void resetRelationships()
-	{
-		_allRelationships = null;
-	}
-	/// <summary>
-	/// resets the cached attributes
-	/// </summary>
-	internal void resetAttributes()
-	{
-		_attributes = null;
-		_attributeWrappers = null;
-	}
-	public string linkedDocument
-	{
-		get
+		/// <summary>
+		/// resets the cached relations
+		/// </summary>
+		internal void resetRelationships()
 		{
-			if (_linkedDocument != null)
-			{
-				_linkedDocument = this.wrappedElement.GetLinkedDocument();
-			}
-			return _linkedDocument;
+			_allRelationships = null;
 		}
-		set
+		/// <summary>
+		/// resets the cached attributes
+		/// </summary>
+		internal void resetAttributes()
 		{
-			if (value != _linkedDocument)
-			{
-				//write the value to a temp file
-				string tempFile = Path.GetTempFileName();
-				File.WriteAllText(tempFile,value);
-				//load the new contents in the linked document
-				this.wrappedElement.LoadLinkedDocument(tempFile);
-				//delete the temp file
-				File.Delete(tempFile);
-			}
-			
+			_attributes = null;
+			_attributeWrappers = null;
 		}
-	}
+		public string linkedDocument
+		{
+			get
+			{
+				if (_linkedDocument != null)
+				{
+					_linkedDocument = this.wrappedElement.GetLinkedDocument();
+				}
+				return _linkedDocument;
+			}
+			set
+			{
+				if (value != _linkedDocument)
+				{
+					//write the value to a temp file
+					string tempFile = Path.GetTempFileName();
+					File.WriteAllText(tempFile,value);
+					//load the new contents in the linked document
+					this.wrappedElement.LoadLinkedDocument(tempFile);
+					//delete the temp file
+					File.Delete(tempFile);
+				}
+				
+			}
+		}
 
 	void reloadWrappedElement()
 	{
 		this.wrappedElement = this.model.wrappedModel.GetElementByGuid(this._uniqueID);
 	}
-
+	public ElementWrapper classifier
+	{
+		get
+		{
+			return  this.model.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(),this.wrappedElement.ClassifierID));
+		}
+		set
+		{
+			this.setProperty(getPropertyNameName(),value.id,this.wrappedElement.ClassifierID);
+		}
+	}
     public override string name 
     {
     	get 
@@ -231,6 +241,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	if (this.getProperty("position") != null) this.wrappedElement.TreePos = (int)this.getProperty("position");
     	if (this.getProperty("visibility") != null) this.wrappedElement.Visibility = (string)this.getProperty("visibility");
     	if (this.getProperty("stereotypes") != null) this.wrappedElement.StereotypeEx = (string)this.getProperty("stereotypes");
+    	if (this.getProperty("classifier") != null) this.wrappedElement.ClassifierID = (int)this.getProperty("classifier");
     	if (this.getProperty("owner") != null)
     	{
     		if (this.getProperty("owner") is Package)

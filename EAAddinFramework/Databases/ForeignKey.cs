@@ -194,7 +194,8 @@ namespace EAAddinFramework.Databases
 			base.updateDetails(newDatabaseItem);
 			ForeignKey newForeignKey = (ForeignKey)newDatabaseItem;
 			//update the association
-			this._foreignTable = newForeignKey._foreignTable;
+			var newForeignTable = this.ownerTable.databaseOwner.tables.FirstOrDefault( x => x.name == newForeignKey._foreignTable.name);
+			if (newForeignTable != null) this._foreignTable = (Table)newForeignTable;
 			//set logical association
 			this.logicalAssociation = newForeignKey.logicalAssociation;
 

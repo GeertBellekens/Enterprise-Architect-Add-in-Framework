@@ -202,7 +202,11 @@ namespace EAAddinFramework.Databases
 				{
 					throw new Exception(string.Format("cannot save {0} because wrapped pacakge for database {1} does not exist",this.name, this.databaseOwner.name));
 				}
-				
+			}
+			else
+			{
+				//save the class to save the changes to the existing table
+				_wrappedClass.save();
 			}
 			
 		}
