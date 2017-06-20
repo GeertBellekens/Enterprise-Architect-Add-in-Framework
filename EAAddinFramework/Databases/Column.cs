@@ -165,7 +165,7 @@ namespace EAAddinFramework.Databases
 				return (! string.IsNullOrEmpty(this.name)
 				        && this.type != null
 				        && this.type.isValid
-				        && ownerTable.columns.Count(x => x.name == this.name && ! x.isNotRealized) == 1);
+				        && ownerTable.columns.Count(x => x.name == this.name && ! x.isNotRealized) <= 1);
 				       
 			}
 		}

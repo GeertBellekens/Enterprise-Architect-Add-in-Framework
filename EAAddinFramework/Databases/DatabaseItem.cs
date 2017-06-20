@@ -174,12 +174,55 @@ namespace EAAddinFramework.Databases
 		{
 			get
 			{
-				this._isNotRealized = this.isOverridden && this.wrappedElement == null;
+				foreach (var logicalItem in logicalElements)
+				{
+					var isNotRealizedTaggedValue = logicalItem.taggedValues.FirstOrDefault(x => x.name == "isNotRealized");
+					string taggedValueValue = isNotRealizedTaggedValue != null ? isNotRealizedTaggedValue.tagValue.ToString(): string.Empty;
+					foreach (string taggedValuePart in taggedValueValue.Split(';')) 
+					{
+						if (taggedValuePart.Equals(this.owner.name,StringComparison.InvariantCulture))
+						{
+							this._isNotRealized = true;
+							return _isNotRealized;
+						}
+					}
+				}
 				return _isNotRealized;
 			}
 			set
 			{
 				this._isNotRealized = value;
+				foreach (var logicalItem in logicalElements) 
+				{
+					
+					//check if the tagged value exists
+					var isNotRealizedTaggedValue = logicalItem.taggedValues.FirstOrDefault(x => x.name == "isNotRealized");
+					string taggedValueValue = isNotRealizedTaggedValue != null ? isNotRealizedTaggedValue.tagValue.ToString(): string.Empty;
+					if (!taggedValueValue.Contains(this.owner.name))
+					{
+						//add the owner in which this item is not realized
+						if (value) taggedValueValue += this.owner.name + ";";
+					}
+					else
+					{
+						if (!value)
+						{
+							var taggedValueParts = taggedValueValue.Split(';').ToList();
+							foreach (string taggedValuePart in taggedValueParts)
+							{
+								if (taggedValuePart.Equals(this.owner.name,StringComparison.InvariantCulture))
+							    {
+									//if it equals the name of the owner then remove that part
+							    	taggedValueParts.Remove(taggedValuePart);
+							    	taggedValueValue = string.Join(";",taggedValueParts.ToArray());
+							    	break;
+							    }
+							}
+						}
+					}
+					//add the tagged value
+					((Element)logicalItem).addTaggedValue("isNotRealized",taggedValueValue);
+				}
 			}
 		}
 		

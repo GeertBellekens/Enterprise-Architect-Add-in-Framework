@@ -178,9 +178,13 @@ namespace EAAddinFramework.Databases.Compare
 				    && overrideCompare.existingDatabaseItem.isOverridden) 
 						overrideCompare.existingDatabaseItem.isOverridden = false;
 				// new item
-				if (overrideCompare.newDatabaseItem != null 
-				    && overrideCompare.newDatabaseItem.isOverridden) 
+				if (overrideCompare.newDatabaseItem != null)
+				{
+				    if (overrideCompare.newDatabaseItem.isOverridden)
 						overrideCompare.newDatabaseItem.isOverridden = false;
+				    if (overrideCompare.newDatabaseItem.isNotRealized)
+				    	overrideCompare.newDatabaseItem.isNotRealized = false;
+				}
 			}
 			
 		}

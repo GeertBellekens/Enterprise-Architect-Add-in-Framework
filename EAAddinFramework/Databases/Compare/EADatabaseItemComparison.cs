@@ -241,7 +241,7 @@ namespace EAAddinFramework.Databases.Compare
 					//only new item exists
 					if (existingDatabaseItem == null)
 					{
-						if (newDatabaseItem.isOverridden) 
+						if (newDatabaseItem.isNotRealized || newDatabaseItem.isOverridden)
 						{
 							comparisonStatus = DatabaseComparisonStatusEnum.dboverride;
 						}
