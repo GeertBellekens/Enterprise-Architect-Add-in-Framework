@@ -235,7 +235,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	if (this.getProperty("name") != null) this.wrappedElement.Name = (string)this.getProperty("name");
     	if (this.getProperty("alias") != null) this.wrappedElement.Alias = (string)this.getProperty("alias");
     	if (this.getProperty("genLinks") != null) this.wrappedElement.Genlinks = (string)this.getProperty("genLinks");
-    	if (this.getProperty("subType") != null) this.wrappedElement.Type = (string)this.getProperty("subType");
+    	if (this.getProperty("subType") != null) this.wrappedElement.Subtype = (int)this.getProperty("subType");
     	if (this.getProperty("notes") != null) this.wrappedElement.Notes = (string)this.getProperty("notes");
     	if (this.getProperty("isAbstract") != null) this.wrappedElement.Abstract = (string)this.getProperty("isAbstract");
     	if (this.getProperty("position") != null) this.wrappedElement.TreePos = (int)this.getProperty("position");
@@ -296,8 +296,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
     	get 
     	{
-    	
-    		string wrappedType = (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Type);
+    		int subType = (int)this.getProperty(getPropertyNameName(),this.wrappedElement.Subtype);
+    		string wrappedType = this.wrappedElement.Type;
     		//PackagingComponents have Package as Type and 20 as subtype
     		if (wrappedType == "Package" && wrappedElement.Subtype == 20)
     		{
@@ -305,7 +305,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		}
     		else if (wrappedType == "StateNode")
     		{
-    			switch (wrappedElement.Subtype) 
+    			switch (subType) 
     			{
     				case 100:
     					wrappedType = "ActivityInitial";
@@ -347,7 +347,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		}
     		else if (wrappedType == "Text")
     		{
-    			switch (wrappedElement.Subtype) 
+    			switch (subType) 
     			{
     				case 76:
     					wrappedType = "Legend";
@@ -362,7 +362,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		}
     		return wrappedType;
     	}
-    	set {this.setProperty(getPropertyNameName(),value,this.wrappedElement.Type);}
+    	//TODO: properly translate subtypes to their integer value. This now only works if the integer value is used directly.
+    	set {this.setProperty(getPropertyNameName(),int.Parse(value),this.wrappedElement.Subtype);}
     }
     
     public virtual global::EA.Element WrappedElement {

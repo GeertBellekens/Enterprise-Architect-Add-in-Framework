@@ -108,7 +108,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 	//indicates whether or not this element is new
 	internal bool isNew {get;set;}
-	private bool _isDirty = true;
+	private bool? _isDirty = null;
 	public virtual bool isDirty
 	{
 		get
@@ -117,8 +117,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			{
 				_isDirty = true;
 			}
-			else if (this.properties.Any()) _isDirty = this.properties.Values.Any(x => x.isDirty);
-			return _isDirty;
+			else
+			{
+				var dirtyProperties = this.properties.Any() && this.properties.Values.Any(x => x.isDirty);
+				if (dirtyProperties )
+				{
+					_isDirty  = true;
+				}
+				else if (! _isDirty.HasValue)
+				{
+					return false;
+				}
+					
+			}
+			return _isDirty.HasValue ? _isDirty.Value : false;
 		}
 		set
 		{

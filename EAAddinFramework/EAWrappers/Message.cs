@@ -37,8 +37,33 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
         public UML.Interactions.BasicInteractions.MessageSort messageSort
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get 
+            {
+            	//only implemented for synchronous/asyncronous calls
+            	string pdata1 = this.wrappedConnector.MiscData[0].ToString();
+            	return pdata1.Equals("Synchronous",StringComparison.InvariantCultureIgnoreCase) ? 
+            		UML.Interactions.BasicInteractions.MessageSort.synchCall : UML.Interactions.BasicInteractions.MessageSort.asynchCall;
+        	}
+            set 
+            {
+            	//only implemented to make a difference between Synchronous and Asynchronous.
+            	//property is read-only in the API so we have to use an SQL update to set it.
+            	string pdata1;
+            	string pdata3;
+            	pdata3 = value == UML.Interactions.BasicInteractions.MessageSort.asynchSignal ? "Signal" : "Call";
+            	if (value == UML.Interactions.BasicInteractions.MessageSort.asynchCall
+            	    || value == UML.Interactions.BasicInteractions.MessageSort.asynchSignal)
+            	{
+            		pdata1 = "Asynchronous";
+            	}
+            	else
+            	{
+            		pdata1 = "Synchronous";
+            	}
+            	string sqlUpdatePdata1 = "update t_connector set PDATA1 = '"+pdata1+"' ,PDATA3 = '"+pdata3+"'  ,PDATA4 ='0' "
+            							+" where ea_guid = '"+this.uniqueID+"'";
+            	this.model.executeSQL(sqlUpdatePdata1);
+            }
         }
 
         public UML.Interactions.BasicInteractions.Interaction interaction
