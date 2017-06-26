@@ -240,6 +240,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       	this.saveElement();
       	//after saving the element is not new anymore
       	this.isNew = false;
+        // after saving the initialValue of the Properties has to be updated
+        // or we keep comparing with the original value in subsequent calls
+        foreach(var property in this.properties.Values) {
+          property.initialValue = property.propertyValue;
+        }
       }
       foreach (UML.Classes.Kernel.Element element in this.ownedElements) {
         ((Element)element).save();
