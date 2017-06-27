@@ -22,9 +22,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		{
 			this._foreignKey = new ForeignKey((Table) table, FKInvolvedColumns);
 			this._foreignKey.foreignTable = dependingTransformer.table;
-			resetName();
+			//get the association on which this foreign key is based
 			if (dependingTransformer.associationEnd != null) this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
+			this.logicalAssociation = this._foreignKey.logicalAssociation;
 			table.constraints.Add(this._foreignKey);
+			//reset the name of the foreign key
+			resetName();
 			//make sure we get the correct override settings for the FK and the involved columns
 			var dummy = this._foreignKey.isOverridden;
 		}
