@@ -177,13 +177,16 @@ namespace EAAddinFramework.Databases
 				foreach (var logicalItem in logicalElements)
 				{
 					var isNotRealizedTaggedValue = logicalItem.taggedValues.FirstOrDefault(x => x.name == "isNotRealized");
-					string taggedValueValue = isNotRealizedTaggedValue != null ? isNotRealizedTaggedValue.tagValue.ToString(): string.Empty;
-					foreach (string taggedValuePart in taggedValueValue.Split(';')) 
+					if (isNotRealizedTaggedValue != null)
 					{
-						if (taggedValuePart.Equals(this.owner.name,StringComparison.InvariantCulture))
+						string taggedValueValue = isNotRealizedTaggedValue.tagValue.ToString();
+						foreach (string taggedValuePart in taggedValueValue.Split(';')) 
 						{
-							this._isNotRealized = true;
-							return _isNotRealized;
+							if (taggedValuePart.Equals(this.owner.name,StringComparison.InvariantCulture))
+							{
+								this._isNotRealized = true;
+								return _isNotRealized;
+							}
 						}
 					}
 				}
