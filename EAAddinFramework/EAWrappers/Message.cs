@@ -156,5 +156,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//do nothing. An existing message cannot be added to a diagram in EA
 			//because in EA messages are bound to a diagram.
 		}
+		/// <summary>
+		/// the sequence number of this message within the Interaction.
+		/// </summary>
+		public int sequence 
+		{
+			get
+			{
+				return this.WrappedConnector.SequenceNo;
+			}
+			set
+			{
+				this.WrappedConnector.SequenceNo = value;
+			}
+		}
+		public int y 
+		{
+			get
+			{
+				return this.wrappedConnector.StartPointY;
+			}
+			set
+			{
+				this.WrappedConnector.StartPointY = value;
+				this.WrappedConnector.EndPointY = value;
+			}
+		}
     }
  }
