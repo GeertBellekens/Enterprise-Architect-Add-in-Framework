@@ -16,15 +16,35 @@ namespace EAAddinFramework.Databases.Transformation
 	public abstract class EAForeignKeyTransformer:EADatabaseItemTransformer, DB.Transformation.ForeignKeyTransformer
 	{
 		internal ForeignKey _foreignKey;
-		internal UTF_EA.Association _logicalAssociation;
+		internal UTF_EA.Association _logicalAssociation
+		{
+			get
+			{
+				return _logicalAssociationEnd != null ? (UTF_EA.Association) _logicalAssociationEnd.association : null;
+			}
+		}
+
+		public UML.Classes.Kernel.Property logicalAssociationEnd 
+		{
+			get 
+			{
+				return this._logicalAssociationEnd;
+			}
+			set 
+			{
+				this._logicalAssociationEnd = value as UTF_EA.AssociationEnd;
+			}
+		}
+
+		internal UTF_EA.AssociationEnd _logicalAssociationEnd;
 		public EAForeignKeyTransformer(NameTranslator nameTranslator):base(nameTranslator)
 		{
 			_nameTranslator = nameTranslator;
 		}
-		public EAForeignKeyTransformer(ForeignKey foreignKey, UTF_EA.Association association,NameTranslator nameTranslator):this(nameTranslator)
+		public EAForeignKeyTransformer(ForeignKey foreignKey, UTF_EA.AssociationEnd associationEnd,NameTranslator nameTranslator):this(nameTranslator)
 		{
 			_foreignKey = foreignKey;
-			_logicalAssociation = association;
+			_logicalAssociationEnd = associationEnd;
 		}
 
 		#region ForeignKeyTransformer implementation
@@ -59,7 +79,6 @@ namespace EAAddinFramework.Databases.Transformation
 
 		public UML.Classes.Kernel.Association logicalAssociation {
 			get { return _logicalAssociation;}
-			set { _logicalAssociation = (UTF_EA.Association) value;}
 		}
 
 		#endregion

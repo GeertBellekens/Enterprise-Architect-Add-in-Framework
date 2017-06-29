@@ -73,10 +73,6 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			{
 				transformer = this.externalTableTransformers.FirstOrDefault( x => x.logicalClass.Equals(associationEnd.type));
 			}
-			if (transformer != null)
-			{
-				transformer.associationEnd = associationEnd;
-			}
 			return transformer;
 		}
 		protected DB2TableTransformer addDB2Table(UTF_EA.Class classElement)
@@ -106,7 +102,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				foreach (var dependingAssociationEnd in transformer.getDependingAssociationEnds()) 
 				{
 					var dependingEndTransformer = addDB2Table(dependingAssociationEnd);
-					if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingEndTransformer);
+					if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingAssociationEnd,dependingEndTransformer);
 				}
 				//add the remote columns and primary and foreign keys
 				transformer.addRemoteColumnsAndKeys();
@@ -188,7 +184,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 								var subTabletransformer = this.tableTransformers.FirstOrDefault(x => x.table.logicalElements.Any(y => subclass.Equals(y)));
 								//get corresponding columns from subtable
 								var correspondingsubColumns = getCorrespondingColumn(foreignKeyTransformer.foreignKey.involvedColumns,subTabletransformer.table);
-								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,this._nameTranslator);
+								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,(UTF_EA.AssociationEnd)foreignKeyTransformer.logicalAssociationEnd,this._nameTranslator);
 							}
 						}
 						//delete the original foereign key

@@ -19,7 +19,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		Column _involvedColumn = null;
 		public Column getPKInvolvedColumn()
 		{
-			if (_dependingTransformer.associationEnd.isID) return _column;
+			if (this._associationEnd.isID) return _column;
 			return null;
 		}
 		public Column getFKInvolvedColumn()
@@ -38,16 +38,17 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			this.logicalProperty = attribute;
 			this.column = column;
 		}
-		public DB2ColumnTransformer(Table table, Column involvedColumn,DB2TableTransformer dependingTransformer,NameTranslator nameTranslator):this(table,nameTranslator)
+		public DB2ColumnTransformer(Table table, Column involvedColumn,DB2TableTransformer dependingTransformer,UTF_EA.AssociationEnd associationEnd,NameTranslator nameTranslator):this(table,nameTranslator)
 		{
 			this._involvedColumn = involvedColumn;
 			this._dependingTransformer = dependingTransformer;
+			this._associationEnd = associationEnd;
 			_column = new Column((DB_EA.Table)table, involvedColumn.name);
 			_column.type = involvedColumn.type;
 			_column.logicalAttribute = ((DB_EA.Column)involvedColumn).logicalAttribute;
-			if (dependingTransformer.associationEnd != null)
+			if (this._associationEnd != null)
 			{
-				if (dependingTransformer.associationEnd.lower > 0 )
+				if (_associationEnd.lower > 0 )
 				{
 					_column.isNotNullable = true;
 				}

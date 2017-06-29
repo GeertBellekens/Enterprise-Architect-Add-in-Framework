@@ -16,10 +16,9 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	public class DB2TableTransformer:EATableTransformer
 	{
 		protected List<DB2ColumnTransformer> _columnTransformers = new List<DB2ColumnTransformer>();
-		internal List<DB2TableTransformer> dependingTransformers = new List<DB2TableTransformer>();
+		internal Dictionary<UTF_EA.AssociationEnd,DB2TableTransformer> dependingTransformers = new Dictionary<UTF_EA.AssociationEnd, DB2TableTransformer>();
 		internal List<DB2ForeignKeyTransformer> _foreignKeyTransformers = new List<DB2ForeignKeyTransformer>();
 		internal DB2PrimaryKeyTransformer _primaryKeyTransformer = null;
-		internal UTF_EA.AssociationEnd associationEnd;
 		/// <summary>
 		/// constructor
 		/// </summary>
@@ -125,14 +124,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				}
 			}
 			//add the columns for the primary key of the dependent table
-			foreach (var dependingTransformer in this.dependingTransformers) 
+			foreach (var dependKeyValue in this.dependingTransformers) 
 			{
-				if (dependingTransformer.table.primaryKey != null)
+				if (dependKeyValue.Value.table.primaryKey != null)
 				{
 					var dependingColumnTransfomers = new List<DB2ColumnTransformer>();
-					foreach (Column column in dependingTransformer.table.primaryKey.involvedColumns.OrderBy(x => x.position))
+					foreach (Column column in dependKeyValue.Value.table.primaryKey.involvedColumns.OrderBy(x => x.position))
 					{
-						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column, dependingTransformer,_nameTranslator));
+						dependingColumnTransfomers.Add( new DB2ColumnTransformer(this._table, column,dependKeyValue.Value,dependKeyValue.Key,_nameTranslator));
 					}
 					this._columnTransformers.AddRange(dependingColumnTransfomers);
 					List<Column> FKInvolvedColumns = new List<Column>();
@@ -147,7 +146,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 					}
 					if (FKInvolvedColumns.Count > 0 )
 					{
-						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(this._table,FKInvolvedColumns,dependingTransformer,_nameTranslator));
+						this._foreignKeyTransformers.Add(new DB2ForeignKeyTransformer(this._table,FKInvolvedColumns,dependKeyValue.Value,dependKeyValue.Key,_nameTranslator));
 
 					}
 				}

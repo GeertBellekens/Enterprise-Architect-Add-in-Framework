@@ -15,16 +15,17 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 	/// </summary>
 	public class DB2ForeignKeyTransformer:EAForeignKeyTransformer
 	{
-		public DB2ForeignKeyTransformer(ForeignKey foreignKey, UTF_EA.Association association,NameTranslator nameTranslator):base(foreignKey,association,nameTranslator)
+		
+		public DB2ForeignKeyTransformer(ForeignKey foreignKey, UTF_EA.AssociationEnd associationEnd,NameTranslator nameTranslator):base(foreignKey,associationEnd,nameTranslator)
 		{
 		}
-		public DB2ForeignKeyTransformer(Table table,List<Column> FKInvolvedColumns,DB2TableTransformer dependingTransformer,NameTranslator nameTranslator):base(nameTranslator)
+		public DB2ForeignKeyTransformer(Table table,List<Column> FKInvolvedColumns,DB2TableTransformer dependingTransformer,UTF_EA.AssociationEnd associationEnd, NameTranslator nameTranslator):base(nameTranslator)
 		{
 			this._foreignKey = new ForeignKey((Table) table, FKInvolvedColumns);
 			this._foreignKey.foreignTable = dependingTransformer.table;
+			this._logicalAssociationEnd = associationEnd;
 			//get the association on which this foreign key is based
-			if (dependingTransformer.associationEnd != null) this._foreignKey.logicalAssociation = (UTF_EA.Association)dependingTransformer.associationEnd.association;
-			this.logicalAssociation = this._foreignKey.logicalAssociation;
+			if (associationEnd != null) this._foreignKey.logicalAssociation = (UTF_EA.Association)associationEnd.association;
 			table.constraints.Add(this._foreignKey);
 			//reset the name of the foreign key
 			resetName();
