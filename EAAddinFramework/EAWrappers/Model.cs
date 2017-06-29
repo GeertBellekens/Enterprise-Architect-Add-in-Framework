@@ -1550,8 +1550,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		//get the node with the name "ea_guid"
 		XmlNode EAGuidNode = xmlIdGuid.SelectSingleNode(formatXPath("//ea_guid"));
 		
-		string Object_ID = ObjectIDNode.InnerText;
-		string ea_guid = EAGuidNode.InnerText;
+		string Object_ID = ObjectIDNode != null ? ObjectIDNode.InnerText: string.Empty;
+		string ea_guid = EAGuidNode != null ? EAGuidNode.InnerText : string.Empty;
 		
 		return new KeyValuePair<string, string>(Object_ID, ea_guid);
 	}
