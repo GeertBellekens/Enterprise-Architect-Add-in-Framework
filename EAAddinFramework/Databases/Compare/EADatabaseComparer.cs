@@ -113,7 +113,15 @@ namespace EAAddinFramework.Databases.Compare
 			this.updateOverrides(comparedItems);
 			//update merged items
 			this.updateMergedItems();
+			//update foreign keys with equivalent but different involved columns
+			//this.updateFKwithEquivalentColumns();
 		}
+		
+		/// <summary>
+
+		/// </summary>
+	
+
 		private void updateMergedItems()
 		{
 			foreach (var comparedItem in this.comparedItems) 

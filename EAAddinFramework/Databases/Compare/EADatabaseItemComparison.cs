@@ -291,20 +291,74 @@ namespace EAAddinFramework.Databases.Compare
 		{
 			var existingConstraint = this.existingDatabaseItem as Constraint;
 			var newConstraint = this.newDatabaseItem as Constraint;
-			//only if both constraints exist and they both have the same columns
+			//first replace the equivalent columns
 			if (existingConstraint != null
-			    && newConstraint != null
-			    && existingConstraint.involvedColumns.Count == newConstraint.involvedColumns.Count
-			    && existingConstraint.involvedColumns.All(x => newConstraint.involvedColumns.Any(y => y.name == x.name)))
+			    && newConstraint != null)
 			{
-				var newInvolvedColumns = new List<DB.Column>();
-				foreach (var existingInvolvedColumn in existingConstraint.involvedColumns) 
+				this.replaceEquivalentColumns(existingConstraint, newConstraint);
+				//only if both constraints exist and they both have the same columns
+				if (existingConstraint.involvedColumns.Count == newConstraint.involvedColumns.Count
+				    && existingConstraint.involvedColumns.All(x => newConstraint.involvedColumns.Any(y => y.name == x.name)))
 				{
-					//get the corresponding new column
-					var newcolumn = newConstraint.involvedColumns.First(x => x.name == existingInvolvedColumn.name);
-					newInvolvedColumns.Add(newcolumn);
-				} 
-				//set the involved columns in the correct order
+					var newInvolvedColumns = new List<DB.Column>();
+					foreach (var existingInvolvedColumn in existingConstraint.involvedColumns) 
+					{
+						//get the corresponding new column
+						var newcolumn = newConstraint.involvedColumns.First(x => x.name == existingInvolvedColumn.name);
+						newInvolvedColumns.Add(newcolumn);
+					} 
+					//set the involved columns in the correct order
+					newConstraint.involvedColumns = newInvolvedColumns;
+				}
+			}
+		}
+		/// <summary>
+		/// In case of equivalent columns (both columns derived from the same logical elements) the existing constraint is leading. 
+		/// So we replace the involved column by its equivalent following the columns in the existing constraint.
+		/// </summary>
+		/// <param name="existingConstraint">the constraint from the existing database</param>
+		/// <param name="newConstraint">the newly derived constraint</param>
+		void replaceEquivalentColumns(Constraint existingConstraint, Constraint newConstraint)
+		{
+			List<Column> usedExistingColumns = new List<Column>();
+			List<DB.Column> newInvolvedColumns = newConstraint.involvedColumns;
+			bool involvedColumnsUpdated = false;
+			foreach (Column newColumn in newConstraint.involvedColumns)
+			{
+				//find corresponding column in existing constraint
+				//first find columns with same name
+				var correspondingColumn = existingConstraint.involvedColumns.FirstOrDefault(x => x.name == newColumn.name
+				                                                                    && !usedExistingColumns.Contains(x));
+				//then find the column with the same logical item
+				if (correspondingColumn == null)
+				{
+					foreach (Column existingInvolvedColumn in existingConstraint.involvedColumns.Where(x => !usedExistingColumns.Contains(x)))
+					{
+						bool hasEquivalentLogicalElements = existingInvolvedColumn.logicalElements.All(x => newColumn.logicalElements.Any(y => y.Equals(x)));
+						if (hasEquivalentLogicalElements)
+						{
+							correspondingColumn = existingInvolvedColumn;
+							//replace the involvedColumn by the equivalent column in the new table
+							var correspondingNewColumn = newColumn._ownerTable.columns.FirstOrDefault(x => x.name == correspondingColumn.name);
+							if (correspondingNewColumn != null)
+							{
+								//replace the column
+								newInvolvedColumns[newConstraint.involvedColumns.IndexOf(newColumn)] = correspondingNewColumn;
+								involvedColumnsUpdated = true;
+								break;
+							}
+						}
+					}
+				}
+				if (correspondingColumn != null)
+				{
+					//add it to the list of columns that have been used
+					usedExistingColumns.Add((Column)correspondingColumn);
+				}
+			}
+			//if we changed anything then set the involved columns on the new constraint
+			if (involvedColumnsUpdated)
+			{
 				newConstraint.involvedColumns = newInvolvedColumns;
 			}
 		}
