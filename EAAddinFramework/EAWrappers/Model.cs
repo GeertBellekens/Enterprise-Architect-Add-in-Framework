@@ -35,6 +35,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		this.wrappedModel.ActivateTab(tabName);
 	}
+	public bool isTabOpen(string tabName)
+	{
+		return this.wrappedModel.IsTabOpen(tabName) > 0;
+	}
     /// <summary>
     /// returns the full path of the running ea.exe
     /// </summary>
