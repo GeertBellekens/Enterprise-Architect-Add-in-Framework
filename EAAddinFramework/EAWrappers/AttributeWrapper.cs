@@ -122,15 +122,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		this.stereotypes = newStereotypes;
 	    }
 
-      public bool HasStereotype(string stereotype) {
-				return this.stereotypes.Any(
-          x => x.name.Equals(
-            stereotype,
-            StringComparison.CurrentCultureIgnoreCase
-          )
-        );
-      }
-
 	   	public override String notes 
 		{
 			get 
