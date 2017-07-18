@@ -178,6 +178,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 	}
 
+  public Stereotype AddStereotype(string text) {
+    Stereotype stereotype = (Stereotype)this.model.factory.createStereotype(this, text);
+    this.addStereotype(stereotype);
+    return stereotype;
+  }
+
   public bool HasStereotype(string stereotype) {
 		return this.stereotypes.Any(
       x => x.name.Equals(
