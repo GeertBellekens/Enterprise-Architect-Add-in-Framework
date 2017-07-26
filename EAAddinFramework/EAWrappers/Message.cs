@@ -40,7 +40,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
             get 
             {
             	//only implemented for synchronous/asyncronous calls
-            	string pdata1 = this.wrappedConnector.MiscData[0].ToString();
+            	string pdata1 = this.wrappedConnector.get_MiscData(0).ToString();
             	return pdata1.Equals("Synchronous",StringComparison.InvariantCultureIgnoreCase) ? 
             		UML.Interactions.BasicInteractions.MessageSort.synchCall : UML.Interactions.BasicInteractions.MessageSort.asynchCall;
         	}
