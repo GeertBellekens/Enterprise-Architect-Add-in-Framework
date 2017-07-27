@@ -292,7 +292,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      } 
 	      else if(((Factory)this.model.factory).isEAOperation(type))
 	      {
-	        throw new Exception("Cannot add an Attribute to a Package");
+	        throw new Exception("Cannot add an Operation to a Package");
 	      }
 	      else if (((Factory)this.model.factory).isEAPackage(type))
 	      {
