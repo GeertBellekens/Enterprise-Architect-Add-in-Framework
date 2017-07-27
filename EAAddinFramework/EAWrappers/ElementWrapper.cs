@@ -254,7 +254,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		return ((string)this.getProperty(getPropertyNameName(),this.wrappedElement.Tag)).Split(',').ToList();
     	}
   	  set {
-        string string_value = string.Join(",", value);
+        string string_value = value == null ? "" : string.Join(",", value);
   		  this.setProperty(getPropertyNameName(),string_value,this.wrappedElement.Tag);
   	  }
     }
@@ -295,7 +295,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public string domain {
       get {
         TaggedValue tv = this.getTaggedValue(getPropertyNameName());
-        string tagValue = null;
+        string tagValue = "";
         if( tv != null) { tagValue = tv.eaStringValue; }
         return this.getProperty(getPropertyNameName(), tagValue).ToString();
       }
@@ -326,13 +326,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       get {
         TaggedValue tv = this.getTaggedValue(getPropertyNameName());
         string tagValue = null;
-        if( tv != null) { tagValue = (string)tv.tagValue; }
+        if( tv != null) { tagValue = tv.eaStringValue; }
         return (string)this.getProperty(getPropertyNameName(), tagValue);
       }
       set {
         TaggedValue tv = this.getTaggedValue(getPropertyNameName());
         string tagValue = null;
-        if( tv != null) { tagValue = (string)tv.tagValue; }
+        if( tv != null) { tagValue = tv.eaStringValue; }
         this.setProperty(getPropertyNameName(), value, tagValue);
       }
     }
