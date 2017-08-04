@@ -746,6 +746,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
           return "Attribute";
         case "AssociationClass":
           return "Class";
+         case "NoteComment":
+          return "Note";
+     
         default:
           return typeName;
       }
@@ -782,7 +785,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	      || type.Name == "ElementImport"
 	      || type.Name == "PackageImport"
 	      || type.Name == "PackageMerge"
-      	  || type.Name == "Abstraction";
+      	  || type.Name == "Abstraction"
+      	  || type.Name == "ConnectorWrapper";
       
     }
     
