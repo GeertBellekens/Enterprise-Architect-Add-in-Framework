@@ -14,6 +14,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private UML.Classes.Kernel.Element _target;
     private AssociationEnd _sourceEnd;
     private AssociationEnd _targetEnd;
+    
+    public string guardCondition
+    {
+    	get
+    	{
+    		return this.wrappedConnector.MiscData[1].ToString();
+    	}
+    	
+    	set
+    	{
+    		this.model.executeSQL(@"update t_connector
+									set [PDATA2] = '" + value + @"'
+									where connector_id = " + this.id);
+    	}
+    }
+    	
+    
     internal Element sourceElement
     {
     	get
