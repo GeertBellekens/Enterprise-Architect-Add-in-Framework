@@ -549,6 +549,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
 	public override void save()
 	{
+		//set the direction
+		this.setDirection();
 		//save wrapped connector
 		this.WrappedConnector.Update();
 		
@@ -561,6 +563,35 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			this.targetEnd.save();
 			this.sourceEnd.save();
 		}
+	}
+	/// <summary>
+	/// set the direction on the connector based on the navigability of the ends
+	/// </summary>
+	protected virtual void setDirection()
+	{
+		string direction = "Unspecified"; //default
+		if (targetEnd != null && sourceEnd != null)
+		{
+			if (this.targetEnd.isNavigable)
+			{
+				if (this.sourceEnd.isNavigable)
+				{
+					direction = "Bi-Directional";
+				}
+				else
+				{
+					direction = "Source -> Destination";
+				}
+			}
+			else
+			{
+				if (this.sourceEnd.isNavigable)
+				{
+					direction = "Destination -> Source";
+				}
+			}
+		}
+		this.wrappedConnector.Direction = direction;
 	}
     
     internal override void saveElement()

@@ -320,14 +320,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		//end of workaround
     		return this.wrappedAssociationEnd.Navigable == "Navigable"
     			|| this.wrappedAssociationEnd.IsNavigable; }
-      set {
-        if (value) {
-    		this.wrappedAssociationEnd.Navigable = "Navigable";
-          	this.wrappedAssociationEnd.IsNavigable = true;
-        }else {
-          this.wrappedAssociationEnd.Navigable = "Non-Navigable";
-          this.wrappedAssociationEnd.IsNavigable = false;
-        }
+      set 
+      {
+		//the setter apparently also doesn't work properly so we go directly to the database
+		string dbField = this.isTarget ? "DestStyle": "SourceStyle";
+		string dbValue = value ? "Navigable=Navigable;":"Navigable=Non-Navigable;";
+		if (value) {
+			this.wrappedAssociationEnd.Navigable = "Navigable";
+		  	this.wrappedAssociationEnd.IsNavigable = true;
+		}else {
+		  this.wrappedAssociationEnd.Navigable = "Non-Navigable";
+		  this.wrappedAssociationEnd.IsNavigable = false;
+		}
       }
     }
 
