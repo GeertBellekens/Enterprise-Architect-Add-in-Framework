@@ -213,6 +213,7 @@
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\TimingDiagram.cs" />
     <Compile Include="EAWrappers\UnlimitedNatural.cs" />
+    <Compile Include="EAWrappers\Usage.cs" />
     <Compile Include="EAWrappers\UseCaseDiagram.cs" />
     <Compile Include="EAWrappers\ValueSpecification.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />

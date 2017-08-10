@@ -226,6 +226,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				return new Association(this.model as Model, connector);
 			case "Dependency":
 				return new Dependency(this.model as Model, connector);
+			case "Usage":
+				return new Usage(this.model as Model, connector);
 			case "Sequence":
 			case "Collaboration":
 				return new Message(this.model as Model, connector);
