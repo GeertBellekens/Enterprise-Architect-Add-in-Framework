@@ -53,7 +53,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				}
 				else
 				{
-					throw new ArgumentException(string.Format("Cardinality specification {0} is invalid!" ,value));
+					throw new ArgumentException(string.Format("Cardinality specification '{0}' is invalid!" ,value));
 				}
 			}
 		}

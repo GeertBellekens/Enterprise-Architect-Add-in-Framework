@@ -14,6 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		public const string defaultMultiplicity = "0..1";
 	internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
     private ConnectorWrapper _association { get; set; }
+    private bool? _isNavigable {get;set;}
 	
     public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
                           global::EA.ConnectorEnd associationEnd, bool isTarget ):base(model)
@@ -293,33 +294,41 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public bool isNavigable {
-      get { 
-    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
-    		string sqlGetNavigability = "select c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
-    			+ this._association.uniqueID +"'";
-    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
-    		XmlNode navigableNode;
-    		XmlNode styleNode;
-    		if (this.isTarget)
+      get {
+    		if (! _isNavigable.HasValue)
     		{
-    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
-    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
-    		}else
-    		{
-    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
-    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+	    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
+	    		string sqlGetNavigability = "select c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
+	    			+ this._association.uniqueID +"'";
+	    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
+	    		XmlNode navigableNode;
+	    		XmlNode styleNode;
+	    		if (this.isTarget)
+	    		{
+	    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
+	    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
+	    		}else
+	    		{
+	    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
+	    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+	    		}
+	    		if (navigableNode != null && navigableNode.InnerText == "1")
+	    		{
+	    			_isNavigable = true;
+	    		}
+	    		else if (styleNode != null && styleNode.InnerText.Contains("Navigable=Navigable"))
+			    {
+	    			_isNavigable = true;
+			    }
+	    		else
+	    		{
+		    		//end of workaround
+		    		_isNavigable = this.wrappedAssociationEnd.Navigable == "Navigable"
+		    			|| this.wrappedAssociationEnd.IsNavigable;
+	    		}
     		}
-    		if (navigableNode != null && navigableNode.InnerText == "1")
-    		{
-    			return true;
+    		return _isNavigable.Value;
     		}
-    		if (styleNode != null && styleNode.InnerText.Contains("Navigable=Navigable"))
-		    {
-    			return true;
-		    }
-    		//end of workaround
-    		return this.wrappedAssociationEnd.Navigable == "Navigable"
-    			|| this.wrappedAssociationEnd.IsNavigable; }
       set 
       {
 		//the setter apparently also doesn't work properly so we go directly to the database
@@ -332,6 +341,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		  this.wrappedAssociationEnd.Navigable = "Non-Navigable";
 		  this.wrappedAssociationEnd.IsNavigable = false;
 		}
+		_isNavigable = value;
       }
     }
 
