@@ -142,7 +142,14 @@ namespace EAAddinFramework.SchemaBuilder
                         //no restriction on multiplicity, use standard cardinality
                         try
                         {
-                            this._multiplicity = new UTF_EA.Multiplicity(this.wrappedProperty.Cardinality.Replace("...", ".."));
+                        	if (string.IsNullOrEmpty(this.wrappedProperty.Cardinality))
+                        	{
+                        		this._multiplicity = this.defaultMultiplicity;
+                        	}
+                        	else
+                        	{
+                            	this._multiplicity = new UTF_EA.Multiplicity(this.wrappedProperty.Cardinality.Replace("...", ".."));
+                        	}
                         }
                         catch (ArgumentException)
                         {

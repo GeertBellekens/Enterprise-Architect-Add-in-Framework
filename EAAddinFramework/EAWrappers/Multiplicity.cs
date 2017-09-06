@@ -24,7 +24,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get
 			{
-				return this.lower.ToString() + delimiter + this.upper.ToString();
+				return this.lower + delimiter + this.upper ?? string.Empty;
 			}
 			set
 			{
