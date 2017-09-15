@@ -130,6 +130,7 @@
     <Compile Include="EASpecific\WorkingSet.cs" />
     <Compile Include="EAWrappers\Abstraction.cs" />
     <Compile Include="EAWrappers\Action.cs" />
+    <Compile Include="EAWrappers\ActionKind.cs" />
     <Compile Include="EAWrappers\Activity.cs" />
     <Compile Include="EAWrappers\ActivityDiagram.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />

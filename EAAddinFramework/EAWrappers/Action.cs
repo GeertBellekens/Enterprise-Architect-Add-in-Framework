@@ -10,6 +10,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	public class Action: ElementWrapper,UML.Actions.BasicActions.Action
 	{
+		
+		
 		public Action(Model model, global::EA.Element wrappedElement)
       	: base(model,wrappedElement)
     	{
@@ -42,6 +44,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         	get{throw new NotImplementedException();}
         	set{throw new NotImplementedException();} 
          }
+		 
+		 public ActionKind kind
+		 {
+		 	get
+		 	{
+		 		//
+		 	}
+		 	set
+		 	{
+		 		
+		 	}
+		 }
+		
+		 
 		
 
 	}
