@@ -1,5 +1,7 @@
 ﻿namespace TSF.UmlToolingFramework.Wrappers.EA {
-	public enum ActionKind : int {
+	public enum ActionKind : int 
+	{
+		Atomic,	//normal Action
 		AcceptCall,
 		AcceptEvent,
 		AcceptEventTimer,

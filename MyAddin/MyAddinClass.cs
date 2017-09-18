@@ -4,6 +4,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace MyAddin
 {
@@ -139,7 +140,20 @@ namespace MyAddin
 			if (this.eaControl == null)
 					this.eaControl = Repository.AddWindow("My Control","MyAddin.MyEAControl") as MyEAControl;
 			if (this.eaControl != null)
-				this.eaControl.setNameLabel(GUID);
+			{
+				var model = new TSF_EA.Model(Repository);
+				var action = model.getItemFromGUID(GUID) as TSF_EA.Action;
+				string name = GUID;
+//				if( action != null)
+//				{
+//					action.kind = TSF_EA.ActionKind.BroadcastSignal;
+//					action.save();
+//					
+//					name = action.name +" "+ Enum.GetName(typeof(TSF_EA.ActionKind), action.kind);
+//				}
+				this.eaControl.setNameLabel(name);
+			}
+				
 		}
         /// <summary>
         /// Say Hello to the world

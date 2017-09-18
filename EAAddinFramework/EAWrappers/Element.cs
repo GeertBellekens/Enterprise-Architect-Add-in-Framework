@@ -137,6 +137,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			_isDirty = value;
 		}
 	}
+	public virtual bool isPropertyDirty(string propertyName)
+	{
+		return this.properties.ContainsKey(propertyName)
+			&& this.properties[propertyName].isDirty;
+	}
     public virtual HashSet<UML.Classes.Kernel.Comment> ownedComments
       { 
     	get
