@@ -30,6 +30,21 @@ namespace EAAddinFramework.SchemaBuilder
 				return new UTF_EA.Multiplicity("1..1");
 			}
 		}
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+
+
+		protected override UTF_EA.Multiplicity sourceMultiplicity 
+		{
+			get 
+			{
+				return (this.sourceProperty != null ? this.sourceProperty.multiplicity : this.defaultMultiplicity) as UTF_EA.Multiplicity;
+			}
+		}
+
+
+		#endregion
+
 		#endregion		
 		/// <summary>
 		/// The property int he model where this Schema property was derived from
@@ -108,6 +123,7 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				this.subSetProperty.multiplicity = this.multiplicity;
+				//TODO: set position depending on setting
 				this.subSetProperty.position = this.sourceProperty.position;
 				//alias (only if subset alias is empty)
 				if (string.IsNullOrEmpty(((UTF_EA.Attribute)this.subSetProperty).alias))

@@ -30,6 +30,21 @@ namespace EAAddinFramework.SchemaBuilder
 				return new UTF_EA.Multiplicity("1..1");
 			}
 		}
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+
+
+		protected override UTF_EA.Multiplicity sourceMultiplicity 
+		{
+			get 
+			{
+				return this.defaultMultiplicity;
+			}
+		}
+
+
+		#endregion
+
 		#endregion		
 		/// <summary>
 		/// The property int he model where this Schema property was derived from

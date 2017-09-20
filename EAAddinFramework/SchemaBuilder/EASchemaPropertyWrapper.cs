@@ -139,28 +139,15 @@ namespace EAAddinFramework.SchemaBuilder
 
                     if (this._multiplicity == null)
                     {
-                        //no restriction on multiplicity, use standard cardinality
-                        try
-                        {
-                        	if (string.IsNullOrEmpty(this.wrappedProperty.Cardinality))
-                        	{
-                        		this._multiplicity = this.defaultMultiplicity;
-                        	}
-                        	else
-                        	{
-                            	this._multiplicity = new UTF_EA.Multiplicity(this.wrappedProperty.Cardinality.Replace("...", ".."));
-                        	}
-                        }
-                        catch (ArgumentException)
-                        {
-                            //if fro some reason the cardinality is invalid we return the default multiplicity
-                            this._multiplicity = this.defaultMultiplicity;
-                        }
+                    	// we cannot trust the cardinality on the SchemaProperty. On attributes with multiplicity [0..1] it reports [0]
+                    	// but since there is no restriction, the multiplicity is the same as the source attribute or association.
+                    	return this.sourceMultiplicity;
                     }
                 }
                 return this._multiplicity;
             }
         }
+        protected abstract UTF_EA.Multiplicity sourceMultiplicity { get; }
         protected abstract UTF_EA.Multiplicity defaultMultiplicity { get; }
         /// <summary>
         /// restriction string have a form like "byRef=0;inline=0;minOccurs=1;maxOccurs=7;"

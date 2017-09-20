@@ -33,6 +33,21 @@ namespace EAAddinFramework.SchemaBuilder
                 return new UTF_EA.Multiplicity("0..*");
             }
         }
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+
+
+		protected override UTF_EA.Multiplicity sourceMultiplicity 
+		{
+			get 
+			{
+				return (thisEnd != null ? thisEnd.multiplicity : defaultMultiplicity) as UTF_EA.Multiplicity;
+			}
+		}
+
+
+		#endregion
+
         #endregion
         public UML.Classes.Kernel.Association sourceAssociation
         {
