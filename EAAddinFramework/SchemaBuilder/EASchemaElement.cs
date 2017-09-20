@@ -107,21 +107,24 @@ namespace EAAddinFramework.SchemaBuilder
 				this.ownerSchema = (EASchema) value;
 			}
 		}
-
+		private HashSet<EASchemaPropertyWrapper> _schemaPropertyWrappers;
 		private HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
 		{
 			get
 			{
-				HashSet<EASchemaPropertyWrapper> propertyWrappers = new HashSet<EASchemaPropertyWrapper>();
-				foreach (EA.SchemaProperty schemaProperty in this.getSchemaProperties())
+				if (_schemaPropertyWrappers == null)
 				{
-					EASchemaPropertyWrapper wrapper = EASchemaBuilderFactory.getInstance(this.model).createSchemaPropertyWrapper(this, schemaProperty);
-					if (wrapper != null)
+					_schemaPropertyWrappers = new HashSet<EASchemaPropertyWrapper>();
+					foreach (EA.SchemaProperty schemaProperty in this.getSchemaProperties())
 					{
-						propertyWrappers.Add(wrapper);
+						EASchemaPropertyWrapper wrapper = EASchemaBuilderFactory.getInstance(this.model).createSchemaPropertyWrapper(this, schemaProperty);
+						if (wrapper != null)
+						{
+							_schemaPropertyWrappers.Add(wrapper);
+						}
 					}
 				}
-				return propertyWrappers;
+				return _schemaPropertyWrappers;
 			}
 		}
 		private List<EA.SchemaProperty> getSchemaProperties ()
