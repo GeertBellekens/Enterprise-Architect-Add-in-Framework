@@ -353,7 +353,7 @@ namespace EAAddinFramework.SchemaBuilder
             //stereotype
             subSetAssociation.stereotypes = this.sourceAssociation.stereotypes;
             //save all changes
-            subSetAssociation.save();
+            //subSetAssociation.save();
             //copy the association end properties
             //copy source end properties
             this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.thisEnd,
@@ -372,7 +372,7 @@ namespace EAAddinFramework.SchemaBuilder
             ((UTF_EA.Association)subSetAssociation).addTaggedValue(
                 this.owner.owner.settings.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
 
-            subSetAssociation.save();
+            //subSetAssociation.save();
             return subSetAssociation;
         }
 
@@ -384,7 +384,7 @@ namespace EAAddinFramework.SchemaBuilder
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
             //TODO: copy alias of the AssociationEnd if the alias in the subset is empty.
-            target.save();
+            //target.save();
         }
     }
 }

@@ -606,6 +606,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				{
 					direction = "Destination -> Source";
 				}
+				else
+				{
+					direction = "Unspecified";
+				}
 			}
 		}
 		this.wrappedConnector.Direction = direction;
