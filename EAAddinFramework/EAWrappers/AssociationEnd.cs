@@ -13,14 +13,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	/// </summary>
 		public const string defaultMultiplicity = "0..1";
 	internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
-    private ConnectorWrapper _association { get; set; }
+    private ConnectorWrapper connectorWrapper { get; set; }
     private bool? _isNavigable {get;set;}
 	
-    public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
+    public AssociationEnd(Model model, ConnectorWrapper linkedConnector,
                           global::EA.ConnectorEnd associationEnd, bool isTarget ):base(model)
     {
       this.wrappedAssociationEnd = associationEnd;
-      this._association = linkedAssocation;
+      this.connectorWrapper = linkedConnector;
       this.isTarget = isTarget;
       this.isDirty = true;
     }
@@ -146,8 +146,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     public UML.Classes.Kernel.Association association {
-      get { return this._association as Association;  }
-      set { this._association = value as Association; }
+      get { return this.connectorWrapper as Association;  }
+      set { this.connectorWrapper = value as Association; }
     }
 
     public UML.Classes.Kernel.DataType datatype {
@@ -220,11 +220,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       {
         if( this.wrappedAssociationEnd.End == "Supplier" ) 
         {
-          return this._association.target as UML.Classes.Kernel.Type;
+          return this.connectorWrapper.target as UML.Classes.Kernel.Type;
         } 
         else 
         {
-          return this._association.source as UML.Classes.Kernel.Type;
+          return this.connectorWrapper.source as UML.Classes.Kernel.Type;
         }
       }
       set { throw new NotImplementedException(); }
@@ -296,18 +296,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     public bool isNavigable {
       get {
-    		if (! _isNavigable.HasValue)
+    		if (! _isNavigable.HasValue)	
     		{
 	    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
 	    		string sqlGetNavigability = "select c.Direction, c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
-	    			+ this._association.uniqueID +"'";
+	    			+ this.connectorWrapper.uniqueID +"'";
 	    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
 	    		//direction goes above all else
 	    		XmlNode directionNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//Direction"));
-	    		var direction = directionNode != null 
-		    			&& ! string.IsNullOrEmpty(directionNode.InnerText)
-		    			? directionNode.InnerText : ((Association)this.association).WrappedConnector.Direction;
-
+	    		string direction;
+	    		if ( directionNode != null && ! string.IsNullOrEmpty(directionNode.InnerText))
+	    		{
+	    			direction = directionNode.InnerText;
+	    		}
+	    		else
+	    		{
+	    			direction = ((ConnectorWrapper)this.connectorWrapper).WrappedConnector != null ?  
+	    				((ConnectorWrapper)this.connectorWrapper).WrappedConnector.Direction : string.Empty;
+	    		}
 	    		switch (direction) 
 	    		{
 	    			case "Unspecified":
@@ -448,12 +454,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
 		public override string getLockedUser()
 		{
-			return this._association.getLockedUser();
+			return this.connectorWrapper.getLockedUser();
 		}
 	
 		public override string getLockedUserID()
 		{
-			return this._association.getLockedUserID();
+			return this.connectorWrapper.getLockedUserID();
 		}
 	
 		#endregion
