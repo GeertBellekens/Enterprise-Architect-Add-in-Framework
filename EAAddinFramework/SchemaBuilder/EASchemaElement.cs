@@ -129,15 +129,15 @@ namespace EAAddinFramework.SchemaBuilder
 		}
 		private List<EA.SchemaProperty> getSchemaProperties ()
 		{
-			List<EA.SchemaProperty> schemaProperties = new List<EA.SchemaProperty>();
+			List<EA.SchemaProperty> localSchemaProperties = new List<EA.SchemaProperty>();
 			EA.SchemaPropEnum schemaPropEnumerator = this.wrappedSchemaType.Properties;
 			EA.SchemaProperty schemaProperty = schemaPropEnumerator.GetFirst();
 			while (	schemaProperty != null)
 			{
-				schemaProperties.Add(schemaProperty);
+				localSchemaProperties.Add(schemaProperty);
 				schemaProperty = schemaPropEnumerator.GetNext();
 			}
-			return schemaProperties;
+			return localSchemaProperties;
 		}
 		public HashSet<SBF.SchemaProperty> schemaProperties 
 		{
@@ -145,14 +145,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaProperties == null)
 				{
-					this._schemaProperties = new HashSet<SBF.SchemaProperty>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaProperty)
-						{
-							this._schemaProperties.Add((SBF.SchemaProperty)wrapper );
-						}
-					}
+					this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<SBF.SchemaProperty>());
 				}
 				return this._schemaProperties;
 			}
@@ -168,14 +161,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaLiterals == null)
 				{
-					this._schemaLiterals = new HashSet<SBF.SchemaLiteral>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaLiteral)
-						{
-							this._schemaLiterals.Add((SBF.SchemaLiteral)wrapper );
-						}
-					}
+					this._schemaLiterals = new HashSet<SBF.SchemaLiteral>(this.schemaPropertyWrappers.OfType<SBF.SchemaLiteral>());
 				}
 				return this._schemaLiterals;
 			}
@@ -187,14 +173,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaAssociations == null)
 				{
-					this._schemaAssociations = new HashSet<SBF.SchemaAssociation>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaAssociation)
-						{
-							this._schemaAssociations.Add((SBF.SchemaAssociation)wrapper );
-						}
-					}
+					this._schemaAssociations = new HashSet<SBF.SchemaAssociation>(this.schemaPropertyWrappers.OfType<SBF.SchemaAssociation>());
 				}
 				return this._schemaAssociations;			
 			}
