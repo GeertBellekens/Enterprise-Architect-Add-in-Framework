@@ -96,10 +96,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
              this).Cast<DiagramLinkWrapper>());
       }
     }
+    private HashSet<UML.Diagrams.DiagramElement> _diagramObjectWrappers;
     public HashSet<UML.Diagrams.DiagramElement> diagramObjectWrappers {
-      get {
-        return ((Factory) this.model.factory).createDiagramElements
+      get 
+      {
+      	if (_diagramObjectWrappers == null)
+      	{
+      		_diagramObjectWrappers = ((Factory) this.model.factory).createDiagramElements
           ( this.wrappedDiagram.DiagramObjects );
+      	}
+      	return _diagramObjectWrappers;
       }
     }
     public string diagramGUID {
@@ -391,6 +397,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 						diagramElement.element = element;
 						//save the element diagramObject
 						((DiagramObjectWrapper)diagramElement).save();
+						//add the diagramObject to the list
+						this.diagramObjectWrappers.Add(diagramElement);
 						// now refresh to make sure we see the new element on the diagram
 						this.reFresh();
 					}
