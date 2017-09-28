@@ -231,8 +231,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       if (id <= 0 ) return null;
       try
       {
-        return this.factory.createElement
-          (this.wrappedModel.GetElementByID(id)) as ElementWrapper;
+      	var element = this.wrappedModel.GetElementByID(id);
+      	return element != null ? this.factory.createElement(element) as ElementWrapper: null;
       } catch( Exception )  {
         // element not found, return null
         return null;
@@ -979,8 +979,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		 	{
 		 		item = this.selectedDiagram;
 		 	}
-		 	//get the owner in this thread
-		 	if (item != null)
+		 	//get the owner in this thread, not for Connectors as there is a bug in the API that results in a stackoverflow in certain conditions
+		 	if (item != null
+		 	    && ! (item is ConnectorWrapper))
 		 	{
 		 		var owner = item.owner;
 		 	}

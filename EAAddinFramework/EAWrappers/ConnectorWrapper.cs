@@ -115,7 +115,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		else
 		{
-			this.owner.open();
+			if (this.source != null) this.source.open();
 		}
 	}
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
@@ -156,12 +156,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-// removed caching to try and solve multithreading issue.      	
-//      	if (this._owner == null)
-//      	{
-      		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
-//      	}
-      	return this._owner;
+      	return this.source;
       }
       set { throw new NotImplementedException(); }
     }
