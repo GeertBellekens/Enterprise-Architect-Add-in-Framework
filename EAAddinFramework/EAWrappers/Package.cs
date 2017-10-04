@@ -225,7 +225,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
 	    		foreach ( var eaDiagram in this.wrappedPackage.Diagrams)
 	    		{
-	    			diagrams.Add(((Factory)this.model.factory).createDiagram(eaDiagram));
+	    			var newDiagram = ((Factory)this.model.factory).createDiagram(eaDiagram);
+	    			if (newDiagram != null) diagrams.Add(newDiagram);
 	    		}
 	    		return diagrams;
 			}

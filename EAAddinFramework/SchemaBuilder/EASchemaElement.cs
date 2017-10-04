@@ -23,10 +23,6 @@ namespace EAAddinFramework.SchemaBuilder
 		private UTF_EA.ElementWrapper _sourceElement;
 		private HashSet<SBF.SchemaAssociation> _schemaAssociations;
 		private HashSet<SBF.SchemaLiteral> _schemaLiterals;
-		// a list of all properties that already had a subset property prior to generating
-		private IEnumerable<SBF.SchemaProperty> existingProperties;
-		// a list of all properties that didn't have a subset property prior to generating
-		private IEnumerable<SBF.SchemaProperty> newProperties;
 		
 		public EASchemaElement(UTF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
 		{
@@ -287,23 +283,65 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void orderAttributes()
 		{
+			//get all new attributes
+			var newAttributes = this.schemaProperties.Where(x => x.isNew && x.subSetProperty != null);
+			var existingAttributes = this.schemaProperties.Where(x => ! x.isNew && x.subSetProperty != null);
 			//first figure out if all attributes are coming from the same sourceElement
-			var firstProperty = this.schemaProperties.FirstOrDefault(x => x.sourceProperty != null);
-			var firstSourceElement = firstProperty != null ? firstProperty.sourceProperty.owner : null;
-			bool oneSourceElement = this.schemaProperties.All(x => x.sourceProperty.owner.Equals(firstSourceElement));
-			// if there is only one source element then we need to figure out if the subset attributes are ordered the same way as the subset attributes
-			if (oneSourceElement)
+			var firstProperty = newAttributes.FirstOrDefault(x => x.sourceProperty != null);
+			var firstSourceOwner = firstProperty != null ? firstProperty.sourceProperty.owner : null;
+			bool oneSourceElement = this.schemaProperties
+								.Where(x => x.sourceProperty != null)
+								.All(x => x.sourceProperty.owner.Equals(firstSourceOwner));
+			//order all existing subset attributes
+			List<Property>orderedExistingAttributes;
+			if (existingAttributes.Any(x => x.subSetProperty.position == 0))
 			{
-				//figure out if all the existing subset properties are ordered exactly like the source properties
-				var orderdExistingSubsetAttributes = this.existingProperties
-												.Select(x => x.subSetProperty)
-												.OrderBy(y => y.position)
-												.ThenBy(z => ((UTF_EA.AttributeWrapper)z).orderingName);
-				var orderdExistingSourceAttributes = this.existingProperties
-												.Select(x => x.sourceProperty)
-												.OrderBy(y => y.position)
-												.ThenBy(z => ((UTF_EA.AttributeWrapper)z).orderingName);
-				//TODO				
+				orderedExistingAttributes = existingAttributes
+											.Select(a => a.subSetProperty)
+											.OrderBy(y => y.name)
+											.ToList();
+				//order the existing attributes is they are not yet ordered
+				for (int i = 0; i < orderedExistingAttributes.Count() ; i++)
+				{
+					orderedExistingAttributes[i].position = i + 1;
+					orderedExistingAttributes[i].save();
+				}
+			}
+			else
+			{
+				orderedExistingAttributes = existingAttributes
+										.Select(a => a.subSetProperty)
+										.OrderBy(x => x.position)
+										.ThenBy(y => y.name)
+										.ToList();
+			}
+			//get the maximum position nbr from the existing attributes
+			var lastAtribute = orderedExistingAttributes.LastOrDefault();
+			int lastIndex = lastAtribute != null ? lastAtribute.position : 0;
+			// if there is only one source element then we use the position,else we use the name for sorting.
+			if (newAttributes.Any())
+			{
+				List<UML.Classes.Kernel.Property> orderedNewAttributes;
+				if (oneSourceElement)
+				{
+					orderedNewAttributes = newAttributes
+										.Select(x => x.subSetProperty)
+										.OrderBy(y => y.position)
+										.ThenBy(z => z.name)
+										.ToList();
+				}
+				else
+				{
+					orderedNewAttributes = newAttributes
+										.Select(x => x.subSetProperty)
+										.OrderBy(z => z.name)
+										.ToList();
+				}
+				for (int i = 0; i < orderedNewAttributes.Count() ; i++)
+				{
+					orderedNewAttributes[i].position = lastIndex + i +1 ;
+					orderedNewAttributes[i].save();
+				}
 			}
 		}
 
@@ -401,9 +439,6 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void createSubsetAttributes()
 		{
-			//keep a list of all existing and new subset attributes for the purpose of ordering the attributes later
-			this.existingProperties = this.schemaProperties.Where( x => x.subSetProperty != null && x.sourceProperty != null);
-			this.newProperties = this.schemaProperties.Where( x => x.subSetProperty == null && x.sourceProperty != null);
 			//start creating the subset attributes
 			foreach (EASchemaProperty schemaProperty in this.schemaProperties) 
 			{

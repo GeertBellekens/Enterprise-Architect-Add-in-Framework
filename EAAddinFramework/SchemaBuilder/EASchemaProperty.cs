@@ -21,6 +21,8 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="owner">the owner Schema Element</param>
 		/// <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
 		public EASchemaProperty(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap){}
+		
+		public bool isNew { get; protected set;}
 
 		#region implemented abstract members of EASchemaPropertyWrapper
 		protected override UTF_EA.Multiplicity defaultMultiplicity 
@@ -32,7 +34,7 @@ namespace EAAddinFramework.SchemaBuilder
 		}
 
 		#region implemented abstract members of EASchemaPropertyWrapper
-
+		
 
 		protected override UTF_EA.Multiplicity sourceMultiplicity 
 		{
@@ -81,6 +83,7 @@ namespace EAAddinFramework.SchemaBuilder
 				HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 				if (this.subSetProperty == null)
 				{
+					this.isNew = true;
 					this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
 				}
 				else
