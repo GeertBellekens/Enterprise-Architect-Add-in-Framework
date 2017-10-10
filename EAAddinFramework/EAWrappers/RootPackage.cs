@@ -46,7 +46,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				throw new NotImplementedException();
 			}
 		}
-		public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner 
+		public override UML.Classes.Kernel.Package owningPackage 
+		{
+			get 
+			{
+				return null;
+			}
+			set 
+			{
+				// do nothing
+			}
+		}
+	    public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner
 		{
 			get 
 			{ 
