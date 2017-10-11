@@ -284,48 +284,50 @@ namespace EAAddinFramework.SchemaBuilder
 		public void orderAttributes()
 		{
 			//get all new attributes
-			var newAttributes = this.schemaProperties.Where(x => x.isNew && x.subSetProperty != null);
-			var existingAttributes = this.schemaProperties.Where(x => ! x.isNew && x.subSetProperty != null);
+			var newAttributes = this.schemaPropertyWrappers.Where(x => x.isNew && x.subsetAttributeWrapper != null);
+			var existingAttributes = this.schemaPropertyWrappers.Where(x => ! x.isNew && x.subsetAttributeWrapper != null);
 			//first figure out if all attributes are coming from the same sourceElement
-			var firstProperty = newAttributes.FirstOrDefault(x => x.sourceProperty != null);
-			var firstSourceOwner = firstProperty != null ? firstProperty.sourceProperty.owner : null;
-			bool oneSourceElement = this.schemaProperties
-								.Where(x => x.sourceProperty != null)
-								.All(x => x.sourceProperty.owner.Equals(firstSourceOwner));
-			//order all existing subset attributes
-			List<Property>orderedExistingAttributes;
-			if (existingAttributes.Any(x => x.subSetProperty.position == 0))
+			var firstProperty = newAttributes.FirstOrDefault(x => x.sourceAttributeWrapper != null);
+			var firstSourceOwner = firstProperty != null ? firstProperty.sourceAttributeWrapper.owner : null;
+			bool oneSourceElement = this.schemaPropertyWrappers
+								.Where(x => x.sourceAttributeWrapper != null)
+								.All(x => x.sourceAttributeWrapper.owner.Equals(firstSourceOwner));
+			//order all existing subset attributes if ther is more then one subsetproperty with position 0
+			List<UTF_EA.AttributeWrapper>orderedExistingAttributes;
+			if (existingAttributes.Where(x => x.subsetAttributeWrapper.position == 0)
+							    .Skip(1)
+							    .Any())
 			{
 				orderedExistingAttributes = existingAttributes
-											.Select(a => a.subSetProperty)
+											.Select(a => a.subsetAttributeWrapper)
 											.OrderBy(y => y.name)
 											.ToList();
 				//order the existing attributes is they are not yet ordered
 				for (int i = 0; i < orderedExistingAttributes.Count() ; i++)
 				{
-					orderedExistingAttributes[i].position = i + 1;
+					orderedExistingAttributes[i].position = i ;
 					orderedExistingAttributes[i].save();
 				}
 			}
 			else
 			{
 				orderedExistingAttributes = existingAttributes
-										.Select(a => a.subSetProperty)
+										.Select(a => a.subsetAttributeWrapper)
 										.OrderBy(x => x.position)
 										.ThenBy(y => y.name)
 										.ToList();
 			}
 			//get the maximum position nbr from the existing attributes
 			var lastAtribute = orderedExistingAttributes.LastOrDefault();
-			int lastIndex = lastAtribute != null ? lastAtribute.position : 0;
+			int lastIndex = lastAtribute != null ? lastAtribute.position : -1;
 			// if there is only one source element then we use the position,else we use the name for sorting.
 			if (newAttributes.Any())
 			{
-				List<UML.Classes.Kernel.Property> orderedNewAttributes;
+				List<UTF_EA.AttributeWrapper> orderedNewAttributes;
 				if (oneSourceElement)
 				{
 					orderedNewAttributes = newAttributes
-										.Select(x => x.subSetProperty)
+										.Select(x => x.subsetAttributeWrapper)
 										.OrderBy(y => y.position)
 										.ThenBy(z => z.name)
 										.ToList();
@@ -333,13 +335,13 @@ namespace EAAddinFramework.SchemaBuilder
 				else
 				{
 					orderedNewAttributes = newAttributes
-										.Select(x => x.subSetProperty)
+										.Select(x => x.subsetAttributeWrapper)
 										.OrderBy(z => z.name)
 										.ToList();
 				}
 				for (int i = 0; i < orderedNewAttributes.Count() ; i++)
 				{
-					orderedNewAttributes[i].position = lastIndex + i +1 ;
+					orderedNewAttributes[i].position = lastIndex + 1 + i ;
 					orderedNewAttributes[i].save();
 				}
 			}

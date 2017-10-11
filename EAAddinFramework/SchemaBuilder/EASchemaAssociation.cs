@@ -35,6 +35,18 @@ namespace EAAddinFramework.SchemaBuilder
         }
 
 		#region implemented abstract members of EASchemaPropertyWrapper
+		internal override UTF_EA.AttributeWrapper sourceAttributeWrapper {
+			get {
+				return null;
+			}
+		}
+		internal override UTF_EA.AttributeWrapper subsetAttributeWrapper {
+			get {
+				return null;
+			}
+		}
+		#endregion
+		#region implemented abstract members of EASchemaPropertyWrapper
 
 
 		protected override UTF_EA.Multiplicity sourceMultiplicity 

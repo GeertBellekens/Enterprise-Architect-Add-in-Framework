@@ -22,6 +22,8 @@ namespace EAAddinFramework.SchemaBuilder
         private Dictionary<string, string> _restriction;
         private List<EASchemaElement> _choiceElements;
         List<UML.Classes.Kernel.Classifier> _choiceTypes;
+        internal abstract UTF_EA.AttributeWrapper sourceAttributeWrapper {get;}
+        internal abstract UTF_EA.AttributeWrapper subsetAttributeWrapper {get;}
 
         public EASchemaPropertyWrapper(UTF_EA.Model model, EASchemaElement owner, EA.SchemaProperty objectToWrap)
         {
@@ -29,6 +31,7 @@ namespace EAAddinFramework.SchemaBuilder
             this.model = model;
             this.wrappedProperty = objectToWrap;
         }
+        public bool isNew { get; protected set;}
 		
         
         public SBF.SchemaElement owner

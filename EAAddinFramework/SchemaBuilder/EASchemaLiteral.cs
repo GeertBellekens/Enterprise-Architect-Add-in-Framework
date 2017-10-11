@@ -68,7 +68,11 @@ namespace EAAddinFramework.SchemaBuilder
 		/// the property in the subset model generated from this property
 		/// </summary>
 		public UML.Classes.Kernel.EnumerationLiteral subSetLiteral {get;set;}
-
+		
+		internal override UTF_EA.AttributeWrapper sourceAttributeWrapper 
+		{ get { return sourceLiteral as UTF_EA.AttributeWrapper;}}
+		internal override UTF_EA.AttributeWrapper subsetAttributeWrapper 
+		{ get { return subSetLiteral as UTF_EA.AttributeWrapper;}}
 		/// <summary>
 		/// Checks if the attribute type is present as the source element of one of the schema elements
 		/// If it finds a match the type is set to the subset elemnt of this schema element
@@ -78,6 +82,7 @@ namespace EAAddinFramework.SchemaBuilder
 			HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 			if (this.subSetLiteral == null)
 			{
+				this.isNew = true;
 				this.subSetLiteral = this.model.factory.createNewElement<UML.Classes.Kernel.EnumerationLiteral>(this.owner.subsetElement,this.sourceLiteral.name);
 			}
 			else
@@ -94,6 +99,8 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			this.subSetLiteral.name = this.sourceLiteral.name;
 			this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;
+			//Set position for new items
+			if (this.isNew) this.subSetLiteral.position = this.sourceLiteral.position;
 			//alias (only if subset alias is empty)
 			if (string.IsNullOrEmpty(((UTF_EA.EnumerationLiteral)subSetLiteral).alias))
 				((UTF_EA.EnumerationLiteral)subSetLiteral).alias = ((UTF_EA.EnumerationLiteral)sourceLiteral).alias;
