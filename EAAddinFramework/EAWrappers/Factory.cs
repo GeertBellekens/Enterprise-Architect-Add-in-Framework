@@ -226,6 +226,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				return new Association(this.model as Model, connector);
 			case "Dependency":
 				return new Dependency(this.model as Model, connector);
+			case "Usage":
+				return new Usage(this.model as Model, connector);
 			case "Sequence":
 			case "Collaboration":
 				return new Message(this.model as Model, connector);
@@ -576,7 +578,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	HashSet<UML.CommonBehaviors.Communications.Trigger> triggers = 
     		new HashSet<TSF.UmlToolingFramework.UML.CommonBehaviors.Communications.Trigger>();
     
-    	UML_SM.StateMachine stateMachine = getContainingStateMachine(transition.owner);
+    	UML_SM.StateMachine stateMachine = getContainingStateMachine(transition.source);
     	if(stateMachine != null)
     	{
 			string[] events = transition.wrappedConnector.TransitionEvent.Split( ", ".ToCharArray());
@@ -630,7 +632,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    	if(umlItem.owner is UML_SM.StateMachine) {
 	    		return umlItem.owner as UML_SM.StateMachine;
 	    	}
-    		else {
+    		else 
+    		{
 	    		return getContainingStateMachine(umlItem.owner);
 	    	}
     	}
@@ -746,6 +749,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
           return "Attribute";
         case "AssociationClass":
           return "Class";
+         case "NoteComment":
+          return "Note";
+     
         default:
           return typeName;
       }
@@ -782,7 +788,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	      || type.Name == "ElementImport"
 	      || type.Name == "PackageImport"
 	      || type.Name == "PackageMerge"
-      	  || type.Name == "Abstraction";
+      	  || type.Name == "Abstraction"
+      	  || type.Name == "ConnectorWrapper";
       
     }
     

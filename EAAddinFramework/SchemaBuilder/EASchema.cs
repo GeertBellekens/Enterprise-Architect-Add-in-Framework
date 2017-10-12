@@ -42,8 +42,8 @@ namespace EAAddinFramework.SchemaBuilder
 			get 
 			{
 //				//TODO: check how to compile this only in certain conditions
-//				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
-//					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
+				if (model.wrappedModel.LibraryVersion >= 1308) //this doesn't seem to work when running against version 12
+					return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
 				return "Unknown Schema Name";
 			}
 		}
@@ -227,6 +227,9 @@ namespace EAAddinFramework.SchemaBuilder
 							//and add a dependency from the schemaElement to the type of the attributes
 							schemaElement.addAttributeTypeDependencies();
 						}
+						//order the attribute
+						schemaElement.orderAttributes();
+						//order the associations
 						if (this.settings.orderAssociationsAlphabetically)
 						{
 							//tell the user what we are doing 

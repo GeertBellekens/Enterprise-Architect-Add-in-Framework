@@ -103,34 +103,37 @@ namespace EAAddinFramework.SchemaBuilder
 				this.ownerSchema = (EASchema) value;
 			}
 		}
-
+		private HashSet<EASchemaPropertyWrapper> _schemaPropertyWrappers;
 		private HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
 		{
 			get
 			{
-				HashSet<EASchemaPropertyWrapper> propertyWrappers = new HashSet<EASchemaPropertyWrapper>();
-				foreach (EA.SchemaProperty schemaProperty in this.getSchemaProperties())
+				if (_schemaPropertyWrappers == null)
 				{
-					EASchemaPropertyWrapper wrapper = EASchemaBuilderFactory.getInstance(this.model).createSchemaPropertyWrapper(this, schemaProperty);
-					if (wrapper != null)
+					_schemaPropertyWrappers = new HashSet<EASchemaPropertyWrapper>();
+					foreach (EA.SchemaProperty schemaProperty in this.getSchemaProperties())
 					{
-						propertyWrappers.Add(wrapper);
+						EASchemaPropertyWrapper wrapper = EASchemaBuilderFactory.getInstance(this.model).createSchemaPropertyWrapper(this, schemaProperty);
+						if (wrapper != null)
+						{
+							_schemaPropertyWrappers.Add(wrapper);
+						}
 					}
 				}
-				return propertyWrappers;
+				return _schemaPropertyWrappers;
 			}
 		}
 		private List<EA.SchemaProperty> getSchemaProperties ()
 		{
-			List<EA.SchemaProperty> schemaProperties = new List<EA.SchemaProperty>();
+			List<EA.SchemaProperty> localSchemaProperties = new List<EA.SchemaProperty>();
 			EA.SchemaPropEnum schemaPropEnumerator = this.wrappedSchemaType.Properties;
 			EA.SchemaProperty schemaProperty = schemaPropEnumerator.GetFirst();
 			while (	schemaProperty != null)
 			{
-				schemaProperties.Add(schemaProperty);
+				localSchemaProperties.Add(schemaProperty);
 				schemaProperty = schemaPropEnumerator.GetNext();
 			}
-			return schemaProperties;
+			return localSchemaProperties;
 		}
 		public HashSet<SBF.SchemaProperty> schemaProperties 
 		{
@@ -138,14 +141,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaProperties == null)
 				{
-					this._schemaProperties = new HashSet<SBF.SchemaProperty>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaProperty)
-						{
-							this._schemaProperties.Add((SBF.SchemaProperty)wrapper );
-						}
-					}
+					this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<SBF.SchemaProperty>());
 				}
 				return this._schemaProperties;
 			}
@@ -161,14 +157,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaLiterals == null)
 				{
-					this._schemaLiterals = new HashSet<SBF.SchemaLiteral>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaLiteral)
-						{
-							this._schemaLiterals.Add((SBF.SchemaLiteral)wrapper );
-						}
-					}
+					this._schemaLiterals = new HashSet<SBF.SchemaLiteral>(this.schemaPropertyWrappers.OfType<SBF.SchemaLiteral>());
 				}
 				return this._schemaLiterals;
 			}
@@ -180,14 +169,7 @@ namespace EAAddinFramework.SchemaBuilder
 			{
 				if (this._schemaAssociations == null)
 				{
-					this._schemaAssociations = new HashSet<SBF.SchemaAssociation>();
-					foreach (EASchemaPropertyWrapper wrapper in this.schemaPropertyWrappers) 
-					{
-						if (wrapper is EASchemaAssociation)
-						{
-							this._schemaAssociations.Add((SBF.SchemaAssociation)wrapper );
-						}
-					}
+					this._schemaAssociations = new HashSet<SBF.SchemaAssociation>(this.schemaPropertyWrappers.OfType<SBF.SchemaAssociation>());
 				}
 				return this._schemaAssociations;			
 			}
@@ -294,6 +276,78 @@ namespace EAAddinFramework.SchemaBuilder
 			return this.subsetElement;
 		}
 		/// <summary>
+		/// If all attributes are coming from the same source element, and the order of the existing attributes corresponds exactly to that of the
+		/// source element, then we use the same order as the order of the source element. That means that attributes will be inserted in the sequence.
+		/// If not all attributes are from the same source element, or if the order of the subset attributes does not corresponds 
+		/// with the order of the attributes in the source element then all new attributes are added at the end in alphabetical order.
+		/// </summary>
+		public void orderAttributes()
+		{
+			//get all new attributes
+			var newAttributes = this.schemaPropertyWrappers.Where(x => x.isNew && x.subsetAttributeWrapper != null);
+			var existingAttributes = this.schemaPropertyWrappers.Where(x => ! x.isNew && x.subsetAttributeWrapper != null);
+			//first figure out if all attributes are coming from the same sourceElement
+			var firstProperty = newAttributes.FirstOrDefault(x => x.sourceAttributeWrapper != null);
+			var firstSourceOwner = firstProperty != null ? firstProperty.sourceAttributeWrapper.owner : null;
+			bool oneSourceElement = this.schemaPropertyWrappers
+								.Where(x => x.sourceAttributeWrapper != null)
+								.All(x => x.sourceAttributeWrapper.owner.Equals(firstSourceOwner));
+			//order all existing subset attributes if ther is more then one subsetproperty with position 0
+			List<UTF_EA.AttributeWrapper>orderedExistingAttributes;
+			if (existingAttributes.Where(x => x.subsetAttributeWrapper.position == 0)
+							    .Skip(1)
+							    .Any())
+			{
+				orderedExistingAttributes = existingAttributes
+											.Select(a => a.subsetAttributeWrapper)
+											.OrderBy(y => y.name)
+											.ToList();
+				//order the existing attributes is they are not yet ordered
+				for (int i = 0; i < orderedExistingAttributes.Count() ; i++)
+				{
+					orderedExistingAttributes[i].position = i ;
+					orderedExistingAttributes[i].save();
+				}
+			}
+			else
+			{
+				orderedExistingAttributes = existingAttributes
+										.Select(a => a.subsetAttributeWrapper)
+										.OrderBy(x => x.position)
+										.ThenBy(y => y.name)
+										.ToList();
+			}
+			//get the maximum position nbr from the existing attributes
+			var lastAtribute = orderedExistingAttributes.LastOrDefault();
+			int lastIndex = lastAtribute != null ? lastAtribute.position : -1;
+			// if there is only one source element then we use the position,else we use the name for sorting.
+			if (newAttributes.Any())
+			{
+				List<UTF_EA.AttributeWrapper> orderedNewAttributes;
+				if (oneSourceElement)
+				{
+					orderedNewAttributes = newAttributes
+										.Select(x => x.subsetAttributeWrapper)
+										.OrderBy(y => y.position)
+										.ThenBy(z => z.name)
+										.ToList();
+				}
+				else
+				{
+					orderedNewAttributes = newAttributes
+										.Select(x => x.subsetAttributeWrapper)
+										.OrderBy(z => z.name)
+										.ToList();
+				}
+				for (int i = 0; i < orderedNewAttributes.Count() ; i++)
+				{
+					orderedNewAttributes[i].position = lastIndex + 1 + i ;
+					orderedNewAttributes[i].save();
+				}
+			}
+		}
+
+		/// <summary>
 		/// orders the associations of this element alphabetically
 		/// </summary>
 		public void orderAssociationsAlphabetically()
@@ -387,6 +441,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void createSubsetAttributes()
 		{
+			//start creating the subset attributes
 			foreach (EASchemaProperty schemaProperty in this.schemaProperties) 
 			{
 				schemaProperty.createSubsetProperty();

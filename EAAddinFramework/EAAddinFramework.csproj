@@ -130,6 +130,7 @@
     <Compile Include="EASpecific\WorkingSet.cs" />
     <Compile Include="EAWrappers\Abstraction.cs" />
     <Compile Include="EAWrappers\Action.cs" />
+    <Compile Include="EAWrappers\ActionKind.cs" />
     <Compile Include="EAWrappers\Activity.cs" />
     <Compile Include="EAWrappers\ActivityDiagram.cs" />
     <Compile Include="EAWrappers\AggregationKind.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="EAWrappers\TaggedValue.cs" />
     <Compile Include="EAWrappers\TimingDiagram.cs" />
     <Compile Include="EAWrappers\UnlimitedNatural.cs" />
+    <Compile Include="EAWrappers\Usage.cs" />
     <Compile Include="EAWrappers\UseCaseDiagram.cs" />
     <Compile Include="EAWrappers\ValueSpecification.cs" />
     <Compile Include="EAWrappers\VisibilityKind.cs" />

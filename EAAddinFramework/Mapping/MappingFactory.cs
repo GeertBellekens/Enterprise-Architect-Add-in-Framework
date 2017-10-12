@@ -168,17 +168,17 @@ namespace EAAddinFramework.Mapping
 						if (sourceRootElement is Package)
 						{
 							rootPackage = sourceRootElement as Package;
-							newMappingSet = new PackageMappingSet(sourceRootElement as Package,true);
+							newMappingSet = new PackageMappingSet(sourceRootElement as Package);
 						}
 						else if (sourceRootElement is ElementWrapper)
 						{
 							rootPackage = sourceRootElement.owningPackage as Package;
-							newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper,true);
+							newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper);
 						}
 						else
 						{
 							rootPackage = source.owningPackage as Package;
-							newMappingSet = new PackageMappingSet((Package)source.owningPackage,true);
+							newMappingSet = new PackageMappingSet((Package)source.owningPackage);
 						}
 						
 					}

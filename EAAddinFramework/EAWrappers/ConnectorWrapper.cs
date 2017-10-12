@@ -14,6 +14,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private UML.Classes.Kernel.Element _target;
     private AssociationEnd _sourceEnd;
     private AssociationEnd _targetEnd;
+    
+    public string guardCondition
+    {
+    	get
+    	{
+    		return this.wrappedConnector.MiscData[1].ToString();
+    	}
+    	
+    	set
+    	{
+    		this.model.executeSQL(@"update t_connector
+									set [PDATA2] = '" + value + @"'
+									where connector_id = " + this.id);
+    	}
+    }
+    	
+    
     internal Element sourceElement
     {
     	get
@@ -98,7 +115,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		else
 		{
-			this.owner.open();
+			if (this.source != null) this.source.open();
 		}
 	}
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
@@ -139,12 +156,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override UML.Classes.Kernel.Element owner {
       get 
       {
-// removed caching to try and solve multithreading issue.      	
-//      	if (this._owner == null)
-//      	{
-      		this._owner = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);
-//      	}
-      	return this._owner;
+      	return this.source;
       }
       set { throw new NotImplementedException(); }
     }
@@ -235,7 +247,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	        	var targetElementWrapper = this.model.getElementWrapperByID(this.wrappedConnector.SupplierID); 
 	        	this._target = targetElementWrapper;			
 	       		//in case the source is linked to a connector there's a dummy element with type ProxyConnector
-				if (targetElementWrapper.EAElementType == "ProxyConnector")
+	       		if (targetElementWrapper != null && targetElementWrapper.EAElementType == "ProxyConnector")
 				{
 					//get the source connector
 					this._source = this.model.getRelationByID(targetElementWrapper.wrappedElement.ClassifierID);
@@ -549,6 +561,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
 	public override void save()
 	{
+		//set the direction
+		this.setDirection();
 		//save wrapped connector
 		this.WrappedConnector.Update();
 		
@@ -561,6 +575,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			this.targetEnd.save();
 			this.sourceEnd.save();
 		}
+	}
+	/// <summary>
+	/// set the direction on the connector based on the navigability of the ends
+	/// </summary>
+	protected virtual void setDirection()
+	{
+		string direction = "Unspecified"; //default
+		if (targetEnd != null && sourceEnd != null)
+		{
+			if (this.targetEnd.isNavigable)
+			{
+				if (this.sourceEnd.isNavigable)
+				{
+					direction = "Bi-Directional";
+				}
+				else
+				{
+					direction = "Source -> Destination";
+				}
+			}
+			else
+			{
+				if (this.sourceEnd.isNavigable)
+				{
+					direction = "Destination -> Source";
+				}
+				else
+				{
+					direction = "Unspecified";
+				}
+			}
+		}
+		this.wrappedConnector.Direction = direction;
 	}
     
     internal override void saveElement()

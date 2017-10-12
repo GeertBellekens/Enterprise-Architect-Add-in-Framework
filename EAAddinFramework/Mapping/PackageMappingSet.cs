@@ -13,11 +13,9 @@ namespace EAAddinFramework.Mapping
 	public class PackageMappingSet:MappingSet
 	{
 		internal Package wrappedPackage {get;set;}
-		internal bool source {get;private set;}
-		public PackageMappingSet(Package wrappedPackage, bool source)
+		public PackageMappingSet(Package wrappedPackage)
 		{
 			this.wrappedPackage = wrappedPackage;
-			this.source = source;
 			base.name = wrappedPackage.name;
 			base.mappings = this.getMappings().Cast<MP.Mapping>().ToList();;
 		}

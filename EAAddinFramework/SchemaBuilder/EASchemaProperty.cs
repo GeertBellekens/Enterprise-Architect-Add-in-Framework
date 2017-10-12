@@ -21,6 +21,8 @@ namespace EAAddinFramework.SchemaBuilder
 		/// <param name="owner">the owner Schema Element</param>
 		/// <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
 		public EASchemaProperty(UTF_EA.Model model,EASchemaElement owner, EA.SchemaProperty objectToWrap):base(model,owner, objectToWrap){}
+		
+		
 
 		#region implemented abstract members of EASchemaPropertyWrapper
 		protected override UTF_EA.Multiplicity defaultMultiplicity 
@@ -30,6 +32,21 @@ namespace EAAddinFramework.SchemaBuilder
 				return new UTF_EA.Multiplicity("1..1");
 			}
 		}
+
+		#region implemented abstract members of EASchemaPropertyWrapper
+		
+
+		protected override UTF_EA.Multiplicity sourceMultiplicity 
+		{
+			get 
+			{
+				return (this.sourceProperty != null ? this.sourceProperty.multiplicity : this.defaultMultiplicity) as UTF_EA.Multiplicity;
+			}
+		}
+
+
+		#endregion
+
 		#endregion		
 		/// <summary>
 		/// The property int he model where this Schema property was derived from
@@ -54,6 +71,10 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public UML.Classes.Kernel.Property subSetProperty {get;set;}
 
+		internal override UTF_EA.AttributeWrapper sourceAttributeWrapper 
+		{ get { return sourceProperty as UTF_EA.AttributeWrapper;}}
+		internal override UTF_EA.AttributeWrapper subsetAttributeWrapper 
+		{ get { return subSetProperty as UTF_EA.AttributeWrapper;}}
 		/// <summary>
 		/// Checks if the attribute type is present as the source element of one of the schema elements
 		/// If it finds a match the type is set to the subset elemnt of this schema element
@@ -66,6 +87,7 @@ namespace EAAddinFramework.SchemaBuilder
 				HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 				if (this.subSetProperty == null)
 				{
+					this.isNew = true;
 					this.subSetProperty = this.model.factory.createNewElement<UML.Classes.Kernel.Property>(this.owner.subsetElement,this.sourceProperty.name);
 				}
 				else
@@ -108,7 +130,8 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				this.subSetProperty.multiplicity = this.multiplicity;
-				this.subSetProperty.position = this.sourceProperty.position;
+				//Set position for new items
+				if (this.isNew)this.subSetProperty.position = this.sourceProperty.position;
 				//alias (only if subset alias is empty)
 				if (string.IsNullOrEmpty(((UTF_EA.Attribute)this.subSetProperty).alias))
 						((UTF_EA.Attribute)this.subSetProperty).alias = ((UTF_EA.Attribute)sourceProperty).alias;

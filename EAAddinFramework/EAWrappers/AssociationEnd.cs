@@ -13,14 +13,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	/// </summary>
 		public const string defaultMultiplicity = "0..1";
 	internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
-    private ConnectorWrapper _association { get; set; }
+    private ConnectorWrapper connectorWrapper { get; set; }
+    private bool? _isNavigable {get;set;}
 	
-    public AssociationEnd(Model model, ConnectorWrapper linkedAssocation,
+    public AssociationEnd(Model model, ConnectorWrapper linkedConnector,
                           global::EA.ConnectorEnd associationEnd, bool isTarget ):base(model)
     {
       this.wrappedAssociationEnd = associationEnd;
-      this._association = linkedAssocation;
+      this.connectorWrapper = linkedConnector;
       this.isTarget = isTarget;
+      this.isDirty = true;
     }
     public bool isTarget {get;private set;}
     public bool isSource {
@@ -144,8 +146,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     public UML.Classes.Kernel.Association association {
-      get { return this._association as Association;  }
-      set { this._association = value as Association; }
+      get { return this.connectorWrapper as Association;  }
+      set { this.connectorWrapper = value as Association; }
     }
 
     public UML.Classes.Kernel.DataType datatype {
@@ -218,11 +220,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       {
         if( this.wrappedAssociationEnd.End == "Supplier" ) 
         {
-          return this._association.target as UML.Classes.Kernel.Type;
+          return this.connectorWrapper.target as UML.Classes.Kernel.Type;
         } 
         else 
         {
-          return this._association.source as UML.Classes.Kernel.Type;
+          return this.connectorWrapper.source as UML.Classes.Kernel.Type;
         }
       }
       set { throw new NotImplementedException(); }
@@ -293,41 +295,87 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public bool isNavigable {
-      get { 
-    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
-    		string sqlGetNavigability = "select c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
-    			+ this._association.uniqueID +"'";
-    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
-    		XmlNode navigableNode;
-    		XmlNode styleNode;
-    		if (this.isTarget)
+      get {
+    		if (! _isNavigable.HasValue)	
     		{
-    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
-    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
-    		}else
-    		{
-    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
-    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+	    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
+	    		string sqlGetNavigability = "select c.Direction, c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
+	    			+ this.connectorWrapper.uniqueID +"'";
+	    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
+	    		//direction goes above all else
+	    		XmlNode directionNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//Direction"));
+	    		string direction;
+	    		if ( directionNode != null && ! string.IsNullOrEmpty(directionNode.InnerText))
+	    		{
+	    			direction = directionNode.InnerText;
+	    		}
+	    		else
+	    		{
+	    			direction = ((ConnectorWrapper)this.connectorWrapper).WrappedConnector != null ?  
+	    				((ConnectorWrapper)this.connectorWrapper).WrappedConnector.Direction : string.Empty;
+	    		}
+	    		switch (direction) 
+	    		{
+	    			case "Unspecified":
+	    				_isNavigable = false;
+	    				break;
+	    			case "Bi-Directional":
+	    				_isNavigable = true;
+	    				break;
+	    			case "Source -> Destination":
+						_isNavigable = this.isTarget;
+						break;
+					case "Destination -> Source":
+						_isNavigable = ! this.isTarget;
+						break;
+	    		}
+
+	    		// is not found using direction then check the other fields, first (Source/Dest)style, then (Source/Dest)IsNavigable
+	    		if (! _isNavigable.HasValue)
+	    		{
+		    		XmlNode navigableNode;
+		    		XmlNode styleNode;
+		    		if (this.isTarget)
+		    		{
+		    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
+		    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
+		    		}else
+		    		{
+		    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
+		    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+		    		}
+		    		if (navigableNode != null && navigableNode.InnerText == "1")
+		    		{
+		    			_isNavigable = true;
+		    		}
+		    		else if (styleNode != null && styleNode.InnerText.Contains("Navigable=Navigable"))
+				    {
+		    			_isNavigable = true;
+				    }
+		    		else
+		    		{
+			    		//end of workaround
+			    		
+			    		_isNavigable = this.wrappedAssociationEnd.Navigable == "Navigable"
+			    			|| this.wrappedAssociationEnd.IsNavigable;
+		    		}
+	    		}
     		}
-    		if (navigableNode != null && navigableNode.InnerText == "1")
-    		{
-    			return true;
-    		}
-    		if (styleNode != null && styleNode.InnerText.Contains("Navigable=Navigable"))
-		    {
-    			return true;
-		    }
-    		//end of workaround
-    		return this.wrappedAssociationEnd.Navigable == "Navigable"
-    			|| this.wrappedAssociationEnd.IsNavigable; }
-      set {
-        if (value) {
-    		this.wrappedAssociationEnd.Navigable = "Navigable";
-          	this.wrappedAssociationEnd.IsNavigable = true;
-        }else {
-          this.wrappedAssociationEnd.Navigable = "Non-Navigable";
-          this.wrappedAssociationEnd.IsNavigable = false;
-        }
+    		return _isNavigable.Value;
+    	}
+      set 
+      {
+		//the setter apparently also doesn't work properly so we go directly to the database
+		string dbField = this.isTarget ? "DestStyle": "SourceStyle";
+		string dbValue = value ? "Navigable=Navigable;":"Navigable=Non-Navigable;";
+		if (value) {
+			this.wrappedAssociationEnd.Navigable = "Navigable";
+		  	this.wrappedAssociationEnd.IsNavigable = true;
+		}else {
+		  this.wrappedAssociationEnd.Navigable = "Non-Navigable";
+		  this.wrappedAssociationEnd.IsNavigable = false;
+		}
+		_isNavigable = value;
       }
     }
 
@@ -406,12 +454,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	
 		public override string getLockedUser()
 		{
-			return this._association.getLockedUser();
+			return this.connectorWrapper.getLockedUser();
 		}
 	
 		public override string getLockedUserID()
 		{
-			return this._association.getLockedUserID();
+			return this.connectorWrapper.getLockedUserID();
 		}
 	
 		#endregion

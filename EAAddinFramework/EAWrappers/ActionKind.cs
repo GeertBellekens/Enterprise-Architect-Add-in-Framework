@@ -1,0 +1,42 @@
+﻿namespace TSF.UmlToolingFramework.Wrappers.EA {
+	public enum ActionKind : int 
+	{
+		Atomic,	//normal Action
+		AcceptCall,
+		AcceptEvent,
+		AcceptEventTimer,
+		AddStructuralFeatureValue,
+		AddVariableValue,
+		BroadcastSignal,
+		ClearAssocciation,
+		ClearStructuralFeature,
+		ClearVariable,
+		CreateLink,
+		CreateLinkObject,
+		CreateObject,
+		DestroyLink,
+		DestroyObject,
+		Hyperlink,
+		RaiseException,
+		ReadExtent,
+		ReadIsClassifiedObject,
+		ReadLink,
+		ReadLinkObjectEnd,
+		ReadLinkObjectEndQualifier,
+		ReadSelf,
+		ReadStructuralFeature,
+		ReadVariable,
+		ReclassifyObject,
+		RemoveStructuralFeatureValue,
+		RemoveVariableValue,
+		Reply,
+		SendObject,
+		SendSignal,
+		StartOwnedBehavior,
+		TestIdentity,
+		ValueSpecification,
+		WriteLink,
+		WriteStructuralFeature,
+		WriteVariable
+	}
+}

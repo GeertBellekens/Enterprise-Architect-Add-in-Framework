@@ -209,8 +209,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public UML.Classes.Kernel.Classifier classifier {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { 
+			return this.type as UML.Classes.Kernel.Classifier;
+			}
+		set { this.type = value;
+		}
     }
     
     public UML.Classes.Kernel.Class _class {

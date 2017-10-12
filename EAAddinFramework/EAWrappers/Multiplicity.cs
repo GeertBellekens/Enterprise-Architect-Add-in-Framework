@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using UML=TSF.UmlToolingFramework.UML;
+using EAAddinFramework.Utilities;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -23,37 +24,40 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get
 			{
-				return this.lower.ToString() + delimiter + this.upper.ToString();
+				return this.lower + delimiter + this.upper ?? string.Empty;
 			}
 			set
 			{
-				string[] parts = value.Split(new string[]{delimiter},StringSplitOptions.None);
-				if (value.Length > 0 && parts.Length >= 2)
+				try
 				{
-					if (string.IsNullOrEmpty(parts[0]))
-				    {
-				    	parts[0] = "0";
-				    }
-					this.lower = uint.Parse(parts[0]);
-					this.upper = new UnlimitedNatural(parts[1]);
-				}
-				else if (value.Length > 0 && parts.Length == 1)
-				{
-					if (parts[0] == UnlimitedNatural.unlimited)
-					{	//[*] means [0..*]
-						this.lower = 0;
-						this.upper = new UnlimitedNatural(parts[0]);
-					}
-					else
+					string[] parts = value.Split(new string[]{delimiter},StringSplitOptions.None);
+					if (value.Length > 0 && parts.Length >= 2)
 					{
-						// [1] means [1..1] 
+						if (string.IsNullOrEmpty(parts[0]))
+					    {
+					    	parts[0] = "0";
+					    }
 						this.lower = uint.Parse(parts[0]);
-						this.upper = new UnlimitedNatural(parts[0]);
+						this.upper = new UnlimitedNatural(parts[1]);
+					}
+					else if (value.Length > 0 && parts.Length == 1)
+					{
+						if (parts[0] == UnlimitedNatural.unlimited)
+						{	//[*] means [0..*]
+							this.lower = 0;
+							this.upper = new UnlimitedNatural(parts[0]);
+						}
+						else
+						{
+							// [1] means [1..1] 
+							this.lower = uint.Parse(parts[0]);
+							this.upper = new UnlimitedNatural(parts[0]);
+						}
 					}
 				}
-				else
+				catch(Exception)
 				{
-					throw new ArgumentException(string.Format("Cardinality specification {0} is invalid!" ,value));
+					Logger.logError(string.Format("Cannot create multiplicity based on string '{0}'",value));
 				}
 			}
 		}
