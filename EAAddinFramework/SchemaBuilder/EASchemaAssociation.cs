@@ -53,7 +53,7 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			get 
 			{
-				return (thisEnd != null ? thisEnd.multiplicity : defaultMultiplicity) as UTF_EA.Multiplicity;
+				return (otherEnd != null ? otherEnd.multiplicity : defaultMultiplicity) as UTF_EA.Multiplicity;
 			}
 		}
 
