@@ -668,7 +668,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	            return (this.getLockedUser() != string.Empty);
 	    	}
 	    }
-	            /// <summary>
+	    /// <summary>
         /// returns the owned elements of this diagram.
         /// That are all elements that are shown on the diagram and that have the same parent as the diagram
         /// Plus all notes shown on this diagram
@@ -688,5 +688,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	                                and o.Object_Type = 'Note'))";
             return this.model.getElementWrappersByQuery(SQLQuery).Cast<Element>().ToList();
         }
+        /// <summary>
+        /// saves the image of this diagram to the given folder as png
+        /// </summary>
+        /// <param name="imagePath">path where to save the file</param>
+		public void saveImageToFile(string imagePath)
+		{
+			this.model.wrappedModel.GetProjectInterface().PutDiagramImageToFile(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(this.uniqueID)
+			                                                                    ,imagePath + "\\" + this.uniqueID + ".png",1);
+		}
   }
 }
