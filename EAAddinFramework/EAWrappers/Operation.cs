@@ -466,5 +466,9 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 	}
 
 	#endregion
+	public void exportAllDiagrams(string imagePath)
+	{
+		// do nothing as operations don't have diagram
+	}
   }
 }

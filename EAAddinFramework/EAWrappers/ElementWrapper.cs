@@ -1332,7 +1332,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 			return assocationEnds;
 		}
-		#region implemented abstract members of Element
+		
 
 		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
 		{
@@ -1366,7 +1366,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 			return ownedItems;
 		}
-
-		#endregion
+		/// <summary>
+		/// exports all diagrams to the given path
+		/// </summary>
+		/// <param name="imagePath">the path to the folder where to store all images</param>
+		public void exportAllDiagrams(string imagePath)
+		{
+			
+			//the standard export feature has the unwanted side effect that it opens all the diagrams in the package tree
+			//exporting as HTML does not have this side effect, but it requires to go into the html tree, and get each and every single image, 
+			// and then look into the html to figure out to which diagram the image belongs to.
+//			//get the package guid, either of this element if it is a package or of it's owning package
+//			string packageGUID = this is UML.Classes.Kernel.Package ? this.uniqueID : this.owningPackage.uniqueID;
+//			// as an alternative we can generate an HTML export and get the diagrams from there
+//			this.model.wrappedModel.GetProjectInterface().RunHTMLReport(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(packageGUID),
+//			                                                            imagePath,".png","<default>",".html");
+			                                                            	
+			//first export all owned diagrams
+			foreach (var diagram in this.ownedDiagrams) 
+			{
+				diagram.saveImageToFile(imagePath);
+			}
+			//then loop owned elements
+			foreach (var ownedElement in this.ownedElements.OfType<UML.Classes.Kernel.Namespace>()) 
+			{
+				ownedElement.exportAllDiagrams(imagePath);
+			}
+		}
   }
 }

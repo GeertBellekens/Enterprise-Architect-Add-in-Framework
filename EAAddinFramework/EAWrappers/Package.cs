@@ -376,6 +376,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,1,0,filePath);
 			this.model.wrappedModel.SuppressEADialogs = false;
 		}
+
+
 		public void refresh()
 		{
 			this.model.wrappedModel.RefreshModelView(this.packageID);

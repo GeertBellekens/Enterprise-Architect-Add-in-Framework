@@ -192,5 +192,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 
 	#endregion
+	public void exportAllDiagrams(string imagePath)
+	{
+		// do nothing as Primitive Types don't have diagram
+	}
   }
 }

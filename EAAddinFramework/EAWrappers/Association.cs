@@ -59,5 +59,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		//associations cannot be conveyed in EA.
 		return new HashSet<UML.InfomationFlows.InformationFlow>();
 	}
+
+		public void exportAllDiagrams(string imagePath)
+		{
+			// do nothing as associations don't have diagram
+		}
   }
 }
