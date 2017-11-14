@@ -393,7 +393,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// adds a new tagged value to the element with the given name and value
 	/// if a tagged value with that name already exists the value of the existing tagged value is updated./
 	/// </summary>
-	/// <param name="name">the name fo the tagged value to add</param>
+	/// <param name="name">the name of the tagged value to add</param>
 	/// <param name="tagValue">the value of the tagged value</param>
 	/// <param name = "comment">the comment to add to the tagged value</param>
 	/// <param name = "addDuplicate"></param>
@@ -416,6 +416,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		if (comment != null) newTaggedValue.comment = comment;
 		newTaggedValue.save();
 		return newTaggedValue;
+	}
+	/// <summary>
+	/// adds a new tagged value to the element with the given name and value
+	/// if a tagged value with that name already exists the value of the existing tagged value is updated./
+	/// </summary>
+	/// <param name="name">the name of the tagged value to add</param>
+	/// <param name="linkedElement">the element to be linked via this tagged value</param>
+	/// <param name = "comment">the comment to add to the tagged value</param>
+	/// <param name = "addDuplicate"></param>
+	/// <returns>the added (or updated) tagged value</returns>
+	public virtual TaggedValue addTaggedValue(string name, UML.Extended.UMLItem linkedElement,string comment = null, bool addDuplicate = false)
+	{
+		return this.addTaggedValue(name, linkedElement.uniqueID,comment,addDuplicate);
 	}
 	/// <summary>
 	/// copies the tagged values from the source as tagged values of this element
