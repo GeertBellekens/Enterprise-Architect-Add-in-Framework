@@ -230,6 +230,55 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			this.setProperty(getPropertyNameName(),Stereotype.getStereotypeEx(value),this.wrappedElement.StereotypeEx);
 		}    	
     }
+
+    public string author {
+    	get {
+    		return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Author);
+    	}
+  	  set {
+  		  this.setProperty(getPropertyNameName(),value,this.wrappedElement.Author);
+  	  }
+    }
+
+    public string version {
+    	get {
+    		return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Version);
+    	}
+  	  set {
+  		  this.setProperty(getPropertyNameName(),value,this.wrappedElement.Version);
+  	  }
+    }
+
+    public List<string> keywords {
+    	get {
+    		return ((string)this.getProperty(getPropertyNameName(),this.wrappedElement.Tag)).Split(',').ToList();
+    	}
+  	  set {
+        string string_value = value == null ? "" : string.Join(",", value);
+  		  this.setProperty(getPropertyNameName(),string_value,this.wrappedElement.Tag);
+  	  }
+    }
+
+    public DateTime created {
+    	get {
+    		return (DateTime)this.getProperty(getPropertyNameName(),this.wrappedElement.Created);
+    	}
+  	  set {
+  		  this.setProperty(getPropertyNameName(),value,this.wrappedElement.Created);
+  	  }
+    }
+
+    public DateTime modified {
+    	get {
+    		return (DateTime)this.getProperty(getPropertyNameName(),this.wrappedElement.Modified);
+    	}
+  	  set {
+  		  this.setProperty(getPropertyNameName(),value,this.wrappedElement.Modified);
+  	  }
+    }
+
+    
+
 	internal override void saveElement()
     {
     	if (this.getProperty("name") != null) this.wrappedElement.Name = (string)this.getProperty("name");
@@ -254,6 +303,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		}
     	}
     	if (this.getProperty("owningPackage") != null) this.wrappedElement.PackageID = ((Package)this.getProperty("owningPackage")).packageID;
+
+      if (this.getProperty("author") != null) this.wrappedElement.Author = (string)this.getProperty("author");
+      if (this.getProperty("version") != null) this.wrappedElement.Version = (string)this.getProperty("version");
+      if (this.getProperty("status") != null) this.wrappedElement.Status = (string)this.getProperty("status");
+      if (this.getProperty("keywords") != null) this.wrappedElement.Tag = (string)this.getProperty("keywords");
+      if (this.getProperty("created") != null) this.wrappedElement.Created = (DateTime)this.getProperty("created");
+      if (this.getProperty("modified") != null) this.wrappedElement.Modified = (DateTime)this.getProperty("modified");
+      if (this.getProperty("modifier") != null) this.addTaggedValue("modifier", (string)this.getProperty("modifier"));
+
+      if (this.getProperty("notes") != null) this.wrappedElement.Notes = (string)this.getProperty("notes");
+      if (this.getProperty("domain") != null) this.addTaggedValue("domain", (string)this.getProperty("domain"));
+
+      if (this.getProperty("label") != null) this.addTaggedValue("label", (string)this.getProperty("label"));
+      if (this.getProperty("type") != null) this.addTaggedValue("type", (string)this.getProperty("type"));
+      if (this.getProperty("size") != null) this.addTaggedValue("size", (string)this.getProperty("size"));
+      if (this.getProperty("format") != null) this.addTaggedValue("format", (string)this.getProperty("format"));
+      if (this.getProperty("initialValue") != null) this.addTaggedValue("initialValue", (string)this.getProperty("initialValue"));
+
     	this.wrappedElement.Update();
     }
 	public List<string> primitiveParentNames

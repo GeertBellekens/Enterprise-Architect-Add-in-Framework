@@ -166,6 +166,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	return someObject as Object;
     }
+    public UML.Classes.Kernel.Package selectedTreePackage
+    {
+	    get
+	    {
+	    	return this.factory.createElement(
+	    		this.wrappedModel.GetTreeSelectedPackage()) 
+	    		as UML.Classes.Kernel.Package;
+	    }
+    }
     /// the Element currently selected in EA
     public UML.Classes.Kernel.Element selectedElement {
       get {

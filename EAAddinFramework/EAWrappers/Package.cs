@@ -209,6 +209,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public override HashSet<UML.Classes.Kernel.Element> ownedElements {
 			get 
 			{ 
+        this.wrappedPackage.Elements.Refresh();
 				List<UML.Classes.Kernel.Element> elements = this.model.factory.createElements( this.wrappedPackage.Elements).Cast<UML.Classes.Kernel.Element>().ToList();
 				elements.AddRange(this.model.factory.createElements( this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
 				return new HashSet<UML.Classes.Kernel.Element>(elements);
