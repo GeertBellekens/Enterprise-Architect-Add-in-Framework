@@ -100,7 +100,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			else
 			{
 				DataType datatype = _table._owner._factory.createDataType(attributeType.alias);
-				if (datatype == null) Logger.logError (string.Format("Could not find translate {0} as Datatype for attribute {1}.{2}"
+				if (datatype == null) Logger.logError (string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
 				                                                    ,attributeType.alias, attribute.owner.name, attribute.name));
 				else
 				{
@@ -115,6 +115,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			else
 			{
 				column.isNotNullable = true;
+			}
+			//set inital value
+			if (attribute.defaultValue != null
+				&& ! string.IsNullOrEmpty( attribute.defaultValue.ToString()))
+			{
+				this.column.initialValue = attribute.defaultValue.ToString();
 			}
 			//set position
 			this.column.position = attribute.position;

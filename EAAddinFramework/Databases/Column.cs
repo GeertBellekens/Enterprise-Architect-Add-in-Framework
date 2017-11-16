@@ -208,6 +208,7 @@ namespace EAAddinFramework.Databases
 			this.isOverridden = newColumn.isOverridden;
 			this.isRenamed = newColumn.isRenamed;
 			this.position = newColumn.position;
+			this.initialValue = newColumn.initialValue;
 		}
 		#endregion		
 		
@@ -345,6 +346,11 @@ namespace EAAddinFramework.Databases
 				{
 					_properties += " Not Null";
 				}
+				if( ! string.IsNullOrEmpty(this.initialValue)
+				   && ! this.initialValue.Equals("DEFAULT")) //TODO: find a better way then hardcoding this value here.
+				{
+					_properties += " DEFAULT " + this.initialValue;
+				}
 				return _properties;
 			}
 		}
@@ -450,10 +456,11 @@ namespace EAAddinFramework.Databases
 		}
 		set 
 		{
-			this._initialValue = value;
+			var newInitial = value ?? string.Empty;
+			this._initialValue = newInitial;
 			if (this._wrappedattribute != null)
 			{
-				_wrappedattribute.setDefaultValue(value);
+				_wrappedattribute.setDefaultValue(newInitial);
 			}
 		}
     }
