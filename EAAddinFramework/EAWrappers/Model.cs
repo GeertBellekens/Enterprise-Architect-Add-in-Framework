@@ -1479,8 +1479,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// Lets the user select an element from the model and return that
     /// </summary>
     /// <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
-    /// <returns>the selected element</returns>
+	/// <returns>the selected element</returns>
 	public UML.Classes.Kernel.Element getUserSelectedElement(List<string> allowedTypes)
+	{
+		return this.getUserSelectedElement(allowedTypes, null);
+	}
+	
+    /// <summary>
+    /// Lets the user select an element from the model and return that
+    /// </summary>
+    /// <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
+    /// <returns>the selected element</returns>
+	/// <param name = "allowedStereotypes"> the list of stereotypes to filter on</param>
+    public UML.Classes.Kernel.Element getUserSelectedElement(List<string> allowedTypes, List<string> allowedStereotypes )
 	{
 		//construct the include string
 		string includeString = "IncludedTypes=";
@@ -1492,6 +1503,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		includeString += string.Join(",",allowedTypes);
 		//close section
 		includeString += ";";
+		if (allowedStereotypes != null && allowedStereotypes.Any())
+		{
+			//add stereotype filter
+			includeString += "StereoType=" 
+						  	+ string.Join(",", allowedStereotypes)
+							+ ";";
+		}
 		//get the currently selected package
 		var treeSelectedPackage = this.wrappedModel.GetTreeSelectedPackage();
 		if (treeSelectedPackage != null)

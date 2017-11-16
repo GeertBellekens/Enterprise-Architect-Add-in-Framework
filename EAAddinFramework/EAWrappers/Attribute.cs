@@ -85,6 +85,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     		this.setProperty(getPropertyNameName(),value,getInitialMultiplicity());
     	}
     }
+    public int length
+	{
+		get 
+    	{
+			int returnedLength  = 0;
+			int.TryParse((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Length),out returnedLength);
+			return returnedLength;
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value.ToString(),this.wrappedAttribute.Length);
+		}
+	}
+	public int precision
+	{
+		get 
+    	{
+			int returnedprecision  = 0;
+			int.TryParse((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Precision),out returnedprecision);
+			return returnedprecision;
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value.ToString(),this.wrappedAttribute.Precision);
+		}
+	}
+	public int scale
+	{
+		get 
+    	{
+			int returnedScale  = 0;
+			int.TryParse((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Scale),out returnedScale);
+			return returnedScale;
+    	}
+		set 
+		{
+			this.setProperty(getPropertyNameName(),value.ToString(),this.wrappedAttribute.Scale);
+		}
+	}
 
 	internal override void saveElement()
 	{
@@ -93,6 +132,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		if (this.getProperty("defaultValue") != null) this.wrappedAttribute.Default = (string)this.getProperty("defaultValue");
 		if (this.getProperty("isStatic") != null) this.wrappedAttribute.IsStatic = (bool)this.getProperty("isStatic");
 		if (this.getProperty("visibility") != null) this.wrappedAttribute.Visibility = (string)this.getProperty("visibility");
+		if (this.getProperty("length") != null) this.wrappedAttribute.Length = (string)this.getProperty("length");
+		if (this.getProperty("precision") != null) this.wrappedAttribute.Precision = (string)this.getProperty("precision");
+		if (this.getProperty("scale") != null) this.wrappedAttribute.Scale = (string)this.getProperty("scale");
 		//multiplicity is a bit of an exception. We only save the info if it actually has changed
 		var multiplicityProperty = this.getPropertyInfo("EAMultiplicity");
 		if (multiplicityProperty != null && multiplicityProperty.isDirty)
@@ -313,45 +355,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       get { throw new NotImplementedException(); }
       set { throw new NotImplementedException(); }
     }
-	public int length
-	{
-		get
-		{
-			int returnedLenght  = 0;
-			int.TryParse(this.wrappedAttribute.Length,out returnedLenght);
-			return returnedLenght;
-		}
-		set
-		{
-			this.wrappedAttribute.Length = value.ToString();
-		}
-	}
-	public int precision
-	{
-		get
-		{
-			int returnedPrecision  = 0;
-			int.TryParse(this.wrappedAttribute.Precision,out returnedPrecision);
-			return returnedPrecision;
-		}
-		set
-		{
-			this.wrappedAttribute.Precision = value.ToString();
-		}
-	}
-	public int scale
-	{
-		get
-		{
-			int returnedScale  = 0;
-			int.TryParse(this.wrappedAttribute.Scale,out returnedScale);
-			return returnedScale;
-		}
-		set
-		{
-			this.wrappedAttribute.Scale = value.ToString();
-		}
-	}
+	
    
     
     public bool isNavigable {
