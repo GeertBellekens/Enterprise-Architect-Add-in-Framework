@@ -21,18 +21,24 @@ namespace EAAddinFramework.Databases
 		internal List<Constraint> _constraints;
 		internal List<Class> _logicalClasses;
 		private string _name;
-		public string _tableSpace;
+		
 		public Table(Database owner,Class wrappedClass)
 		{
 			this._wrappedClass = wrappedClass;
 			this._owner = owner;
+			this.tableOwner = _owner.defaultOwner;
 		}
 		public Table(Database owner, string name)
 		{
 			this._name = name;
 			this._owner = owner;
 			this.databaseOwner.addTable(this);
+			this.tableOwner = _owner.defaultOwner;
 		}
+		
+
+
+
 		public  override List<UML.Classes.Kernel.Element> logicalElements {
 			get 
 			{
@@ -50,7 +56,9 @@ namespace EAAddinFramework.Databases
 				return ((Database)databaseOwner).compareonly;
 			}
 		}
-		public string tableSpace {
+		public string _tableSpace = null;
+		public string tableSpace 
+		{
 			get 
 			{
 				if (_tableSpace == null)
@@ -63,7 +71,7 @@ namespace EAAddinFramework.Databases
 						_tableSpace = tableSpaceTag != null ? tableSpaceTag.tagValue.ToString() : null;
 					}
 				}
-				return _tableSpace;
+				return _tableSpace ?? string.Empty;
 			}
 			set
 			{
@@ -72,6 +80,33 @@ namespace EAAddinFramework.Databases
 				if (this.wrappedElement != null)
 				{
 					wrappedElement.addTaggedValue("Tablespace",value);
+				}
+			}
+		}
+		private string _tableOwner = null;
+		public string tableOwner 
+		{
+			get 
+			{
+				if (_tableOwner == null)
+				{
+					//get the tagged value if it exists
+					if (this.wrappedElement != null)
+					{
+						var ownerTag = this.wrappedElement.taggedValues
+							.FirstOrDefault( x => x.name.Equals("Owner",StringComparison.InvariantCultureIgnoreCase));
+						_tableSpace = ownerTag != null ? ownerTag.tagValue.ToString() : null;
+					}
+				}
+				return _tableOwner ?? string.Empty;
+			}
+			set
+			{
+				this._tableOwner = value;
+				//create tagged value if needed if not overridden then we don't need the tagged value;
+				if (this.wrappedElement != null)
+				{
+					wrappedElement.addTaggedValue("Owner",value);
 				}
 			}
 		}
@@ -195,6 +230,7 @@ namespace EAAddinFramework.Databases
 					this.isOverridden = this.isOverridden;
 					this.isRenamed = this.isRenamed;
 					this.tableSpace = this.tableSpace;
+					this.tableOwner = this.tableOwner;
 					//add trace relation to logical class(ses)
 					setTracesToLogicalClasses();
 				}

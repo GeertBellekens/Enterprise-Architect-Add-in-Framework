@@ -29,13 +29,40 @@ namespace EAAddinFramework.Databases
 			this._name = name;
 			this.__factory = factory;
 		}
-		public override DB.DataBaseFactory factory {
+		public override DB.DataBaseFactory factory 
+		{
 			get 
 			{
 				return __factory;
 			}
 		}
-
+		private string _defaultOwner = null;
+		public string defaultOwner 
+		{
+			get 
+			{
+				if (_defaultOwner == null)
+				{
+					//get the tagged value if it exists
+					if (this.wrappedElement != null)
+					{
+						var defaultOwnerTag = this.wrappedElement.taggedValues
+							.FirstOrDefault( x => x.name.Equals("DefaultOwner",StringComparison.InvariantCultureIgnoreCase));
+						_defaultOwner = defaultOwnerTag != null ? defaultOwnerTag.tagValue.ToString() : null;
+					}
+				}
+				return _defaultOwner ?? string.Empty;
+			}
+			set
+			{
+				this._defaultOwner = value;
+				//create tagged value if needed if not overridden then we don't need the tagged value;
+				if (this.wrappedElement != null)
+				{
+					wrappedElement.addTaggedValue("DefaultOwner",value);
+				}
+			}
+		}
 		#region implemented abstract members of DatabaseItem
 
 
