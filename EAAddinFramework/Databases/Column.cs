@@ -105,7 +105,15 @@ namespace EAAddinFramework.Databases
 					this.ownerTable.save();
 				}
 				//now the wrappedClass should exist. if not then we have a problem
-				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable._wrappedClass,this.name);		
+				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable._wrappedClass,this.name);
+
+				if (this.isNotNullable
+				    && this.ownerTable.primaryKey != null
+				    && this.ownerTable.primaryKey.involvedColumns.Contains(this))
+				{
+					//not nullable columns that are not part of a Primary key get "DEFAULT" as default value, which results in "WITH DEFAULT" in the DDL
+					this.initialValue = "DEFAULT"; //TODO: find a better way to define "DEFAULT" instead of hardcoding.
+				}
 			}
 			if (_wrappedattribute != null)
 			{

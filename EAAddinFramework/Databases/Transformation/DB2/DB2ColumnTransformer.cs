@@ -122,6 +122,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			{
 				this.column.initialValue = attribute.defaultValue.ToString();
 			}
+
 			//set position
 			this.column.position = attribute.position;
 			return this._column;
