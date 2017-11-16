@@ -125,10 +125,12 @@ namespace EAAddinFramework.Databases
 			{
 				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
 				this._wrappedOperation.setStereotype(this.getStereotype());
+				
 			}
 			this._wrappedOperation.save();
+			//set onDelete 
 			this.onDelete = this.onDelete;
-
+			//create trace to logical model
 			if (this.traceTaggedValue == null) createTraceTaggedValue();
 			//check if association to correct table
 			if (this._wrappedAssociation == null)
@@ -199,6 +201,8 @@ namespace EAAddinFramework.Databases
 				this.setLogicalName(save);
 				newForeignKey.isOverridden = isOverridden;
 				newForeignKey.derivedFromItem = this;
+				//set default value for onDelete
+				newForeignKey.onDelete = "Restrict";
 				if (save) newForeignKey.save();
 				return newForeignKey;
 			}

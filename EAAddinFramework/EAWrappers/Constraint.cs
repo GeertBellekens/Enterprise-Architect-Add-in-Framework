@@ -24,6 +24,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public Constraint(Model model, global::EA.Constraint wrappedConstraint):base(model)
 		{
 			this.wrappedConstraint = wrappedConstraint;
+			this.isDirty = true;
 		}
 
 		#region implemented abstract members of Element

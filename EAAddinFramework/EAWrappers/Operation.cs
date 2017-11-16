@@ -18,7 +18,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public Operation(Model model, global::EA.Method wrappedOperation) 
       : base(model) 
     {
-      this.wrappedOperation = wrappedOperation;
+		this.wrappedOperation = wrappedOperation;
+		this.isDirty = true;
+    }
+    public override string name 
+	{
+      get { return this.wrappedOperation.Name;   }
+      set { this.wrappedOperation.Name = value; }
     }
 	public override UML.Classes.Kernel.Package owningPackage {
 		get {
@@ -208,11 +214,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       set { throw new NotImplementedException(); }
     }
     
-	public override string name 
-	{
-      get { return this.wrappedOperation.Name;   }
-      set { this.wrappedOperation.Name = value; }
-    }
+
     
     public UML.Classes.Kernel.VisibilityKind visibility {
       get {

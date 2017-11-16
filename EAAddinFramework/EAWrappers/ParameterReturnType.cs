@@ -16,6 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       : base(model)
     {
       this._owner = operation;
+      this.isDirty = true;
     }
     
     public override UML.Classes.Kernel.ParameterDirectionKind direction {

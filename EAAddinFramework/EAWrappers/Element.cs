@@ -9,30 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
  {
  	private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
  	internal global::EA.Element wrappedElement {get;set;}
- 	protected class PropertyInfo
- 	{
- 		public PropertyInfo(object propertyValue, object initialValue)
- 		{
- 			this.propertyValue = propertyValue;
- 			this.initialValue = initialValue;
- 		}
- 		public object propertyValue {get;set;}
- 		public object initialValue {get;set;}
- 		public bool isDirty
- 		{
- 			get
- 			{
- 				if (this.initialValue == null)
- 				{
- 					return (this.propertyValue != null);
- 				}
- 				else
- 				{
- 					return !this.initialValue.Equals(this.propertyValue);
- 				}
- 			}
- 		}
- 	}
+ 	
  	protected object getProperty(string propertyName, object initialValue)
  	{
  		if (!properties.ContainsKey(propertyName))
@@ -108,7 +85,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 	//indicates whether or not this element is new
 	internal bool isNew {get;set;}
-	private bool? _isDirty = null;
+	private bool? _isDirty = true;
 	public virtual bool isDirty
 	{
 		get
@@ -553,5 +530,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	//default implementation returns empty collection
     	return new List<UML.Extended.UMLItem>();
     }
+    protected class PropertyInfo
+ 	{
+ 		public PropertyInfo(object propertyValue, object initialValue)
+ 		{
+ 			this.propertyValue = propertyValue;
+ 			this.initialValue = initialValue;
+ 		}
+ 		public object propertyValue {get;set;}
+ 		public object initialValue {get;set;}
+ 		public bool isDirty
+ 		{
+ 			get
+ 			{
+ 				if (this.initialValue == null)
+ 				{
+ 					return (this.propertyValue != null);
+ 				}
+ 				else
+ 				{
+ 					return !this.initialValue.Equals(this.propertyValue);
+ 				}
+ 			}
+ 		}
+ 	}
   }
 }

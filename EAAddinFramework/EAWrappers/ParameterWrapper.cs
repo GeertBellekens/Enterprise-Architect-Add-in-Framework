@@ -11,6 +11,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       : base(model) 
     {
       this.wrappedParameter = parameter;
+      this.isDirty = true;
     }
 	/// <summary>
     /// return the unique ID of this element

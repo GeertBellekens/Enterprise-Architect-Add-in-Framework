@@ -14,6 +14,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     private UML.Classes.Kernel.Element _target;
     private AssociationEnd _sourceEnd;
     private AssociationEnd _targetEnd;
+    public ConnectorWrapper(Model model, global::EA.Connector connector)
+      : base(model)
+    {
+		this.wrappedConnector = connector;
+		this.isDirty = true;
+    }
     
     public string guardCondition
     {
@@ -97,11 +103,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	get{return this.wrappedConnector.ConnectorID;}
     }
 	
-    public ConnectorWrapper(Model model, global::EA.Connector connector)
-      : base(model)
-    {
-      this.wrappedConnector = connector;
-    }
+
     public global::EA.Connector WrappedConnector {
     	get { return this.wrappedConnector; }
     }

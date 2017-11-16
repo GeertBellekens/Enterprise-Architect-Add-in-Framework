@@ -12,6 +12,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public class AttributeWrapper :Element
 	{
 		private UML.Classes.Kernel.Type _type;
+		
+		public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute) 
+	      : base(model)
+	    {
+			this.wrappedAttribute = wrappedAttribute;
+			var dummy = this.type; //make sure we get the type here to avoid multithreading errors
+			this.isDirty = false;
+	    }
+		
 		internal global::EA.Attribute wrappedAttribute { get; set; }
 	    public int id
 	    {
@@ -25,13 +34,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    		((ElementWrapper)this.owner).owningPackage = value;
 			}
 		}
-	    public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute) 
-	      : base(model)
-	    {
-	      this.wrappedAttribute = wrappedAttribute;
-	      var dummy = this.type; //make sure we get the type here to avoid multithreading errors
-	      this.isDirty = false;
-	    }
+
 	
 	    public global::EA.Attribute WrappedAttribute
 	    {
