@@ -138,20 +138,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    }
 
 
-      public string dataitem {
-        get {
-          TaggedValue tv = this.getTaggedValue(getPropertyNameName());
-          string tagValue = null;
-          if( tv != null) { tagValue = tv.eaStringValue; }
-          return this.getProperty(getPropertyNameName(), tagValue).ToString();
-        }
-        set {
-          TaggedValue tv = this.getTaggedValue(getPropertyNameName());
-          string tagValue = null;
-          if( tv != null) { tagValue = tv.eaStringValue; }
-          this.setProperty(getPropertyNameName(), value, tagValue);
-        }
-      }
 	   	
 	   	internal override void saveElement()
 	   	{
@@ -162,7 +148,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    	if (this.getProperty("notes") != null) this.wrappedAttribute.Notes = (string)this.getProperty("notes");
 	    	if (this.getProperty("position") != null) this.wrappedAttribute.Pos = (int)this.getProperty("position");
 	    	if (this.getProperty("stereotypes") != null) this.wrappedAttribute.StereotypeEx = (string)this.getProperty("stereotypes");
-        if (this.getProperty("dataitem") != null) this.addTaggedValue("dataitem", (string)this.getProperty("dataitem"));
 
 	      	this.wrappedAttribute.Update();
 	    }
