@@ -293,17 +293,38 @@ namespace EAAddinFramework.Databases
 		{
 			DatabaseItem other = obj as DatabaseItem;
 			if (other == null) return false;
-			bool ownerEqual = false;
-			ownerEqual = this.owner != null && this.owner.Equals(other.owner) || this.owner == null && other.owner == null;
+			bool nameEquals = this.name == other.name;
+			if (! nameEquals) return false;
+			//check itemType
+			bool itemTypeEquals = this.itemType == other.itemType;
+			if (! itemTypeEquals) return false;
+			//check wrapped element
 			bool wrappedElementEqual = false;
 			wrappedElementEqual = this.wrappedElement != null && this.wrappedElement.Equals(other.wrappedElement)
 				|| this.wrappedElement == null && other.wrappedElement == null;
+			if (!wrappedElementEqual) return false;
+			//check owner
+			bool ownerEqual = false;
+			ownerEqual = this.owner != null && this.owner.Equals(other.owner) || this.owner == null && other.owner == null;
+			if (! ownerEqual) return false;
+			//check logical elements
 			bool logicalElementsEqual = false;
 			logicalElementsEqual = this.logicalElements.All(x => other.logicalElements.Any(y => y.Equals(x)))
 				|| this.logicalElements.Count == 0 && other.logicalElements.Count == 0;
-			bool itemTypeEquals = this.itemType == other.itemType;
-			bool nameEquals = this.name == other.name;
-			return ownerEqual && wrappedElementEqual && logicalElementsEqual && itemTypeEquals && nameEquals;
+			return logicalElementsEqual;
+		}
+
+
+		public static bool operator ==(DatabaseItem lhs, DatabaseItem rhs) {
+			if (ReferenceEquals(lhs, rhs))
+				return true;
+			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+				return false;
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(DatabaseItem lhs, DatabaseItem rhs) {
+			return !(lhs == rhs);
 		}
 	}
 }

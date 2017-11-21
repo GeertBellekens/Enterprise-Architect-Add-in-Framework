@@ -157,11 +157,11 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				return logicalAttributes.Cast<UML.Classes.Kernel.Element>().ToList();
+				return logicalAttributes.OfType<UML.Classes.Kernel.Element>().ToList();
 			}
 			set
 			{
-				this._logicalAttributes = value.Cast<TSF_EA.Attribute>().ToList();
+				this._logicalAttributes = value.OfType<TSF_EA.Attribute>().ToList();
 			}
 		}
 		#region implemented abstract members of DatabaseItem
@@ -316,14 +316,9 @@ namespace EAAddinFramework.Databases
 							.Where(x => x.name.Equals("sourceAttribute",StringComparison.InvariantCultureIgnoreCase)
 							             && x.tagValue is TSF_EA.Attribute)
 							.Select(y => y.tagValue as TSF_EA.Attribute).ToList();
-						return _logicalAttributes;
 					}
 				}
-				else
-				{
-					return _logicalAttributes;
-				}
-				return new List<TSF_EA.Attribute>();
+				return _logicalAttributes ?? new List<TSF_EA.Attribute>();
 			}
 		}
 		

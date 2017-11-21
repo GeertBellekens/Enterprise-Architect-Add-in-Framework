@@ -74,6 +74,8 @@ namespace EAAddinFramework.Databases.Compare
 			this.comparedItems = new List<DatabaseItemComparison>();
 			var tableComparisons = new List<EADatabaseItemComparison>();
 			//compare each new table
+			//debug
+			Logger.log("before compare each new table");
 			if (newDatabase != null)
 			{
 				foreach (var newTable in _newDatabase.tables)
@@ -83,6 +85,10 @@ namespace EAAddinFramework.Databases.Compare
 					tableComparisons.Add( new EADatabaseItemComparison(newTable,existingTable));
 				}
 			}
+			//debug
+			Logger.log("after compare each new table");
+			//debug
+			Logger.log("before get existing tables");
 			if (existingDatabase != null)
 			{
 				//get existing tables that don't exist in the new database
@@ -99,20 +105,38 @@ namespace EAAddinFramework.Databases.Compare
 					}
 				}
 			}
+			//debug
+			Logger.log("after get existing tables");
+			//debug
+			Logger.log("before process the ones that have an existing database item");
 			//first process the ones that have an existing database item
 			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem != null).OrderBy(y => y.existingDatabaseItem.position).ThenBy(y => y.existingDatabaseItem.name))
 			{
 				addTableComparison(tableComparison);
 			}
+			//debug
+			Logger.log("after process the ones that have an existing database item");
+			//debug
+			Logger.log("before ones without an existing database item");
 			//then the ones without an existing database item
 			foreach (var tableComparison in tableComparisons.Where(x => x.existingDatabaseItem == null).OrderBy(y => y.newDatabaseItem.position).ThenBy(y => y.newDatabaseItem.name))
 			{
 				addTableComparison(tableComparison);
 			}
+			//debug
+			Logger.log("after ones without an existing database item");
+			//debug
+			Logger.log("before check and update overriden items");
 			//check and update overriden items
 			this.updateOverrides(comparedItems);
+			//debug
+			Logger.log("after check and update overriden items");
+			//debug
+			Logger.log("before update merged items");
 			//update merged items
 			this.updateMergedItems();
+			//debug
+			Logger.log("after update merged items");
 			//update foreign keys with equivalent but different involved columns
 			//this.updateFKwithEquivalentColumns();
 		}

@@ -101,8 +101,11 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 				//now do the external tables linked to this classElement
 				foreach (var dependingAssociationEnd in transformer.getDependingAssociationEnds()) 
 				{
-					var dependingEndTransformer = addDB2Table(dependingAssociationEnd);
-					if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingAssociationEnd,dependingEndTransformer);
+					if (! transformer.dependingTransformers.ContainsKey(dependingAssociationEnd))
+					{
+						var dependingEndTransformer = addDB2Table(dependingAssociationEnd);
+						if (dependingEndTransformer != null)transformer.dependingTransformers.Add(dependingAssociationEnd,dependingEndTransformer);
+					}
 				}
 				//add the remote columns and primary and foreign keys
 				transformer.addRemoteColumnsAndKeys();

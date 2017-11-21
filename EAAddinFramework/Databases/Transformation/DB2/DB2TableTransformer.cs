@@ -171,9 +171,33 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		public List<UTF_EA.AssociationEnd> getDependingAssociationEnds()
 		{
 			var dependingAssociationEnds = new List<UTF_EA.AssociationEnd>();
+			//is not logical class if found then return empty list
+			if (this.logicalClass == null) return dependingAssociationEnds;
+			//create list of id's
+			string logicalClassIDs = string.Join(",",this.allLogicalClasses.Select(x => ((UTF_EA.ElementWrapper)x).id));
+			//get the relations with an sql query
+			string getAssociationsSQL = @"select c.Connector_ID from t_connector c
+inner join t_object os on os.Object_ID = c.Start_Object_ID
+inner join t_object ot on ot.Object_ID = c.End_Object_ID
+where c.Connector_Type in ('Association', 'Aggregation')
+and ot.Object_Type = 'Class'
+and os.Object_Type = 'Class'
+and c.DestCard like '%1'
+and os.Object_ID in (" + logicalClassIDs +")"
++@" union 
+select c.Connector_ID from t_connector c
+inner join t_object os on os.Object_ID = c.Start_Object_ID
+inner join t_object ot on ot.Object_ID = c.End_Object_ID
+where c.Connector_Type in ('Association', 'Aggregation')
+and ot.Object_Type = 'Class'
+and os.Object_Type = 'Class'
+and c.SourceCard like '%1'
+and ot.Object_ID in ("+ logicalClassIDs +")";
+			var allAssociations = this.logicalClass.model.getRelationsByQuery(getAssociationsSQL);
+			
 			foreach (var currentClass in this.allLogicalClasses) 
 			{
-				foreach (var association in currentClass.relationships.OfType<UTF_EA.Association>())
+				foreach (var association in allAssociations)
 				{
 					foreach (UTF_EA.AssociationEnd end in association.memberEnds) 
 					{

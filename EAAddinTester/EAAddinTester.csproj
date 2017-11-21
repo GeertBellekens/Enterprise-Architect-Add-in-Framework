@@ -125,6 +125,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EADatabaseTransformer\EADatabaseTransformer.csproj">
+      <Project>{fa1df927-ed65-49ed-87d5-8aa59e18ca73}</Project>
+      <Name>EADatabaseTransformer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EANavigator\EANavigator.csproj">
       <Project>{2BFBE8B8-528D-4844-BE0D-ECC68FE1CD1D}</Project>
       <Name>EANavigator</Name>
@@ -153,6 +157,12 @@
       <Project>{E7CDD133-70A7-4E27-8E47-EE200655A1EA}</Project>
       <Name>MyAddin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProfilingSessions\Session20171121_113654.sdps" />
+    <Content Include="ProfilingSessions\Session20171121_121105.sdps" />
+    <Content Include="ProfilingSessions\Session20171121_135950.sdps" />
+    <Content Include="ProfilingSessions\Session20171121_142953.sdps" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

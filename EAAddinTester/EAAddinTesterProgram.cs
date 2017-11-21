@@ -41,8 +41,8 @@ namespace EAAddinTester
 //        	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
 //        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
 //			addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
-			addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
-        	
+//			addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
+			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin());
         }
         private static void initializeAddins()
         {

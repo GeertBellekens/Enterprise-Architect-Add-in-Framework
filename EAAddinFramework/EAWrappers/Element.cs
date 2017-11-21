@@ -286,6 +286,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		set{}
 	}
+	protected HashSet<UML.Profiles.TaggedValue> _taggedValues;
   	/// <summary>
   	/// default empty implementation
   	/// </summary>
@@ -293,10 +294,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		get 
 		{
-			//make sure we have the latest set of tagged values
-			this.eaTaggedValuesCollection.Refresh();
-			//create the tagged values from the EA collection
-			return new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.eaTaggedValuesCollection));
+			if (_taggedValues == null)
+			{
+				//make sure we have the latest set of tagged values
+				this.eaTaggedValuesCollection.Refresh();
+				//create the tagged values from the EA collection
+				_taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.eaTaggedValuesCollection));
+			}
+			return _taggedValues;
 		}
 		set { throw new NotImplementedException();}
 	}
@@ -388,6 +393,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			//no existing tagged value found, or we need to create duplicates
 			newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
+			//add it to the local list of tagged values
+			_taggedValues.Add(newTaggedValue);
 		}
 		newTaggedValue.tagValue = tagValue;
 		if (comment != null) newTaggedValue.comment = comment;

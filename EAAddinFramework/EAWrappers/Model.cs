@@ -17,6 +17,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private IWin32Window _mainEAWindow;
     private RepositoryType? _repositoryType;
     private static string _applicationFullPath;
+    private bool useCache = false;
+    private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
+    private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
+    
+    private Dictionary<int, AttributeWrapper> attributesByID = new Dictionary<int, AttributeWrapper>();
+    private Dictionary<string, AttributeWrapper> attributesByGUID = new Dictionary<string, AttributeWrapper>();
 	
 
     public Boolean isLiteEdition {get {return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite;}}
@@ -30,7 +36,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	return this.wrappedModel.GetFieldFromFormat(externalFormat,externalNotes);
     }
-
+    public void flushCache()
+    {
+    	elementsByID.Clear();
+    	elementsByGUID.Clear();
+    	attributesByID.Clear();
+    	attributesByGUID.Clear();
+    }
 	public void activateTab(string tabName)
 	{
 		this.wrappedModel.ActivateTab(tabName);
@@ -132,8 +144,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       _wrappedModel = eaRepository;
     }
     /// constructor creates EAModel based on the given repository
-    public Model(global::EA.Repository eaRepository){
+    public Model(global::EA.Repository eaRepository, bool useCache = false)
+    {
     	this.initialize(eaRepository);
+    	this.useCache = useCache;
     }
     public UserControl addWindow(string title, string fullControlName)
     {
@@ -232,20 +246,80 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public UML.Extended.UMLFactory factory {
       get { return Factory.getInstance(this); }
     }
+	
 
     /// Finds the EA.Element with the given id and returns an EAElementwrapper 
     /// wrapping this element.
-    public ElementWrapper getElementWrapperByID(int id){
-      //don't even try if the ID is not a positive number
-      if (id <= 0 ) return null;
-      try
-      {
-      	var element = this.wrappedModel.GetElementByID(id);
-      	return element != null ? this.factory.createElement(element) as ElementWrapper: null;
-      } catch( Exception )  {
-        // element not found, return null
-        return null;
-      }
+    public ElementWrapper getElementWrapperByID(int id)
+    {
+		//don't even try if the ID is not a positive number
+		if (id <= 0 ) return null;
+		//check if element exists in cache and return it if found
+		ElementWrapper elementWrapper;
+		if (this.useCache)
+		{
+			if (elementsByID.TryGetValue(id, out elementWrapper))
+			{
+				return elementWrapper;
+			}
+		}
+		global::EA.Element eaElement;
+		try
+		{
+			eaElement = this.wrappedModel.GetElementByID(id);
+		} 
+		catch( Exception )
+		{
+			// element not found, return null
+			return null;
+		}
+		//create the elementWrapper
+		elementWrapper = this.factory.createElement(eaElement) as ElementWrapper;
+		//add to cache
+		if (this.useCache) addElementToCache(elementWrapper);
+		//return it
+		return elementWrapper;
+    }
+        /// <summary>
+    /// Finds the EA.Element with the given GUID and returns an EAElementwrapper 
+    /// wrapping this element.
+    /// </summary>
+    /// <param name="GUID">the GUID of the element</param>
+    /// <returns>the element with the given GUID</returns>
+    public ElementWrapper getElementWrapperByGUID(string GUID)
+    {
+		//check if element exists in cache and return it if found
+		ElementWrapper elementWrapper;
+		if (this.useCache)
+		{
+			if (elementsByGUID.TryGetValue(GUID, out elementWrapper))
+			{
+				return elementWrapper;
+			}
+		}
+    	global::EA.Element eaElement;
+		try
+		{
+			eaElement = this.wrappedModel.GetElementByGuid(GUID);
+		} 
+		catch( Exception )
+		{
+			// element not found, return null
+			return null;
+		}
+		//if not found then return empty
+      	if (eaElement == null) return null;
+      	//create elementWrapper
+      	elementWrapper = this.factory.createElement(eaElement) as ElementWrapper;
+      	//add to cache
+      	if (this.useCache) addElementToCache(elementWrapper);
+		//return it
+		return elementWrapper;
+    }
+    private void addElementToCache(ElementWrapper element)
+    {
+    	this.elementsByID.Add(element.id, element);
+    	this.elementsByGUID.Add(element.uniqueID, element);
     }
     
     public void refreshDiagram(Diagram diagram)
@@ -280,21 +354,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	}
     	return foundElement;
     }
-    /// <summary>
-    /// Finds the EA.Element with the given GUID and returns an EAElementwrapper 
-    /// wrapping this element.
-    /// </summary>
-    /// <param name="GUID">the GUID of the element</param>
-    /// <returns>the element with the given GUID</returns>
-    public ElementWrapper getElementWrapperByGUID(string GUID){
-      try{
-        return this.factory.createElement
-          (this.wrappedModel.GetElementByGuid(GUID)) as ElementWrapper;
-      } catch( Exception )  {
-        // element not found, return null
-        return null;
-      }
-    }
+
     /// <summary>
     /// returns the elementwrappers that are identified by the Object_ID's returned by the given query
     /// </summary>
@@ -373,23 +433,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
  		}
  		return results;
     }
-    /// <summary>
-    /// gets the Attribute with the given GUID
-    /// </summary>
-    /// <param name="GUID">the attribute's GUID</param>
-    /// <returns>the Attribute with the given GUID</returns>
-    public AttributeWrapper getAttributeWrapperByGUID (string GUID)
-    {
-    	try
-    	{
-    		return this.factory.createElement(this.wrappedModel.GetAttributeByGuid(GUID)) as AttributeWrapper;
-    	}catch (Exception)
-    	{
-    		// attribute not found, return null
-    		return null;
-    	}
-    	
-    }
+
     /// <summary>
     /// gets the Attribute with the given ID
     /// </summary>
@@ -414,15 +458,74 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// <returns>the Attribute with the given ID</returns>
     public AttributeWrapper getAttributeWrapperByID (int attributeID)
     {
+    	//don't even try if not > 0
+    	if (attributeID <= 0) return null;
+    	
+    	AttributeWrapper attributeWrapper;
+    	if (useCache)
+    	{
+    		if (attributesByID.TryGetValue(attributeID,out attributeWrapper))
+    		{
+    			return attributeWrapper;
+    		}
+    	}
+    	global::EA.Attribute eaAttribute;
     	try
     	{
-    		return this.factory.createElement(this.wrappedModel.GetAttributeByID(attributeID)) as AttributeWrapper;
-    	}catch (Exception)
+    		eaAttribute = this.wrappedModel.GetAttributeByID(attributeID);
+    	}
+    	catch (Exception)
     	{
     		// attribute not found, return null
     		return null;
     	}
-    	
+    	//return null if not found
+    	if (eaAttribute == null) return null;
+    	//create new attributeWrapper
+    	attributeWrapper = this.factory.createElement(eaAttribute) as AttributeWrapper;
+    	//add to cache
+    	if (useCache) this.addAttributeToCache(attributeWrapper);
+    	//return
+    	return attributeWrapper;
+    }
+    /// <summary>
+    /// gets the Attribute with the given GUID
+    /// </summary>
+    /// <param name="GUID">the attribute's GUID</param>
+    /// <returns>the Attribute with the given GUID</returns>
+    public AttributeWrapper getAttributeWrapperByGUID (string GUID)
+    {
+    	AttributeWrapper attributeWrapper;
+    	if (useCache)
+    	{
+    		if (attributesByGUID.TryGetValue(GUID,out attributeWrapper))
+    		{
+    			return attributeWrapper;
+    		}
+    	}
+    	global::EA.Attribute eaAttribute;
+    	try
+    	{
+    		eaAttribute = this.wrappedModel.GetAttributeByGuid(GUID);
+    	}
+    	catch (Exception)
+    	{
+    		// attribute not found, return null
+    		return null;
+    	}
+    	//return null if not found
+    	if (eaAttribute == null) return null;
+    	//create new attributeWrapper
+    	attributeWrapper = this.factory.createElement(eaAttribute) as AttributeWrapper;
+    	//add to cache
+    	if (useCache) this.addAttributeToCache(attributeWrapper);
+    	//return
+    	return attributeWrapper;
+    }
+    private void addAttributeToCache(AttributeWrapper attributeWrapper)
+    {
+    	this.attributesByID.Add(attributeWrapper.id, attributeWrapper);
+    	this.attributesByGUID.Add(attributeWrapper.uniqueID, attributeWrapper);
     }
     /// <summary>
     /// gets the parameter by its GUID.
