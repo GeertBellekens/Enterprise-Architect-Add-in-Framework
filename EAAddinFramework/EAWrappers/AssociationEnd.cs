@@ -461,7 +461,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		{
 			return this.connectorWrapper.getLockedUserID();
 		}
-	
+
+		
+		protected override string getTaggedValueQuery(string taggedValueName)
+		{
+			return @"select tv.PropertyID from t_taggedvalue tv
+			where tv.TagValue = '"+taggedValueName+"' "
+				+ " and tv.ElementID = '"+this.owningAssociation.uniqueID+"'";
+		}
+		
 		#endregion
 		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
 		{

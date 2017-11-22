@@ -264,6 +264,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 		}
 
+		protected override string getTaggedValueQuery(string taggedValueName)
+		{
+			throw new NotImplementedException();
+		}
+
 
 		#endregion
 

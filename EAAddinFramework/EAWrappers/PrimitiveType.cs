@@ -196,5 +196,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		// do nothing as Primitive Types don't have diagram
 	}
+
+		#region implemented abstract members of Element
+
+	protected override string getTaggedValueQuery(string taggedValueName)
+	{
+		throw new NotImplementedException();
+	}
+
+	#endregion
   }
 }

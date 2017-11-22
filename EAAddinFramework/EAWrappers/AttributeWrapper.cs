@@ -235,8 +235,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			get {
 				return this.WrappedAttribute.TaggedValues;
 			}
-		}
-	  	
+		}	  	
 		public override string guid {
 			get 
 			{
@@ -265,6 +264,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			return ((Element)this.owner).getLockedUserID();
 		}
+
+		protected override string getTaggedValueQuery(string taggedValueName)
+		{
+			return @"select tv.ea_guid from t_attributetag tv
+				where 
+				tv.Property = '"+taggedValueName+"' and tv.ElementID = "+ this.id;
+		}
+
 		#endregion
 		public override List<UML.Extended.UMLItem> findOwnedItems(List<string> descriptionParts)
 		{

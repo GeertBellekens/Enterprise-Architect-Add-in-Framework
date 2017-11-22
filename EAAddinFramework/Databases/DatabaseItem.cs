@@ -16,6 +16,7 @@ namespace EAAddinFramework.Databases
 		internal abstract TaggedValue traceTaggedValue {get;set;}
 		internal abstract void createTraceTaggedValue();
 		internal bool? _isOverridden;
+		internal bool? _isRenamed;
 		string _renamedName = string.Empty;
 		public string renamedName 
 		{
@@ -48,7 +49,6 @@ namespace EAAddinFramework.Databases
 				_mergedEquivalents = value;
 			}
 		}
-		bool? _isRenamed;
 		public bool isRenamed 
 		{
 			get 

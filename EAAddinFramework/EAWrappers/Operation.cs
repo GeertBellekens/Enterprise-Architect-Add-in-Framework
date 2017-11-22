@@ -466,6 +466,12 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 	{
 		return ((Element)this.owner).getLockedUserID();
 	}
+	protected override string getTaggedValueQuery(string taggedValueName)
+	{
+		return @"select tv.ea_guid from t_operationtag tv
+			where 
+			tv.Property = '"+taggedValueName+"' and tv.ElementID = "+ this.id;
+	}
 
 	#endregion
 	public void exportAllDiagrams(string imagePath)

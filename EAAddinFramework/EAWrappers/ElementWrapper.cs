@@ -1003,6 +1003,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			return this.WrappedElement.ElementGUID;
 		}
 	}
+	protected override string getTaggedValueQuery(string taggedValueName)
+	{
+		return @"select tv.ea_guid from t_objectproperties tv
+			where 
+			tv.Property = '"+taggedValueName+"' and tv.Object_ID = "+ this.id;
+	}
 
 	/// <summary>
 	/// deletes an element owned by this element

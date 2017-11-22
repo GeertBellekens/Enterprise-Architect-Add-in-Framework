@@ -305,6 +305,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 		set { throw new NotImplementedException();}
 	}
+	protected abstract string getTaggedValueQuery(string taggedValueName);
+	/// <summary>
+	/// returns the tagged value with the given name
+	/// if a tagged valeu with the given name doesn't exist null is returned
+	/// </summary>
+	/// <param name="taggedValueName">the name of the tagged value to return</param>
+	/// <returns>the tagged value with the given name</returns>
+	public TaggedValue getTaggedValue(string taggedValueName)
+	{
+		bool getTag = _taggedValues != null;
+		if (_taggedValues == null)
+		{
+			//check if tagged value exists
+			var xDoc = this.model.SQLQuery(this.getTaggedValueQuery(taggedValueName));
+			//get the tagged value if there is one
+			if (xDoc.SelectNodes(this.model.formatXPath("//Row")).Count > 0)
+			{
+				getTag = true;
+			}
+		}
+		return getTag ?
+			this.taggedValues.FirstOrDefault(x => taggedValueName.Equals(x.name, StringComparison.InvariantCultureIgnoreCase)) as TaggedValue
+			: null;
+	}
+
   	/// <summary>
   	/// default empty implementation
   	/// </summary>
@@ -427,23 +452,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			
 		}
 	}
-	/// <summary>
-	/// returns the tagged value with the given name
-	/// if a tagged valeu with the given name doesn't exist null is returned
-	/// </summary>
-	/// <param name="name">the name of the taggev value to return</param>
-	/// <returns>the tagged value with the given name</returns>
-	public virtual TaggedValue getTaggedValue(string name)
-	{
-		foreach (TaggedValue taggedValue in this.taggedValues) 
-		{
-			if (taggedValue.name.Equals(name,StringComparison.InvariantCultureIgnoreCase))
-			{
-				return taggedValue;
-			}
-		}
-		return null;
-	}
+
 	/// <summary>
 	/// deletes this element from the model
 	/// In Enterprise Architect we can only delete an element by removing it from its parents collection.

@@ -726,6 +726,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		if (this.sourceElement != null) return sourceElement.getLockedUserID();
 		return string.Empty;
 	}
+	protected override string getTaggedValueQuery(string taggedValueName)
+	{
+		return @"select tv.ea_guid from t_connectortag tv
+			where 
+			tv.Property = '"+taggedValueName+"' and tv.ElementID = "+ this.id;
+	}
 
 	#endregion
   }

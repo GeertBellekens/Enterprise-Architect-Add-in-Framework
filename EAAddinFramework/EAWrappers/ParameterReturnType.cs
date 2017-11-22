@@ -200,5 +200,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		}
 	
 		#endregion
+
+		#region implemented abstract members of Element
+
+		protected override string getTaggedValueQuery(string taggedValueName)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
   }
 }
