@@ -44,7 +44,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 	    	get 
 	    	{
-	    		return (string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Name);
+	    		//check first if already exists
+	    		string prop = (string)this.getProperty(getPropertyNameName());
+				return prop ?? (string)this.getProperty(getPropertyNameName(), this.wrappedAttribute.Name);
 	    	}
 			set 
 			{

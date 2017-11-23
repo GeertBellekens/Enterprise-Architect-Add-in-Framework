@@ -165,16 +165,27 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#region implemented abstract members of DatabaseItem
+		private bool? _isValid;
 		public override bool isValid 
 		{
 			get 
 			{
-				// a column is valid if it has a name, a type, and if there's no other column in the table with the same except if that column is not realized
-				return (! string.IsNullOrEmpty(this.name)
+				if (! _isValid.HasValue)
+				{
+					_isValid = ! string.IsNullOrEmpty(this.name)
 				        && this.type != null
-				        && this.type.isValid
-				        && ownerTable.columns.Count(x => x.name == this.name && ! x.isNotRealized) <= 1);
-				       
+						&& this.type.isValid;
+					if (_isValid.Value)
+					{
+						var sameColumns = ownerTable.columns.Where (x => x.name == this.name);
+						if (sameColumns.Count() > 1)
+						{
+							_isValid = sameColumns.Count(x => ! x.isNotRealized) <= 1;
+						}
+					}
+				}
+				// a column is valid if it has a name, a type, and if there's no other column in the table with the same except if that column is not realized
+				return _isValid.Value;
 			}
 		}
 		#endregion
@@ -369,6 +380,14 @@ namespace EAAddinFramework.Databases
 				_name = value;
 				if (_wrappedattribute != null) this._wrappedattribute.name = _name;
 				if (this.logicalAttribute != null && !this.isRemote) this.logicalAttribute.alias = value;
+				resetIsValid();
+			}
+		}
+		private void resetIsValid()
+		{
+			foreach (Column column in this.ownerTable.columns)
+			{
+				column._isValid = null;
 			}
 		}
 

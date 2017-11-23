@@ -30,7 +30,7 @@ namespace EAAddinFramework.Databases
 			_involvedColumns = involvedColumns;
 			this.ownerTable.addConstraint(this);
 		}
-
+		
 		#region implemented abstract members of DatabaseItem
 		protected override void updateDetails(DB.DatabaseItem newDatabaseItem)
 		{

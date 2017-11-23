@@ -314,6 +314,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// <returns>the tagged value with the given name</returns>
 	public TaggedValue getTaggedValue(string taggedValueName)
 	{
+		//bool getTag = true;
 		bool getTag = _taggedValues != null;
 		if (_taggedValues == null)
 		{

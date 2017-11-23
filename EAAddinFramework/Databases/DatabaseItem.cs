@@ -19,6 +19,22 @@ namespace EAAddinFramework.Databases
 		internal bool? _isRenamed;
 		string _renamedName = string.Empty;
 		public bool isEqualDirty {get;set;}
+		
+		public string _logicalName;
+		public string logicalName 
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_logicalName))
+				{
+					_logicalName = logicalElement != null ? 
+										logicalElement.name : 
+										string.Empty;
+				}
+				return _logicalName;
+			}
+		}
+
 		public string renamedName 
 		{
 			get 

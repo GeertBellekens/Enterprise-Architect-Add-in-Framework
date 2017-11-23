@@ -182,5 +182,11 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public string logicalName {
+			get {
+				throw new NotImplementedException();
+			}
+		}
 	}
 }
