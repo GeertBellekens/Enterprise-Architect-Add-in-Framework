@@ -73,8 +73,18 @@ namespace EAAddinFramework.Databases.Compare
 		}
 		public void updatePosition(int i)
 		{
-			if (newDatabaseItem != null) newDatabaseItem.position = i;
-			if (existingDatabaseItem != null) existingDatabaseItem.position = i;
+			if (newDatabaseItem != null
+			   && newDatabaseItem.position != i)
+			{
+				newDatabaseItem.position = i;
+				newDatabaseItem.isEqualDirty = true;
+			}
+			if (existingDatabaseItem != null
+			   && existingDatabaseItem.position != i)
+			{
+				existingDatabaseItem.position = i;
+				existingDatabaseItem.isEqualDirty = true;
+			}
 		}
 
 		DatabaseItemComparison _ownerComparison;
@@ -148,12 +158,18 @@ namespace EAAddinFramework.Databases.Compare
 			{
 				case DatabaseComparisonStatusEnum.equal:
 					//make sure the translation sticks
-					foreach (var logical in newDatabaseItem.logicalElements) 
+					if (newDatabaseItem.isEqualDirty)
 					{
-						if (logical != null) logical.save();
+						foreach (var logical in newDatabaseItem.logicalElements) 
+						{
+							if (logical != null) logical.save();
+						}
 					}
-					//make sure the position is saved
-					this.existingDatabaseItem.save();
+					if (existingDatabaseItem.isEqualDirty)
+					{
+						//make sure the position is saved
+						this.existingDatabaseItem.save();
+					}
 					break;
 				case DatabaseComparisonStatusEnum.changed:
 					this.existingDatabaseItem.update(this.newDatabaseItem);

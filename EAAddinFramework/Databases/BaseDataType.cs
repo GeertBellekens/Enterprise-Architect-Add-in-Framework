@@ -166,5 +166,14 @@ namespace EAAddinFramework.Databases
 				throw new NotImplementedException();
 			}
 		}
+
+		public bool isEqualDirty {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

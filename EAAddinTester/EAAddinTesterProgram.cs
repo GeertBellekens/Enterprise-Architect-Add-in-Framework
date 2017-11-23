@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+using EADatabaseTransformer;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
 
 
@@ -42,7 +43,7 @@ namespace EAAddinTester
 //        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
 //			addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
 //			addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
-			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin());
+			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
         }
         private static void initializeAddins()
         {

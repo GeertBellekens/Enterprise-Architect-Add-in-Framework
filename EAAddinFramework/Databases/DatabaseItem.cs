@@ -18,6 +18,7 @@ namespace EAAddinFramework.Databases
 		internal bool? _isOverridden;
 		internal bool? _isRenamed;
 		string _renamedName = string.Empty;
+		public bool isEqualDirty {get;set;}
 		public string renamedName 
 		{
 			get 

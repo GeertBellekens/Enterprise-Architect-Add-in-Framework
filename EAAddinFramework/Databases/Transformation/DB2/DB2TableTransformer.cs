@@ -95,7 +95,12 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			string counterPart = nameCounter.ToString();
 			if (counterPart.Length < 2) counterPart = "0" + counterPart;
 			string tableName = fixedTableString + counterPart;
-			this.logicalClass.alias = tableName;
+			if (this.logicalClass.alias != tableName)
+			{
+				this.logicalClass.alias = tableName;
+				//make sure the alias sticks even when deemed equal
+				this._table.isEqualDirty = true;
+			}
 			this._table.name = tableName;
 			foreach (var fkTransformer in this.foreignKeyTransformers) {
 				fkTransformer.resetName();

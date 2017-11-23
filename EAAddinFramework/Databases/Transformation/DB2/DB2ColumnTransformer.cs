@@ -86,13 +86,16 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 
 		private Column transformLogicalAttribute(UTF_EA.Attribute attribute)
 		{
+			bool isEqualDirty = false;
 			//first translate the columname if needed
 			if (string.IsNullOrEmpty(attribute.alias))
 			{
 				attribute.alias = this._nameTranslator.translate(attribute.name, attribute.owner.name);
+				isEqualDirty = true;
 				//should we save here?
 			}
 			this.column = new Column(this._table, attribute.alias);
+			this.column.isEqualDirty = isEqualDirty;
 			//get base type
 			var attributeType = attribute.type as UTF_EA.ElementWrapper;
 			if (attributeType == null) Logger.logError (string.Format("Attribute {0}.{1} does not have a element as datatype"

@@ -18,6 +18,7 @@ namespace EAAddinFramework.Databases
 		internal Table _owner;
 		internal string _name;
 		protected List<Column> _involvedColumns;
+
 		public Constraint(Table owner,Operation operation)
 		{
 			_owner = owner;

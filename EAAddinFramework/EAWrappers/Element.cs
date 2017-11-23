@@ -419,7 +419,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			//no existing tagged value found, or we need to create duplicates
 			newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
 			//add it to the local list of tagged values
-			_taggedValues.Add(newTaggedValue);
+			if (_taggedValues != null) _taggedValues.Add(newTaggedValue);
 		}
 		newTaggedValue.tagValue = tagValue;
 		if (comment != null) newTaggedValue.comment = comment;
