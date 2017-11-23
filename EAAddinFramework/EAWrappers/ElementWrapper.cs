@@ -109,12 +109,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		try
     		{
-    			return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
+    			//check first if already exists
+	    		string prop = (string)this.getProperty(getPropertyNameName());
+    			return prop ?? (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
     		}
     		catch(System.InvalidCastException)
     		{
     			this.reloadWrappedElement();
-    			return (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
+    			//check first if already exists
+	    		string prop = (string)this.getProperty(getPropertyNameName());
+    			return prop ?? (string)this.getProperty(getPropertyNameName(),this.wrappedElement.Name);
     		}
     	}
 		set 

@@ -116,6 +116,8 @@ namespace EAAddinFramework.Databases.Compare
 			}
 			//debug
 			Logger.log("after process the ones that have an existing database item");
+			//in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
+			fixForeignkeysToSameTable();
 			//debug
 			Logger.log("before ones without an existing database item");
 			//then the ones without an existing database item
@@ -297,8 +299,6 @@ namespace EAAddinFramework.Databases.Compare
 					}
 					
 				}
-				//in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
-				fixForeignkeysToSameTable();
 				//add all foreignkeys
 				foreach (ForeignKey existingForeignkey in existingTable.foreignKeys) 
 				{
