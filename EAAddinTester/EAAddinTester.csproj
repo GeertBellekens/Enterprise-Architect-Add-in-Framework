@@ -158,22 +158,6 @@
       <Name>MyAddin</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="ProfilingSessions\Session20171121_113654.sdps" />
-    <Content Include="ProfilingSessions\Session20171121_121105.sdps" />
-    <Content Include="ProfilingSessions\Session20171121_135950.sdps" />
-    <Content Include="ProfilingSessions\Session20171121_142953.sdps" />
-    <Content Include="ProfilingSessions\Session20171121_152010.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_090721.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_114516.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_114856.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_120945.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_130213.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_133914.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_141636.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_151857.sdps" />
-    <Content Include="ProfilingSessions\Session20171123_155625.sdps" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
