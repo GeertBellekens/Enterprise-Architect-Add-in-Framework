@@ -42,7 +42,7 @@ namespace EAAddinFramework.Databases.Compare
 			foreach (var tableCompareItem in tableComparers )
 			{
 				//then save all columns
-				int i = 1;
+				int i = 0;
 				foreach (var columnCompareItem in tableCompareItem.ownedComparisons.Where(
 					x => x.itemType.Equals("Column",StringComparison.InvariantCultureIgnoreCase)))
 				{

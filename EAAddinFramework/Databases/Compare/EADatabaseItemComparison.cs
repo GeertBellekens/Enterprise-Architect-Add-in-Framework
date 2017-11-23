@@ -73,12 +73,6 @@ namespace EAAddinFramework.Databases.Compare
 		}
 		public void updatePosition(int i)
 		{
-			if (newDatabaseItem != null
-			   && newDatabaseItem.position != i)
-			{
-				newDatabaseItem.position = i;
-				newDatabaseItem.isEqualDirty = true;
-			}
 			if (existingDatabaseItem != null
 			   && existingDatabaseItem.position != i)
 			{
