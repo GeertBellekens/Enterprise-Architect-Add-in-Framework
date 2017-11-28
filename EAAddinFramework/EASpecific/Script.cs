@@ -285,12 +285,13 @@ namespace EAAddinFramework.EASpecific
 				string[] mdgFiles = Directory.GetFiles(folderPath,"*.xml",SearchOption.TopDirectoryOnly);
 				foreach(string mdgfile in mdgFiles)
 				{
-					loadMDGScripts(File.ReadAllText(mdgfile));
+					if (File.Exists(mdgfile))
+						loadMDGScripts(File.ReadAllText(mdgfile));
 				}
 			}
 			catch (Exception e)
 			{
-				EAAddinFramework.Utilities.Logger.logError("Error in loadMDGScriptsFromFolder: " + e.Message);
+				Logger.logError("Error in loadMDGScriptsFromFolder: " + e.Message);
 			}
 		}
 		/// <summary>
@@ -323,7 +324,9 @@ namespace EAAddinFramework.EASpecific
 						{
 							//the script itstelf is base64 endcoded in the content tag
 							string scriptcontent = System.Text.Encoding.Unicode.GetString( System.Convert.FromBase64String(contentNode.InnerText));
-							staticIncludableScripts.Add("!INC "+ mdgName + "." + scriptName,scriptcontent);
+							string scriptKey = "!INC "+ mdgName + "." + scriptName;
+							if (! staticIncludableScripts.ContainsKey(scriptKey))
+								staticIncludableScripts.Add(scriptKey,scriptcontent);
 							//also check if the script needs to be loaded as static EA-Matic script
 							loadStaticEAMaticScript(scriptName, mdgName, scriptcontent,scriptLanguage);
 						}
