@@ -13,6 +13,7 @@ namespace EAAddinFramework.Utilities
 		Model model;
 		string name;
 		static Dictionary<string, EAOutputLogger> outputLogs = new Dictionary<string, EAOutputLogger>();
+		static EAOutputLogger defaultLogger;
 		static EAOutputLogger getOutputLogger(Model model, string outputName)
 		{
 			var logKey = model.projectGUID+outputName;
@@ -20,7 +21,8 @@ namespace EAAddinFramework.Utilities
 			{
 				outputLogs.Add(logKey,new EAOutputLogger(model, outputName));
 			}
-			return outputLogs[logKey];
+			defaultLogger = outputLogs[logKey]; 
+			return defaultLogger;
 		}
 		/// <summary>
 		/// private constructor
@@ -56,7 +58,7 @@ namespace EAAddinFramework.Utilities
 		public static void log(Model model,string outputName, string message, int elementID = 0,LogTypeEnum logType = LogTypeEnum.none)
 		{
 			var logger = getOutputLogger(model, outputName);
-			
+
 			//log to logfile if needed
 			switch (logType) 
 			{
@@ -74,6 +76,19 @@ namespace EAAddinFramework.Utilities
 			}
 			//log to output
 			logger.logToOutput(message,elementID);
+		}
+		/// <summary>
+		/// logs a message to the currently active outputlogger
+		/// </summary>
+		/// <param name="message">the message to be logged</param>
+		/// <param name="elementID">the element ID to associate with the message. Can be used by add-ins when they implement EA_OnOutput...</param>
+		/// <param name="logType">the type of logging to the logfile</param>
+		public static void log(string message, int elementID = 0,LogTypeEnum logType = LogTypeEnum.none)
+		{
+			if (defaultLogger != null)
+			{
+				log(defaultLogger.model, defaultLogger.name, message, elementID, logType);
+			}
 		}
 		public static void clearLog(Model model,string outputName)
 		{
