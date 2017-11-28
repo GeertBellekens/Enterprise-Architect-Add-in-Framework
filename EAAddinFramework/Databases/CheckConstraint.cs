@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
+using EAAddinFramework.Databases.Strategy;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using UML=TSF.UmlToolingFramework.UML;
@@ -13,13 +14,15 @@ namespace EAAddinFramework.Databases
 	public class CheckConstraint:Constraint,DB.CheckConstraint
 	{
 		private Column _column;
-		public CheckConstraint(string name, Column column , string rule):base(column._ownerTable,new List<Column>{column})
+		public CheckConstraint(string name, Column column , string rule,DatabaseItemStrategy strategy)
+			:base(column._ownerTable,new List<Column>{column},strategy)
 		{
 			this._column = column;
 			this.rule = rule;
 			this.name = name;
 		}
-		public CheckConstraint(Table ownerTable, Operation wrappedOperation):base(ownerTable,wrappedOperation)
+		public CheckConstraint(Table ownerTable, Operation wrappedOperation,DatabaseItemStrategy strategy)
+			:base(ownerTable,wrappedOperation,strategy)
 		{
 		}
 		private string _rule;
@@ -45,7 +48,7 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
-		public override void save()
+		protected override void saveMe()
 		{
 			base.save();
 			if (this._wrappedOperation != null)

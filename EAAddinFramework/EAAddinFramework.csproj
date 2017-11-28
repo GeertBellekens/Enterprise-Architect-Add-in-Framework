@@ -101,6 +101,11 @@
     <Compile Include="Databases\ForeignKey.cs" />
     <Compile Include="Databases\PrimaryKey.cs" />
     <Compile Include="Databases\Index.cs" />
+    <Compile Include="Databases\Strategy\DatabaseItemStrategy.cs" />
+    <Compile Include="Databases\Strategy\DB2\DB2Strategy.cs" />
+    <Compile Include="Databases\Strategy\DB2\DB2StrategyFactory.cs" />
+    <Compile Include="Databases\Strategy\DB2\DB2TableStrategy.cs" />
+    <Compile Include="Databases\Strategy\StrategyFactory.cs" />
     <Compile Include="Databases\Table.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2ColumnTransformer.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2DatabaseTransformer.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="Databases\Transformation\NameTranslation.cs" />
     <Compile Include="Databases\Transformation\NameTranslator.cs" />
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />
+    <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
@@ -307,6 +313,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Databases\Strategy" />
+    <Folder Include="Databases\Strategy\DB2" />
     <Folder Include="Files" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />

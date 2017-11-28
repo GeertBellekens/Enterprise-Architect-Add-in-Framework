@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EAAddinFramework.Databases.Strategy;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
@@ -12,6 +13,11 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public abstract class DatabaseItem:DB.DatabaseItem
 	{
+		protected DatabaseItemStrategy strategy {get;private set;}
+		protected DatabaseItem(DatabaseItemStrategy strategy)
+		{
+			this.strategy = strategy;
+		}
 		internal abstract Element wrappedElement {get;set;}
 		internal abstract TaggedValue traceTaggedValue {get;set;}
 		internal abstract void createTraceTaggedValue();
@@ -289,7 +295,7 @@ namespace EAAddinFramework.Databases
 
 		public abstract DB.DatabaseItem owner {get;}
 		
-		internal DatabaseItem _owner
+		private DatabaseItem _owner
 		{
 			get
 			{
@@ -297,9 +303,22 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		
-		public abstract void save();
+		public void save()
+		{
+			this.strategy.beforeSave();
+			saveMe();
+			this.strategy.afterSave();
+		}
+		protected abstract void saveMe();
 
-		public abstract void delete();
+		public void delete()
+		{
+			this.strategy.beforeDelete();
+			deleteMe();
+			this.strategy.afterDelete();
+		}
+		protected abstract void deleteMe();
+		
 
 		public abstract string name {get;set;}
 

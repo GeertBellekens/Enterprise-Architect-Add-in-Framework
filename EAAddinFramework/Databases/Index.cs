@@ -115,8 +115,10 @@ namespace EAAddinFramework.Databases
 			return null;
 		}
 
-    public override void save() {
-     if(this._wrappedOperation == null ) {
+    protected override void saveMe() 
+    {
+     if(this._wrappedOperation == null ) 
+     {
        this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
        this._wrappedOperation.setStereotype(this.getStereotype());
      }
