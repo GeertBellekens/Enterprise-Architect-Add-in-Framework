@@ -18,11 +18,11 @@ namespace EAAddinFramework.Databases
 		
 		internal Table _foreignTable;
 		
-		public ForeignKey(Table owner,Operation operation):base(owner,operation)
+		public ForeignKey(Table owner,Operation operation):base(owner,operation, owner.strategy.getStrategy<ForeignKey>())
 		{
 
 		}
-		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns,owner.strategy.getStrategy<ForeignKey>())
 		{
 
 		}

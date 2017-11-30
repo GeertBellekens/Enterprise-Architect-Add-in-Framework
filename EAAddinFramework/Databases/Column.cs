@@ -22,12 +22,12 @@ namespace EAAddinFramework.Databases
 		private List<TSF_EA.Attribute> _logicalAttributes;
 		private string _name;
 		
-		public Column(Table owner, TSF_EA.Attribute attribute, DatabaseItemStrategy strategy):base(strategy)
+		public Column(Table owner, TSF_EA.Attribute attribute):base(owner.strategy.getStrategy<Column>())
 		{
 			this._ownerTable = owner;
 			this._wrappedattribute = attribute;
 		}
-		public Column(Table owner, string name, DatabaseItemStrategy strategy):base(strategy)
+		public Column(Table owner, string name):base(owner.strategy.getStrategy<Column>())
 		{
 			this._ownerTable = owner;
 			this.name = name;
@@ -202,7 +202,7 @@ namespace EAAddinFramework.Databases
 			}
 			if (newTable != null)
 			{
-				var newColumn = new Column(newTable,this.name, this.strategy);
+				var newColumn = new Column(newTable,this.name);
 				newColumn.isNotNullable = isNotNullable;
 				newColumn.type = type;
 				newColumn.logicalAttribute = logicalAttribute;

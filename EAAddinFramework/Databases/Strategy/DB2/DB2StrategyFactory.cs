@@ -14,7 +14,7 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 	public class DB2StrategyFactory:StrategyFactory
 	{
 		private static DB2StrategyFactory instance;
-		private DB2StrategyFactory();
+		private DB2StrategyFactory(){}
 		public static DB2StrategyFactory getInstance()
 		{
 			if (instance == null)

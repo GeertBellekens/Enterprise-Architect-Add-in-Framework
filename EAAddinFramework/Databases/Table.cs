@@ -23,13 +23,13 @@ namespace EAAddinFramework.Databases
 		internal List<Class> _logicalClasses;
 		private string _name;
 		
-		public Table(Database owner,Class wrappedClass, DatabaseItemStrategy strategy):base(strategy)
+		public Table(Database owner,Class wrappedClass):base(owner.strategy.getStrategy<Table>())
 		{
 			this._wrappedClass = wrappedClass;
 			this._owner = owner;
 			this.tableOwner = _owner.defaultOwner;
 		}
-		public Table(Database owner, string name, DatabaseItemStrategy strategy):base(strategy)
+		public Table(Database owner, string name):base(owner.strategy.getStrategy<Table>())
 		{
 			this._name = name;
 			this._owner = owner;

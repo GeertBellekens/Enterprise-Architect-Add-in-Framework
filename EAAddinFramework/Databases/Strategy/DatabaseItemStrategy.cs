@@ -14,9 +14,9 @@ namespace EAAddinFramework.Databases.Strategy
 		{
 			this.factory = factory;
 		}
-		public DatabaseItemStrategy getStrategy<T>() where T :class, DatabaseItem
+		public DatabaseItemStrategy getStrategy<T>() where T : DatabaseItem
 		{
-			return this.factory.getStrategy<Table>();
+			return this.factory.getStrategy<T>();
 		}
 		
 		public DatabaseItem databaseItem {get;set;}

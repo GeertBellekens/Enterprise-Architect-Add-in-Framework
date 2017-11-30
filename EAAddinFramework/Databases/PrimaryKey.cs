@@ -15,11 +15,11 @@ namespace EAAddinFramework.Databases
 	{
 
 		
-		public PrimaryKey(Table owner,Operation operation) : base(owner, operation)
+		public PrimaryKey(Table owner,Operation operation) : base(owner, operation,owner.strategy.getStrategy<PrimaryKey>())
 		{
 			
 		}
-		public PrimaryKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		public PrimaryKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns, owner.strategy.getStrategy<PrimaryKey>())
 		{
 			
 		}

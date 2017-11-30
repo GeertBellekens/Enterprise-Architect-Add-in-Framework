@@ -13,10 +13,12 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public abstract class DatabaseItem:DB.DatabaseItem
 	{
-		protected DatabaseItemStrategy strategy {get;private set;}
+		public DatabaseItemStrategy strategy {get;private set;}
 		protected DatabaseItem(DatabaseItemStrategy strategy)
 		{
 			this.strategy = strategy;
+			this.strategy.databaseItem = this;
+			this.strategy.onNew();
 		}
 		internal abstract Element wrappedElement {get;set;}
 		internal abstract TaggedValue traceTaggedValue {get;set;}

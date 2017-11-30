@@ -9,6 +9,6 @@ namespace EAAddinFramework.Databases.Strategy
 	/// </summary>
 	public abstract class StrategyFactory
 	{
-		public abstract DatabaseItemStrategy getStrategy<T>() where T :class, DatabaseItem;
+		public abstract DatabaseItemStrategy getStrategy<T>() where T : DatabaseItem;
 	}
 }

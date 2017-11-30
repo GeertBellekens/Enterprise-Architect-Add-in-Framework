@@ -16,7 +16,7 @@ namespace EAAddinFramework.Databases
 	{
 		internal Package _wrappedPackage;
 		internal List<Table> _tables;
-		internal List<View> _views;
+		internal List<View> _views = new List<View>();
 		private string _name;
 		private DatabaseFactory __factory;
 		internal bool compareonly{get;set;}
@@ -332,21 +332,6 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public void addView(DB.View view)
-		{
-			throw new NotImplementedException();
-		}
-public void removeView(DB.View view)
-{
-	throw new NotImplementedException();
-}
-public List<DB.View> views {
-	get {
-		throw new NotImplementedException();
-	}
-	set {
-		throw new NotImplementedException();
-	}
-}
+
 	}
 }

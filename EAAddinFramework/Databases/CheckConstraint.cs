@@ -14,15 +14,15 @@ namespace EAAddinFramework.Databases
 	public class CheckConstraint:Constraint,DB.CheckConstraint
 	{
 		private Column _column;
-		public CheckConstraint(string name, Column column , string rule,DatabaseItemStrategy strategy)
-			:base(column._ownerTable,new List<Column>{column},strategy)
+		public CheckConstraint(string name, Column column , string rule)
+			:base(column._ownerTable,new List<Column>{column},column.strategy.getStrategy<ForeignKey>())
 		{
 			this._column = column;
 			this.rule = rule;
 			this.name = name;
 		}
-		public CheckConstraint(Table ownerTable, Operation wrappedOperation,DatabaseItemStrategy strategy)
-			:base(ownerTable,wrappedOperation,strategy)
+		public CheckConstraint(Table ownerTable, Operation wrappedOperation)
+			:base(ownerTable,wrappedOperation,ownerTable.strategy.getStrategy<ForeignKey>())
 		{
 		}
 		private string _rule;

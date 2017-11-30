@@ -13,10 +13,10 @@ namespace EAAddinFramework.Databases
 	public class Index : Constraint, DB.Index
 	{
 		public Index(Table owner,Operation operation) :
-      base(owner, operation) {}
+      base(owner, operation,owner.strategy.getStrategy<Index>()) {}
 
 		public Index(Table owner, List<Column> involvedColumns) : 
-      base(owner, involvedColumns) {}
+      base(owner, involvedColumns,owner.strategy.getStrategy<Index>()) {}
 
 		public override string itemType {
 			get { return "Index"; }
