@@ -15,11 +15,11 @@ namespace EAAddinFramework.Databases
 	{
 
 		
-		public PrimaryKey(Table owner,Operation operation) : base(owner, operation)
+		public PrimaryKey(Table owner,Operation operation) : base(owner, operation,owner.strategy.getStrategy<PrimaryKey>())
 		{
 			
 		}
-		public PrimaryKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		public PrimaryKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns, owner.strategy.getStrategy<PrimaryKey>())
 		{
 			
 		}
@@ -68,9 +68,9 @@ namespace EAAddinFramework.Databases
 			}
 			return null;
 		}
-		public override void save()
+		protected override void saveMe()
 		{
-			base.save();
+			base.saveMe();
 			//loop all columns and add or remove their primary key indicator
 			foreach (Column column in this.ownerTable.columns) 
 			{

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Databases.Strategy;
 using EAAddinFramework.Utilities;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
@@ -22,13 +23,13 @@ namespace EAAddinFramework.Databases
 		internal List<Class> _logicalClasses;
 		private string _name;
 		
-		public Table(Database owner,Class wrappedClass)
+		public Table(Database owner,Class wrappedClass):base(owner.strategy.getStrategy<Table>())
 		{
 			this._wrappedClass = wrappedClass;
 			this._owner = owner;
 			this.tableOwner = _owner.defaultOwner;
 		}
-		public Table(Database owner, string name)
+		public Table(Database owner, string name):base(owner.strategy.getStrategy<Table>())
 		{
 			this._name = name;
 			this._owner = owner;
@@ -95,7 +96,7 @@ namespace EAAddinFramework.Databases
 					{
 						var ownerTag = this.wrappedElement.taggedValues
 							.FirstOrDefault( x => x.name.Equals("Owner",StringComparison.InvariantCultureIgnoreCase));
-						_tableSpace = ownerTag != null ? ownerTag.tagValue.ToString() : null;
+						_tableOwner = ownerTag != null ? ownerTag.tagValue.ToString() : null;
 					}
 				}
 				return _tableOwner ?? string.Empty;
@@ -209,7 +210,7 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 
-		public override void save()
+		protected override void saveMe()
 		{
 			if (_wrappedClass == null) 
 			{
@@ -224,7 +225,7 @@ namespace EAAddinFramework.Databases
 					_wrappedClass = this._factory._modelFactory.createNewElement<Class>(ownerPackage, this.name);
 					//TODO: provide wrapper function for gentype?
 					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
-					_wrappedClass.setStereotype("table");
+					_wrappedClass.setStereotype("EAUML::table");
 					_wrappedClass.save();
 					//set override and rename and tableSpace
 					this.isOverridden = this.isOverridden;
@@ -236,7 +237,7 @@ namespace EAAddinFramework.Databases
 				}
 				else
 				{
-					throw new Exception(string.Format("cannot save {0} because wrapped pacakge for database {1} does not exist",this.name, this.databaseOwner.name));
+					throw new Exception(string.Format("cannot save {0} because wrapped package for database {1} does not exist",this.name, this.databaseOwner.name));
 				}
 			}
 			else
@@ -265,7 +266,7 @@ namespace EAAddinFramework.Databases
 			
 			
 		}
-		public override void delete()
+		protected override void deleteMe()
 		{
 			if (_wrappedClass != null) _wrappedClass.delete();
 			//remove from the database

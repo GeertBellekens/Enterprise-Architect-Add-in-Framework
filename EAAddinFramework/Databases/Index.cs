@@ -13,10 +13,10 @@ namespace EAAddinFramework.Databases
 	public class Index : Constraint, DB.Index
 	{
 		public Index(Table owner,Operation operation) :
-      base(owner, operation) {}
+      base(owner, operation,owner.strategy.getStrategy<Index>()) {}
 
 		public Index(Table owner, List<Column> involvedColumns) : 
-      base(owner, involvedColumns) {}
+      base(owner, involvedColumns,owner.strategy.getStrategy<Index>()) {}
 
 		public override string itemType {
 			get { return "Index"; }
@@ -115,8 +115,10 @@ namespace EAAddinFramework.Databases
 			return null;
 		}
 
-    public override void save() {
-     if(this._wrappedOperation == null ) {
+    protected override void saveMe() 
+    {
+     if(this._wrappedOperation == null ) 
+     {
        this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
        this._wrappedOperation.setStereotype(this.getStereotype());
      }

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using EAAddinFramework.Databases.Strategy;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using TSF_EA=TSF.UmlToolingFramework.Wrappers.EA;
@@ -21,12 +22,12 @@ namespace EAAddinFramework.Databases
 		private List<TSF_EA.Attribute> _logicalAttributes;
 		private string _name;
 		
-		public Column(Table owner, TSF_EA.Attribute attribute)
+		public Column(Table owner, TSF_EA.Attribute attribute):base(owner.strategy.getStrategy<Column>())
 		{
 			this._ownerTable = owner;
 			this._wrappedattribute = attribute;
 		}
-		public Column(Table owner, string name)
+		public Column(Table owner, string name):base(owner.strategy.getStrategy<Column>())
 		{
 			this._ownerTable = owner;
 			this.name = name;
@@ -95,7 +96,7 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
-		public override void save()
+		protected override void saveMe()
 		{
 			//create the _wrapped attribute if needed
 			if (_wrappedattribute == null)
@@ -231,7 +232,7 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion		
 		
-		public override void delete()
+		protected override void deleteMe()
 		{
 			if (_wrappedattribute != null) _wrappedattribute.delete();
 			this.ownerTable.removeColumn(this);

@@ -18,11 +18,11 @@ namespace EAAddinFramework.Databases
 		
 		internal Table _foreignTable;
 		
-		public ForeignKey(Table owner,Operation operation):base(owner,operation)
+		public ForeignKey(Table owner,Operation operation):base(owner,operation, owner.strategy.getStrategy<ForeignKey>())
 		{
 
 		}
-		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns)
+		public ForeignKey(Table owner, List<Column> involvedColumns):base(owner, involvedColumns,owner.strategy.getStrategy<ForeignKey>())
 		{
 
 		}
@@ -116,9 +116,9 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public override void save()
+		protected override void saveMe()
 		{
-			base.save();
+			base.saveMe();
 
 			// TODO: check this, compare to Index.save, which doesn't call base.save()
 			if(this._wrappedOperation == null ) 
@@ -224,9 +224,9 @@ namespace EAAddinFramework.Databases
 
 		}
 
-		public override void delete()
+		protected override void deleteMe()
 		{
-			base.delete();
+			base.deleteMe();
 			if (this._wrappedAssociation != null) this._wrappedAssociation.delete();
 		}
 

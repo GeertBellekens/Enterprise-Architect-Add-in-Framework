@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EAAddinFramework.Databases.Strategy;
 using UML=TSF.UmlToolingFramework.UML;
-using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using DB_EA = EAAddinFramework.Databases;
 using EAAddinFramework.Utilities;
@@ -21,20 +21,20 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		private string outputName = "DB2DatabaseTransformer.complete";
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
-		public DB2DatabaseTransformer(UTF_EA.Package logicalPackage,NameTranslator nameTranslator, bool compareOnly = false):this(logicalPackage.model, nameTranslator,compareOnly)
+		public DB2DatabaseTransformer(Package logicalPackage,NameTranslator nameTranslator, StrategyFactory strategyFactory, bool compareOnly = false):this(logicalPackage.model, nameTranslator,strategyFactory,compareOnly)
 		{
 			this._logicalPackage = logicalPackage;
 		}
-		public DB2DatabaseTransformer(UTF_EA.Model model,NameTranslator nameTranslator,bool compareOnly = false):this(getFactory(model),model,nameTranslator,compareOnly)
+		public DB2DatabaseTransformer(Model model,NameTranslator nameTranslator,StrategyFactory strategyFactory,bool compareOnly = false):this(getFactory(model,strategyFactory),model,nameTranslator,compareOnly)
 		{
 		}
-		public DB2DatabaseTransformer(DatabaseFactory factory,UTF_EA.Model model,NameTranslator nameTranslator,bool compareOnly = false):base(factory,model,nameTranslator,compareOnly)
+		public DB2DatabaseTransformer(DatabaseFactory factory,Model model,NameTranslator nameTranslator,bool compareOnly = false):base(factory,model,nameTranslator,compareOnly)
 		{
 			this._externalDatabase = factory.createDatabase("external");
 		}
-		public static DatabaseFactory getFactory(UTF_EA.Model model)
+		public static DatabaseFactory getFactory(Model model, StrategyFactory strategyFactory)
 		{
-			return DB_EA.DatabaseFactory.getFactory("DB2",model);
+			return DB_EA.DatabaseFactory.getFactory("DB2",model, strategyFactory);
 		}
 
 		#region implemented abstract members of EADatabaseItemTransformer
@@ -57,14 +57,14 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			}
 		}
 
-		protected override void addTable(UTF_EA.Class classElement)
+		protected override void addTable(Class classElement)
 		{
 				addDB2Table(classElement);
 		}
-		protected DB2TableTransformer addDB2Table(UTF_EA.AssociationEnd associationEnd)
+		protected DB2TableTransformer addDB2Table(AssociationEnd associationEnd)
 		{
 			
-			DB2TableTransformer transformer = addDB2Table(associationEnd.type as UTF_EA.Class);
+			DB2TableTransformer transformer = addDB2Table(associationEnd.type as Class);
 			if (transformer == null)
 			{
 				transformer = this.tableTransformers.OfType<DB2TableTransformer>().FirstOrDefault( x => x.logicalClass.Equals(associationEnd.type));
@@ -75,7 +75,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 			}
 			return transformer;
 		}
-		protected DB2TableTransformer addDB2Table(UTF_EA.Class classElement)
+		protected DB2TableTransformer addDB2Table(Class classElement)
 		{
 			DB2TableTransformer transformer = null;
 			if (classElement.owningPackage.Equals(this.logicalPackage))
@@ -187,7 +187,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 								var subTabletransformer = this.tableTransformers.FirstOrDefault(x => x.table.logicalElements.Any(y => subclass.Equals(y)));
 								//get corresponding columns from subtable
 								var correspondingsubColumns = getCorrespondingColumn(foreignKeyTransformer.foreignKey.involvedColumns,subTabletransformer.table);
-								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,(UTF_EA.AssociationEnd)foreignKeyTransformer.logicalAssociationEnd,this._nameTranslator);
+								var newForeignKeyTransfomer = new DB2ForeignKeyTransformer((Table)foreignKeyTransformer.foreignKey.ownerTable ,correspondingsubColumns,(DB2TableTransformer)subTabletransformer,(AssociationEnd)foreignKeyTransformer.logicalAssociationEnd,this._nameTranslator);
 							}
 						}
 						//delete the original foereign key

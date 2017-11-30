@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Databases.Strategy;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using UML=TSF.UmlToolingFramework.UML;
@@ -19,12 +20,12 @@ namespace EAAddinFramework.Databases
 		internal string _name;
 		protected List<Column> _involvedColumns;
 
-		public Constraint(Table owner,Operation operation)
+		public Constraint(Table owner,Operation operation, DatabaseItemStrategy strategy):base(strategy)
 		{
 			_owner = owner;
 			_wrappedOperation = operation;
 		}
-		public Constraint(Table owner, List<Column> involvedColumns)
+		public Constraint(Table owner, List<Column> involvedColumns, DatabaseItemStrategy strategy):base(strategy)
 		{
 			_owner = owner;
 			_involvedColumns = involvedColumns;
@@ -82,7 +83,7 @@ namespace EAAddinFramework.Databases
 
 		internal abstract override TaggedValue traceTaggedValue {get;set;}
 		#endregion
-		public override void save()
+		protected override void saveMe()
 		{
 			if (this._wrappedOperation == null)
 			{
@@ -164,7 +165,7 @@ namespace EAAddinFramework.Databases
 		protected abstract string getStereotype();
 
 
-		public override void delete()
+		protected override void deleteMe()
 		{
 			if (this._wrappedOperation != null) this._wrappedOperation.delete();
 			this.ownerTable.removeConstraint(this);

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Databases.Strategy;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace EAAddinFramework.Databases
 	{
 		private string _type;
 		private Model _model;
+		private StrategyFactory _strategyFactory;
 		public string type 
 		{
 			get { return _type;}
@@ -42,11 +44,12 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		/// <summary>
-		/// adds a factory to the list of possible database factories
+		/// adds a factory to the list of possible database factories or return the existing factory for the given type and model
 		/// </summary>
 		/// <param name="type">the type of the factory</param>
-		/// <param name="datatypes">the base datatypes for this factory</param>
-		public static DatabaseFactory getFactory(string type, Model model)
+		/// <param name = "model">the model for this factory</param>
+		/// <param name = "strategyFactory">the strategy for this factory</param>
+		public static DatabaseFactory getFactory(string type, Model model,StrategyFactory strategyFactory)
 		{
 			
 			if (!modelFactories.ContainsKey(model))
@@ -57,7 +60,7 @@ namespace EAAddinFramework.Databases
 			var factories = modelFactories[model];
 			if (!factories.ContainsKey(type))
 			{
-				DatabaseFactory factory = new DatabaseFactory(type, model);
+				DatabaseFactory factory = new DatabaseFactory(type, model, strategyFactory);
 				factories.Add(type, factory);
 			}
 			return factories[type];
@@ -80,11 +83,12 @@ namespace EAAddinFramework.Databases
 				return modelFactory as Factory;
 			}
 		}
-		private DatabaseFactory(string type, Model model)
+		private DatabaseFactory(string type, Model model, StrategyFactory strategyFactory)
 		{
 			this._type = type;
 			this._model = model;
 			this._baseDataTypes = getBaseDataTypes(type,model);
+			this._strategyFactory = strategyFactory;
 		}
 		public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
 		{
@@ -108,11 +112,11 @@ namespace EAAddinFramework.Databases
 		/// <returns>the created database</returns>
 		public Database createDataBase(Package package,bool compareOnly = false)
 		{
-			return new Database(package, this, compareOnly);
+			return new Database(package, this, this._strategyFactory.getStrategy<Database>(),compareOnly);
 		}
 		public Database createDatabase(string name)
 		{
-			return new Database(name, this);
+			return new Database(name, this, this._strategyFactory.getStrategy<Database>());
 		}
 		public DataType createDataType(string compositeName)
 		{

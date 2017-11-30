@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using EAAddinFramework.Databases.Strategy;
 using DB=DatabaseFramework;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
@@ -15,16 +16,17 @@ namespace EAAddinFramework.Databases
 	{
 		internal Package _wrappedPackage;
 		internal List<Table> _tables;
+		internal List<View> _views = new List<View>();
 		private string _name;
 		private DatabaseFactory __factory;
 		internal bool compareonly{get;set;}
-		public Database(Package package,DatabaseFactory factory,bool compareOnly = false)
+		public Database(Package package,DatabaseFactory factory, DatabaseItemStrategy strategy,bool compareOnly = false):base(strategy)
 		{
 			this._wrappedPackage = package;
 			this.__factory = factory;
 			this.compareonly = compareOnly;
 		}
-		public Database(string name,DatabaseFactory factory)
+		public Database(string name,DatabaseFactory factory, DatabaseItemStrategy strategy):base(strategy)
 		{
 			this._name = name;
 			this.__factory = factory;
@@ -152,12 +154,12 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#endregion
-		public override void save()
+		protected override void saveMe()
 		{
 			if (this._wrappedPackage != null) this._wrappedPackage.save();
 			//TODO: figure out some way to get a new database to be saved
 		}
-		public override void delete()
+		protected override void deleteMe()
 		{
 			if (this._wrappedPackage != null) this._wrappedPackage.delete();
 		}
@@ -215,7 +217,25 @@ namespace EAAddinFramework.Databases
 				}
 			}
 		}
-
+		
+		
+		public void addView(DB.View view)
+		{
+			this._views.Add((View)view);
+		}
+		public void removeView(DB.View view)
+		{
+			this._views.Remove((View)view);
+		}
+		public List<DB.View> views 
+		{
+			get 
+			{
+				return _views.Cast<DB.View>().ToList();
+			}
+			set {throw new NotImplementedException();}
+		}
+		
 		public List<DB.Table> tables 
 		{
 			get 
@@ -312,21 +332,6 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public void addView(DB.View view)
-		{
-			throw new NotImplementedException();
-		}
-public void removeView(DB.View view)
-{
-	throw new NotImplementedException();
-}
-public List<DB.View> views {
-	get {
-		throw new NotImplementedException();
-	}
-	set {
-		throw new NotImplementedException();
-	}
-}
+
 	}
 }
