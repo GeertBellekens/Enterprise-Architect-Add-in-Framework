@@ -312,5 +312,21 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
+		public void addView(DB.View view)
+		{
+			throw new NotImplementedException();
+		}
+public void removeView(DB.View view)
+{
+	throw new NotImplementedException();
+}
+public List<DB.View> views {
+	get {
+		throw new NotImplementedException();
+	}
+	set {
+		throw new NotImplementedException();
+	}
+}
 	}
 }
