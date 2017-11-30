@@ -11,6 +11,14 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 	public class DB2TableStrategy:DB2Strategy
 	{
 		View linkedView {get;set;}
+		bool isNew = false;
+		Table table 
+		{
+			get
+			{
+				return (Table)this.databaseItem;
+			}
+		}
 		public DB2TableStrategy(StrategyFactory factory):base(factory) {}
 
 		public override void beforeSave()
@@ -18,27 +26,36 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 			//new table
 			if (databaseItem.wrappedElement == null)
 			{
+				this.isNew = true;
 				//create new view
-				linkedView = new View((Database)this.databaseItem.owner,this.getViewName() ,factory.getStrategy<View>());
+				linkedView = new View((Database)table.databaseOwner,this.getViewName() ,factory.getStrategy<View>());
 				this.linkedView.definition = getViewDefinition();
+			}
+			else
+			{
+				this.isNew = false;
 			}
 		}
 		public override void afterSave()
 		{
-			if (this.linkedView != null)
+			if (isNew)
 			{
-				this.linkedView.save();
+				if (this.linkedView != null)
+				{
+					this.linkedView.save();
+				}
 			}
 		}
 		private string getViewName()
 		{
-			var nameStringBuilder = new StringBuilder(this.databaseItem.name);
+			var nameStringBuilder = new StringBuilder(this.table.name);
 			nameStringBuilder[2] = 'V';
 			return nameStringBuilder.ToString();
 		}
 		private string getViewDefinition()
 		{
-			return "select * from " + ((Table)this.databaseItem).tableOwner + "." + this.databaseItem.name;
+			return "select * from " + table.tableOwner + "." + this.table.name;
 		}
+
 	}
 }

@@ -115,17 +115,12 @@ namespace EAAddinFramework.Databases
 			return null;
 		}
 
-    protected override void saveMe() 
-    {
-     if(this._wrappedOperation == null ) 
-     {
-       this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
-       this._wrappedOperation.setStereotype(this.getStereotype());
-     }
-     this._wrappedOperation.save();
-     this.isUnique    = this.isUnique;
-     this.isClustered = this.isClustered;
-   }
+		protected override void saveMe() 
+		{
+			base.saveMe();
+		    this.isUnique    = this.isUnique;
+		    this.isClustered = this.isClustered;
+		}
 
 		internal override void createTraceTaggedValue()
 		{

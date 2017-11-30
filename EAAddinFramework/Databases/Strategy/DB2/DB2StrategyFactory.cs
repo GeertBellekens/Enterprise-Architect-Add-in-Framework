@@ -29,6 +29,14 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 			{
 				return new DB2TableStrategy(this);
 			}
+			if( typeof(PrimaryKey).IsAssignableFrom(TType))
+			{
+				return new DB2PrimaryKeyStrategy (this);
+			}
+			if( typeof(ForeignKey).IsAssignableFrom(TType))
+			{
+				return new DB2ForeignKeyStrategy(this);
+			}
 			else
 			{
 				return new DB2Strategy(this);
