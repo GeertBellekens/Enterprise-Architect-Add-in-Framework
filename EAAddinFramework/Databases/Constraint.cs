@@ -107,7 +107,7 @@ namespace EAAddinFramework.Databases
 					{
 						{
 							ParameterWrapper parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name) as ParameterWrapper;
-							parameter.type = ((Column)column)._wrappedattribute.type;
+							parameter.type =  this._wrappedOperation.model.factory.createPrimitiveType(column.type.name);
 							parameter.position = parameterPosition;
 							//TODO: this would be nicer if we could keep the parameters in memory and not save them directly
 							parameter.save();
