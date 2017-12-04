@@ -55,13 +55,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			get 
 			{
-				return this._opaqueExpression.bodies.FirstOrDefault();
+				return this.wrappedConstraint != null ? 
+						this.wrappedConstraint.Notes : 
+						string.Empty;
 			}
 			set 
 			{
 				throw new NotImplementedException();
 			}
 		}
+		internal string convertFromEANotes( string newFormat)
+	    {
+	    	return this.model.convertFromEANotes(this.notes,newFormat);
+	    }
+	    internal void convertToEANotes(string externalNotes, string externalFormat)
+	    {
+	    	this.notes = this.model.convertToEANotes(externalNotes,externalFormat);
+	    }
 		public override string guid 
 		{
 			get 

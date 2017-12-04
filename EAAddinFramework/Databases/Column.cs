@@ -115,6 +115,22 @@ namespace EAAddinFramework.Databases
 					//not nullable columns that are not part of a Primary key get "DEFAULT" as default value, which results in "WITH DEFAULT" in the DDL
 					this.initialValue = "DEFAULT"; //TODO: find a better way to define "DEFAULT" instead of hardcoding.
 				}
+				if (this.logicalAttribute!= null)
+				{
+					var attributeType = logicalAttribute.type as TSF_EA.ElementWrapper;
+					if (attributeType != null)
+					{
+						//check if attributeType as any constraints
+						var typeConstraint = attributeType.constraints.FirstOrDefault();
+						if (typeConstraint != null)
+						{
+							//add a check constraint
+							var checkConstraint = new CheckConstraint(this.name, this, typeConstraint.convertFromEANotes("TXT").Replace("<Column>", this.name));
+							//save?
+							checkConstraint.save();
+						}
+					}
+				}					    
 			}
 			if (_wrappedattribute != null)
 			{
@@ -146,8 +162,6 @@ namespace EAAddinFramework.Databases
 				this.isRenamed = this.isRenamed;
 				//logical attribute tag value
 				if (traceTaggedValue == null) createTraceTaggedValue();
-				
-        
 			}
 			//save the columnn name in the alias
 			if (logicalAttribute != null) logicalAttribute.save(); 

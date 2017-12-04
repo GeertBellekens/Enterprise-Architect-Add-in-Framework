@@ -15,14 +15,14 @@ namespace EAAddinFramework.Databases
 	{
 		private Column _column;
 		public CheckConstraint(string name, Column column , string rule)
-			:base(column._ownerTable,new List<Column>{column},column.strategy.getStrategy<ForeignKey>())
+			:base(column._ownerTable,new List<Column>{column},column.strategy.getStrategy<CheckConstraint>())
 		{
 			this._column = column;
 			this.rule = rule;
 			this.name = name;
 		}
 		public CheckConstraint(Table ownerTable, Operation wrappedOperation)
-			:base(ownerTable,wrappedOperation,ownerTable.strategy.getStrategy<ForeignKey>())
+			:base(ownerTable,wrappedOperation,ownerTable.strategy.getStrategy<CheckConstraint>())
 		{
 		}
 		private string _rule;
@@ -50,7 +50,7 @@ namespace EAAddinFramework.Databases
 		}
 		protected override void saveMe()
 		{
-			base.save();
+			base.saveMe();
 			if (this._wrappedOperation != null)
 			{
 				this.rule = this.rule;

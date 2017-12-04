@@ -274,7 +274,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
     
     public UML.Classes.Kernel.DataType datatype {
-      get { throw new NotImplementedException(); }
+	  get { return this.type as UML.Classes.Kernel.DataType; }
       set { throw new NotImplementedException(); }
     }
     
