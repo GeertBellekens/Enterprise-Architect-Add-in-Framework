@@ -141,8 +141,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 
     public UML.Classes.Kernel.Association owningAssociation {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+		get { return this.association;}
+		set { this.association = value;}
     }
 
     public UML.Classes.Kernel.Association association {
