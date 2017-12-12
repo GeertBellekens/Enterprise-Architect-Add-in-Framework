@@ -1067,7 +1067,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		get
 		{
 			object item ;
-			this.wrappedModel.GetTreeSelectedItem(out item);
+			try
+			{
+				this.wrappedModel.GetTreeSelectedItem(out item);
+			}
+			catch(COMException)
+			{
+				//something went wrong (Can't find matching ID)
+				return null;
+			}
 			global::EA.Diagram diagram = item as global::EA.Diagram;
 			if (diagram != null)
 			{

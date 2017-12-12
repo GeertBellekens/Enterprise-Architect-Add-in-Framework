@@ -45,6 +45,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 			this.initialize(package);
 		}
+		public List<T> getOwnedElementWrappers<T>( string stereotype, bool recursive) where T:ElementWrapper
+		{
+			string packageIDString = recursive ? this.getPackageTreeIDString() : this.packageID.ToString();
+			string getGetOwnedElements = "select * from t_object o" +
+										" inner join t_xref x on x.Client = o.ea_guid " +
+										" where o.Object_Type = '" + typeof(T).Name  + "' " +
+										" and o.Package_ID in (" + packageIDString + ") " +
+										" and x.Name = 'Stereotypes' " +
+										" and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
+			return model.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
+		}
 		public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
 		{
 			global::EA.Element foundElement = package.Element;
