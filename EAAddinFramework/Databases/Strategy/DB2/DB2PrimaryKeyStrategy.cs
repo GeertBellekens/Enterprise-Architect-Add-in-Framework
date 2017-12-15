@@ -25,7 +25,7 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 		}
 		private string getIndexName()
 		{
-			return "GBX" + primaryKey.ownerTable.name.Substring(3,3) + "1";
+			return "GBX1" + primaryKey.ownerTable.name.Substring(3,5);
 		}
 	}
 }

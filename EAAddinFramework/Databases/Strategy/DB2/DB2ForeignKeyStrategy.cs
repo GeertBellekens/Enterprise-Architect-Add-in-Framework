@@ -26,7 +26,7 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 		private string getIndexName()
 		{
 			int indexCounter = foreignKey.ownerTable.constraints.OfType<Index>().Count();
-			return "GBX" + foreignKey.ownerTable.name.Substring(3,3) + indexCounter;
+			return "GBX" + indexCounter + foreignKey.ownerTable.name.Substring(3,5);
 		}
 		
 	}
