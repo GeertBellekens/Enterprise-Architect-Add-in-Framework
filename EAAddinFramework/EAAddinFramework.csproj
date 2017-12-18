@@ -102,6 +102,7 @@
     <Compile Include="Databases\PrimaryKey.cs" />
     <Compile Include="Databases\Index.cs" />
     <Compile Include="Databases\Strategy\DatabaseItemStrategy.cs" />
+    <Compile Include="Databases\Strategy\DB2\DB2ColumnStrategy.cs" />
     <Compile Include="Databases\Strategy\DB2\DB2ForeignKeyStrategy.cs" />
     <Compile Include="Databases\Strategy\DB2\DB2PrimaryKeyStrategy.cs" />
     <Compile Include="Databases\Strategy\DB2\DB2Strategy.cs" />

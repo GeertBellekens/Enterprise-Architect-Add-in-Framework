@@ -57,7 +57,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				}
 				catch(Exception)
 				{
-					Logger.logError(string.Format("Cannot create multiplicity based on string '{0}'",value));
+					throw new FormatException(string.Format("Cannot create multiplicity based on string '{0}'",value));
 				}
 			}
 		}

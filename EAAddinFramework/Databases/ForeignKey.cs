@@ -178,7 +178,7 @@ namespace EAAddinFramework.Databases
 		#region implemented abstract members of DatabaseItem
 
 
-		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		protected override DatabaseItem createAsNew(DatabaseItem owner, bool save = true)
 		{
 			Table newTable = owner as Table;
 			Database existingDatabase = owner as Database;
@@ -196,6 +196,7 @@ namespace EAAddinFramework.Databases
 			{
 				var newForeignKey = new ForeignKey(newTable,this._involvedColumns);
 				newForeignKey.name = name;
+				newForeignKey.isNew = true;
 				newForeignKey._foreignTable = (Table)newForeignTable;
 				newForeignKey._logicalAssociation = _logicalAssociation;
 				this.setLogicalName(save);

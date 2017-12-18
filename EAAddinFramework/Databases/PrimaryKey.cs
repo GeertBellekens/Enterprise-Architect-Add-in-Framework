@@ -48,7 +48,7 @@ namespace EAAddinFramework.Databases
 				//no nothing, you cannot set the logical element directly but you have to go through the involved columns.
 			}
 		}
-		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		protected override DatabaseItem createAsNew(DatabaseItem owner, bool save = true)
 		{
 			Table newTable = owner as Table;
 			Database existingDatabase = owner as Database;
@@ -61,6 +61,7 @@ namespace EAAddinFramework.Databases
 			{
 				var newPrimaryKey = new PrimaryKey(newTable,this._involvedColumns);
 				newPrimaryKey.name = name;
+				newPrimaryKey.isNew = true;
 				//newPrimaryKey.isOverridden = this.isOverridden;
 				newPrimaryKey.derivedFromItem = this;
 				if (save) newPrimaryKey.save();

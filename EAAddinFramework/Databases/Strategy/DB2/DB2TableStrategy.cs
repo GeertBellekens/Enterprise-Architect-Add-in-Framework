@@ -11,7 +11,6 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 	public class DB2TableStrategy:DB2Strategy
 	{
 		View linkedView {get;set;}
-		bool isNew = false;
 		Table table 
 		{
 			get
@@ -24,21 +23,16 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 		public override void beforeSave()
 		{
 			//new table
-			if (databaseItem.wrappedElement == null)
+			if (databaseItem.isNew)
 			{
-				this.isNew = true;
 				//create new view
 				linkedView = new View((Database)table.databaseOwner,this.getViewName() ,factory.getStrategy<View>());
 				this.linkedView.definition = getViewDefinition();
 			}
-			else
-			{
-				this.isNew = false;
-			}
 		}
 		public override void afterSave()
 		{
-			if (isNew)
+			if (databaseItem.isNew)
 			{
 				if (this.linkedView != null)
 				{

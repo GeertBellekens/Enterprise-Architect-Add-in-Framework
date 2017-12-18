@@ -44,7 +44,7 @@ namespace EAAddinFramework
 		/// Process the given exception by logging it to the log and showing a message box to the user
 		/// </summary>
 		/// <param name="e">the exception</param>
-		static void processException(Exception e)
+		public static void processException(Exception e)
 		{
 			string exceptionInfo = "An unhandled exception has occured." + Environment.NewLine
 	                     +"Error Message: " + e.Message + Environment.NewLine

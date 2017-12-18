@@ -95,7 +95,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		protected override DatabaseItem createAsNew(DatabaseItem owner, bool save = true)
 		{
 			Table newTable = owner as Table;
 			Database existingDatabase = owner as Database;
@@ -108,6 +108,7 @@ namespace EAAddinFramework.Databases
 			if (newTable != null )
 			{
 				var index = new Index(newTable, this._involvedColumns);
+				index.isNew = true;
 				index.name = name;
 				if (save) index.save();
 				return index;

@@ -37,6 +37,10 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 			{
 				return new DB2ForeignKeyStrategy(this);
 			}
+			if( typeof(Column).IsAssignableFrom(TType))
+			{
+				return new DB2ColumnStrategy(this);
+			}
 			else
 			{
 				return new DB2Strategy(this);

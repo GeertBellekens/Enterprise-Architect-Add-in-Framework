@@ -119,7 +119,7 @@ namespace EAAddinFramework.Databases
 		}
 
 		#region implemented abstract members of DatabaseItem
-		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		protected override DatabaseItem createAsNew(DatabaseItem owner, bool save = true)
 		{
 			//TODO: figure out how to handle creation of new databases
 			return null;

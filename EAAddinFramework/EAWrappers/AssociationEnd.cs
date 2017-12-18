@@ -394,13 +394,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	get
     	{
-    		if (this.wrappedAssociationEnd.Cardinality.Length > 0)
+    		try
     		{
-    			return new Multiplicity(this.wrappedAssociationEnd.Cardinality);
+	    		if (this.wrappedAssociationEnd.Cardinality.Length > 0)
+	    		{
+	    			return new Multiplicity(this.wrappedAssociationEnd.Cardinality);
+	    		}
+	    		else
+	    		{
+	    			return new Multiplicity(defaultMultiplicity);
+	    		}
     		}
-    		else
+    		catch(FormatException e)
     		{
-    			return new Multiplicity(defaultMultiplicity);
+    			throw new FormatException (string.Format("Error creating Multiplicity for AssociationEnd on association between {0} and {1} \n {2}"
+    			                                         ,((Association)this.association).source.name, ((Association)this.association).target.name,e.Message));
     		}
     	}
     	set

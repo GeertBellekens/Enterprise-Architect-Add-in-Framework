@@ -27,6 +27,7 @@ namespace EAAddinFramework.Databases
 		internal bool? _isRenamed;
 		string _renamedName = string.Empty;
 		public bool isEqualDirty {get;set;}
+		public bool isNew{get;protected set;}
 		
 		public string _logicalName;
 		public string logicalName 
@@ -157,7 +158,7 @@ namespace EAAddinFramework.Databases
 		{
 			get 
 			{
-				//default implmementation
+				//default implementation
 				return 0;
 			}
 			set 
@@ -166,10 +167,18 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		public DB.DatabaseItem derivedFromItem {get;set;}
-		public abstract DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true);
+		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		{
+			//create as new
+			var newItem = createAsNew((DatabaseItem)owner, save);
+			//return
+			return newItem;
+		}
+		protected abstract DatabaseItem createAsNew(DatabaseItem owner, bool save = true);
 
 		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, string newName, bool save = true)
 		{
+
 			//temporarily rename this item to the new name
 			string originalName = this.name;
 			this.name = newName;

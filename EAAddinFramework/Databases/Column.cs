@@ -108,13 +108,6 @@ namespace EAAddinFramework.Databases
 				//now the wrappedClass should exist. if not then we have a problem
 				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable._wrappedClass,this.name);
 
-				if (this.isNotNullable
-				    && this.ownerTable.primaryKey != null
-				    && this.ownerTable.primaryKey.involvedColumns.Contains(this))
-				{
-					//not nullable columns that are not part of a Primary key get "DEFAULT" as default value, which results in "WITH DEFAULT" in the DDL
-					this.initialValue = "DEFAULT"; //TODO: find a better way to define "DEFAULT" instead of hardcoding.
-				}
 				if (this.logicalAttribute!= null)
 				{
 					var attributeType = logicalAttribute.type as TSF_EA.ElementWrapper;
@@ -205,7 +198,7 @@ namespace EAAddinFramework.Databases
 		}
 		#endregion
 		#region implemented abstract members of DatabaseItem
-		public override DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
+		protected override DatabaseItem createAsNew(DatabaseItem owner, bool save = true)
 		{
 			Table newTable = owner as Table;
 			Database existingDatabase = owner as Database;
@@ -217,6 +210,7 @@ namespace EAAddinFramework.Databases
 			if (newTable != null)
 			{
 				var newColumn = new Column(newTable,this.name);
+				newColumn.isNew = true;
 				newColumn.isNotNullable = isNotNullable;
 				newColumn.type = type;
 				newColumn.logicalAttribute = logicalAttribute;

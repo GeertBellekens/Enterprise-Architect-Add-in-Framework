@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
+using TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace EAAddinFramework.Databases.Strategy.DB2
 {
@@ -22,6 +23,16 @@ namespace EAAddinFramework.Databases.Strategy.DB2
 				pkIndex.isClustered = true;
 				pkIndex.save();
 			}
+			//check if any of the columns still have the DEFAULT initial value while beeing new
+			foreach (var column in primaryKey.involvedColumns.OfType<Column>()
+			         .Where(x => x.isNew 
+			                && x.isNotNullable
+			               && x.initialValue == "DEFAULT"))
+			{
+				column.initialValue = string.Empty;
+				column.save();
+			}
+
 		}
 		private string getIndexName()
 		{
