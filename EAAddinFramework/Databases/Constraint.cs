@@ -106,8 +106,8 @@ namespace EAAddinFramework.Databases
 					foreach (var column in _involvedColumns) 
 					{
 						{
-							ParameterWrapper parameter = this._wrappedOperation.model.factory.createNewElement<Parameter>(this._wrappedOperation, column.name) as ParameterWrapper;
-							parameter.type =  this._wrappedOperation.model.factory.createPrimitiveType(column.type.name);
+							ParameterWrapper parameter = this._wrappedOperation.EAModel.factory.createNewElement<Parameter>(this._wrappedOperation, column.name) as ParameterWrapper;
+							parameter.type =  this._wrappedOperation.EAModel.factory.createPrimitiveType(column.type.name);
 							parameter.position = parameterPosition;
 							//TODO: this would be nicer if we could keep the parameters in memory and not save them directly
 							parameter.save();

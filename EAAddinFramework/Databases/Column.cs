@@ -459,7 +459,7 @@ namespace EAAddinFramework.Databases
 		{
 			if (this._wrappedattribute != null)
 			{
-				this._wrappedattribute.type = this._wrappedattribute.model.factory.createPrimitiveType(_type.type.name);
+				this._wrappedattribute.type = this._wrappedattribute.EAModel.factory.createPrimitiveType(_type.type.name);
 				if (this.type.type.hasPrecision)
 				{
 					this._wrappedattribute.precision = _type.length;

@@ -76,7 +76,7 @@ namespace EAAddinFramework.WorkTracking
 											where tv.[Property] = 'TFS_ID'
 											and tv.[Value] = '"+ this.ID +"'";
 			//TODO: get elements by query
-			var elementToWrap = ownerPackage.model.getElementWrappersByQuery(sqlGetExistingElement).FirstOrDefault();
+			var elementToWrap = ownerPackage.EAModel.getElementWrappersByQuery(sqlGetExistingElement).FirstOrDefault();
 			if (elementToWrap == null)
 			{
 				//element does not exist, create a new one

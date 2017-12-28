@@ -28,7 +28,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         }
 		public override void open()
 		{
-			Diagram diagram = this.model.getDiagramByID(this.wrappedConnector.DiagramID);
+			Diagram diagram = this.EAModel.getDiagramByID(this.wrappedConnector.DiagramID);
 			if (diagram != null)
 			{
 				diagram.open();
@@ -62,7 +62,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
             	}
             	string sqlUpdatePdata1 = "update t_connector set PDATA1 = '"+pdata1+"' ,PDATA3 = '"+pdata3+"'  ,PDATA4 ='0' "
             							+" where ea_guid = '"+this.uniqueID+"'";
-            	this.model.executeSQL(sqlUpdatePdata1);
+            	this.EAModel.executeSQL(sqlUpdatePdata1);
             }
         }
 
@@ -127,7 +127,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                 {
                     if (tag.Name == "operation_guid")
                     {
-                        returnedOperation = this.model.getOperationByGUID(tag.Value);
+                        returnedOperation = this.EAModel.getOperationByGUID(tag.Value);
                     }
                 }
                 return returnedOperation;
@@ -142,7 +142,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         {
             //messages only occur on sequence diagrams
             HashSet<T> diagrams = new HashSet<T>();
-            T diagram = this.model.getDiagramByID(this.wrappedConnector.DiagramID) as T;
+            T diagram = this.EAModel.getDiagramByID(this.wrappedConnector.DiagramID) as T;
             if (null != diagram)
                 diagrams.Add(diagram);
 

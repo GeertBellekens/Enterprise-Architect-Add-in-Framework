@@ -126,7 +126,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 				}
 			}
 			//add the direct owned workitems
-			foreach (var workitemElement in ((Package)ownerPackage).model.getElementWrappersByQuery(getWorkitemsSQL))
+			foreach (var workitemElement in ((Package)ownerPackage).EAModel.getElementWrappersByQuery(getWorkitemsSQL))
 			{
 				foundWorkItems.Add( new TFSWorkItem(this, workitemElement));
 			}
@@ -286,7 +286,7 @@ namespace EAAddinFramework.WorkTracking.TFS
 				DialogResult dialogResponse;
 				if (this.wrappedPackage != null) 
 				{
-					dialogResponse = getAuthorizationForm.ShowDialog(this.wrappedPackage.model.mainEAWindow);
+					dialogResponse = getAuthorizationForm.ShowDialog(this.wrappedPackage.EAModel.mainEAWindow);
 				}
 				else
 				{

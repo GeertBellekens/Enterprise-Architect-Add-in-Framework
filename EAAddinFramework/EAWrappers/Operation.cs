@@ -46,7 +46,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
 	public Parameter addOwnedParameter(string name)
 	{
-		return this.model.factory.createElement(this.wrappedOperation.Parameters.AddNew(name, "Parameter")) as Parameter;
+		return this.EAModel.factory.createElement(this.wrappedOperation.Parameters.AddNew(name, "Parameter")) as Parameter;
 	}
 	public string code
 	{
@@ -84,7 +84,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
       {
       	if (_owner == null)
       	{
-      		_owner = this.model.getElementWrapperByID( this.wrappedOperation.ParentID);
+      		_owner = this.EAModel.getElementWrapperByID( this.wrappedOperation.ParentID);
       	}
       	return _owner;
       }
@@ -96,7 +96,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get {
-        return ((Factory)this.model.factory).createStereotypes
+        return ((Factory)this.EAModel.factory).createStereotypes
           ( this, this.wrappedOperation.StereotypeEx );
       }
       set { throw new NotImplementedException(); }
@@ -130,7 +130,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public UML.Classes.Kernel.Type type {
       get {
         ParameterReturnType returnParameter =
-          ((Factory)this.model.factory).createEAParameterReturnType(this);
+          ((Factory)this.EAModel.factory).createEAParameterReturnType(this);
         return returnParameter != null ? returnParameter.type : null;
       }
       set { throw new NotImplementedException(); }
@@ -166,12 +166,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         // get the regular parameters
         HashSet<UML.Classes.Kernel.Parameter> parameters = 
           new HashSet<UML.Classes.Kernel.Parameter>
-          ( this.model.factory.createElements
+          ( this.EAModel.factory.createElements
             (this.wrappedOperation.Parameters)
             .Cast<UML.Classes.Kernel.Parameter>() );
         // get the returntype
         ParameterReturnType returntype =
-          ((Factory)this.model.factory).createEAParameterReturnType(this);
+          ((Factory)this.EAModel.factory).createEAParameterReturnType(this);
         if( returntype != null ) {
           parameters.Add(returntype);
         }
@@ -263,7 +263,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 			HashSet<UML.CommonBehaviors.BasicBehaviors.Behavior> behaviors = new HashSet<TSF.UmlToolingFramework.UML.CommonBehaviors.BasicBehaviors.Behavior>();
 			// the Behavior property of an operation either contains some text, or a GUID of a Behavior element.
 			// we try to find the element 
-			EA.ElementWrapper behavior = this.model.getElementWrapperByGUID (this.wrappedOperation.Behavior);
+			EA.ElementWrapper behavior = this.EAModel.getElementWrapperByGUID (this.wrappedOperation.Behavior);
 			if (behavior != null && behavior is UML.CommonBehaviors.BasicBehaviors.Behavior) behaviors.Add((UML.CommonBehaviors.BasicBehaviors.Behavior)behavior);
 			return behaviors;
 		}
@@ -293,7 +293,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 +@" and ((c.Start_Object_ID = o.Object_ID and c.End_Object_ID <> o.Object_ID)
     or (c.Start_Object_ID <> o.Object_ID and c.End_Object_ID = o.Object_ID))";
-			return this.model.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
+			return this.EAModel.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
 		}
 		set { base.relationships = value; }
 	}
@@ -318,7 +318,7 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
                 and ot.ElementID = " + this.wrappedOperation.MethodID;
            // return this.model.getRelationsFromQuery(sqlQuery).Cast<UMLMessage>().ToList();
             HashSet<UML.Interactions.BasicInteractions.Message> returnedMessages = new HashSet<UML.Interactions.BasicInteractions.Message>();
-           foreach (Message message in this.model.getRelationsByQuery(sqlCallingMessages).Cast<Message>().ToList())
+           foreach (Message message in this.EAModel.getRelationsByQuery(sqlCallingMessages).Cast<Message>().ToList())
            {
                if (!returnedMessages.Contains(message))
                {
@@ -339,7 +339,7 @@ and c.StyleEx like '%LF_P="+this.wrappedOperation.MethodGUID+"%'"
 			inner join t_object a on op.ea_guid = a.Classifier_guid
 			where op.OperationID = " +this.wrappedOperation.MethodID;
     	HashSet<UML.Actions.BasicActions.CallOperationAction> callOperationActions = new HashSet<UML.Actions.BasicActions.CallOperationAction>();
-    	foreach (ElementWrapper callOperationAction in this.model.getElementWrappersByQuery(sqlCallOperationActions)) 
+    	foreach (ElementWrapper callOperationAction in this.EAModel.getElementWrappersByQuery(sqlCallOperationActions)) 
     	{
     		if (callOperationAction is UML.Actions.BasicActions.CallOperationAction)
     		{

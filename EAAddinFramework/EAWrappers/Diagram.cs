@@ -694,8 +694,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         /// <param name="imagePath">path where to save the file</param>
 		public void saveImageToFile(string imagePath)
 		{
-			this.model.wrappedModel.GetProjectInterface().PutDiagramImageToFile(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(this.uniqueID)
+			//lets try the cached image first GetDiagramImageAndMap only works in version 13 (1308?)
+//			if (! this.model.wrappedModel.GetProjectInterface().GetDiagramImageAndMap(this.uniqueID,imagePath))	//for some bizar reason this operation takes the regular GUID.
+//			{
+				//only do this if the cache version doesn't work
+				this.model.wrappedModel.GetProjectInterface().PutDiagramImageToFile(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(this.uniqueID)
 			                                                                    ,imagePath + "\\" + this.uniqueID + ".png",1);
+//			}
 		}
   }
 }

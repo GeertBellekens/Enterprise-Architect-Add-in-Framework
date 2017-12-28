@@ -40,7 +40,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public HashSet<UML_SM.Transition> outgoings  
 		{ 
 			get {
-				return ((Factory)this.model.factory).createOutgoingTransitions(this);
+				return ((Factory)this.EAModel.factory).createOutgoingTransitions(this);
 			}
 			set {
 				throw new NotImplementedException();
@@ -55,7 +55,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		public HashSet<UML_SM.Transition> incomings  
 		{ 
 			get {
-				return ((Factory)this.model.factory).createIncomingTransitions(this);
+				return ((Factory)this.EAModel.factory).createIncomingTransitions(this);
 			}
 			set {
 				throw new NotImplementedException();
@@ -69,7 +69,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		{ 
 			get {
 				if(_container == null) {
-					_container = ((Factory)this.model.factory).getContainingRegion(this);
+					_container = ((Factory)this.EAModel.factory).getContainingRegion(this);
 				}
 				return _container;
 			}

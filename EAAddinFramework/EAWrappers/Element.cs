@@ -42,18 +42,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return name;
 	}
  	                        
-	public Model model { get;  internal set; }
+	public Model EAModel { get;  internal set; }
+	public UML.Extended.UMLModel model 
+	{
+		get
+		{
+			return this.EAModel;
+		}
+	}
 	
     internal Element(Model model){
-      this.model = model;
+      this.EAModel = model;
     }
     internal string convertFromEANotes( string newFormat)
     {
-    	return this.model.convertFromEANotes(this.notes,newFormat);
+    	return this.EAModel.convertFromEANotes(this.notes,newFormat);
     }
     internal void convertToEANotes(string externalNotes, string externalFormat)
     {
-    	this.notes = this.model.convertToEANotes(externalNotes,externalFormat);
+    	this.notes = this.EAModel.convertToEANotes(externalNotes,externalFormat);
     }
     internal abstract global::EA.Collection eaTaggedValuesCollection {get;}
     public abstract String notes { get; set; }
@@ -124,7 +131,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	get
     	{
     		HashSet<UML.Classes.Kernel.Comment> comments = new HashSet<TSF.UmlToolingFramework.UML.Classes.Kernel.Comment>();
-    		comments.Add(((Factory)this.model.factory).createDescriptionComment(this));
+    		comments.Add(((Factory)this.EAModel.factory).createDescriptionComment(this));
     		return comments;
     	}
     	set
@@ -161,7 +168,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	}
 
   public Stereotype AddStereotype(string text) {
-    Stereotype stereotype = (Stereotype)this.model.factory.createStereotype(this, text);
+    Stereotype stereotype = (Stereotype)this.EAModel.factory.createStereotype(this, text);
     this.addStereotype(stereotype);
     return stereotype;
   }
@@ -265,14 +272,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     /// </summary>
 	public virtual void select()
 	{
-		this.model.selectedElement = this;
+		this.EAModel.selectedElement = this;
 	}
   	/// <summary>
   	/// opens the element. 
   	/// </summary>
 	public virtual void open()
 	{
-		this.model.selectedElement = this;
+		this.EAModel.selectedElement = this;
 	}
 
   	
@@ -299,7 +306,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				//make sure we have the latest set of tagged values
 				this.eaTaggedValuesCollection.Refresh();
 				//create the tagged values from the EA collection
-				_taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.model.factory.createTaggedValues(this.eaTaggedValuesCollection));
+				_taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this.eaTaggedValuesCollection));
 			}
 			return _taggedValues;
 		}
@@ -319,9 +326,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		if (_taggedValues == null)
 		{
 			//check if tagged value exists
-			var xDoc = this.model.SQLQuery(this.getTaggedValueQuery(taggedValueName));
+			var xDoc = this.EAModel.SQLQuery(this.getTaggedValueQuery(taggedValueName));
 			//get the tagged value if there is one
-			if (xDoc.SelectNodes(this.model.formatXPath("//Row")).Count > 0)
+			if (xDoc.SelectNodes(this.EAModel.formatXPath("//Row")).Count > 0)
 			{
 				getTag = true;
 			}
@@ -337,7 +344,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// <returns>empty set</returns>
 	public virtual HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
 	{
-		return this.model.getTaggedValuesWithValue(this.uniqueID,true);
+		return this.EAModel.getTaggedValuesWithValue(this.uniqueID,true);
 	}
 	
 	public virtual string fqn 
@@ -365,14 +372,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	public virtual void openProperties()
 	{
-		this.model.openProperties(this);
+		this.EAModel.openProperties(this);
 	}
   	/// <summary>
   	/// adds this element to the currently opened diagram
   	/// </summary>
 	public virtual void addToCurrentDiagram()
 	{
-		UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
+		UML.Diagrams.Diagram currentDiagram = this.EAModel.currentDiagram;
 		if (currentDiagram != null)
 		{
 			currentDiagram.addToDiagram(this);
@@ -383,7 +390,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   	/// </summary>
 	public virtual void selectInCurrentDiagram()
 	{
-		UML.Diagrams.Diagram currentDiagram = this.model.currentDiagram;
+		UML.Diagrams.Diagram currentDiagram = this.EAModel.currentDiagram;
 		if (currentDiagram != null)
 		{
 			currentDiagram.selectItem(this);
@@ -418,7 +425,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		if (newTaggedValue == null) 
 		{
 			//no existing tagged value found, or we need to create duplicates
-			newTaggedValue = (TaggedValue)this.model.factory.createNewTaggedValue(this,name);
+			newTaggedValue = (TaggedValue)this.EAModel.factory.createNewTaggedValue(this,name);
 			//add it to the local list of tagged values
 			if (_taggedValues != null) _taggedValues.Add(newTaggedValue);
 		}
@@ -489,11 +496,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		get 
 		{
 			//first check if locking is enabled
-			if (!this.model.isSecurityEnabled) return false;
+			if (!this.EAModel.isSecurityEnabled) return false;
 			
 			if (this.isLocked)
 			{
-				return this.getLockedUserID() != this.model.currentUserID;
+				return this.getLockedUserID() != this.EAModel.currentUserID;
 			}
 			//not locked so readonly (only works when "require user lock to edit is on")
 			return true;
@@ -537,7 +544,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	//if not found anything directly then try with FQN
     	if (!ownedItems.Any())
     	{
-    		var item = this.model.getItemFromFQN(this.fqn + "." + itemDescriptor);
+    		var item = this.EAModel.getItemFromFQN(this.fqn + "." + itemDescriptor);
     		if (item != null) ownedItems.Add(item);
     	}
     	return ownedItems;

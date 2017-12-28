@@ -645,7 +645,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
     	if(elementWrapper.wrappedElement.ParentID != 0)
     	{
-    		return elementWrapper.model.getElementWrapperByID(elementWrapper.wrappedElement.ParentID);
+    		return elementWrapper.EAModel.getElementWrapperByID(elementWrapper.wrappedElement.ParentID);
     	}
     	
     	return null;

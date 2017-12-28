@@ -46,7 +46,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get {
-        return ((Factory) this.model.factory).createStereotypes(
+        return ((Factory) this.EAModel.factory).createStereotypes(
                  this, this.wrappedAssociationEnd.StereotypeEx);
       }
       set { throw new NotImplementedException(); }
@@ -301,9 +301,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	    		//because of a bug in the API we don't alwas get the correct information. Therefore we need this workaround using a database call
 	    		string sqlGetNavigability = "select c.Direction, c.DestIsNavigable, c.DestStyle, c.SourceIsNavigable, c.SourceStyle from t_connector c where c.ea_guid = '"
 	    			+ this.connectorWrapper.uniqueID +"'";
-	    		var navigabilityInfo = this.model.SQLQuery(sqlGetNavigability);
+	    		var navigabilityInfo = this.EAModel.SQLQuery(sqlGetNavigability);
 	    		//direction goes above all else
-	    		XmlNode directionNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//Direction"));
+	    		XmlNode directionNode = navigabilityInfo.SelectSingleNode(this.EAModel.formatXPath("//Direction"));
 	    		string direction;
 	    		if ( directionNode != null && ! string.IsNullOrEmpty(directionNode.InnerText))
 	    		{
@@ -337,12 +337,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		    		XmlNode styleNode;
 		    		if (this.isTarget)
 		    		{
-		    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestIsNavigable"));
-		    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//DestStyle"));
+		    			navigableNode = navigabilityInfo.SelectSingleNode(this.EAModel.formatXPath("//DestIsNavigable"));
+		    			styleNode = navigabilityInfo.SelectSingleNode(this.EAModel.formatXPath("//DestStyle"));
 		    		}else
 		    		{
-		    			navigableNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceIsNavigable"));
-		    			styleNode = navigabilityInfo.SelectSingleNode(this.model.formatXPath("//SourceStyle"));
+		    			navigableNode = navigabilityInfo.SelectSingleNode(this.EAModel.formatXPath("//SourceIsNavigable"));
+		    			styleNode = navigabilityInfo.SelectSingleNode(this.EAModel.formatXPath("//SourceStyle"));
 		    		}
 		    		if (navigableNode != null && navigableNode.InnerText == "1")
 		    		{

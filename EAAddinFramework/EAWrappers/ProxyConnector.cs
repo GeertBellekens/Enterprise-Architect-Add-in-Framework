@@ -16,7 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		{
 		    get 
 	    	{
-		    	return this.model.getRelationByID((int)this.getProperty(getPropertyNameName(),this.wrappedElement.ClassifierID));
+		    	return this.EAModel.getRelationByID((int)this.getProperty(getPropertyNameName(),this.wrappedElement.ClassifierID));
 	    	}
 			set 
 			{

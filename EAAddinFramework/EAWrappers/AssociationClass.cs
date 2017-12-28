@@ -20,7 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{
 				if (_relatedAssociation ==null)
 				{
-					_relatedAssociation = this.model.getRelationByID(this.WrappedElement.AssociationClassConnectorID) as Association;
+					_relatedAssociation = this.EAModel.getRelationByID(this.WrappedElement.AssociationClassConnectorID) as Association;
 				}
 				return _relatedAssociation;
 			}

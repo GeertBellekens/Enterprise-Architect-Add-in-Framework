@@ -38,7 +38,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     {
 		get 
 		{
-			return this.model.factory.createValueSpecificationFromString((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Default));
+			return this.EAModel.factory.createValueSpecificationFromString((string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.Default));
 		}
 		set 
 		{
@@ -199,7 +199,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 							and c.StyleEx like '%LF_P="+this.wrappedAttribute.AttributeGUID+"%'"
 							+@" and ((c.Start_Object_ID = a.Object_ID and c.End_Object_ID <> a.Object_ID)
 							    or (c.Start_Object_ID <> a.Object_ID and c.End_Object_ID = a.Object_ID))";
-			return this.model.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
+			return this.EAModel.getRelationsByQuery(selectRelationsSQL).Cast<UML.Classes.Kernel.Relationship>().ToList();
     	}
 		set { throw new NotImplementedException(); }
 	}
@@ -231,7 +231,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 
 	public void setDefaultValue(string defaultStringValue)
 	{
-		this.defaultValue = this.model.factory.createValueSpecificationFromString(defaultStringValue);
+		this.defaultValue = this.EAModel.factory.createValueSpecificationFromString(defaultStringValue);
 	}
 
     

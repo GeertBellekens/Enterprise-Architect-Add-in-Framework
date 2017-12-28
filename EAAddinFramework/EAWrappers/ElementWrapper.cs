@@ -90,13 +90,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 	void reloadWrappedElement()
 	{
-		this.wrappedElement = this.model.wrappedModel.GetElementByGuid(this._uniqueID);
+		this.wrappedElement = this.EAModel.wrappedModel.GetElementByGuid(this._uniqueID);
 	}
 	public ElementWrapper classifier
 	{
 		get
 		{
-			return  this.model.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(),this.wrappedElement.ClassifierID));
+			return  this.EAModel.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(),this.wrappedElement.ClassifierID));
 		}
 		set
 		{
@@ -227,7 +227,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
     	get 
     	{
-    		return ((Factory) this.model.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedElement.StereotypeEx));
+    		return ((Factory) this.EAModel.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedElement.StereotypeEx));
     	}
 		set 
 		{
@@ -469,7 +469,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       	{
       		//refresh attributes to make sure we have an up-to-date list
       		this._constraints = new HashSet<Constraint>();
-      		foreach (var constraint in this.model.factory.createElements(this.wrappedElement.Constraints).Cast<Constraint>())
+      		foreach (var constraint in this.EAModel.factory.createElements(this.wrappedElement.Constraints).Cast<Constraint>())
       		{
       			_constraints.Add(constraint);
       		}
@@ -503,7 +503,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     			//refresh attributes to make sure we have an up-to-date list
       			this.wrappedElement.Attributes.Refresh();
       			//get the attribute wrappers
-    			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.model)
+    			this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.EAModel)
       		                   .createElements( this.wrappedElement.Attributes,this).Cast<AttributeWrapper>());
     		}
     		return this._attributeWrappers;
@@ -520,7 +520,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public override HashSet<UML.Classes.Kernel.Element> ownedElements {
       get {
         List<UML.Classes.Kernel.Element> elements =
-          this.model.factory.createElements
+          this.EAModel.factory.createElements
             ( this.wrappedElement.Elements ).ToList();
         elements.AddRange
           (this.ownedAttributes.Cast<UML.Classes.Kernel.Element>());
@@ -541,10 +541,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		{
 	    		if (this.wrappedElement.ParentID > 0)
 	    		{
-	    			this._owner = this.model.getElementWrapperByID(this.wrappedElement.ParentID);
+	    			this._owner = this.EAModel.getElementWrapperByID(this.wrappedElement.ParentID);
 	    		}else
 	    		{
-	    			this._owner = this.model.getElementWrapperByPackageID(this.wrappedElement.PackageID);
+	    			this._owner = this.EAModel.getElementWrapperByPackageID(this.wrappedElement.PackageID);
 	    		}
     		}
 			
@@ -564,7 +564,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public HashSet<UML.Classes.Kernel.Class> superClasses {
       get {
         return new HashSet<UML.Classes.Kernel.Class>
-          (this.model.factory.createElements(this.wrappedElement.BaseClasses)
+          (this.EAModel.factory.createElements(this.wrappedElement.BaseClasses)
           .Cast<UML.Classes.Kernel.Class>());
       }
       set { throw new NotImplementedException(); }
@@ -595,7 +595,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public HashSet<UML.Classes.Kernel.Operation> ownedOperations {
       get {
         return new HashSet<UML.Classes.Kernel.Operation>
-          (this.model.factory.createElements(this.wrappedElement.Methods)
+          (this.EAModel.factory.createElements(this.wrappedElement.Methods)
           .Cast<UML.Classes.Kernel.Operation>());
       }
       set { throw new NotImplementedException(); }
@@ -611,7 +611,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
 	    	//to make sure the connectors collection is still accurate we do a refresh first
 	    	this.WrappedElement.Connectors.Refresh();
-			this._allRelationships = this.model.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
+			this._allRelationships = this.EAModel.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
     	}
 		List<T> returnedRelationships = new List<T>();
 		// we still need to filter out those relationships that are there because of linked features
@@ -679,7 +679,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     
     public UML.Classes.Kernel.Namespace owningNamespace {
       get {
-    		return this.model.getElementWrapperByPackageID(wrappedElement.PackageID) as Package;
+    		return this.EAModel.getElementWrapperByPackageID(wrappedElement.PackageID) as Package;
     	}
       set { throw new NotImplementedException(); }
     }
@@ -705,7 +705,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// <returns>the new diagram</returns>
     public virtual T addOwnedDiagram<T>(String name) where T: class, UML.Diagrams.Diagram
     {
-    	return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedElement.Diagrams,name);
+    	return ((Factory)this.EAModel.factory).addNewDiagramToEACollection<T>(this.wrappedElement.Diagrams,name);
     }
     /// creates a new element of the given type as an owned element of this 
     /// element
@@ -722,33 +722,33 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       System.Type type = typeof(T);
       T newElement;
 
-      if(((Factory)this.model.factory).isEAAtttribute(type)) 
+      if(((Factory)this.EAModel.factory).isEAAtttribute(type)) 
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Attributes, name, string.Empty  );
+        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Attributes, name, string.Empty  );
         //reset the cached attributes
         this.resetAttributes();
       } 
-      else if(((Factory)this.model.factory).isEAOperation(type))
+      else if(((Factory)this.EAModel.factory).isEAOperation(type))
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Methods, name, string.Empty  );
+        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Methods, name, string.Empty  );
       }
-      else if (((Factory)this.model.factory).isEAConnector(type))
+      else if (((Factory)this.EAModel.factory).isEAConnector(type))
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
+        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
         //if we add a connector to the element wrapper we have to make sure to reset the connectors
         this.resetRelationships();
       }
-	  else if (((Factory)this.model.factory).isEAParameter(type))
+	  else if (((Factory)this.EAModel.factory).isEAParameter(type))
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
+        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Connectors, name, EAType  );
       }
 	  else if (type.Name == "Constraint")
 	  {
-	  	newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Constraints, name, EAType  );
+	  	newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Constraints, name, EAType  );
 	  }
       else
       {
-        newElement = ((Factory)this.model.factory).addElementToEACollection<T>( this.wrappedElement.Elements, name, EAType );
+        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>( this.wrappedElement.Elements, name, EAType );
       }
       return newElement;
     }
@@ -761,7 +761,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
     		foreach ( global::EA.Diagram eaDiagram in this.wrappedElement.Diagrams)
     		{
-    			diagrams.Add(((Factory)this.model.factory).createDiagram(eaDiagram));
+    			diagrams.Add(((Factory)this.EAModel.factory).createDiagram(eaDiagram));
     		}
     		return diagrams;
 		}
@@ -774,7 +774,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
         string sqlGetDiagrams = @"select distinct d.Diagram_ID from t_DiagramObjects d
                                   where d.Object_ID = " + this.wrappedElement.ElementID;
-        List<UML.Diagrams.Diagram> allDiagrams = this.model.getDiagramsByQuery(sqlGetDiagrams).Cast<UML.Diagrams.Diagram>().ToList(); ; ;
+        List<UML.Diagrams.Diagram> allDiagrams = this.EAModel.getDiagramsByQuery(sqlGetDiagrams).Cast<UML.Diagrams.Diagram>().ToList(); ; ;
         HashSet<T> returnedDiagrams = new HashSet<T>();
         foreach (UML.Diagrams.Diagram diagram in allDiagrams)
         {
@@ -797,7 +797,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
     	string sqlGetAttributes = @"select a.ea_guid from t_attribute a
     								where a.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
-    	return new HashSet<UML.Classes.Kernel.Property>(this.model.getAttributesByQuery(sqlGetAttributes));
+    	return new HashSet<UML.Classes.Kernel.Property>(this.EAModel.getAttributesByQuery(sqlGetAttributes));
     	
     }
     /// <summary>
@@ -838,7 +838,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 									where x.Name = 'MOFProps' 
 									and x.Behavior = 'conveyed'
 									and x.Description like '%" + this.guid +"%'";
-		foreach (var connector  in this.model.getRelationsByQuery(sqlGetInformationFlows)) 
+		foreach (var connector  in this.EAModel.getRelationsByQuery(sqlGetInformationFlows)) 
 		{
 			InformationFlow informationFlow = connector as InformationFlow;
 			if (informationFlow != null)
@@ -860,11 +860,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		// get the "regular" parameters
 		string sqlGetParameters = @"select p.ea_guid from t_operationparams p
     								where p.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
-    	HashSet<UML.Classes.Kernel.Parameter> parameters = new HashSet<UML.Classes.Kernel.Parameter>(this.model.getParametersByQuery(sqlGetParameters));
+    	HashSet<UML.Classes.Kernel.Parameter> parameters = new HashSet<UML.Classes.Kernel.Parameter>(this.EAModel.getParametersByQuery(sqlGetParameters));
     	// get the return parameters
     	foreach (Operation operation in this.getOperationsWithMeAsReturntype()) 
     	{
-    		parameters.Add(((Factory)this.model.factory).createEAParameterReturnType(operation));
+    		parameters.Add(((Factory)this.EAModel.factory).createEAParameterReturnType(operation));
     	} 
     	return parameters;
 	}
@@ -877,15 +877,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		// get the return-parameters
     	string sqlGetReturnParameters = @"select o.OperationID from t_operation o
     								where o.Classifier = '"+this.wrappedElement.ElementID.ToString()+"'";
-    	return new HashSet<UML.Classes.Kernel.Operation>(this.model.getOperationsByQuery(sqlGetReturnParameters));
+    	return new HashSet<UML.Classes.Kernel.Operation>(this.EAModel.getOperationsByQuery(sqlGetReturnParameters));
 	}
 	public override void open()
 	{
-		this.model.selectedElement = this;
+		this.EAModel.selectedElement = this;
 	}
 	public override void select()
 	{
-		this.model.selectedElement = this;
+		this.EAModel.selectedElement = this;
 	}
 	/// <summary>
   	/// gets the item from the given relative path.
@@ -970,7 +970,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		get 
 		{
 			string sqlQuery = "select OperationID from t_operation where Behaviour like '" + this.wrappedElement.ElementGUID + "'";
-			List<Operation> operations =  this.model.getOperationsByQuery(sqlQuery);
+			List<Operation> operations =  this.EAModel.getOperationsByQuery(sqlQuery);
 			if (operations.Count > 0)
 			{
 				return operations[0];
@@ -987,7 +987,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	  	
 	public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram 
 	{
-		get { return this.model.factory.createDiagram(this.wrappedElement.CompositeDiagram) ;}
+		get { return this.EAModel.factory.createDiagram(this.wrappedElement.CompositeDiagram) ;}
 		set { this.wrappedElement.SetCompositeDiagram(((Diagram)value).diagramGUID); }
 	}
 
@@ -1092,7 +1092,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 string SQLQuery = @"select u.FirstName, u.Surname from t_seclocks s
                                     inner join t_secuser u on s.userID = u.userID 
                                     where s.entityID = '" + this.guid + "'";
-                var result = this.model.SQLQuery(SQLQuery);
+                var result = this.EAModel.SQLQuery(SQLQuery);
                 XmlNode firstNameNode = result.SelectSingleNode("//FirstName");
                 XmlNode lastNameNode = result.SelectSingleNode("//Surname");
                 if (firstNameNode != null && lastNameNode != null)
@@ -1106,7 +1106,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
         	    string SQLQuery = @"select s.UserID from t_seclocks s
                                     where s.entityID = '" + this.guid+ "'";
-                XmlDocument result = this.model.SQLQuery(SQLQuery);
+                XmlDocument result = this.EAModel.SQLQuery(SQLQuery);
                 XmlNode userIDNode = result.SelectSingleNode("//UserID");
                 return userIDNode.InnerText;
         }
@@ -1118,7 +1118,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public override bool makeWritable(bool overrideLocks)
 		{
 			//if security is not enabled then it is always writeable
-			if (!this.model.isSecurityEnabled) return true;
+			if (!this.EAModel.isSecurityEnabled) return true;
 			//if already writable return true
 			if (!this.isReadOnly) return true;
 			//TODO: override locks
@@ -1161,7 +1161,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			string sqlGetAttributes = "select a.ea_guid from t_attribute a " +
 									" where a.Object_ID = " + this.id +
 									" and a.name = '" + attributeName + "'";
-			return this.model.getAttributesByQuery(sqlGetAttributes);
+			return this.EAModel.getAttributesByQuery(sqlGetAttributes);
 		}
 
 		public List<ElementWrapper> getOwnedElements(string elementName)
@@ -1170,7 +1170,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" where " +
 										" o.Name = '" + elementName + "' " +
 										" and o.ParentID = " + this.id;
-			return this.model.getElementWrappersByQuery(sqlGetOwnedElement);
+			return this.EAModel.getElementWrappersByQuery(sqlGetOwnedElement);
 		}
 		public List<Diagram> getOwnedDiagrams(string diagramName)
 		{
@@ -1178,7 +1178,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" where " +
 										" d.Name = '" + diagramName + "' " +
 										" and d.ParentID = " + this.id;
-			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
+			return this.EAModel.getDiagramsByQuery(sqlGetOwnedDiagram);
 		}
 
 
@@ -1224,7 +1224,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" select c.Connector_ID from t_connector c " +
 										" where c.End_Object_ID = " + this.id + 
 										" and c.Name = '" + rolename + "' ";
-			var connectorWrappers = this.model.getRelationsByQuery(sqlGetConnectorWrappers);
+			var connectorWrappers = this.EAModel.getRelationsByQuery(sqlGetConnectorWrappers);
 			//loop the associations to get the ends at the other side
 			foreach (var connectorWrapper in connectorWrappers)
 			{
@@ -1289,6 +1289,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 //			this.model.wrappedModel.GetProjectInterface().RunHTMLReport(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(packageGUID),
 //			                                                            imagePath,".png","<default>",".html");
 			                                                            	
+			
 			//first export all owned diagrams
 			foreach (var diagram in this.ownedDiagrams) 
 			{

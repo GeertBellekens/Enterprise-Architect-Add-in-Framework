@@ -198,7 +198,7 @@ and ot.Object_Type = 'Class'
 and os.Object_Type = 'Class'
 and c.SourceCard like '%1'
 and ot.Object_ID in ("+ logicalClassIDs +")";
-			var allAssociations = this.logicalClass.model.getRelationsByQuery(getAssociationsSQL);
+			var allAssociations = this.logicalClass.EAModel.getRelationsByQuery(getAssociationsSQL);
 			
 			foreach (var currentClass in this.allLogicalClasses) 
 			{

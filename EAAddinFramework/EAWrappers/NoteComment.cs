@@ -32,10 +32,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
             // now figure out which side is the note and which side the 
             // annotated element
             if( connector.ClientID == this.wrappedElement.ElementID ) {
-              returnedElements.Add( this.model.getElementWrapperByID
+              returnedElements.Add( this.EAModel.getElementWrapperByID
                                       (connector.SupplierID) );
             } else {
-              returnedElements.Add( this.model.getElementWrapperByID
+              returnedElements.Add( this.EAModel.getElementWrapperByID
                                       (connector.ClientID) );
             }
           }

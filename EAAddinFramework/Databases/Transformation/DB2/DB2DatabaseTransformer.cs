@@ -21,7 +21,7 @@ namespace EAAddinFramework.Databases.Transformation.DB2
 		private string outputName = "DB2DatabaseTransformer.complete";
 		internal List<DB2TableTransformer> externalTableTransformers = new List<DB2TableTransformer>();
 		internal Database _externalDatabase;
-		public DB2DatabaseTransformer(Package logicalPackage,NameTranslator nameTranslator, StrategyFactory strategyFactory, bool compareOnly = false):this(logicalPackage.model, nameTranslator,strategyFactory,compareOnly)
+		public DB2DatabaseTransformer(Package logicalPackage,NameTranslator nameTranslator, StrategyFactory strategyFactory, bool compareOnly = false):this(logicalPackage.EAModel, nameTranslator,strategyFactory,compareOnly)
 		{
 			this._logicalPackage = logicalPackage;
 		}

@@ -150,7 +150,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		/// </summary>
 		public HashSet<UML.StateMachines.BehaviorStateMachines.Vertex> subvertices {
 			get {
-				return ((Factory)this.model.factory).createVertices(this);
+				return ((Factory)this.EAModel.factory).createVertices(this);
 			}
 			set {
 				throw new NotImplementedException();

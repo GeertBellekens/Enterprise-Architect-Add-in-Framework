@@ -28,12 +28,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 											and x.Behavior = 'conveyed'
 											and x.client = '" + this.guid + "'";
 				//xrefdescription contains the GUID's of the conveyed elements comma separated
-				var xrefDescription = this.model.SQLQuery(getXrefDescription).SelectSingleNode(this.model.formatXPath("//Description"));
+				var xrefDescription = this.EAModel.SQLQuery(getXrefDescription).SelectSingleNode(this.EAModel.formatXPath("//Description"));
 				if (xrefDescription != null)
 				{
 					foreach (string conveyedGUID in xrefDescription.InnerText.Split(','))
 					{
-						var conveyedElement = this.model.getElementWrapperByGUID(conveyedGUID) as UML.Classes.Kernel.Classifier;
+						var conveyedElement = this.EAModel.getElementWrapperByGUID(conveyedGUID) as UML.Classes.Kernel.Classifier;
 						if (conveyedElement != null)
 						{
 							//initialize if needed
@@ -80,7 +80,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 											and c.ea_guid = '" + this.guid + "'"
 											+" and x.Description like '%"+this.guid+"%'";
 										
-				_realization = this.model.getRelationsByQuery(sqlGetRealization).FirstOrDefault();
+				_realization = this.EAModel.getRelationsByQuery(sqlGetRealization).FirstOrDefault();
 				if (_realization != null)
 				{
 					_realizations.Add(_realization);

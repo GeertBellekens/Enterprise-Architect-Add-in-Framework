@@ -66,11 +66,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		internal string convertFromEANotes( string newFormat)
 	    {
-	    	return this.model.convertFromEANotes(this.notes,newFormat);
+	    	return this.EAModel.convertFromEANotes(this.notes,newFormat);
 	    }
 	    internal void convertToEANotes(string externalNotes, string externalFormat)
 	    {
-	    	this.notes = this.model.convertToEANotes(externalNotes,externalFormat);
+	    	this.notes = this.EAModel.convertToEANotes(externalNotes,externalFormat);
 	    }
 		public override string guid 
 		{
@@ -133,7 +133,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{
 				if (_owner == null)
 				{
-					_owner = this.model.getElementWrapperByID(this.wrappedConstraint.ParentID);
+					_owner = this.EAModel.getElementWrapperByID(this.wrappedConstraint.ParentID);
 				}
 				return _owner;
 			}

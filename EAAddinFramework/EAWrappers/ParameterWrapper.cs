@@ -40,7 +40,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	{
     		if (_owner == null)
     		{
-    			_owner = this.model.getOperationByID(this.wrappedParameter.OperationID);
+    			_owner = this.EAModel.getOperationByID(this.wrappedParameter.OperationID);
     		}
     		return _owner;
     	}
@@ -52,7 +52,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get {
-        return ((Factory)this.model.factory).createStereotypes
+        return ((Factory)this.EAModel.factory).createStereotypes
           ( this, this.wrappedParameter.StereotypeEx );
       }
       set { throw new NotImplementedException(); }
@@ -137,12 +137,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         UML.Classes.Kernel.Type type = null;
         if (int.TryParse(this.wrappedParameter.ClassifierID,out ClassifierID))
         {
-           	type = this.model.getElementWrapperByID(ClassifierID) as UML.Classes.Kernel.Type;
+           	type = this.EAModel.getElementWrapperByID(ClassifierID) as UML.Classes.Kernel.Type;
         }
         // check if the type is defined as an element in the model.
         if( type == null ) {
           // no element, create primitive type based on the name of the type
-          type = this.model.factory.createPrimitiveType
+          type = this.EAModel.factory.createPrimitiveType
             ( this.wrappedParameter.Type );
         }
         return type;

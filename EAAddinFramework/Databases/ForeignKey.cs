@@ -273,7 +273,7 @@ namespace EAAddinFramework.Databases
 				string getAssociationQuery = @"select c.Connector_ID from t_connector c 
 											where c.Start_Object_ID = " + this._owner._wrappedClass.id.ToString() +
 					" and c.SourceRole = '"+ _wrappedOperation.name +"'";
-				_wrappedAssociation = this._wrappedOperation.model.getRelationsByQuery(getAssociationQuery).FirstOrDefault() as Association;
+				_wrappedAssociation = this._wrappedOperation.EAModel.getRelationsByQuery(getAssociationQuery).FirstOrDefault() as Association;
 			}
 		}
 		public override string properties {

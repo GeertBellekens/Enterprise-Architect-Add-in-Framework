@@ -88,8 +88,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				where x.Name = 'CustomProperties'
 				and x.Type = 'element property'
 				and o.Object_ID = "+ this.wrappedElement.ElementID;
-		 		XmlDocument descriptionXml  = this.model.SQLQuery(sqlGetActionKind);
-				XmlNodeList descriptionNodes = descriptionXml.SelectNodes(this.model.formatXPath("//Description"));
+		 		XmlDocument descriptionXml  = this.EAModel.SQLQuery(sqlGetActionKind);
+				XmlNodeList descriptionNodes = descriptionXml.SelectNodes(this.EAModel.formatXPath("//Description"));
 				foreach (XmlNode descriptionNode in descriptionNodes) 
 				{
 					string description = descriptionNode.InnerText;
@@ -122,7 +122,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 													where Name = 'CustomProperties'
 													and Type = 'element property'
 													and Client = '"+this.uniqueID+"'";
-							this.model.executeSQL(updateXref);
+							this.EAModel.executeSQL(updateXref);
 							// no need to continue for loop
 							break;
 						}

@@ -25,7 +25,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			{
 				if(this.wrappedElement == null)
 				{
-					this.wrappedElement = this.model.wrappedModel.GetElementByGuid(this.guid);
+					this.wrappedElement = this.EAModel.wrappedModel.GetElementByGuid(this.guid);
 				}
 				return base.wrappedElement;
 			}
@@ -54,7 +54,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" and o.Package_ID in (" + packageIDString + ") " +
 										" and x.Name = 'Stereotypes' " +
 										" and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
-			return model.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
+			return EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
 		}
 		public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
 		{
@@ -68,7 +68,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		protected void initialize(global::EA.Package package)
 		{
-			base.initialize(Package.getElementForPackage(this.model,package));
+			base.initialize(Package.getElementForPackage(this.EAModel,package));
 			this.wrappedPackage = package;
 			if (string.IsNullOrEmpty(this._uniqueID)) this._uniqueID = package.PackageGUID;
 		}
@@ -109,15 +109,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				{
 					//find the new parent package
 					this.save();
-					var newParent = (Package)this.model.getElementWrapperByPackageID(((Package)value).packageID);
+					var newParent = (Package)this.EAModel.getElementWrapperByPackageID(((Package)value).packageID);
 					if (newParent != null)
 					{
 						string sqlUpdatePackageParent =   "update t_package set Parent_ID = " + newParent.packageID
 							+ " where ea_guid = '"+ this.uniqueID +"'";
-						model.executeSQL(sqlUpdatePackageParent);
+						EAModel.executeSQL(sqlUpdatePackageParent);
 						string sqlUpdateObjectParent =   "update t_object set Package_ID = " + newParent.packageID
 							+ " where ea_guid = '"+ this.uniqueID +"'";
-						model.executeSQL(sqlUpdateObjectParent);
+						EAModel.executeSQL(sqlUpdateObjectParent);
 						//reload from the database
 						this._owner = (Package)value;
 						this.dontSave = true;
@@ -129,8 +129,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		}
 		public void reload()
 		{
-			this.model.wrappedModel.RefreshModelView(0);
-			global::EA.Package eaPackage = this.model.wrappedModel.GetPackageByGuid(this.uniqueID);
+			this.EAModel.wrappedModel.RefreshModelView(0);
+			global::EA.Package eaPackage = this.EAModel.wrappedModel.GetPackageByGuid(this.uniqueID);
 			Logger.log("ParentID of eaPackage "+ eaPackage.Name + " = " +eaPackage.ParentID);
 			this.initialize(eaPackage);
 		}
@@ -209,8 +209,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 									where o.Object_ID is null
 									and d.Diagram_ID is null
 									and  p.Package_ID = " + this.packageID;
-				var isEmptyXml = this.model.SQLQuery(sqlIsEmpty);
-				var isEmptyNode = isEmptyXml.SelectSingleNode(this.model.formatXPath("//isEmpty"));
+				var isEmptyXml = this.EAModel.SQLQuery(sqlIsEmpty);
+				var isEmptyNode = isEmptyXml.SelectSingleNode(this.EAModel.formatXPath("//isEmpty"));
 				return isEmptyNode != null && isEmptyNode.InnerText.Equals("true",StringComparison.InvariantCultureIgnoreCase);
 			}
 		}
@@ -221,8 +221,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			get 
 			{ 
         this.wrappedPackage.Elements.Refresh();
-				List<UML.Classes.Kernel.Element> elements = this.model.factory.createElements( this.wrappedPackage.Elements).Cast<UML.Classes.Kernel.Element>().ToList();
-				elements.AddRange(this.model.factory.createElements( this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
+				List<UML.Classes.Kernel.Element> elements = this.EAModel.factory.createElements( this.wrappedPackage.Elements).Cast<UML.Classes.Kernel.Element>().ToList();
+				elements.AddRange(this.EAModel.factory.createElements( this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
 				return new HashSet<UML.Classes.Kernel.Element>(elements);
 			}
 			set 
@@ -237,7 +237,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    		HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram> diagrams = new HashSet<TSF.UmlToolingFramework.UML.Diagrams.Diagram>();
 	    		foreach ( var eaDiagram in this.wrappedPackage.Diagrams)
 	    		{
-	    			var newDiagram = ((Factory)this.model.factory).createDiagram(eaDiagram);
+	    			var newDiagram = ((Factory)this.EAModel.factory).createDiagram(eaDiagram);
 	    			if (newDiagram != null) diagrams.Add(newDiagram);
 	    		}
 	    		return diagrams;
@@ -272,9 +272,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		private string getFQN(string fqnString, int packageID)
 		{
 			string newFQN = fqnString;
-			XmlDocument result = this.model.SQLQuery("select p.Parent_ID, p.Name from t_package p where p.Package_ID = " + packageID.ToString());
-			XmlNode parentIDNode = result.SelectSingleNode(this.model.formatXPath("//Parent_ID"));
-			XmlNode nameNode = result.SelectSingleNode(this.model.formatXPath("//Name"));
+			XmlDocument result = this.EAModel.SQLQuery("select p.Parent_ID, p.Name from t_package p where p.Package_ID = " + packageID.ToString());
+			XmlNode parentIDNode = result.SelectSingleNode(this.EAModel.formatXPath("//Parent_ID"));
+			XmlNode nameNode = result.SelectSingleNode(this.EAModel.formatXPath("//Name"));
 			if (nameNode != null)
 			{
 				//add the "." if necesarry
@@ -299,27 +299,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      System.Type type = typeof(T);
 	      T newElement;
 		  
-	      if(((Factory)this.model.factory).isEAAtttribute(type)) 
+	      if(((Factory)this.EAModel.factory).isEAAtttribute(type)) 
 	      {
 	      	throw new Exception("Cannot add an Attribute to a Package");
 	      } 
-	      else if(((Factory)this.model.factory).isEAOperation(type))
+	      else if(((Factory)this.EAModel.factory).isEAOperation(type))
 	      {
 	        throw new Exception("Cannot add an Operation to a Package");
 	      }
-	      else if (((Factory)this.model.factory).isEAPackage(type))
+	      else if (((Factory)this.EAModel.factory).isEAPackage(type))
 	      {
-	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>
 	          ( this.wrappedPackage.Packages, name, EAType  );
 	      } 
-	      else if (((Factory)this.model.factory).isEAConnector(type))
+	      else if (((Factory)this.EAModel.factory).isEAConnector(type))
 	      {
-	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>
 	          ( this.wrappedPackage.Connectors, name, EAType  );
 	      } 
 	      else 
 	      {
-	        newElement = ((Factory)this.model.factory).addElementToEACollection<T>
+	        newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>
 	          ( this.wrappedPackage.Elements, name, EAType );
 	      }
 	      return newElement;
@@ -331,7 +331,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    /// <returns>the new diagram</returns>
 		public override T addOwnedDiagram<T>(string name)
 		{
-			return ((Factory)this.model.factory).addNewDiagramToEACollection<T>(this.wrappedPackage.Diagrams,name);
+			return ((Factory)this.EAModel.factory).addNewDiagramToEACollection<T>(this.wrappedPackage.Diagrams,name);
 		}
 		public override void save()
 		{
@@ -379,19 +379,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		/// export this package to xmi in the default format
 		/// </summary>
 		/// <param name="filePath">the filepath to save the xmi file to</param>
-		public void exportToXMI(string filePath)
+		public void exportToXMI(string filePath,bool includeDiagrams)
 		{
-			this.model.wrappedModel.SuppressEADialogs = true;
-			var projectInterface = this.model.wrappedModel.GetProjectInterface();
+			this.EAModel.wrappedModel.SuppressEADialogs = true;
+			var projectInterface = this.EAModel.wrappedModel.GetProjectInterface();
 			string xmlGUID = projectInterface.GUIDtoXML(this.guid);
-			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,3,1,0,filePath);
-			this.model.wrappedModel.SuppressEADialogs = false;
+			int diagramsPar = includeDiagrams ? 3 : -1;
+			projectInterface.ExportPackageXMI(xmlGUID,global::EA.EnumXMIType.xmiEADefault,2,diagramsPar,1,0,filePath);
+			this.EAModel.wrappedModel.SuppressEADialogs = false;
 		}
 
 
 		public void refresh()
 		{
-			this.model.wrappedModel.RefreshModelView(this.packageID);
+			this.EAModel.wrappedModel.RefreshModelView(this.packageID);
 		}
 		public override List<UML.Extended.UMLItem> findOwnedItems(string itemDescriptor)
 		{
@@ -478,7 +479,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										and o.Name = '" + ownerName + @"'
 										and o.Package_ID in (" + packageIDList + @")";
 
-			return this.model.getAttributesByQuery(sqlGetAttributes);
+			return this.EAModel.getAttributesByQuery(sqlGetAttributes);
 		}
 
 		public List<ElementWrapper> getOwnedElements(string elementName, string packageIDList)
@@ -487,7 +488,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" where " +
 										" o.Name = '" + elementName + "' " +
 				" and o.Package_ID in (" + packageIDList + ") ";
-			return this.model.getElementWrappersByQuery(sqlGetOwnedElement);
+			return this.EAModel.getElementWrappersByQuery(sqlGetOwnedElement);
 		}
 		public List<Diagram> getOwnedDiagrams(string diagramName, string packageIDList)
 		{
@@ -495,7 +496,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 										" where " +
 										" d.Name = '" + diagramName + "' " +
 										" and d.Package_ID in (" + packageIDList + ") ";
-			return this.model.getDiagramsByQuery(sqlGetOwnedDiagram);
+			return this.EAModel.getDiagramsByQuery(sqlGetOwnedDiagram);
 		}
 		public HashSet<UML.Classes.Kernel.Package> getNestedPackageTree(bool includeThis)
 		{
@@ -544,7 +545,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			//get the id's from the subpackages
 			string parentIDString = string.Join(",",parentIDs);
 			string getSubpackageSQL = "select p.Package_ID from t_package p where p.Parent_ID in ("+ parentIDString +")";
-			var queryResult = this.model.SQLQuery(getSubpackageSQL);
+			var queryResult = this.EAModel.SQLQuery(getSubpackageSQL);
 			foreach (XmlNode packageIdNode in queryResult.SelectNodes("//Package_ID")) 
 			{
 				subPackageIDs.Add(packageIdNode.InnerText);

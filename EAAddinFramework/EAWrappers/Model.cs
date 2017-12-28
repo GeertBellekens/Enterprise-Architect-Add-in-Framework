@@ -25,6 +25,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     private Dictionary<string, AttributeWrapper> attributesByGUID = new Dictionary<string, AttributeWrapper>();
 	
 
+    public int EAVersion {get {return this._wrappedModel.LibraryVersion;}}
     public Boolean isLiteEdition {get {return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite;}}
     public string currentUserID {get{return this.wrappedModel.GetCurrentLoginUser(true);}}
     

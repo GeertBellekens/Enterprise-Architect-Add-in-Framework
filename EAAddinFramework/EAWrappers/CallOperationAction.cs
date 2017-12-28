@@ -34,10 +34,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         public UML.Classes.Kernel.Operation operation { 
         	get{
         		// first get the operations guid which is stored in the Classifier_guid column
-        		XmlDocument operationGUIDxml = this.model.SQLQuery(@"select o.Classifier_guid from t_object o
+        		XmlDocument operationGUIDxml = this.EAModel.SQLQuery(@"select o.Classifier_guid from t_object o
 									where o.Object_ID = " + this.id.ToString());
-        		XmlNode operationGUIDNode = operationGUIDxml.SelectSingleNode(this.model.formatXPath("//Classifier_guid"));
-        	    return this.model.getOperationByGUID(operationGUIDNode.InnerText);
+        		XmlNode operationGUIDNode = operationGUIDxml.SelectSingleNode(this.EAModel.formatXPath("//Classifier_guid"));
+        	    return this.EAModel.getOperationByGUID(operationGUIDNode.InnerText);
         	}
         	set{
         		// no API method available, so we need to update the database directly

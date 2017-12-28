@@ -30,7 +30,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	
     	set
     	{
-    		this.model.executeSQL(@"update t_connector
+    		this.EAModel.executeSQL(@"update t_connector
 									set [PDATA2] = '" + value + @"'
 									where connector_id = " + this.id);
     	}
@@ -147,7 +147,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		var dependentDiagrams = new List<UML.Diagrams.Diagram>();
 		string sqlQuery = "select dl.DiagramID as Diagram_ID from t_diagramlinks dl where dl.ConnectorID = " + this.id;
-		dependentDiagrams.AddRange(this.model.getDiagramsByQuery(sqlQuery));
+		dependentDiagrams.AddRange(this.EAModel.getDiagramsByQuery(sqlQuery));
 		return dependentDiagrams;
 	}
 		
@@ -165,7 +165,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// the stereotypes defined on this Relationship
     public override HashSet<UML.Profiles.Stereotype> stereotypes {
       get {
-        return ((Factory)this.model.factory).createStereotypes
+        return ((Factory)this.EAModel.factory).createStereotypes
           ( this, this.wrappedConnector.StereotypeEx );
       }
       set 
@@ -202,7 +202,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	   			featureGUID = featureGUID.Substring(0,featureGUID.Length -1);
 	   		}
    			//get the linked feature
-    		linkedFeature = this.model.getItemFromGUID(featureGUID);
+    		linkedFeature = this.EAModel.getItemFromGUID(featureGUID);
     	}
     	return linkedFeature;
     }
@@ -246,13 +246,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	        }
 	        else
 	        {
-	        	var targetElementWrapper = this.model.getElementWrapperByID(this.wrappedConnector.SupplierID); 
+	        	var targetElementWrapper = this.EAModel.getElementWrapperByID(this.wrappedConnector.SupplierID); 
 	        	this._target = targetElementWrapper;			
 	       		//in case the source is linked to a connector there's a dummy element with type ProxyConnector
 	       		if (targetElementWrapper != null && targetElementWrapper.EAElementType == "ProxyConnector")
 				{
 					//get the source connector
-					this._source = this.model.getRelationByID(targetElementWrapper.wrappedElement.ClassifierID);
+					this._source = this.EAModel.getRelationByID(targetElementWrapper.wrappedElement.ClassifierID);
 				}
 	        }
       	}
@@ -281,7 +281,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 											inner join t_object o on (o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
 											and o.Object_Type = 'ProxyConnector'))
 											where o.Classifier_guid = '"+this.uniqueID+"'";
-			return this.model.getRelationsByQuery(sqlGetRelationships).Cast<UML.Classes.Kernel.Relationship>().ToList();
+			return this.EAModel.getRelationsByQuery(sqlGetRelationships).Cast<UML.Classes.Kernel.Relationship>().ToList();
 		}
 		set 
 		{
@@ -302,7 +302,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		foundElements.AddRange(this.relationships.OfType<ConnectorWrapper>().Where(x => x.source != this).Select(y => y.source));
 		//then add the notes/constrains that are linked to this relation via a notelink
 		string selecNoteLinkElements = "select o.Object_ID from t_object o where o.pdata4 like '%idref_=" + this.id + ";%'";
-		foundElements.AddRange(this.model.getElementWrappersByQuery(selecNoteLinkElements));
+		foundElements.AddRange(this.EAModel.getElementWrappersByQuery(selecNoteLinkElements));
 		//return the found elements
 		return foundElements;
 	}
@@ -316,18 +316,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			string idRefString = getNextIdRefString(pdata4);
 			pdata4 = KeyValuePairsHelper.setValueForKey(idRefString,this.id.ToString(),pdata4);
 			string sqlUpdateNoteLink = "update t_object set PDATA4 = '"+ pdata4 +"' where ea_guid =" + element.uniqueID;
-			this.model.executeSQL(sqlUpdateNoteLink);
+			this.EAModel.executeSQL(sqlUpdateNoteLink);
 		}
 		else
 		{
 			//create an element of type ProxyConnector with
 			//t_object.ClassifierGUID = sourceConnectorGUID
 			//t_object.Classifier = sourcConnector.ConnectorID
-			var proxyConnector = this.model.factory.createNewElement<ProxyConnector>(this.owningPackage,string.Empty);
+			var proxyConnector = this.EAModel.factory.createNewElement<ProxyConnector>(this.owningPackage,string.Empty);
 			proxyConnector.connector = this;
 			proxyConnector.save();
 			//then create a connector between the ProxyConnector Element and the target element
-			var elementLink = this.model.factory.createNewElement<Dependency>(proxyConnector,string.Empty);
+			var elementLink = this.EAModel.factory.createNewElement<Dependency>(proxyConnector,string.Empty);
 			elementLink.target = element;
 			elementLink.save();
 		}
@@ -357,13 +357,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	        }
 	        else
 	        {
-				var sourceElementWrapper = this.model.getElementWrapperByID(this.wrappedConnector.ClientID);	        	
+				var sourceElementWrapper = this.EAModel.getElementWrapperByID(this.wrappedConnector.ClientID);	        	
 				this._source = sourceElementWrapper;
 				//in case the source is linked to a connector there's a dummy element with type ProxyConnector
 				if (sourceElementWrapper.EAElementType == "ProxyConnector")
 				{
 					//get the source connector
-					this._source = this.model.getRelationByID(sourceElementWrapper.wrappedElement.ClassifierID);
+					this._source = this.EAModel.getRelationByID(sourceElementWrapper.wrappedElement.ClassifierID);
 				}
 	        }
       	}
@@ -431,7 +431,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._sourceEnd == null)
     		{
-    			this._sourceEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd,false) ;
+    			this._sourceEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd,false) ;
     		}
     		return this._sourceEnd;
     	}
@@ -442,7 +442,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	{
     		if (this._targetEnd == null)
     		{
-    			this._targetEnd = ((Factory)this.model.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd,true); 
+    			this._targetEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd,true); 
     		}
     		return this._targetEnd;
     	}
@@ -541,13 +541,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			from (t_connector c
 			inner join t_xref x on (x.client = c.ea_guid and x.Name = 'MOFProps'))
 			where c.ea_guid = '" + this.guid + "'";
-		var queryResult = this.model.SQLQuery(sqlGetInformationFlowIDs);
-		var descriptionNode = queryResult.SelectSingleNode(this.model.formatXPath("//description"));
+		var queryResult = this.EAModel.SQLQuery(sqlGetInformationFlowIDs);
+		var descriptionNode = queryResult.SelectSingleNode(this.EAModel.formatXPath("//description"));
 		if (descriptionNode != null)
 		{
 			foreach (string ifGUID in descriptionNode.InnerText.Split(','))
 			{
-				var informationFlow = this.model.getRelationByGUID(ifGUID) as UML.InfomationFlows.InformationFlow;
+				var informationFlow = this.EAModel.getRelationByGUID(ifGUID) as UML.InfomationFlows.InformationFlow;
 				if (informationFlow != null )
 				{
 					informationFlows.Add(informationFlow);

@@ -36,7 +36,7 @@ namespace EAAddinFramework.Mapping
 			if (sourceOwner != null & targetOwner != null)
 			{
 				//create the connector
-				wrappedConnector = sourceOwner.model.factory.createNewElement<UML.Classes.Kernel.Association>
+				wrappedConnector = sourceOwner.EAModel.factory.createNewElement<UML.Classes.Kernel.Association>
            		 					(sourceOwner,string.Empty) as Association;
 				//set source and target
 				wrappedConnector.source = source;

@@ -23,7 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		
 		public HashSet<TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines.Region> regions {
 			get {
-				return ((Factory)this.model.factory).createBehaviourStateMachineRegions(this);
+				return ((Factory)this.EAModel.factory).createBehaviourStateMachineRegions(this);
 			}
 			set {
 				throw new NotImplementedException();

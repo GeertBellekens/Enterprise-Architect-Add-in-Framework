@@ -82,12 +82,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      	{
 	    		if (this._type == null)
 	    		{	
-	    			this._type = this.model.getElementWrapperByID( (int)this.getProperty("ClassifierID",this.wrappedAttribute.ClassifierID)) as UML.Classes.Kernel.Type;
+	    			this._type = this.EAModel.getElementWrapperByID( (int)this.getProperty("ClassifierID",this.wrappedAttribute.ClassifierID)) as UML.Classes.Kernel.Type;
 			        // check if the type is defined as an element in the model.
 			        if(this._type == null ) 
 			        {
 			          // no element, create primitive type based on the name of the type
-			          this._type = this.model.factory.createPrimitiveType(this.getProperty("Type",this.wrappedAttribute.Type));
+			          this._type = this.EAModel.factory.createPrimitiveType(this.getProperty("Type",this.wrappedAttribute.Type));
 			        }
 	    		}
 	        	return this._type;
@@ -113,7 +113,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get 
 	    	{
-	    		return ((Factory) this.model.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.StereotypeEx));
+	    		return ((Factory) this.EAModel.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.StereotypeEx));
 	    	}
 			set 
 			{
@@ -123,7 +123,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     	public void setStereotype(string stereotype)
     	{	
     		var newStereotypes = new HashSet<UML.Profiles.Stereotype>();
-    		newStereotypes.Add(new Stereotype(this.model,this,stereotype));
+    		newStereotypes.Add(new Stereotype(this.EAModel,this,stereotype));
     		this.stereotypes = newStereotypes;
 	    }
 
@@ -178,7 +178,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	      {
 				if (_owner == null)
 				{
-					_owner = this.model.getElementWrapperByID(this.wrappedAttribute.ParentID);
+					_owner = this.EAModel.getElementWrapperByID(this.wrappedAttribute.ParentID);
 				}
 				return _owner;
 			}

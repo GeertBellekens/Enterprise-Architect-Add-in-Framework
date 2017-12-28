@@ -49,7 +49,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
 		public HashSet<UML.CommonBehaviors.Communications.Trigger> triggers  
 		{ 
 			get {
-				return ((UTF_EA.Factory)model.factory).createTransitionTriggers(this);
+				return ((UTF_EA.Factory)EAModel.factory).createTransitionTriggers(this);
 			}
 			set {
 				throw new NotImplementedException();

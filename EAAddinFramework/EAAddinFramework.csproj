@@ -260,7 +260,9 @@
     <Compile Include="Utilities\LogTypeEnum.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="WorkTracking\Project.cs" />
-    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.cs" />
+    <Compile Include="WorkTracking\TFS\GetAuthorizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WorkTracking\TFS\GetAuthorizationForm.Designer.cs" />
     <Compile Include="WorkTracking\TFS\ListOfWorkItemResponse.cs" />
     <Compile Include="WorkTracking\TFS\TFSProject.cs" />
@@ -315,10 +317,6 @@
       <Isolated>False</Isolated>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Databases\Strategy" />
-    <Folder Include="Databases\Strategy\DB2" />
-    <Folder Include="Files" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

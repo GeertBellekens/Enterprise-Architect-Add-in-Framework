@@ -46,7 +46,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 				{
 					if (associationClassID > 0)
 					{
-						this._associationClass = this.model.getElementWrapperByID(associationClassID) as AssociationClass;
+						this._associationClass = this.EAModel.getElementWrapperByID(associationClassID) as AssociationClass;
 					}
 				}
 			}

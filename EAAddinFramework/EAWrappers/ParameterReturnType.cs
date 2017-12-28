@@ -88,13 +88,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
         UML.Classes.Kernel.Type type = null;
         if (int.TryParse(this.wrappedOperation.ClassifierID,out ClassifierID))
         {
-           	type = this.model.getElementWrapperByID(ClassifierID) as UML.Classes.Kernel.Type;
+           	type = this.EAModel.getElementWrapperByID(ClassifierID) as UML.Classes.Kernel.Type;
         }
         // check if the type is defined as an element in the model.
         if( type == null ) {
           // no element, create primitive type based on the name of the 
           // returntype
-          type = this.model.factory.createPrimitiveType
+          type = this.EAModel.factory.createPrimitiveType
             ( this.wrappedOperation.ReturnType );
         }
         return type;
