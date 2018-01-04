@@ -489,7 +489,9 @@ namespace EAAddinFramework.EASpecific
 						Script script = new Script(ScriptID,scriptName,groupName,scriptCode, language,model); 
 						allEAMaticScripts.Add(script);
 						//also add the script to the include dictionary
-						modelIncludableScripts.Add("!INC "+ script.groupName + "." + script.name,script._code);
+                        string scriptKey = "!INC "+ script.groupName + "." + script.name ;
+                        if (! modelIncludableScripts.ContainsKey(scriptKey))
+						        modelIncludableScripts.Add(scriptKey,script._code);
 					}
           	    }
               }
