@@ -77,13 +77,13 @@ namespace EAAddinFramework.Databases
 			{
 				if (this.involvedColumns.Any(x => x.name == column.name))
 			    {
-					column._wrappedattribute.wrappedAttribute.IsOrdered = true;
+					column.wrappedattribute.wrappedAttribute.IsOrdered = true;
 			    }
 				else
 				{
-					column._wrappedattribute.wrappedAttribute.IsOrdered = false;
+					column.wrappedattribute.wrappedAttribute.IsOrdered = false;
 				}
-				column._wrappedattribute.save();
+				column.wrappedattribute.save();
 			}
 		}
 

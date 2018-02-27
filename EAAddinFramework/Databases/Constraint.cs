@@ -87,7 +87,7 @@ namespace EAAddinFramework.Databases
 		{
 			if (this._wrappedOperation == null)
 			{
-				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner.wrappedClass,this._name);
 				this._wrappedOperation.setStereotype(getStereotype());
 			}
 			if (this._wrappedOperation != null)
@@ -119,11 +119,11 @@ namespace EAAddinFramework.Databases
 			//set all attributes to static
 			foreach (Column involvedColumn in this.involvedColumns) 
 			{
-				if (involvedColumn._wrappedattribute != null
-				   && ! involvedColumn._wrappedattribute.isStatic)
+				if (involvedColumn.wrappedattribute != null
+				   && ! involvedColumn.wrappedattribute.isStatic)
 				{
-					involvedColumn._wrappedattribute.isStatic = true;
-					involvedColumn._wrappedattribute.save();
+					involvedColumn.wrappedattribute.isStatic = true;
+					involvedColumn.wrappedattribute.save();
 				}
 			}
 		}
@@ -305,7 +305,7 @@ namespace EAAddinFramework.Databases
     // mark a column as included by adding it's GUID to "includes" TaggedValue
     public void markAsIncluded(Column column) {
       if( this.wrappedElement != null ) {
-        String guid = column._wrappedattribute.guid;
+        String guid = column.wrappedattribute.guid;
         TaggedValue tag = this.wrappedElement.getTaggedValue("includes");
         if(tag == null) {
           this.wrappedElement.addTaggedValue("includes", guid);

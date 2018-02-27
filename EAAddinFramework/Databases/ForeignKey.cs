@@ -123,7 +123,7 @@ namespace EAAddinFramework.Databases
 			// TODO: check this, compare to Index.save, which doesn't call base.save()
 			if(this._wrappedOperation == null ) 
 			{
-				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner._wrappedClass,this._name);
+				this._wrappedOperation = this._factory._modelFactory.createNewElement<Operation>(this._owner.wrappedClass,this._name);
 				this._wrappedOperation.setStereotype(this.getStereotype());
 				
 			}
@@ -136,13 +136,13 @@ namespace EAAddinFramework.Databases
 			if (this._wrappedAssociation == null)
 			{
 				//create wrapped association
-				this._wrappedAssociation = this._factory._modelFactory.createNewElement<Association>(this._owner._wrappedClass, "");
+				this._wrappedAssociation = this._factory._modelFactory.createNewElement<Association>(this._owner.wrappedClass, "");
 			}
 			if (this._wrappedAssociation != null)
 			{
-				if (((Table)this.foreignTable)._wrappedClass != null)
+				if (((Table)this.foreignTable).wrappedClass != null)
 				{
-					this._wrappedAssociation.target = this._foreignTable._wrappedClass;
+					this._wrappedAssociation.target = this._foreignTable.wrappedClass;
 					this.wrappedAssociation.sourceEnd.name = this.name;
 					this.setLogicalName(true);
 					if (this._foreignTable.primaryKey != null) this.wrappedAssociation.targetEnd.name = this._foreignTable.primaryKey.name;
@@ -271,7 +271,7 @@ namespace EAAddinFramework.Databases
 			if (_wrappedOperation != null)
 			{
 				string getAssociationQuery = @"select c.Connector_ID from t_connector c 
-											where c.Start_Object_ID = " + this._owner._wrappedClass.id.ToString() +
+											where c.Start_Object_ID = " + this._owner.wrappedClass.id.ToString() +
 					" and c.SourceRole = '"+ _wrappedOperation.name +"'";
 				_wrappedAssociation = this._wrappedOperation.EAModel.getRelationsByQuery(getAssociationQuery).FirstOrDefault() as Association;
 			}

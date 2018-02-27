@@ -7,7 +7,7 @@ namespace EAAddinFramework.Databases.Strategy
 	/// <summary>
 	/// Description of DatabaseItemStrategy.
 	/// </summary>
-	public abstract class DatabaseItemStrategy
+	public class DatabaseItemStrategy
 	{
 		protected StrategyFactory factory {get;set;}
 		public DatabaseItemStrategy(StrategyFactory factory)

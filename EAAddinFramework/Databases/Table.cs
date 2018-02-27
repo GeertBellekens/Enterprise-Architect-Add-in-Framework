@@ -16,9 +16,10 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public class Table:DatabaseItem,DB.Table
 	{
-		internal Class _wrappedClass;
+		protected Class _wrappedClass;
+        internal Class wrappedClass { get { return _wrappedClass; } }
 		internal Database _owner;
-		internal List<Column> _columns;
+		protected List<Column> _columns;
 		internal List<Constraint> _constraints;
 		internal List<Class> _logicalClasses;
 		private string _name;
@@ -573,7 +574,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		#endregion
-		private void getColumnsFromAttributes()
+		protected virtual void getColumnsFromAttributes()
 		{
 			_columns = new List<Column>();
 			if( this._wrappedClass != null)

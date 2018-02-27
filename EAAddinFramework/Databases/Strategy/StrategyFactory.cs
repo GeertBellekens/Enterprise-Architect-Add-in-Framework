@@ -7,8 +7,12 @@ namespace EAAddinFramework.Databases.Strategy
 	/// <summary>
 	/// Description of StrategyFactory.
 	/// </summary>
-	public abstract class StrategyFactory
+	public class StrategyFactory
 	{
-		public abstract DatabaseItemStrategy getStrategy<T>() where T : DatabaseItem;
+		public virtual DatabaseItemStrategy getStrategy<T>() where T : DatabaseItem
+        {
+            //default implementation
+            return new DatabaseItemStrategy(this);
+        }
 	}
 }

@@ -15,8 +15,9 @@ namespace EAAddinFramework.Databases
 	public class Column:DatabaseItem, DB.Column
 	{
 		internal Table _ownerTable;
-		internal TSF_EA.Attribute _wrappedattribute;
-		internal DataType _type;
+		protected TSF_EA.Attribute _wrappedattribute;
+        public TSF_EA.Attribute wrappedattribute { get { return _wrappedattribute; } }
+        internal DataType _type;
 		private TSF_EA.TaggedValue _traceTaggedValue;
 		private TSF_EA.Attribute _logicalAttribute;
 		private List<TSF_EA.Attribute> _logicalAttributes;
@@ -101,12 +102,12 @@ namespace EAAddinFramework.Databases
 			//create the _wrapped attribute if needed
 			if (_wrappedattribute == null)
 			{
-				if (this._ownerTable._wrappedClass == null)
+				if (this._ownerTable.wrappedClass == null)
 				{
 					this.ownerTable.save();
 				}
 				//now the wrappedClass should exist. if not then we have a problem
-				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable._wrappedClass,this.name);
+				this._wrappedattribute = this.factory.modelFactory.createNewElement<TSF_EA.Attribute>(this._ownerTable.wrappedClass,this.name);
 
 				if (this.logicalAttribute!= null)
 				{
