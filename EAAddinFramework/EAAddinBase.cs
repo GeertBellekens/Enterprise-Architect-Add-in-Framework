@@ -46,10 +46,13 @@ namespace EAAddinFramework
 		/// <param name="e">the exception</param>
 		public static void processException(Exception e)
 		{
-			string exceptionInfo = "An unhandled exception has occured." + Environment.NewLine
-	                     +"Error Message: " + e.Message + Environment.NewLine
-	      				+"Stacktrace: " + e.StackTrace;
-			Logger.logError(exceptionInfo);
+            string exceptionInfo = "An unhandled exception has occured." + Environment.NewLine
+                        + "Error Message: " + e.Message + Environment.NewLine
+                        + "Stacktrace: " + e.StackTrace;
+            if (e.InnerException != null)
+                exceptionInfo += Environment.NewLine + "Inner Exception: " + e.InnerException.Message + Environment.NewLine
+                    + "Stacktrace: " + e.InnerException.StackTrace;
+            Logger.logError(exceptionInfo);
 	      	MessageBox.Show(exceptionInfo,"Unexpected Exception",MessageBoxButtons.OK,MessageBoxIcon.Error);
 		}
 
