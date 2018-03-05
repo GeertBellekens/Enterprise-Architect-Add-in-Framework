@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using UML=TSF.UmlToolingFramework.UML;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class DiagramObjectWrapper : UML.Diagrams.DiagramElement {
@@ -171,5 +171,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		this.wrappedDiagramObject.SetStyleEx("VPartition",vPartitionValue);
 		string styleAfter = this.wrappedDiagramObject.Style.ToString();
 	}
-  }
+
+        public List<UML.Classes.Kernel.Element> getAllOwners()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

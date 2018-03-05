@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
-using UML=TSF.UmlToolingFramework.UML;
+using UML = TSF.UmlToolingFramework.UML;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
 {
@@ -133,7 +134,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		throw new NotImplementedException();
 	}
-	public string name {
+
+        public List<UML.Classes.Kernel.Element> getAllOwners()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string name {
 		get {
 			throw new NotImplementedException();
 		}

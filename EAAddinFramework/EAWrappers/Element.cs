@@ -156,6 +156,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         protected Element _owner;
         public abstract UML.Classes.Kernel.Element owner
         { get; set; }
+        /// <summary>
+        /// returns a list of all owners starting with the owner of this element up to the root package of the model
+        /// </summary>
+        /// <returns>a list of all owners starting with the over of this element up to the root package of the model</returns>
+        public List<UML.Classes.Kernel.Element> getAllOwners()
+        {
+            var owners = new List<UML.Classes.Kernel.Element>();
+            if (this.owner != null)
+            {
+                owners.Add(this.owner);
+                owners.AddRange(this.owner.getAllOwners());
+            }
+            return owners;
+        }
         public abstract HashSet<UML.Profiles.Stereotype> stereotypes
         { get; set; }
         public virtual void addStereotype(UML.Profiles.Stereotype stereotype)

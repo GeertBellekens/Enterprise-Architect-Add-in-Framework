@@ -30,11 +30,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public Boolean isLiteEdition { get { return this.wrappedModel.EAEdition == global::EA.EAEditionTypes.piLite; } }
         public string currentUserID { get { return this.wrappedModel.GetCurrentLoginUser(true); } }
 
-        internal string convertFromEANotes(string EANotes, string newFormat)
+        public string convertFromEANotes(string EANotes, string newFormat)
         {
             return this.wrappedModel.GetFormatFromField(newFormat, EANotes);
         }
-        internal string convertToEANotes(string externalNotes, string externalFormat)
+        public string convertToEANotes(string externalNotes, string externalFormat)
         {
             return this.wrappedModel.GetFieldFromFormat(externalFormat, externalNotes);
         }

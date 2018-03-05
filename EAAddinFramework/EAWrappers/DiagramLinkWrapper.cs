@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 
 using EAAddinFramework.Utilities;
-using UML=TSF.UmlToolingFramework.UML;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   /// A diagramElement that wraps the EA.DiagramLink class.
@@ -248,5 +249,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	{
 		//do nothing
 	}
-  }
+
+        public List<UML.Classes.Kernel.Element> getAllOwners()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
