@@ -12,18 +12,23 @@ namespace EAAddinFramework.Databases
 	/// </summary>
 	public class BaseDataType:DB.BaseDataType
 	{
+        
 		public BaseDataType(string name, bool hasLength, bool hasPrecision)
 		{
 			this.name = name;
 			this.hasLength = hasLength;
 			this.hasPrecision = hasPrecision;
+            this.databaseProduct = string.Empty;
 		}
 		public BaseDataType(global::EA.Datatype eaDatatype)
 		{
 			this.name = eaDatatype.Name;
 			this.hasLength = eaDatatype.Size > 0;
 			this.hasPrecision = eaDatatype.Size == 2;
+            this.databaseProduct = eaDatatype.Product;
 		}
+        public string databaseProduct { get; private set; }
+
 
 		public List<DB.DatabaseItem> mergedEquivalents {
 			get {

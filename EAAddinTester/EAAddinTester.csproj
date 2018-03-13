@@ -145,6 +145,10 @@
       <Project>{D800D986-DF66-4447-AD33-2E1D1ACF63FD}</Project>
       <Name>ECDMMessageComposer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\GlossaryManager\GlossaryManager.csproj">
+      <Project>{0f163106-7c92-4bb8-b54c-0ff8315d1779}</Project>
+      <Name>GlossaryManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\UMLToolingFramework\UMLToolingFramework.csproj">
       <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
       <Name>UMLToolingFramework</Name>

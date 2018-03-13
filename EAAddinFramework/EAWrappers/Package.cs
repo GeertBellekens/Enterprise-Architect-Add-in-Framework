@@ -180,7 +180,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get
             {
                 this.wrappedPackage.Packages.Refresh(); // make sure that the most up to date list of packages
-                return new HashSet<UML.Classes.Kernel.Package>(this.ownedElements.OfType<UML.Classes.Kernel.Package>());
+                var packages = this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Package>();
+                return new HashSet<UML.Classes.Kernel.Package>(packages);
             }
             set
             {

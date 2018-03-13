@@ -114,16 +114,30 @@ namespace EAAddinFramework.Databases
             this._baseDataTypes = getBaseDataTypes(type, model);
             this._strategyFactory = strategyFactory;
         }
-        public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
+        private static Dictionary<Model, List<BaseDataType>> modelBaseDataTypes = new Dictionary<Model, List<BaseDataType>>();
+        public static void loadBaseDataTypes(Model model)
         {
-            Dictionary<string, BaseDataType> datatypes = new Dictionary<string, BaseDataType>();
+            var newBaseDataTypes = new List<BaseDataType>();
             foreach (global::EA.Datatype eaDataType in model.wrappedModel.Datatypes)
             {
-                if (eaDataType.Product.Equals(databaseType, StringComparison.InvariantCultureIgnoreCase)
-                    && eaDataType.Type == "DDL")
+                if (eaDataType.Type == "DDL")
                 {
-                    var datatype = new BaseDataType(eaDataType);
-                    datatypes.Add(datatype.name, datatype);
+                    newBaseDataTypes.Add(new BaseDataType(eaDataType));
+                }
+            }
+            modelBaseDataTypes[model] = newBaseDataTypes;
+        }
+        public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
+        {
+            //make sure the BaseDataTypes are loaded
+            if (!modelBaseDataTypes.ContainsKey(model)) loadBaseDataTypes(model);
+            //find the database types
+            Dictionary<string, BaseDataType> datatypes = new Dictionary<string, BaseDataType>();
+            foreach (var baseDataType in modelBaseDataTypes[model])
+            {
+                if (baseDataType.databaseProduct.Equals(databaseType, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    datatypes.Add(baseDataType.name, baseDataType);
                 }
             }
             return datatypes;
