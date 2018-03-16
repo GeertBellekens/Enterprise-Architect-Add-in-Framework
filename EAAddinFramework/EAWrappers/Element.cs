@@ -455,6 +455,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //we don't wan't any duplicates so we get the existing one
                 newTaggedValue = this.getTaggedValue(name);
             }
+            else
+            {
+                //we allow "duplicate" tagged values, but only if the value is different.
+                newTaggedValue = this.taggedValues.FirstOrDefault(x => x.name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
+                                                            && ((TaggedValue)x).eaStringValue.Equals(tagValue, StringComparison.InvariantCultureIgnoreCase)) as TaggedValue;
+            }
             if (newTaggedValue == null)
             {
                 //no existing tagged value found, or we need to create duplicates
