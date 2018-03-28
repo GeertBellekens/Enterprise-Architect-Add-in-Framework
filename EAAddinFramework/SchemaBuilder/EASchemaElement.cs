@@ -216,6 +216,8 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			//stereotypes
 			this.subsetElement.stereotypes = this.sourceElement.stereotypes;
+            //abstract
+            this.subsetElement.isAbstract = this.sourceElement.isAbstract;
 			//alias
 			//only copy alias is the alias in the subset is empty
 			if(string.IsNullOrEmpty(((UTF_EA.ElementWrapper)subsetElement).alias))

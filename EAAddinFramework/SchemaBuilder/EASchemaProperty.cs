@@ -130,6 +130,8 @@ namespace EAAddinFramework.SchemaBuilder
 				this.subSetProperty.type = this.sourceProperty.type;
 				this.subSetProperty.stereotypes = this.sourceProperty.stereotypes;
 				this.subSetProperty.multiplicity = this.multiplicity;
+                this.subSetProperty.isID = this.sourceProperty.isID;
+                this.subSetProperty.visibility = this.sourceProperty.visibility;
 				//Set position for new items
 				if (this.isNew)this.subSetProperty.position = this.sourceProperty.position;
 				//alias (only if subset alias is empty)

@@ -238,8 +238,9 @@ namespace EAAddinFramework.SchemaBuilder
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.addAttributeTypeDependencies();
                         }
-                        //order the attribute
-                        schemaElement.orderAttributes();
+                        //order the attributes
+                        if (!this.settings.keepOriginalAttributeOrder)
+                                schemaElement.orderAttributes();
                         //order the associations
                         if (this.settings.orderAssociationsAlphabetically)
                         {

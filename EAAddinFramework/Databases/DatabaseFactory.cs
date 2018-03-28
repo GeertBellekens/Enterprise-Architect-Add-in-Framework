@@ -127,7 +127,7 @@ namespace EAAddinFramework.Databases
             }
             modelBaseDataTypes[model] = newBaseDataTypes;
         }
-        public Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
+        public static Dictionary<string, BaseDataType> getBaseDataTypes(string databaseType, Model model)
         {
             //make sure the BaseDataTypes are loaded
             if (!modelBaseDataTypes.ContainsKey(model)) loadBaseDataTypes(model);

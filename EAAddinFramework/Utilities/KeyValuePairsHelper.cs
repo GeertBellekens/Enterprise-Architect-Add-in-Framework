@@ -31,6 +31,28 @@ namespace EAAddinFramework.Utilities
 			//if nothing found then return null;
 			return null;
 		}
+        /// <summary>
+        /// returns a dictionary of the key value pairs in the given string.
+        /// pairs are divided by ';' where key is separated by value with '='
+        /// Example: key1=value1;key2=value2
+        /// </summary>
+        /// <param name="source">the string containing the key-value pairs</param>
+        /// <returns>A dictionary of the key value pairs found in the given string</returns>
+        public static Dictionary<string,string> GetKeyValuePairs(string source)
+        {
+            var keyValuePairs = new Dictionary<string, string>();
+            //first split the string into keyvalue pairs
+            foreach (var keyValuePair in source.Split(';'))
+            {
+                //then split the key and value
+                var keyValues = keyValuePair.Split('=');
+                if (keyValues.Count() >= 2)
+                {
+                     keyValuePairs[keyValues[0]] = keyValues[1];
+                }
+            }
+            return keyValuePairs;
+        }
 		public static string setValueForKey(string key,string value,string source)
 		{
 			var keyValuePairs = new List<string>();

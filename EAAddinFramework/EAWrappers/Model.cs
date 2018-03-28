@@ -1638,7 +1638,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <param name="allowedTypes">the subtypes of UML.Classes.Kernel.Element that should be used as a filter</param>
         /// <returns>the selected element</returns>
         /// <param name = "allowedStereotypes"> the list of stereotypes to filter on</param>
-        public UML.Classes.Kernel.Element getUserSelectedElement(List<string> allowedTypes, List<string> allowedStereotypes)
+        public UML.Classes.Kernel.Element getUserSelectedElement(List<string> allowedTypes, List<string> allowedStereotypes, string defaultSelectionGUID = null)
         {
             //construct the include string
             string includeString = "IncludedTypes=";
@@ -1657,13 +1657,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                   + string.Join(",", allowedStereotypes)
                                 + ";";
             }
+            if (string.IsNullOrEmpty(defaultSelectionGUID))
+            {
+                defaultSelectionGUID = this.wrappedModel.GetTreeSelectedPackage()?.PackageGUID;
+            }
             //get the currently selected package
             var treeSelectedPackage = this.wrappedModel.GetTreeSelectedPackage();
-            if (treeSelectedPackage != null)
+            if (!string.IsNullOrEmpty(defaultSelectionGUID))
             {
-                includeString += "Selection=" + treeSelectedPackage.PackageGUID;
-                //close section
-                includeString += ";";
+                includeString += "Selection="
+                            + defaultSelectionGUID
+                            + ";";
             }
             //currenlty only supported for ElementWrappers
             int EAElementID = this.wrappedModel.InvokeConstructPicker(includeString);
