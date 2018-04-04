@@ -53,14 +53,36 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Design, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Docking, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Docking.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Navigator, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Navigator.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Ribbon, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Ribbon.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Workspace, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\KryptonWinFormControls.4.4.1.0\lib\net40\ComponentFactory.Krypton.Workspace.dll</HintPath>
+    </Reference>
     <Reference Include="FileHelpers">
       <HintPath>..\..\Enterprise-Architect-Toolpack\packages\FileHelpers.3.1.5\lib\net45\FileHelpers.dll</HintPath>
     </Reference>
     <Reference Include="Interop.EA">
-      <HintPath>..\..\..\..\..\..\Program Files %28x86%29\Sparx Systems\EA\Interop.EA.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Sparx Systems\EA\Interop.EA.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Enterprise-Architect-Toolpack\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\..\Enterprise-Architect-Toolpack\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
