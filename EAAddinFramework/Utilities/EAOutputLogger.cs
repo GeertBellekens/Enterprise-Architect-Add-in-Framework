@@ -38,7 +38,7 @@ namespace EAAddinFramework.Utilities
 			this.model.wrappedModel.EnsureOutputVisible(this.name);
 			this.model.wrappedModel.ClearOutput(this.name);
 		}
-		private void logToOutput(string message, int elementID = 0)
+        private void logToOutput(string message, int elementID = 0)
 		{
 			this.model.wrappedModel.EnsureOutputVisible(this.name);
 			this.model.wrappedModel.WriteOutput(this.name,message,elementID);
