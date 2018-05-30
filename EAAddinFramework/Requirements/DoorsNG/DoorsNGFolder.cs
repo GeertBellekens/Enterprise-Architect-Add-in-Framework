@@ -7,7 +7,7 @@ using EARQ = EAAddinFramework.Requirements;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using RequirementsFramework;
 using System.Net.Http;
-using Nito.AsyncEx;
+
 
 namespace EAAddinFramework.Requirements.DoorsNG
 {
