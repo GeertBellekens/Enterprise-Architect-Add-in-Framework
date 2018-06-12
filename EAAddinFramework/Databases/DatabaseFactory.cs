@@ -69,8 +69,27 @@ namespace EAAddinFramework.Databases
         }
         public static DB_EA.Column createColumn(TSF_EA.Attribute attribute)
         {
+            //create the table
+            var tableElement = attribute.owner as Class;
+            if (tableElement == null) return null;
+            var table = createTable(tableElement);
+            if (table == null) return null;
+            //create the column
+            return new Column(table, attribute);
+        }
+        public static DB_EA.Table createTable(TSF_EA.Class tableElement)
+        {
+            //get the database
+            var database = getDatabase(tableElement);
+            if (database == null) return null;
+            //create the table
+            return new Table(database, tableElement);
+        }
+
+        public static DB_EA.Database getDatabase(TSF_EA.Element element)
+        {
             //first get the database based on the attribute
-            var databasePackage = attribute.getAllOwners().OfType<Package>().FirstOrDefault(x => x.stereotypeNames.Any(y => y.ToLower() == "database"));
+            var databasePackage = element.getAllOwners().OfType<Package>().FirstOrDefault(x => x.stereotypeNames.Any(y => y.ToLower() == "database"));
             //no database found, return empty
             if (databasePackage == null) return null;
             string databaseType = databasePackage.taggedValues.FirstOrDefault(x => x.name.ToLower() == "dbms")?.tagValue.ToString();
@@ -78,17 +97,10 @@ namespace EAAddinFramework.Databases
             if (string.IsNullOrEmpty(databaseType)) return null;
             //create the factory and database
             // TODO: add caching?
-            var dbFactory = getFactory(databaseType, attribute.EAModel, new StrategyFactory());
-            var database = dbFactory.createDataBase(databasePackage);
-            //no database, return
-            if (database == null) return null;
-            //create the table
-            var tableElement = attribute.owner as Class;
-            if (tableElement == null) return null;
-            var table = new Table(database, tableElement);
-            //create the column
-            return new Column(table, attribute);
+            var dbFactory = getFactory(databaseType, element.EAModel, new StrategyFactory());
+            return dbFactory?.createDataBase(databasePackage);
         }
+
         //private static Dictionary<string, DatabaseFactory> factories = new Dictionary<string, DatabaseFactory>();
         private static Dictionary<Model, Dictionary<string, DatabaseFactory>> modelFactories = new Dictionary<Model, Dictionary<string, DatabaseFactory>>();
 
