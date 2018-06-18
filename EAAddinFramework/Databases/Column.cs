@@ -460,17 +460,16 @@ namespace EAAddinFramework.Databases
 		{
 			if (this._wrappedattribute != null)
 			{
-				this._wrappedattribute.type = this._wrappedattribute.EAModel.factory.createPrimitiveType(_type.type.name);
+				this._wrappedattribute.type = this._wrappedattribute.EAModel.factory.createPrimitiveType(this.type.type.name);
 				if (this.type.type.hasPrecision)
 				{
-					this._wrappedattribute.precision = _type.length;
-					this._wrappedattribute.scale = _type.precision;
+					this._wrappedattribute.precision = this.type.length;
+					this._wrappedattribute.scale = this.type.precision;
 				}
 				else
 				{
-					this._wrappedattribute.length = _type.length;
+					this._wrappedattribute.length = this.type.length;
 				}
-				
 			}
 		}
 

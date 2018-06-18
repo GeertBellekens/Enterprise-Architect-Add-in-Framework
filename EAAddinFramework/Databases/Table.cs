@@ -453,6 +453,12 @@ namespace EAAddinFramework.Databases
             //initialise columns
             if (this.columns != null) this._columns.Add((Column)column);
         }
+        public Column addNewColumn(string name)
+        {
+            var newColumn = new Column(this, name);
+            if (this.columns != null) this._columns.Add(newColumn);
+            return newColumn;
+        }
 
         public void removeColumn(DB.Column column)
         {

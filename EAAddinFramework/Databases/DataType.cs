@@ -134,7 +134,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 		public string name {
-			get {return this.type.name;}
+			get {return this.type?.name;}
 			set {throw new NotImplementedException();}
 		}
 		public int length {get;set;}
