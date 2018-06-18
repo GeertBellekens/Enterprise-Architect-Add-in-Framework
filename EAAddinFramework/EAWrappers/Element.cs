@@ -13,7 +13,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// resets teh property info making sure all properties are reset
         /// </summary>
-        public void reload()
+        public virtual void reload()
         {
             this.properties.Clear();
         }

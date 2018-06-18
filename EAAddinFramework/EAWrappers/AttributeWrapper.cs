@@ -20,8 +20,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			var dummy = this.type; //make sure we get the type here to avoid multithreading errors
 			this.isDirty = false;
 	    }
-		
-		internal global::EA.Attribute wrappedAttribute { get; set; }
+        public override void reload()
+        {
+            base.reload();
+            this._type = null;
+        }
+        internal global::EA.Attribute wrappedAttribute { get; set; }
 	    public int id
 	    {
 	    	get{return this.wrappedAttribute.AttributeID;}

@@ -22,8 +22,10 @@ namespace EAAddinFramework.Databases
 		private TSF_EA.Attribute _logicalAttribute;
 		private List<TSF_EA.Attribute> _logicalAttributes;
 		private string _name;
-		
-		public Column(Table owner, TSF_EA.Attribute attribute):base(owner.strategy.getStrategy<Column>())
+        private bool? _isNotNullable;
+        internal string _initialValue;
+
+        public Column(Table owner, TSF_EA.Attribute attribute):base(owner.strategy.getStrategy<Column>())
 		{
 			this._ownerTable = owner;
 			this._wrappedattribute = attribute;
@@ -34,6 +36,17 @@ namespace EAAddinFramework.Databases
 			this.name = name;
 			this.ownerTable.addColumn(this);
 		}
+        /// <summary>
+        /// reloads the data from the dataabse
+        /// </summary>
+        public void reload()
+        {
+            this.wrappedattribute.reload();
+            this._name = null;
+            this._type = null;
+            this._isNotNullable = null;
+            this._initialValue = null;
+        }
 		
 		internal bool initialOverride = false;
 		internal bool getInitialOverride()
@@ -418,7 +431,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		private bool? _isNotNullable;
+		
 		public bool isNotNullable
 		{
 			get 
@@ -473,7 +486,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-    internal string _initialValue;
+    
     public string initialValue 
     {
 		get 
