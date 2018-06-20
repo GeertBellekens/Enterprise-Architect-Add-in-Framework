@@ -237,7 +237,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	protected override string getTaggedValueQuery(string taggedValueName)
 	{
 		return @"select tv.PropertyID from t_taggedvalue tv
-		where tv.TagValue = '"+taggedValueName+"' "
+		where tv.TagValue like '"+taggedValueName+"' "
 			+ " and tv.ElementID = '"+this.uniqueID+"'";
 	}
 	#endregion
