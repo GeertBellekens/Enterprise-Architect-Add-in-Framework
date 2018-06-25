@@ -30,7 +30,7 @@ namespace EAAddinFramework.SchemaBuilder
         {
             get
             {
-                return new UTF_EA.Multiplicity("0..*");
+                return new UTF_EA.Multiplicity("1..1");
             }
         }
 
