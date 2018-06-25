@@ -41,7 +41,7 @@ namespace EAAddinFramework.Databases
         /// </summary>
         public void reload()
         {
-            this.wrappedattribute.reload();
+            this.wrappedattribute?.reload();
             this._name = null;
             this._type = null;
             this._isNotNullable = null;
