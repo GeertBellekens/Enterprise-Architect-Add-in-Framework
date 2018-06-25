@@ -117,13 +117,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	    {
 	    	get 
 	    	{
-	    		return ((Factory) this.EAModel.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(),this.wrappedAttribute.StereotypeEx));
+	    		return ((Factory) this.EAModel.factory).createStereotypes(this,(string)this.getProperty(getPropertyNameName(), this.getWrappedStereotypeString()));
 	    	}
 			set 
-			{
-				this.setProperty(getPropertyNameName(),Stereotype.getStereotypeEx(value),this.wrappedAttribute.StereotypeEx);
+			{   
+                this.setProperty(getPropertyNameName(),Stereotype.getStereotypeEx(value),this.getWrappedStereotypeString());
 			}    	
 	    }
+        private string getWrappedStereotypeString()
+        {
+            //in some cases the StereotypeEx is empty while Stereotyp is not. (smells like a bug in the EA API)
+            // below the workaround to make sure we have the stereotype
+            var stereotypeString = this.wrappedAttribute.StereotypeEx;
+            if (string.IsNullOrEmpty(stereotypeString)) stereotypeString = this.wrappedAttribute.Stereotype;
+            return stereotypeString;
+        }
     	public void setStereotype(string stereotype)
     	{	
     		var newStereotypes = new HashSet<UML.Profiles.Stereotype>();
