@@ -299,6 +299,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return elementWrapper;
         }
         /// <summary>
+        /// close the tab with the given name
+        /// </summary>
+        /// <param name="appTitle">the name of the tab to close</param>
+        public void closeTab(string appTitle)
+        {
+            if (this.wrappedModel.IsTabOpen(appTitle) > 0)
+                this.wrappedModel.RemoveTab(appTitle);
+        }
+
+        /// <summary>
         /// Finds the EA.Element with the given GUID and returns an EAElementwrapper 
         /// wrapping this element.
         /// </summary>
