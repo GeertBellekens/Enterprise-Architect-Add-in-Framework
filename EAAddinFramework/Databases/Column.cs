@@ -41,11 +41,14 @@ namespace EAAddinFramework.Databases
         /// </summary>
         public void reload()
         {
-            this.wrappedattribute?.reload();
-            this._name = null;
-            this._type = null;
-            this._isNotNullable = null;
-            this._initialValue = null;
+            if (this.wrappedattribute != null)
+            {
+                this.wrappedattribute.reload();
+                this._name = null;
+                this._type = null;
+                this._isNotNullable = null;
+                this._initialValue = null;
+            }
         }
 		
 		internal bool initialOverride = false;
