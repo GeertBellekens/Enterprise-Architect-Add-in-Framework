@@ -767,6 +767,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// supported functions:
         /// 
         /// - lcase -> lower in T-SQL (SQLSVR and ASA)
+        /// - like -> ilike in PostGres
         /// </summary>
         /// <param name="sqlQuery">the query to format</param>
         /// <returns>a query with traslated functions</returns>
@@ -781,6 +782,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                    this.repositoryType == RepositoryType.POSTGRES)
             {
                 formattedSQL = formattedSQL.Replace("lcase(", "lower(");
+            }
+            // like -> ilike
+            if (this.repositoryType == RepositoryType.POSTGRES)
+            {
+                formattedSQL = formattedSQL.Replace(" like ", " ilike ");
             }
             return formattedSQL;
         }
