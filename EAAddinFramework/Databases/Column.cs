@@ -148,7 +148,7 @@ namespace EAAddinFramework.Databases
 				this._wrappedattribute.setStereotype("column");
 				//set datatype;
 				_wrappedattribute.type = this.factory.modelFactory.createPrimitiveType(this.type.name);
-				if (this.type.type.hasPrecision)
+				if (this.type.type != null && this.type.type.hasPrecision)
 				{
 					_wrappedattribute.precision = this.type.length;
 					_wrappedattribute.scale = this.type.precision;
