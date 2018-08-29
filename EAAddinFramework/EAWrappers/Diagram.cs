@@ -410,6 +410,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 return ((Factory)this.model.factory).createStereotypes(this, this.wrappedDiagram.Stereotype);
             }
+            set
+            {
+                this.wrappedDiagram.StereotypeEx = Stereotype.getStereotypeEx(value);
+            }
         }
 
 

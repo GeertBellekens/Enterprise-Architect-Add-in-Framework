@@ -148,6 +148,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 // return an empty collection
                 return new HashSet<UML.Profiles.Stereotype>();
             }
+            set
+            {
+                //do nothing
+            }
         }
         /// <summary>
         /// add the owner of the tagged value to the current diagram

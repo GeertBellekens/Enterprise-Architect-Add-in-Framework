@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using SBF = SchemaBuilderFramework;
 using UML = TSF.UmlToolingFramework.UML;
-using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.Utilities;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
@@ -16,7 +16,7 @@ namespace EAAddinFramework.SchemaBuilder
     /// </summary>
     public class EASchema : SBF.Schema
     {
-        private UTF_EA.Model model;
+        private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
         private HashSet<SBF.SchemaElement> schemaElements = null;
 
@@ -27,7 +27,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="model">The model containing this Scheam</param>
         /// <param name="composer">The EA.SchemaComposer object to be wrapped</param>
-        internal EASchema(UTF_EA.Model model, EA.SchemaComposer composer, SBF.SchemaSettings settings)
+        internal EASchema(TSF_EA.Model model, EA.SchemaComposer composer, SBF.SchemaSettings settings)
         {
             this.model = model;
             this.wrappedComposer = composer;
@@ -79,6 +79,28 @@ namespace EAAddinFramework.SchemaBuilder
                 throw new NotImplementedException();
             }
         }
+        private TSF_EA.ElementWrapper _containerElement;
+        public PackageableElement containerElement
+        {
+            get
+            {
+                if (this._containerElement is null)
+                {
+                    string sqlGetSchemaArtifact = "select o.Object_ID from t_object o "
+                                                  + " inner join t_document d on d.ElementID = o.ea_guid "
+                                                  + $"where d.StrContent like '%<description name=\"{this.name}\"%'";
+                    var schemaArtifacts = this.model.getElementWrappersByQuery(sqlGetSchemaArtifact);
+                    //only safe if only one element found.
+                    if (schemaArtifacts.Count == 1) this._containerElement = schemaArtifacts.First();
+                }
+                return _containerElement as PackageableElement;
+            }
+            set
+            {
+                this._containerElement = value as TSF_EA.ElementWrapper;
+            }
+        }
+
         /// <summary>
         /// gets the EA.SchemaTypes from the enumerator
         /// </summary>
@@ -153,8 +175,8 @@ namespace EAAddinFramework.SchemaBuilder
 													where 
 													c.Connector_Type = 'Abstraction'
 													and c.Stereotype = 'trace'
-													and c.Start_Object_ID = " + ((UTF_EA.ElementWrapper)subsetElement).id +
-                                                    " and c.End_Object_ID = " + ((UTF_EA.ElementWrapper)schemaElement.sourceElement).id;
+													and c.Start_Object_ID = " + ((TSF_EA.ElementWrapper)subsetElement).id +
+                                                    " and c.End_Object_ID = " + ((TSF_EA.ElementWrapper)schemaElement.sourceElement).id;
                             var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
                             var connectorIDNode = checkTraceXML.SelectSingleNode(this.model.formatXPath("//Connector_ID"));
                             int connectorID;
@@ -275,7 +297,7 @@ namespace EAAddinFramework.SchemaBuilder
                            && !reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
                            && !reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
                            && !reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
-                           && (reloadedElement is UTF_EA.ElementWrapper && !((UTF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
+                           && (reloadedElement is TSF_EA.ElementWrapper && !((TSF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
                         {
                             //tell the user what we are doing 
                             EAOutputLogger.log(this.model, this.settings.outputName, "Deleting subset element for: '" + schemaElement.name + "'"
@@ -347,7 +369,7 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element: '" + subsetElement.name + "' to a schema element"
-                                   , ((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
+                                   , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
                 //get the corrsponding schema element
                 EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
 
@@ -362,7 +384,7 @@ namespace EAAddinFramework.SchemaBuilder
                     //only if the subset element is located in the same folder as the message element
                     //and it doesn't have one of stereotypes to be ignored
                     if (destinationPackage.getNestedPackageTree(true).Any(x => x.Equals(subsetElement.owningPackage))
-                        && !this.settings.ignoredStereotypes.Intersect(((UTF_EA.Element)subsetElement).stereotypeNames).Any())
+                        && !this.settings.ignoredStereotypes.Intersect(((TSF_EA.Element)subsetElement).stereotypeNames).Any())
                     {
                         subsetElement.delete();
                     }
@@ -430,12 +452,12 @@ namespace EAAddinFramework.SchemaBuilder
         private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
         {
             //follow the associations
-            foreach (UTF_EA.Association association in element.getRelationships<UML.Classes.Kernel.Association>())
+            foreach (TSF_EA.Association association in element.getRelationships<UML.Classes.Kernel.Association>())
             {
                 addToSubsetElements(association.target as UML.Classes.Kernel.Classifier, subsetElements);
             }
             //follow the attribute types
-            foreach (UTF_EA.Attribute attribute in element.attributes)
+            foreach (TSF_EA.Attribute attribute in element.attributes)
             {
                 addToSubsetElements(attribute.type as UML.Classes.Kernel.Classifier, subsetElements);
             }
@@ -463,15 +485,15 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="source">the source element</param>
         /// <param name="target">the target element</param>
-        public void copyTaggedValues(UTF_EA.Element source, UTF_EA.Element target)
+        public void copyTaggedValues(TSF_EA.Element source, TSF_EA.Element target)
         {
             //copy tagged values
-            foreach (UTF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
+            foreach (TSF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
             {
                 bool updateTaggedValue = true;
                 if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name))
                 {
-                    UTF_EA.TaggedValue targetTaggedValue =
+                    TSF_EA.TaggedValue targetTaggedValue =
                         target.getTaggedValue(sourceTaggedValue.name);
                     if (targetTaggedValue != null &&
                         targetTaggedValue.eaStringValue != string.Empty)

@@ -10,7 +10,7 @@ using UML = TSF.UmlToolingFramework.UML;
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
 
-    public class ElementWrapper : Element, UML.Classes.Kernel.NamedElement
+    public class ElementWrapper : Element, UML.Classes.Kernel.PackageableElement
     {
         internal global::EA.Element wrappedElement { get; set; }
         private HashSet<UML.Classes.Kernel.Property> _attributes;
