@@ -5,7 +5,7 @@ using System.Text;
 using EAAddinFramework.Utilities;
 using SBF=SchemaBuilderFramework;
 using UML=TSF.UmlToolingFramework.UML;
-using UTF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
 
@@ -17,14 +17,14 @@ namespace EAAddinFramework.SchemaBuilder
 	public class EASchemaElement : SBF.SchemaElement
 	{
 		internal EA.SchemaType wrappedSchemaType;
-		private UTF_EA.Model model;
+		private TSF_EA.Model model;
 		private EASchema ownerSchema;
 		private HashSet<SBF.SchemaProperty> _schemaProperties;
-		private UTF_EA.ElementWrapper _sourceElement;
+		private TSF_EA.ElementWrapper _sourceElement;
 		private HashSet<SBF.SchemaAssociation> _schemaAssociations;
 		private HashSet<SBF.SchemaLiteral> _schemaLiterals;
 		
-		public EASchemaElement(UTF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
+		public EASchemaElement(TSF_EA.Model model,EASchema owner, EA.SchemaType objectToWrap)
 		{
 			this.model = model;
 			this.ownerSchema = owner;
@@ -210,7 +210,7 @@ namespace EAAddinFramework.SchemaBuilder
                                               ,string.Format("Element '{0}' has changed name from '{1}' since the last schema generation"
                                   					,this.sourceElement.name
                                   					,this.subsetElement.name)
-                                              ,((UTF_EA.ElementWrapper)sourceElement).id
+                                              ,((TSF_EA.ElementWrapper)sourceElement).id
                                               , LogTypeEnum.warning);						
 				}
 			}
@@ -220,21 +220,21 @@ namespace EAAddinFramework.SchemaBuilder
             this.subsetElement.isAbstract = this.sourceElement.isAbstract;
 			//alias
 			//only copy alias is the alias in the subset is empty
-			if(string.IsNullOrEmpty(((UTF_EA.ElementWrapper)subsetElement).alias))
-			                        ((UTF_EA.ElementWrapper)subsetElement).alias = ((UTF_EA.ElementWrapper)sourceElement).alias;
+			if(string.IsNullOrEmpty(((TSF_EA.ElementWrapper)subsetElement).alias))
+			                        ((TSF_EA.ElementWrapper)subsetElement).alias = ((TSF_EA.ElementWrapper)sourceElement).alias;
 			//Check if the subset alias is different from the source alias and issue warning if that is the case
-			if (!string.Equals(((UTF_EA.ElementWrapper)subsetElement).alias,((UTF_EA.ElementWrapper)sourceElement).alias))
+			if (!string.Equals(((TSF_EA.ElementWrapper)subsetElement).alias,((TSF_EA.ElementWrapper)sourceElement).alias))
 			{
 					EAOutputLogger.log(this.model,this.owner.settings.outputName
                                               ,string.Format("Property '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
                                   					,this.sourceElement.name
-                                  					,((UTF_EA.ElementWrapper)subsetElement).alias
-                                  					,((UTF_EA.ElementWrapper)sourceElement).alias)
-                                              ,((UTF_EA.ElementWrapper)sourceElement).id
+                                  					,((TSF_EA.ElementWrapper)subsetElement).alias
+                                  					,((TSF_EA.ElementWrapper)sourceElement).alias)
+                                              ,((TSF_EA.ElementWrapper)sourceElement).id
                                               , LogTypeEnum.warning);				
 			}
 			//genlinks
-			((UTF_EA.ElementWrapper)subsetElement).genLinks = ((UTF_EA.ElementWrapper)sourceElement).genLinks;
+			((TSF_EA.ElementWrapper)subsetElement).genLinks = ((TSF_EA.ElementWrapper)sourceElement).genLinks;
 			//notes only update them if they are empty
 			if (this.subsetElement.ownedComments.Count == 0 || ! this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
 			{
@@ -251,14 +251,14 @@ namespace EAAddinFramework.SchemaBuilder
 				
 			}
 			//save the new subset element
-			((UTF_EA.Element) this.subsetElement).save();
+			((TSF_EA.Element) this.subsetElement).save();
 			//copy tagged values
-			((EASchema) this.owner).copyTaggedValues((UTF_EA.Element)this.sourceElement, (UTF_EA.Element)this.subsetElement);
+			((EASchema) this.owner).copyTaggedValues((TSF_EA.Element)this.sourceElement, (TSF_EA.Element)this.subsetElement);
 			//set reference to source element
 			if (this.owner.settings.tvInsteadOfTrace)
 			{
 				//add a tagged value from the subset element to the source element
-				((UTF_EA.ElementWrapper)this.subsetElement).addTaggedValue(this.owner.settings.elementTagName,this.sourceElement.uniqueID);
+				((TSF_EA.ElementWrapper)this.subsetElement).addTaggedValue(this.owner.settings.elementTagName,this.sourceElement.uniqueID);
 			}
 			else
 			{
@@ -295,7 +295,7 @@ namespace EAAddinFramework.SchemaBuilder
 								.Where(x => x.sourceAttributeWrapper != null)
 								.All(x => x.sourceAttributeWrapper.owner.Equals(firstSourceOwner));
 			//order all existing subset attributes if ther is more then one subsetproperty with position 0
-			List<UTF_EA.AttributeWrapper>orderedExistingAttributes;
+			List<TSF_EA.AttributeWrapper>orderedExistingAttributes;
 			if (existingAttributes.Where(x => x.subsetAttributeWrapper.position == 0)
 							    .Skip(1)
 							    .Any())
@@ -325,7 +325,7 @@ namespace EAAddinFramework.SchemaBuilder
 			// if there is only one source element then we use the position,else we use the name for sorting.
 			if (newAttributes.Any())
 			{
-				List<UTF_EA.AttributeWrapper> orderedNewAttributes;
+				List<TSF_EA.AttributeWrapper> orderedNewAttributes;
 				if (oneSourceElement)
 				{
 					orderedNewAttributes = newAttributes
@@ -356,17 +356,17 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				var listToBeOrdered = new List<UTF_EA.Element>();
+				var listToBeOrdered = new List<TSF_EA.Element>();
 				//add the associations
 				var allAssociations = this.subsetElement.getRelationships<Association>()
-									.Cast<UTF_EA.Association>();
+									.Cast<TSF_EA.Association>();
 				listToBeOrdered.AddRange(allAssociations.Where( y => y.source.Equals(this.subsetElement)));
 				int i;
 				//add attributes depending on the settings
 				if(listToBeOrdered.Count > 0 && this.owner.settings.orderAssociationsAmongstAttributes)
 				{
 					//add attributes
-					listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<UTF_EA.Attribute>());
+					listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<TSF_EA.Attribute>());
 					i = 1;
 				}
 				else
@@ -376,7 +376,7 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 				foreach (var element in listToBeOrdered.OrderBy(x => x.orderingName))
 				{
-					var association = element as UTF_EA.Association;
+					var association = element as TSF_EA.Association;
 					if (association != null)
 					{
 						association.sourceEnd.addTaggedValue("position",i.ToString());
@@ -419,7 +419,7 @@ namespace EAAddinFramework.SchemaBuilder
 					if (! subsetGeneralizations.Any(x => x.target.Equals(sourceGeneralization.target)))
 					{
 						//generalization doesn't exist yet. Add it
-						var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+						var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement,string.Empty);
 						newGeneralization.addRelatedElement(sourceGeneralization.target);
 						newGeneralization.save();
 					}
@@ -477,7 +477,7 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				foreach (var dependency in this.subsetElement.getRelationships<UTF_EA.Dependency>().Where(x => x.source.Equals(this.subsetElement) 
+				foreach (var dependency in this.subsetElement.getRelationships<TSF_EA.Dependency>().Where(x => x.source.Equals(this.subsetElement) 
 				                                                                                          && ! x.stereotypes.Any()))
 				{
 					//if the settings say we don't need to create attribute type dependencies then we delete them all
@@ -578,7 +578,7 @@ namespace EAAddinFramework.SchemaBuilder
 					    && ! subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
 						{
 						//generalization doesn't exist yet. Add it
-						var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+						var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement,string.Empty);
 						newGeneralization.addRelatedElement(schemaParent.subsetElement);
 						newGeneralization.save();
 						}
@@ -594,7 +594,7 @@ namespace EAAddinFramework.SchemaBuilder
 						&& ! subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target)))
 						{
 							//generalization doesn't exist yet. Add it
-							var newGeneralization = this.model.factory.createNewElement<UTF_EA.Generalization>(this.subsetElement,string.Empty);
+							var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement,string.Empty);
 							newGeneralization.addRelatedElement(sourceGeneralization.target);
 							newGeneralization.save();
 						}
@@ -611,11 +611,11 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				foreach (UTF_EA.Attribute attribute in this.subsetElement.attributes) 
+				foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes) 
 				{
 					//tell the user what we are doing 
 					EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching subset attribute: '" + attribute.name + "' to a schema property"
-					                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
+					                   ,((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 					EASchemaProperty matchingProperty = this.getMatchingSchemaProperty(attribute);
 					if (matchingProperty != null)
 					{
@@ -640,10 +640,10 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				var subsetElementWrapper = subsetElement as UTF_EA.ElementWrapper;
+				var subsetElementWrapper = subsetElement as TSF_EA.ElementWrapper;
 				if (subsetElementWrapper != null)
 				{
-					foreach (UTF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals) 
+					foreach (TSF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals) 
 					{
 						//tell the user what we are doing 
 						EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching subset literal: '" + literal.name + "' to a schema property"
@@ -672,7 +672,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="literal">the literal to match</param>
 		/// <returns>the corresponding SchemaLiteral</returns>
-		EASchemaLiteral getMatchingSchemaLiteral(UTF_EA.EnumerationLiteral literal)
+		EASchemaLiteral getMatchingSchemaLiteral(TSF_EA.EnumerationLiteral literal)
 		{
 			EASchemaLiteral result = null;
 			var sourceAttributeTag = literal.getTaggedValue(this.owner.settings.sourceAttributeTagName);
@@ -684,7 +684,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//we have the same attribute if the given attribute has a tagged value 
 					//called sourceAttribute that refences the source attribute of the schema Property
-					if (((UTF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral).guid == tagReference)
+					if (((TSF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral).guid == tagReference)
 					{
 						result = schemaLiteral;
 						break;
@@ -693,12 +693,43 @@ namespace EAAddinFramework.SchemaBuilder
 			}
 			return result;
 		}
-		/// <summary>
-		/// finds the corresponding Schema property for the given attribut
-		/// </summary>
-		/// <param name="attribute">attribute</param>
-		/// <returns>the corresponding Schema property if one is found. Else null</returns>
-		public EASchemaProperty getMatchingSchemaProperty(UTF_EA.Attribute attribute)
+        /// <summary>
+        /// get the subset element that represents this element in the destination package
+        /// </summary>
+        /// <param name="destinationPackage"></param>
+        public void matchSubsetElement(Package destinationPackage)
+        {
+            string sqlGetClassifiers;
+            if (this.ownerSchema.settings.tvInsteadOfTrace)
+            {
+                //get the classifier in the subset that represents this element
+                sqlGetClassifiers = "select distinct o.Object_ID from t_object o "
+                                   + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
+                                   + $" where p.Property = '{this.ownerSchema.settings.elementTagName}'"
+                                   + $"  and p.Value = '{this.sourceElement?.uniqueID}'"
+                                   + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+            }
+            else
+            {
+                //get the classifier in the subset that represents this element
+                sqlGetClassifiers = "select distinct o.Object_ID from ((t_object o"
+                                       + " inner join t_connector c on(c.Start_Object_ID = o.Object_ID"
+                                       + "                and c.Connector_Type = 'Abstraction'"
+                                       + "               and c.Stereotype = 'trace'))"
+                                       + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
+                                       + $"    where ot.ea_guid = '{this.sourceElement?.uniqueID}'"
+                                       + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+            }
+            //match with this classifier
+            this.matchSubsetElement(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>().FirstOrDefault());
+        }
+
+        /// <summary>
+        /// finds the corresponding Schema property for the given attribut
+        /// </summary>
+        /// <param name="attribute">attribute</param>
+        /// <returns>the corresponding Schema property if one is found. Else null</returns>
+        public EASchemaProperty getMatchingSchemaProperty(TSF_EA.Attribute attribute)
 		{
 			EASchemaProperty result = null;
 			var sourceAttributeTag = attribute.getTaggedValue(this.owner.settings.sourceAttributeTagName);
@@ -710,7 +741,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//we have the same attribute if the given attribute has a tagged value 
 					//called sourceAttribute that refences the source attribute of the schema Property
-					if (((UTF_EA.Attribute)property.sourceProperty).guid == tagReference)
+					if (((TSF_EA.Attribute)property.sourceProperty).guid == tagReference)
 					{
 						result = property;
 						break;
@@ -728,11 +759,11 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				foreach (UTF_EA.Association association in this.subsetElement.getRelationships<Association>()) 
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching relations of subset element: '" + subsetElement.name + "' to the schema"
+                                   , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
+                foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>()) 
 				{
-					//tell the user what we are doing 
-				EAOutputLogger.log(this.model,this.owner.settings.outputName,"Matching relations of subset element: '" + subsetElement.name + "' to a schema element"
-				                   ,((UTF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
 					//we are only interested in the outgoing associations
 					if (this.subsetElement.Equals(association.source))
 					{
@@ -766,7 +797,7 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		/// <param name="association">the association to match</param>
 		/// <returns>the matching SchemaAssociation</returns>
-		public EASchemaAssociation getMatchingSchemaAssociation(UTF_EA.Association association)
+		public EASchemaAssociation getMatchingSchemaAssociation(TSF_EA.Association association)
 		{
 			EASchemaAssociation result = null;
 			var sourceAssociationTag = association.getTaggedValue(this.owner.settings.sourceAssociationTagName);
@@ -778,7 +809,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//we have the same attribute if the given attribute has a tagged value 
 					//called sourceAssociation that refences the source association of the schema Association
-					if (((UTF_EA.Association)schemaAssociation.sourceAssociation).guid == tagReference)
+					if (((TSF_EA.Association)schemaAssociation.sourceAssociation).guid == tagReference)
 					{
 						//if the schema association has choiceElements then the target of the association should match one of the choice elements
 						if ((schemaAssociation.choiceElements != null 

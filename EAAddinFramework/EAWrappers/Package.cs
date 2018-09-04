@@ -42,6 +42,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public Package(Model model, global::EA.Package package) : base(model, Package.getElementForPackage(model, package))
         {
+            //when saving a package we don't want to save all its owned elements
+            this.saveOwnedElements = false;
             this.initialize(package);
         }
         public List<T> getOwnedElementWrappers<T>(string stereotype, bool recursive) where T : ElementWrapper
@@ -351,7 +353,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override void save()
         {
-            if (!this.dontSave) this.wrappedPackage.Update();
+            if (!this.dontSave)
+            {
+                base.save();
+                this.wrappedPackage.Update();
+            }
         }
         /// <summary>
         /// deletes an element owned by this Package

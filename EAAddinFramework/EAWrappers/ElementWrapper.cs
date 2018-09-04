@@ -47,6 +47,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.setProperty(getPropertyNameName(), value, _owningPackage);
             }
         }
+
         /// <summary>
         /// resets the cached relations
         /// </summary>
@@ -146,6 +147,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set
             {
                 this.setProperty(getPropertyNameName(), value, this.wrappedElement.Status);
+            }
+        }
+        public string header1
+        {
+            get
+            {
+                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.RunState);
+            }
+            set
+            {
+                this.setProperty(getPropertyNameName(), value, this.wrappedElement.RunState);
             }
         }
         public string genLinks
@@ -339,7 +351,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (this.getProperty("size") != null) this.addTaggedValue("size", (string)this.getProperty("size"));
             if (this.getProperty("format") != null) this.addTaggedValue("format", (string)this.getProperty("format"));
             if (this.getProperty("initialValue") != null) this.addTaggedValue("initialValue", (string)this.getProperty("initialValue"));
-
+            if (this.getProperty("header1") != null) this.wrappedElement.Header1 = (string)this.getProperty("header1");
             this.wrappedElement.Update();
         }
         public List<string> primitiveParentNames

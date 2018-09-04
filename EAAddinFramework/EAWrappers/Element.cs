@@ -10,6 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
         internal global::EA.Element wrappedElement { get; set; }
+        protected bool saveOwnedElements { get; set; } = true;
         /// <summary>
         /// resets teh property info making sure all properties are reset
         /// </summary>
@@ -282,9 +283,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     property.initialValue = property.propertyValue;
                 }
             }
-            foreach (UML.Classes.Kernel.Element element in this.ownedElements)
+            if (saveOwnedElements)
             {
-                ((Element)element).save();
+                foreach (UML.Classes.Kernel.Element element in this.ownedElements)
+                {
+                    ((Element)element).save();
+                }
             }
         }
         //default empty implemenation

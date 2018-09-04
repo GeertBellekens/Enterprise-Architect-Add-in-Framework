@@ -8,6 +8,8 @@ using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.Utilities;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -88,7 +90,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     string sqlGetSchemaArtifact = "select o.Object_ID from t_object o "
                                                   + " inner join t_document d on d.ElementID = o.ea_guid "
-                                                  + $"where d.StrContent like '%<description name=\"{this.name}\"%'";
+                                                  + $"where d.StrContent like '%<description%name=\"{this.name}\"%</description>%'";
                     var schemaArtifacts = this.model.getElementWrappersByQuery(sqlGetSchemaArtifact);
                     //only safe if only one element found.
                     if (schemaArtifacts.Count == 1) this._containerElement = schemaArtifacts.First();
@@ -196,11 +198,11 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="destinationPackage">the package to create the subset in</param>
         /// <param name="copyDatatype"></param>
-        public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage)
+        public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage, HashSet<SBF.SchemaElement> elements)
         {
 
             //loop the elements to create the subSetElements
-            foreach (EASchemaElement schemaElement in this.elements)
+            foreach (EASchemaElement schemaElement in elements)
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset element for : '" + schemaElement.name + "'"
@@ -226,7 +228,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
             //Logger.log("after EASchema::creating subsetelements");
             // then loop them again to create the associations
-            foreach (EASchemaElement schemaElement in this.elements)
+            foreach (EASchemaElement schemaElement in elements)
             {
                 if (!schemaElement.isShared)
                 {
@@ -262,7 +264,7 @@ namespace EAAddinFramework.SchemaBuilder
                         }
                         //order the attributes
                         if (!this.settings.keepOriginalAttributeOrder)
-                                schemaElement.orderAttributes();
+                            schemaElement.orderAttributes();
                         //order the associations
                         if (this.settings.orderAssociationsAlphabetically)
                         {
@@ -285,7 +287,7 @@ namespace EAAddinFramework.SchemaBuilder
             // or generalizations, or are used as type
             if (this.settings.deleteUnusedSchemaElements)
             {
-                foreach (EASchemaElement schemaElement in this.elements)
+                foreach (EASchemaElement schemaElement in elements)
                 {
                     if (schemaElement.subsetElement != null)
                     {
@@ -307,6 +309,8 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
+            //save the new schema contents to the destination package
+            this.saveSchemaContent(destinationPackage);
         }
 
         /// <summary>
@@ -315,24 +319,192 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="messageElement">The message element that is the root for the message subset model</param>
         public void updateSubsetModel(Classifier messageElement)
         {
+            //TODO: compare with stored schema (if any)?
             //match the subset existing subset elements
             matchSubsetElements(messageElement);
             matchAndUpdateSubsetModel(messageElement.owningPackage);
         }
-
-
-
         /// <summary>
         /// updates the subset model linked to given messageElement
         /// </summary>
         /// <param name="destinationPackage">the package to create the subset in</param>
         public void updateSubsetModel(Package destinationPackage)
         {
-            //match the subset existing subset elements
-            matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
-            matchAndUpdateSubsetModel(destinationPackage);
+            List<EASchemaElement> elementsToCreate;
+            List<EASchemaElement> elementsToUpdate;
+            HashSet<Classifier> subsetElementsToDelete;
+            if (compareSchemas(destinationPackage, out elementsToCreate, out elementsToUpdate, out subsetElementsToDelete))
+            {
+                //TODO: subsetElementsToDelete is not needed anymore as we need to match them all anyway
+                //matchSubsetElements(destinationPackage, subsetElementsToDelete);
+                if (elementsToCreate.Any() || elementsToUpdate.Any() || subsetElementsToDelete.Any())
+                {
+                    // this will delete the subset elements that are no longer needed
+                    matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                    //then process only the elementsToUpdate and ElementsToCreate
+                    matchAndUpdateSubsetModel(destinationPackage, elementsToCreate, elementsToUpdate);
+                }
+            }
+            else
+            {
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                matchAndUpdateSubsetModel(destinationPackage);
+            }
+        }
+        /// <summary>
+        /// compares the saved existing schema with the current schema and determines the 
+        /// - ElementsToCreate: elements that exist in the current schema but not in the existing schema
+        /// - ElementsToUpdate : elements that have been changed somehow and should be re-generated
+        /// - subsetElementsToDelete: elements of the existing schema that are no longer in the current schema. For each of these elements we get the subset elements
+        /// </summary>
+        /// <param name="destinationPackage">the package where the subset should be generated to</param>
+        /// <param name="elementsToCreate">elements that exist in the current schema but not in the existing schema</param>
+        /// <param name="elementsToUpdate">elements that have been changed somehow and should be re-generated</param>
+        /// <param name="subsetElementsToDelete">the classifiers in the subset that should be deleted</param>
+        /// <returns>returns true if was able to compare the schemas. False otherwise</returns>
+        private bool compareSchemas(Package destinationPackage, out List<EASchemaElement> elementsToCreate
+                                , out List<EASchemaElement> elementsToUpdate, out HashSet<Classifier> subsetElementsToDelete)
+        {
+            elementsToCreate = new List<EASchemaElement>();
+            elementsToUpdate = new List<EASchemaElement>();
+            subsetElementsToDelete = new HashSet<Classifier>();
+            var elementsToCreateIDs = new List<string>();
+            var elementsToUpdateIDs = new List<string>();
+            var subsetElementsToDeleteIDs = new List<string>();
+            //get the own XmlSchemaContent
+            XDocument ownSchema = null;
+            XDocument existingSchema = null;
+            try
+            {
+                //parse own schema
+                var xmlSchemacontent = this.getXMLSchemaContent();
+                if (!string.IsNullOrEmpty(xmlSchemacontent)) ownSchema = XDocument.Parse(getXMLSchemaContent());
+                //parse existing schema
+                existingSchema = this.getXmlSchemaFromPackage(destinationPackage);
+            }
+            catch (Exception)
+            {
+                //if for some reason we can't parse the own or existing schema then we process the whole schema
+                return false;
+            }
+            if (ownSchema != null && existingSchema != null)
+            {
+                //loop all class nodes in own schema
+                foreach (var node in ownSchema.XPathSelectElements("//class"))
+                {
+                    var classGUID = node.Attribute("guid").Value;
+                    //find corresponding node in existingSchema
+                    var correspondingNode = existingSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
+                    if (correspondingNode == null)
+                    {
+                        //add node to elementsToCreate
+                        var elementToCreate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                        if (elementToCreate != null) elementsToCreate.Add(elementToCreate);
+                    }
+                    else
+                    {
+                        //compare both nodes
+                        if (!XNode.DeepEquals(node, correspondingNode))
+                        {
+                            var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                            if (elementsToUpdate != null) elementsToUpdate.Add(elementToUpdate);
+                        }
+                    }
+                }
+                //loop all classNodes in existingSchema
+                foreach (var node in existingSchema.XPathSelectElements("//class"))
+                {
+                    var classGUID = node.Attribute("guid").Value;
+                    //find corresponding node in ownschema
+                    //debug
+                    string xpath = $"//class[@guid='{classGUID}']";
+                    string ownSchemaString = ownSchema.ToString();
+                    var correspondingNode = ownSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
+                    if (correspondingNode == null)
+                    {
+                        string sqlGetClassifiers;
+                        if (this.settings.tvInsteadOfTrace)
+                        {
+                            //get the classifier in the subset that represents this element
+                            sqlGetClassifiers = "select distinct o.Object_ID from t_object o "
+                                               + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
+                                               + $" where p.Property = '{this.settings.elementTagName}'"
+                                               + $"  and p.Value = '{classGUID}'"
+                                               + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+                        }
+                        else
+                        {
+                            //get the classifier in the subset that represents this element
+                            sqlGetClassifiers = "select distinct o.Object_ID from ((t_object o"
+                                                   + " inner join t_connector c on(c.Start_Object_ID = o.Object_ID"
+                                                   + "                and c.Connector_Type = 'Abstraction'"
+                                                   + "               and c.Stereotype = 'trace'))"
+                                                   + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
+                                                   + $"    where ot.ea_guid = '{classGUID}'"
+                                                   + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+                        }
+                        //get the elements
+                        subsetElementsToDelete = new HashSet<Classifier>(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>());
+                    }
+                }
+            }
+            return true;
+        }
+        private XDocument getXmlSchemaFromPackage(Package destinationPackage)
+        {
+            var sqlGetSchemaContent = $"select o.Header1 from  t_object o where o.ea_guid = '{destinationPackage.uniqueID}'";
+            var xmlSchemaContent = this.model.SQLQuery(sqlGetSchemaContent).SelectSingleNode(this.model.formatXPath("//Header1")).InnerText;
+            if (!string.IsNullOrEmpty(xmlSchemaContent))
+                return XDocument.Parse(xmlSchemaContent);
+            return null;
+        }
+        /// <summary>
+        /// The xml schema content is being saved to the field t_object.Header1 for this package.
+        /// </summary>
+        /// <param name="destinationPackage">the package to store the content into</param>
+        private void saveSchemaContent(Package destinationPackage)
+        {
+            var schemaContent = getXMLSchemaContent();
+            if (!string.IsNullOrEmpty(schemaContent))
+            {
+                //we save the content to the field Runstate
+                ((TSF_EA.Package)destinationPackage).header1 = schemaContent;
+                destinationPackage.save();
+            }
         }
 
+        public string getXMLSchemaContent()
+        {
+            if (this.containerElement != null)
+            {
+                var sqlGetXMLSchemaContent = "select doc.StrContent from t_document doc "
+                                             + " where doc.DocType = 'SC_MessageProfile'"
+                                             + $"and doc.ElementID = '{this.containerElement.uniqueID}'";
+                return this.model.SQLQuery(sqlGetXMLSchemaContent).SelectSingleNode(this.model.formatXPath("//StrContent")).InnerText;
+            }
+            return null;
+        }
+
+        void matchAndUpdateSubsetModel(Package destinationPackage, List<EASchemaElement> elementsToCreate, List<EASchemaElement> elementsToUpdate)
+        {
+            //first match the elementsToUpdate with their subset model equivalent
+            foreach (var schemaElement in elementsToUpdate)
+            {
+                schemaElement.matchSubsetElement(destinationPackage);
+                //match the attributes
+                schemaElement.matchSubsetAttributes();
+                //Logger.log("after EASchema::matchSubsetAttributes");
+                schemaElement.matchSubsetLiterals();
+                //match the associations
+                schemaElement.matchSubsetAssociations();
+                //Logger.log("after EASchema::matchSubsetAssociations");
+            }
+            //then create all elements
+            var joinedElementsList = new List<SBF.SchemaElement>(elementsToCreate);
+            joinedElementsList.AddRange(elementsToUpdate);
+            //create the subset model for this set of elements
+            this.createSubsetModel(destinationPackage, new HashSet<SBF.SchemaElement>(joinedElementsList));
+        }
         void matchAndUpdateSubsetModel(Package destinationPackage)
         {
             foreach (EASchemaElement schemaElement in this.elements)
@@ -345,7 +517,7 @@ namespace EAAddinFramework.SchemaBuilder
                 schemaElement.matchSubsetAssociations();
                 //Logger.log("after EASchema::matchSubsetAssociations");
             }
-            this.createSubsetModel(destinationPackage);
+            this.createSubsetModel(destinationPackage, this.elements);
             //Logger.log("after EASchema::createSubsetModel");
         }
 
