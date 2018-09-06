@@ -10,6 +10,7 @@ using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Windows.Forms;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -333,20 +334,56 @@ namespace EAAddinFramework.SchemaBuilder
             List<EASchemaElement> elementsToCreate;
             List<EASchemaElement> elementsToUpdate;
             HashSet<Classifier> subsetElementsToDelete;
-            if (compareSchemas(destinationPackage, out elementsToCreate, out elementsToUpdate, out subsetElementsToDelete))
+            bool generateChangesOnly = false;
+            if (this.compareSchemas(destinationPackage, out elementsToCreate, out elementsToUpdate, out subsetElementsToDelete))
             {
-                //TODO: subsetElementsToDelete is not needed anymore as we need to match them all anyway
-                //matchSubsetElements(destinationPackage, subsetElementsToDelete);
                 if (elementsToCreate.Any() || elementsToUpdate.Any() || subsetElementsToDelete.Any())
                 {
-                    // this will delete the subset elements that are no longer needed
-                    matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
-                    //then process only the elementsToUpdate and ElementsToCreate
-                    matchAndUpdateSubsetModel(destinationPackage, elementsToCreate, elementsToUpdate);
+                    //Inform user and request feedback
+                    var response = MessageBox.Show(this.model.mainEAWindow,
+                                                    $"Elements to update: {elementsToUpdate.Count}\n" +
+                                                    $"Elements to create: {elementsToCreate.Count}\n" +
+                                                    $"Elements to delete: {subsetElementsToDelete.Count}"
+                                                    , "Generate only changes?"
+                                                    , MessageBoxButtons.YesNoCancel
+                                                    , MessageBoxIcon.Question);
+                    switch (response)
+                    {
+                        case DialogResult.Yes:
+                            generateChangesOnly = true;
+                            break;
+                        case DialogResult.No:
+                            generateChangesOnly = false;
+                            break;
+                        default:
+                            return;//if the user presses cancel then we stop immediately
+                    }
+
                 }
+                else
+                {
+                    var response = MessageBox.Show(this.model.mainEAWindow
+                                                   , "Found no differences from the generated schema \n" +
+                                                   "Would you like to re-generate anyway?"
+                                                   , "Re-Generate?"
+                                                   , MessageBoxButtons.YesNo
+                                                   , MessageBoxIcon.Question);
+
+                    if (response == DialogResult.Yes)
+                        generateChangesOnly = false;
+                    else return;
+                }
+            }
+            if (generateChangesOnly)
+            {
+                // this will delete the subset elements that are no longer needed
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                //then process only the elementsToUpdate and ElementsToCreate
+                matchAndUpdateSubsetModel(destinationPackage, elementsToCreate, elementsToUpdate);
             }
             else
             {
+                //regenerate completely
                 matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
                 matchAndUpdateSubsetModel(destinationPackage);
             }
@@ -387,89 +424,90 @@ namespace EAAddinFramework.SchemaBuilder
                 //if for some reason we can't parse the own or existing schema then we process the whole schema
                 return false;
             }
-            if (ownSchema != null && existingSchema != null)
+            if (ownSchema == null || existingSchema == null) return false; //could not compare
+            //compare the schema's
+            //loop all class nodes in own schema
+            foreach (var node in ownSchema.XPathSelectElements("//class"))
             {
-                //loop all class nodes in own schema
-                foreach (var node in ownSchema.XPathSelectElements("//class"))
+                var classGUID = node.Attribute("guid").Value;
+                //find corresponding node in existingSchema
+                var correspondingNode = existingSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
+                if (correspondingNode == null)
                 {
-                    var classGUID = node.Attribute("guid").Value;
-                    //find corresponding node in existingSchema
-                    var correspondingNode = existingSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
-                    if (correspondingNode == null)
+                    //add node to elementsToCreate
+                    var elementToCreate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                    if (elementToCreate != null) elementsToCreate.Add(elementToCreate);
+                }
+                else
+                {
+                    //compare both nodes
+                    if (!XNode.DeepEquals(node, correspondingNode))
                     {
-                        //add node to elementsToCreate
-                        var elementToCreate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
-                        if (elementToCreate != null) elementsToCreate.Add(elementToCreate);
+                        var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                        if (elementsToUpdate != null) elementsToUpdate.Add(elementToUpdate);
+                    }
+                }
+            }
+            //loop all classNodes in existingSchema
+            foreach (var node in existingSchema.XPathSelectElements("//class"))
+            {
+                var classGUID = node.Attribute("guid").Value;
+                //find corresponding node in ownschema
+                //debug
+                string xpath = $"//class[@guid='{classGUID}']";
+                string ownSchemaString = ownSchema.ToString();
+                var correspondingNode = ownSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
+                if (correspondingNode == null)
+                {
+                    string sqlGetClassifiers;
+                    if (this.settings.tvInsteadOfTrace)
+                    {
+                        //get the classifier in the subset that represents this element
+                        sqlGetClassifiers = "select distinct o.Object_ID from t_object o "
+                                           + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
+                                           + $" where p.Property = '{this.settings.elementTagName}'"
+                                           + $"  and p.Value = '{classGUID}'"
+                                           + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
                     }
                     else
                     {
-                        //compare both nodes
-                        if (!XNode.DeepEquals(node, correspondingNode))
-                        {
-                            var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
-                            if (elementsToUpdate != null) elementsToUpdate.Add(elementToUpdate);
-                        }
-                    }
-                }
-                //loop all classNodes in existingSchema
-                foreach (var node in existingSchema.XPathSelectElements("//class"))
-                {
-                    var classGUID = node.Attribute("guid").Value;
-                    //find corresponding node in ownschema
-                    //debug
-                    string xpath = $"//class[@guid='{classGUID}']";
-                    string ownSchemaString = ownSchema.ToString();
-                    var correspondingNode = ownSchema.XPathSelectElement($"//class[@guid='{classGUID}']");
-                    if (correspondingNode == null)
-                    {
-                        string sqlGetClassifiers;
-                        if (this.settings.tvInsteadOfTrace)
-                        {
-                            //get the classifier in the subset that represents this element
-                            sqlGetClassifiers = "select distinct o.Object_ID from t_object o "
-                                               + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
-                                               + $" where p.Property = '{this.settings.elementTagName}'"
-                                               + $"  and p.Value = '{classGUID}'"
+                        //get the classifier in the subset that represents this element
+                        sqlGetClassifiers = "select distinct o.Object_ID from ((t_object o"
+                                               + " inner join t_connector c on(c.Start_Object_ID = o.Object_ID"
+                                               + "                and c.Connector_Type = 'Abstraction'"
+                                               + "               and c.Stereotype = 'trace'))"
+                                               + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
+                                               + $"    where ot.ea_guid = '{classGUID}'"
                                                + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
-                        }
-                        else
-                        {
-                            //get the classifier in the subset that represents this element
-                            sqlGetClassifiers = "select distinct o.Object_ID from ((t_object o"
-                                                   + " inner join t_connector c on(c.Start_Object_ID = o.Object_ID"
-                                                   + "                and c.Connector_Type = 'Abstraction'"
-                                                   + "               and c.Stereotype = 'trace'))"
-                                                   + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
-                                                   + $"    where ot.ea_guid = '{classGUID}'"
-                                                   + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
-                        }
-                        //get the elements
-                        subsetElementsToDelete = new HashSet<Classifier>(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>());
                     }
+                    //get the elements
+                    subsetElementsToDelete = new HashSet<Classifier>(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>());
                 }
             }
             return true;
         }
         private XDocument getXmlSchemaFromPackage(Package destinationPackage)
         {
-            var sqlGetSchemaContent = $"select o.Header1 from  t_object o where o.ea_guid = '{destinationPackage.uniqueID}'";
-            var xmlSchemaContent = this.model.SQLQuery(sqlGetSchemaContent).SelectSingleNode(this.model.formatXPath("//Header1")).InnerText;
+            var sqlGetSchemaContent = "select tv.Notes from t_objectproperties tv"
+                                    + " inner join t_object o on o.Object_ID = tv.Object_ID"
+                                    + " where tv.Property = 'schema'"
+                                    + $" and o.ea_guid = '{destinationPackage.uniqueID}'";
+            var xmlSchemaContent = this.model.SQLQuery(sqlGetSchemaContent).SelectSingleNode(this.model.formatXPath("//Notes"))?.InnerText;
             if (!string.IsNullOrEmpty(xmlSchemaContent))
                 return XDocument.Parse(xmlSchemaContent);
             return null;
         }
         /// <summary>
-        /// The xml schema content is being saved to the field t_object.Header1 for this package.
+        /// The xml schema content is being saved to the tagged value "schema"
         /// </summary>
         /// <param name="destinationPackage">the package to store the content into</param>
         private void saveSchemaContent(Package destinationPackage)
         {
+
             var schemaContent = getXMLSchemaContent();
             if (!string.IsNullOrEmpty(schemaContent))
             {
-                //we save the content to the field Runstate
-                ((TSF_EA.Package)destinationPackage).header1 = schemaContent;
-                destinationPackage.save();
+                ((TSF_EA.Package)destinationPackage).addTaggedValue("schema", "<memo>", schemaContent);
             }
         }
 
