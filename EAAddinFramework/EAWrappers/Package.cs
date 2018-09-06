@@ -280,6 +280,36 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this.wrappedPackage.PackageGUID;
             }
         }
+
+        public bool isCompletelyWritable
+        {
+            get
+            {
+                //get the result through a query as opposed to checkign each and every object recursively for performance reasons.
+                //if security is not enable then it is writable
+                if (!this.EAModel.isSecurityEnabled) return true;
+                //security is enabled. We assume the option Require User Locks To Edit is used
+                //Query to check if there are any elements or diagrams that are not locked by this user
+                var treeIDs = this.getPackageTreeIDString();
+                var userID = this.EAModel.currentUserID;
+                var sqlGetUnlockedCount = " select count(total.ea_guid) AS UnlockedCount from "
+                                        + " ( "
+                                        + " select o.ea_guid from t_object o "
+                                        + $" where o.Package_ID in ({treeIDs}) "
+                                        + $" and not exists (select s.EntityID from t_seclocks s where s.EntityID = o.ea_guid and s.UserID = '{userID}') "
+                                        + " union "
+                                        + " select ea_guid from t_diagram d "
+                                        + $" where d.Package_ID in ({treeIDs}) "
+                                        + $" and not exists (select s.EntityID from t_seclocks s where s.EntityID = d.ea_guid and s.UserID = '{userID}') "
+                                        + " ) total ";
+                var result = this.EAModel.SQLQuery(sqlGetUnlockedCount);
+                return result.SelectSingleNode(this.EAModel.formatXPath("//UnlockedCount"))?.InnerText == "0";
+                //TODO: allow for the schem where RULTE is not used.
+                //TODO: check for check-in packages without security
+                //TODO: allow for group checks
+            }
+        }
+
         /// <summary>
         /// gets the FQN without the need of instantiating all the owners up to the root element.
         /// From a package we are sure that only packages are the owners so its safe to check only t_package.
