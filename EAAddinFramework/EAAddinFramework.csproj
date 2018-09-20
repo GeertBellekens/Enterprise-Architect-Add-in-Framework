@@ -270,6 +270,8 @@
     <Compile Include="Mapping\MappingEnd.cs" />
     <Compile Include="Mapping\MappingFactory.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />
+    <Compile Include="Mapping\MappingModel.cs" />
+    <Compile Include="Mapping\MappingNode.cs" />
     <Compile Include="Mapping\MappingSet.cs" />
     <Compile Include="Mapping\MappingSettings.cs" />
     <Compile Include="Mapping\PackageMappingSet.cs" />

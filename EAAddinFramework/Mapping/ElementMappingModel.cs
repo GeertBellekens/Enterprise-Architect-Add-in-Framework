@@ -12,12 +12,7 @@ namespace EAAddinFramework.Mapping
 	public class ElementMappingSet:MappingSet
 	{
 		internal ElementWrapper wrappedElement {get;set;}
-		public ElementMappingSet(ElementWrapper rootElement)
-		{
-			this.wrappedElement = rootElement;
-			base.name = wrappedElement.name;
-			base.mappings = this.getMappings().Cast<MP.Mapping>().ToList();
-		}
+        public ElementMappingSet(MP.MappingModel source, MP.MappingModel target) : base(source, target) { }
 		List<Mapping> getMappings()
 		{
 			return MappingFactory.createRootMappings(this.wrappedElement, this.wrappedElement.name);

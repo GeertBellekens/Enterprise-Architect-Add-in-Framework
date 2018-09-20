@@ -9,22 +9,22 @@ namespace EAAddinFramework.Mapping
 	/// <summary>
 	/// Description of MappingEnd.
 	/// </summary>
-	public  class MappingEnd:MP.MappingEnd
+	public  class MappingEnd:MappingNode, MP.MappingEnd
 	{
 		
-		public MappingEnd(Element mappedElement,string path)
+		public MappingEnd(Element mappedElement,string path):base((UML.Classes.Kernel.NamedElement)mappedElement, null)
 		{
-			this.mappedEnd = mappedElement;
+            //TODO: find the parent based on the path. We will need the the top mapping model element somehow
 			this.mappingPath = path;
 		}
-		public MappingEnd(Element mappedElement)
-		{
-			this.mappedEnd = mappedElement;
+		public MappingEnd(Element mappedElement) : base((UML.Classes.Kernel.NamedElement)mappedElement, null)
+        {
+            //TODO
 			this.mappingPath = strippedFQN();
 		}
-		public MappingEnd(Element mappedElement,ElementWrapper rootElement)
+		public MappingEnd(Element mappedElement,ElementWrapper rootElement): base((UML.Classes.Kernel.NamedElement) mappedElement, null)
 		{
-			this.mappedEnd = mappedElement;
+            //TODO
 			this.mappingPath = strippedFQN();
 			if (rootElement != null && mappingPath.StartsWith(rootElement.fqn))
 			{
@@ -32,23 +32,23 @@ namespace EAAddinFramework.Mapping
 			}
 		}
 		#region MappingEnd implementation
-		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element mappedEnd  {get;set;}
+		public TSF.UmlToolingFramework.UML.Classes.Kernel.Element source  {get;set;}
 		public virtual string mappingPath { get;set;}
 		public virtual string fullMappingPath 
 		{
 			get
 			{
-				return this.mappingPath + "." + this.mappedEnd.name;
+				return this.mappingPath + "." + this.source.name;
 			}
 		}
 		private string strippedFQN()
 		{
-			if (this.mappedEnd != null)
+			if (this.source != null)
 			{
-				var fullFQN = mappedEnd.fqn;
-				if (fullFQN.Length > mappedEnd.name.Length +1)
+				var fullFQN = source.fqn;
+				if (fullFQN.Length > source.name.Length +1)
 				{
-					return fullFQN.Substring(0,fullFQN.Length - mappedEnd.name.Length -1);
+					return fullFQN.Substring(0,fullFQN.Length - source.name.Length -1);
 				}
 				return fullFQN;
 			}

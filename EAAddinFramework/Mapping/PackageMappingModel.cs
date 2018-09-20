@@ -16,8 +16,7 @@ namespace EAAddinFramework.Mapping
 		public PackageMappingSet(Package wrappedPackage)
 		{
 			this.wrappedPackage = wrappedPackage;
-			base.name = wrappedPackage.name;
-			base.mappings = this.getMappings().Cast<MP.Mapping>().ToList();;
+			base.mappings = this.getMappings().Cast<MP.Mapping>().ToList();
 		}
 		
 		List<Mapping> getMappings()

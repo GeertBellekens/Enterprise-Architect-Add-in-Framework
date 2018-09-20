@@ -15,6 +15,12 @@ namespace EAAddinFramework.Mapping
 	{
 		const string mappingSourcePathName = "mappingSourcePath";
 		const string mappingTargetPathName = "mappingTargetPath";
+        public static PackageMappingSet createMappingSet(UML.Classes.Kernel.NamedElement sourceRoot, UML.Classes.Kernel.NamedElement targetRoot )
+        {
+            //first create the mappigng models
+
+            return null;
+        }
 		public static List<Mapping> createNewMappings(TSF.UmlToolingFramework.Wrappers.EA.Attribute attribute,string basepath,ElementWrapper targetRootElement)
 		{
 			List<Mapping> returnedMappings = new List<Mapping>();

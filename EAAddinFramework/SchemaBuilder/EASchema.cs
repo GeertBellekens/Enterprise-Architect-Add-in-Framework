@@ -95,6 +95,13 @@ namespace EAAddinFramework.SchemaBuilder
                     var schemaArtifacts = this.model.getElementWrappersByQuery(sqlGetSchemaArtifact);
                     //only safe if only one element found.
                     if (schemaArtifacts.Count == 1) this._containerElement = schemaArtifacts.First();
+                    else
+                    {
+                        //in case of EA version pre v13 the schema name is not available, so this method to get the artifact will not work.
+                        //as a workaround we let the user select the artifact
+                        //this also applies if two (or more) schema's with the same name exist in the model
+                        this._containerElement = this.model.getUserSelectedElement(new List<string> { "Artifact" }, null, this.model.selectedTreePackage?.uniqueID) as TSF_EA.ElementWrapper;
+                    }
                 }
                 return _containerElement as PackageableElement;
             }
