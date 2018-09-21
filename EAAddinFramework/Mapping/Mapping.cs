@@ -12,24 +12,24 @@ namespace EAAddinFramework.Mapping
     /// </summary>
     public abstract class Mapping : MP.Mapping
     {
-        internal MappingEnd _source;
-        internal MappingEnd _target;
+        internal MappingNode _source;
+        internal MappingNode _target;
         internal MappingLogic _mappingLogic;
-        public Mapping(MappingEnd sourceEnd, MappingEnd targetEnd)
+        public Mapping(MappingNode sourceEnd, MappingNode targetEnd)
         {
             _source = sourceEnd;
             _target = targetEnd;
         }
-        public Mapping(MappingEnd sourceEnd, MappingEnd targetEnd, MappingLogic logic) : this(sourceEnd, targetEnd)
+        public Mapping(MappingNode sourceEnd, MappingNode targetEnd, MappingLogic logic) : this(sourceEnd, targetEnd)
         {
             _mappingLogic = logic;
         }
-        public Mapping(Element sourceElement, Element targetElement, string basepath)
-            : this(new MappingEnd(sourceElement, basepath), new MappingEnd(targetElement)) { }
-        public Mapping(Element sourceElement, Element targetElement, string basepath, ElementWrapper targetRoot)
-            : this(new MappingEnd(sourceElement, basepath), new MappingEnd(targetElement, targetRoot)) { }
-        public Mapping(Element sourceElement, Element targetElement, string basepath, string targetBasePath)
-            : this(new MappingEnd(sourceElement, basepath), new MappingEnd(targetElement, targetBasePath)) { }
+        //public Mapping(Element sourceElement, Element targetElement, string basepath)
+        //    : this(new MappingNode(sourceElement, basepath), new MappingNode(targetElement)) { }
+        //public Mapping(Element sourceElement, Element targetElement, string basepath, ElementWrapper targetRoot)
+        //    : this(new MappingNode(sourceElement, basepath), new MappingNode(targetElement, targetRoot)) { }
+        //public Mapping(Element sourceElement, Element targetElement, string basepath, string targetBasePath)
+        //    : this(new MappingNode(sourceElement, basepath), new MappingNode(targetElement, targetBasePath)) { }
 
         /// <summary>
         /// strips the given path from the element name at the end.
@@ -49,7 +49,7 @@ namespace EAAddinFramework.Mapping
         }
         #region Mapping implementation
 
-        public MP.MappingEnd source
+        public MP.MappingNode source
         {
             get
             {
@@ -57,11 +57,11 @@ namespace EAAddinFramework.Mapping
             }
             set
             {
-                _source = (MappingEnd)value;
+                _source = (MappingNode)value;
             }
         }
 
-        public MP.MappingEnd target
+        public MP.MappingNode target
         {
             get
             {
@@ -69,17 +69,17 @@ namespace EAAddinFramework.Mapping
             }
             set
             {
-                _target = (MappingEnd)value;
+                _target = (MappingNode)value;
             }
         }
 
         public abstract void save();
         public abstract MP.MappingLogic mappingLogic { get; set; }
 
-        public override string ToString()
-        {
-            return this.source.fullMappingPath + " - " + this.target.fullMappingPath;
-        }
+        //public override string ToString()
+        //{
+        //    return this.source.fullMappingPath + " - " + this.target.fullMappingPath;
+        //}
 
         #endregion
     }

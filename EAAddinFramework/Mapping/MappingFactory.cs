@@ -15,12 +15,24 @@ namespace EAAddinFramework.Mapping
 	{
 		const string mappingSourcePathName = "mappingSourcePath";
 		const string mappingTargetPathName = "mappingTargetPath";
-        public static PackageMappingSet createMappingSet(UML.Classes.Kernel.NamedElement sourceRoot, UML.Classes.Kernel.NamedElement targetRoot )
+        public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot )
         {
-            //first create the mappigng models
-
-            return null;
+            //first create the mapping models
+            var sourceMappingModel = new ClassifierMappingNode(sourceRoot);
+            var targetMappingModel = new ClassifierMappingNode(targetRoot);
+            //then create the new mappingSet
+            var mappingSet = new MappingSet(sourceMappingModel, targetMappingModel);
+            return mappingSet;
         }
+        public static MappingSet createMappingSet(ElementWrapper sourceRoot)
+        {
+            //get target mapping root
+            ElementWrapper targetRootElement = null;
+            var packageTrace = sourceRoot.relationships.OfType<Abstraction>().FirstOrDefault(x => x.target is ElementWrapper && x.stereotypes.Any(y => y.name == "trace"));
+            if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
+            return createMappingSet(sourceRoot, targetRootElement);
+        }
+
 		public static List<Mapping> createNewMappings(TSF.UmlToolingFramework.Wrappers.EA.Attribute attribute,string basepath,ElementWrapper targetRootElement)
 		{
 			List<Mapping> returnedMappings = new List<Mapping>();
@@ -36,13 +48,13 @@ namespace EAAddinFramework.Mapping
 					if (targetTV != null) targetBasePath = targetTV.tagValue.ToString();
 					if (! string.IsNullOrEmpty(targetBasePath))
 					{
-						connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetBasePath);
+						//connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetBasePath);
 					}
 					else
 					{
-						connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetRootElement);
+						//connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetRootElement);
 					}
-					returnedMappings.Add(connectorMapping);
+					//returnedMappings.Add(connectorMapping);
 				}
 			}
 			//tagged value references from owned attributes	
@@ -58,13 +70,13 @@ namespace EAAddinFramework.Mapping
 					TaggedValueMapping tagMapping;
 					if (! string.IsNullOrEmpty(targetBasePath))
 					{
-						tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetBasePath);
+						//tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetBasePath);
 					}
 					else
 					{
-						tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetRootElement);
+						//tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetRootElement);
 					}	
-					returnedMappings.Add(tagMapping);
+					//returnedMappings.Add(tagMapping);
 				}
 			}
 			//add the mappings for the type of the attribute
@@ -81,8 +93,8 @@ namespace EAAddinFramework.Mapping
 			{
 				
 				string connectorPath = basepath + "." + getConnectorString(mappedConnector);
-				var connectorMapping = new ConnectorMapping(mappedConnector,connectorPath,targetRootElement);
-				returnedMappings.Add(connectorMapping);
+				//var connectorMapping = new ConnectorMapping(mappedConnector,connectorPath,targetRootElement);
+				//returnedMappings.Add(connectorMapping);
 			}			
 			//loop owned attributes
 			foreach (TSF.UmlToolingFramework.Wrappers.EA.Attribute ownedAttribute in ownerElement.ownedAttributes) 
@@ -174,17 +186,17 @@ namespace EAAddinFramework.Mapping
 						if (sourceRootElement is Package)
 						{
 							rootPackage = sourceRootElement as Package;
-							newMappingSet = new PackageMappingSet(sourceRootElement as Package);
+							//newMappingSet = new PackageMappingSet(sourceRootElement as Package);
 						}
 						else if (sourceRootElement is ElementWrapper)
 						{
 							rootPackage = sourceRootElement.owningPackage as Package;
-							newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper);
+							//newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper);
 						}
 						else
 						{
 							rootPackage = source.owningPackage as Package;
-							newMappingSet = new PackageMappingSet((Package)source.owningPackage);
+							//newMappingSet = new PackageMappingSet((Package)source.owningPackage);
 						}
 						
 					}
@@ -233,11 +245,11 @@ namespace EAAddinFramework.Mapping
 						//if the source or target are associationEnds then we replace them by their association
 						if (sourceAssociationEnd != null) source = sourceAssociationEnd.association as Element;
 						if (targetAssociationEnd != null) target = targetAssociationEnd.association as Element;
-						newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
+						//newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					else
 					{
-						newMapping = new ConnectorMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
+						//newMapping = new ConnectorMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
 					}
 					if (newMappingLogic != null) newMapping.mappingLogic = newMappingLogic;
 					newMapping.save();
@@ -258,8 +270,8 @@ namespace EAAddinFramework.Mapping
 				{
 					//create the record
 					var mappingRecord = new CSVMappingRecord();
-					mappingRecord.sourcePath = mapping.source.fullMappingPath;
-					mappingRecord.targetPath = mapping.target.fullMappingPath;
+					//mappingRecord.sourcePath = mapping.source.fullMappingPath;
+					//mappingRecord.targetPath = mapping.target.fullMappingPath;
 					mappingRecord.mappingLogic = mapping.mappingLogic != null ? mapping.mappingLogic.description : string.Empty;
 					//add the record to the list
 					csvMappingRecords.Add(mappingRecord);

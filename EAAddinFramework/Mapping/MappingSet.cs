@@ -13,18 +13,21 @@ namespace EAAddinFramework.Mapping
     /// </summary>
     public class MappingSet : MP.MappingSet
     {
-        internal List<Mapping> _mappings = new List<Mapping>();
-        protected MappingModel _source;
-        protected MappingModel _target;
-        public MappingSet(MP.MappingModel source, MP.MappingModel target)
+        internal List<Mapping> _mappings;
+        protected MappingNode _source;
+        protected MappingNode _target;
+        public MappingSet(MP.MappingNode source, MP.MappingNode target)
         {
             this.source = source;
             this.target = target;
+            //get the list of mappings
+            this._mappings = this.source.getMappings(null).Cast<Mapping>().ToList();
         }
+
 
         #region MappingSet implementation
 
-        public List<MP.Mapping> mappings
+        public IEnumerable<MP.Mapping> mappings
         {
             get
             {
@@ -36,15 +39,15 @@ namespace EAAddinFramework.Mapping
             }
         }
         
-        public MP.MappingModel source
+        public MP.MappingNode source
         {
             get { return this._source; }
-            set { this._source = (MappingModel)value; }
+            set { this._source = (MappingNode)value; }
         }
-        public MP.MappingModel target
+        public MP.MappingNode target
         {
             get { return this._target; }
-            set { this._target = (MappingModel)value; }
+            set { this._target = (MappingNode)value; }
         }
 
         public void addMapping(MP.Mapping mapping)
