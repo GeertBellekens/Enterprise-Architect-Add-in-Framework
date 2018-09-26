@@ -14,11 +14,41 @@ namespace EAAddinFramework.Mapping
         {
             this.source = source;
             this.parent = parent;
-            this.parent.addChildNode(this);
+            this.parent?.addChildNode(this);
         }
         public string name
         {
             get { return this._source.name; }
+        }
+        public List<string> getMappingPath()
+        {
+            if (this.parent == null) return new List<string>() { this.source.uniqueID };
+            var path = ((MappingNode)this.parent).getMappingPath();
+            path.Add(this.source.uniqueID);
+            return path;
+        }
+        public MappingNode createMappingNode(List<string> mappingPath)
+        {
+            //if the path is empty we return this node
+            if (!mappingPath.Any()) return this;
+            //check if the first node corresponds to this node
+            if (mappingPath[0] == this.source.uniqueID)
+            {
+                //pop the first node
+                mappingPath.RemoveAt(0);
+                //if this was the last guid then also return this
+                if (!mappingPath.Any()) return this;
+                //get the element corresponding to the (now) first guid.
+                var subElement = this._source.model.getItemFromGUID(mappingPath[0]) as UML.Classes.Kernel.NamedElement;
+                //TODO: check if subElement is actually somehow linked to this node?
+                var childNode = MappingFactory.createMappingNode(subElement, this);
+                return childNode?.createMappingNode(mappingPath);
+            }
+            else
+            {
+                //the first GUID indicates that it does not below in this node
+                return null;
+            }
         }
 
         public UML.Classes.Kernel.NamedElement source
@@ -37,7 +67,7 @@ namespace EAAddinFramework.Mapping
         {
             get
             {
-                return childNodes.Cast<MP.MappingNode>();
+                return _childNodes;
             }
             set
             {
@@ -50,7 +80,7 @@ namespace EAAddinFramework.Mapping
             this._childNodes.Add((MappingNode)childNode);
         }
 
-        public abstract IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode);
+        public abstract IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode);
 
         public void buildNodeTree()
         {
@@ -63,6 +93,14 @@ namespace EAAddinFramework.Mapping
             }
         }
         protected abstract void setChildNodes();
+
+        public IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode)
+        {
+            //first build tree node
+            this.buildNodeTree();
+            //then get mappings
+            return this.getOwnedMappings(targetRootNode);
+        }
 
         //public IEnumerable<Mapping> getOwnedMappings(MappingModel targetMappingModel)
         //{

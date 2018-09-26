@@ -20,8 +20,9 @@ namespace EAAddinFramework.Mapping
         {
             this.source = source;
             this.target = target;
+            //build the source node tree
             //get the list of mappings
-            this._mappings = this.source.getMappings(null).Cast<Mapping>().ToList();
+            this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();
         }
 
 

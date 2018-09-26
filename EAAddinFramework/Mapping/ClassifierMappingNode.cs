@@ -26,19 +26,23 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        public override IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode)
+        public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {
-            //get the connector mappings
-            //check if the package has a trace to another package
-            TSF_EA.ElementWrapper targetRootElement = null;
-            var packageTrace = this.sourceElement.relationships.OfType<TSF_EA.Abstraction>().FirstOrDefault(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace"));
-            if (packageTrace != null) targetRootElement = packageTrace.target as TSF_EA.ElementWrapper;
-            List<Mapping> returnedMappings = new List<Mapping>();
-            foreach (var classElement in sourceElement.ownedElements.OfType<TSF_EA.ElementWrapper>())
+            var foundMappings = new List<MP.Mapping>();
+            //TODO: is this fast enough?
+            foreach (var trace in this.sourceElement.relationships.OfType<TSF_EA.Abstraction>().Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
             {
-                returnedMappings.AddRange(MappingFactory.createOwnedMappings(classElement, sourceElement.name + "." + classElement.name, targetRootElement, true));
+                //check if this trace represents a mappingNode to somewhere in in the targetNode
+                //get the mapping path
+                var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
+                foundMappings.Add(mapping);
             }
-            return returnedMappings.Cast<MP.Mapping>();
+            //loop subNodes
+            foreach (MappingNode childNode in this.childNodes)
+            {
+                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
+            }
+            return foundMappings;
         }
         protected override void setChildNodes()
         {

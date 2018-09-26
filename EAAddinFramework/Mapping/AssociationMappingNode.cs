@@ -25,7 +25,7 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        public override IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode)
+        public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {
             //TODO
             throw new NotImplementedException();

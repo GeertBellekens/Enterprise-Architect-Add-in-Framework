@@ -14,7 +14,10 @@ namespace EAAddinFramework.Mapping
 	public class ConnectorMapping:Mapping
 	{
 		internal ConnectorWrapper wrappedConnector{get;private set;}
-        public ConnectorMapping(MappingNode sourceEnd, MappingNode targetEnd) : base(sourceEnd, targetEnd) { }
+        public ConnectorMapping(ConnectorWrapper wrappedConnector, MappingNode sourceEnd, MappingNode targetEnd) : base(sourceEnd, targetEnd)
+        {
+            this.wrappedConnector = wrappedConnector;
+        }
         //public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath)
         //{
         //	this.wrappedConnector = wrappedConnector;

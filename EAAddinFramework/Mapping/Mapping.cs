@@ -24,6 +24,8 @@ namespace EAAddinFramework.Mapping
         {
             _mappingLogic = logic;
         }
+
+
         //public Mapping(Element sourceElement, Element targetElement, string basepath)
         //    : this(new MappingNode(sourceElement, basepath), new MappingNode(targetElement)) { }
         //public Mapping(Element sourceElement, Element targetElement, string basepath, ElementWrapper targetRoot)

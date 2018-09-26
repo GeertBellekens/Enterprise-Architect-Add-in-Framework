@@ -33,7 +33,66 @@ namespace EAAddinFramework.Mapping
             return createMappingSet(sourceRoot, targetRootElement);
         }
 
-		public static List<Mapping> createNewMappings(TSF.UmlToolingFramework.Wrappers.EA.Attribute attribute,string basepath,ElementWrapper targetRootElement)
+        private static List<string> getMappingPath(Element tagOwner, bool target)
+        {
+            var mappingPath = new List<String>();
+            var taggedValue = target ? tagOwner.getTaggedValue(mappingTargetPathName) : tagOwner.getTaggedValue(mappingSourcePathName);
+            if (taggedValue != null)
+            {
+                mappingPath = taggedValue.eaStringValue.Split(',').ToList();
+            }
+            return mappingPath;
+
+        }
+        private static List<string> getMappingPath(Element nodeSource, MappingNode targetRootNode)
+        {
+            if (nodeSource.owner == null || nodeSource.uniqueID == targetRootNode.source.uniqueID) return new List<string>() { nodeSource.uniqueID };
+            var path = getMappingPath((Element)nodeSource.owner, targetRootNode);
+            path.Add(nodeSource.uniqueID);
+            return path;
+        }
+        public static Mapping getMapping(MappingNode startNode, ConnectorWrapper mappingRelation, MappingNode targetRootNode)
+        {
+            var sourceMappingPath = getMappingPath(mappingRelation, false);
+            var targetMappingPath = getMappingPath(mappingRelation, true);
+            //check if the mappingPath of the source corresponds with the path of the node
+            var startNodeMappingPath = startNode.getMappingPath();
+            //source is OK if mapping corresponds, or no mapping found
+            var sourceOK = sourceMappingPath.SequenceEqual(startNodeMappingPath) || !sourceMappingPath.Any();
+            // if no targetMapping found then we try to build a Mapping up to the target root node source element
+            if (!targetMappingPath.Any())
+            {
+                targetMappingPath = getMappingPath(mappingRelation.targetElement, targetRootNode);
+            }
+            //target is OK if the first item of the targetMappignPath corresponds to the targetRootNode
+            var targetOK = targetMappingPath.FirstOrDefault() == targetRootNode.source.uniqueID;
+            //if target or source is not OK then we return null
+            if (!sourceOK || !targetOK) return null;
+            //first create the targetMappingNode
+            var targetMappingNode = targetRootNode.createMappingNode(targetMappingPath);
+            //return the actual mapping
+            return new ConnectorMapping(mappingRelation, startNode, targetMappingNode);
+        }
+        public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent)
+        {
+            //AttributeMappingNode
+            var attributeSource = source as TSF.UmlToolingFramework.Wrappers.EA.Attribute;
+            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode);
+
+            //AssociationMappingNode
+            var associationSource = source as Association;
+            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode);
+
+            //ClassifierMappingNode
+            var classifierSource = source as ElementWrapper;
+            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent);
+
+            //not a valid source type, return null
+            return null;
+        }
+
+
+        public static List<Mapping> createNewMappings(TSF.UmlToolingFramework.Wrappers.EA.Attribute attribute,string basepath,ElementWrapper targetRootElement)
 		{
 			List<Mapping> returnedMappings = new List<Mapping>();
 			//connectors from owned attributes
