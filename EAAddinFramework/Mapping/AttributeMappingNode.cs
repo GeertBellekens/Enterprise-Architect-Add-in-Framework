@@ -10,8 +10,8 @@ namespace EAAddinFramework.Mapping
 {
     public class AttributeMappingNode : MappingNode
     {
-        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute) : this(sourceAttribute, null) { }
-        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, ClassifierMappingNode parent) : base(sourceAttribute, parent) { }
+        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, MappingSettings settings) : this(sourceAttribute, null, settings) { }
+        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, ClassifierMappingNode parent, MappingSettings settings) : base(sourceAttribute, parent, settings) { }
         internal TSF_EA.Attribute sourceAttribute
         {
             get
@@ -25,8 +25,20 @@ namespace EAAddinFramework.Mapping
         }
         public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {
-            //TODO
-            throw new NotImplementedException();
+            var foundMappings = new List<MP.Mapping>();
+            //Mappings are stored in tagged values
+            foreach (var mappingTag in this.sourceAttribute.taggedValues.Where(x => x.name == this.settings.linkedAttributeTagName))
+            {
+                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
+                if (mapping != null) foundMappings.Add(mapping);
+            }
+            //TODO: link to element feature connectors
+            //loop subNodes
+            foreach (MappingNode childNode in this.childNodes)
+            {
+                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
+            }
+            return foundMappings;
         }
 
         protected override void setChildNodes()
@@ -35,7 +47,7 @@ namespace EAAddinFramework.Mapping
             var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
             if (attributeType != null)
             {
-                var childNode = new ClassifierMappingNode(attributeType, this);
+                var childNode = new ClassifierMappingNode(attributeType, this, this.settings);
             }
         }
     }

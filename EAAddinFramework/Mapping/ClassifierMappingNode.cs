@@ -12,8 +12,8 @@ namespace EAAddinFramework.Mapping
 	public class ClassifierMappingNode:MappingNode
 	{
 
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement) : this(sourceElement, null) { }
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent) : base(sourceElement, parent) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings) : this(sourceElement, null, settings) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings) : base(sourceElement, parent, settings) { }
         internal TSF_EA.ElementWrapper sourceElement
         {
             get
@@ -35,7 +35,7 @@ namespace EAAddinFramework.Mapping
                 //check if this trace represents a mappingNode to somewhere in in the targetNode
                 //get the mapping path
                 var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
-                foundMappings.Add(mapping);
+                if (mapping != null) foundMappings.Add(mapping);
             }
             //loop subNodes
             foreach (MappingNode childNode in this.childNodes)
@@ -49,12 +49,12 @@ namespace EAAddinFramework.Mapping
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in sourceElement.ownedAttributes)
             {
-                var childNode = new AttributeMappingNode(ownedAttribute, this);
+                var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings);
             }
             //create child nodes for each owned classifier
             foreach(TSF_EA.ElementWrapper ownedClassifier in sourceElement.ownedElements.OfType<UML.Classes.Kernel.Classifier>())
             {
-                var childNode = new ClassifierMappingNode(ownedClassifier, this);
+                var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings);
             }
             //create child nodes for each owned association
             foreach(TSF_EA.Association ownedAssociation in this.sourceElement.getRelationships<TSF_EA.Association>())
@@ -62,7 +62,7 @@ namespace EAAddinFramework.Mapping
                 if (ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == this.sourceElement.uniqueID
                     || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == this.sourceElement.uniqueID)
                 {
-                    var childNode = new AssociationMappingNode(ownedAssociation, this);
+                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings);
                 }
             }
         }

@@ -16,10 +16,12 @@ namespace EAAddinFramework.Mapping
         internal List<Mapping> _mappings;
         protected MappingNode _source;
         protected MappingNode _target;
-        public MappingSet(MP.MappingNode source, MP.MappingNode target)
+        public MappingSettings settings { get; set; }
+        public MappingSet(MP.MappingNode source, MP.MappingNode target, MappingSettings settings)
         {
             this.source = source;
             this.target = target;
+            this.settings = settings;
             //build the source node tree
             //get the list of mappings
             this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();

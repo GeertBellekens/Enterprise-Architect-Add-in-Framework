@@ -10,16 +10,18 @@ namespace EAAddinFramework.Mapping
     public abstract class MappingNode : MP.MappingNode
     {
         protected TSF_EA.Element _source;
-        protected MappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent)
+        protected MappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
         {
             this.source = source;
             this.parent = parent;
+            this.settings = settings;
             this.parent?.addChildNode(this);
         }
         public string name
         {
             get { return this._source.name; }
         }
+        public MappingSettings settings { get; set; }
         public List<string> getMappingPath()
         {
             if (this.parent == null) return new List<string>() { this.source.uniqueID };
@@ -41,7 +43,7 @@ namespace EAAddinFramework.Mapping
                 //get the element corresponding to the (now) first guid.
                 var subElement = this._source.model.getItemFromGUID(mappingPath[0]) as UML.Classes.Kernel.NamedElement;
                 //TODO: check if subElement is actually somehow linked to this node?
-                var childNode = MappingFactory.createMappingNode(subElement, this);
+                var childNode = MappingFactory.createMappingNode(subElement, this, this.settings);
                 return childNode?.createMappingNode(mappingPath);
             }
             else

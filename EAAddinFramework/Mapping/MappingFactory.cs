@@ -15,22 +15,22 @@ namespace EAAddinFramework.Mapping
 	{
 		const string mappingSourcePathName = "mappingSourcePath";
 		const string mappingTargetPathName = "mappingTargetPath";
-        public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot )
+        public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings )
         {
             //first create the mapping models
-            var sourceMappingModel = new ClassifierMappingNode(sourceRoot);
-            var targetMappingModel = new ClassifierMappingNode(targetRoot);
+            var sourceMappingModel = new ClassifierMappingNode(sourceRoot, settings);
+            var targetMappingModel = new ClassifierMappingNode(targetRoot, settings);
             //then create the new mappingSet
-            var mappingSet = new MappingSet(sourceMappingModel, targetMappingModel);
+            var mappingSet = new MappingSet(sourceMappingModel, targetMappingModel, settings);
             return mappingSet;
         }
-        public static MappingSet createMappingSet(ElementWrapper sourceRoot)
+        public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
         {
             //get target mapping root
             ElementWrapper targetRootElement = null;
             var packageTrace = sourceRoot.relationships.OfType<Abstraction>().FirstOrDefault(x => x.target is ElementWrapper && x.stereotypes.Any(y => y.name == "trace"));
             if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
-            return createMappingSet(sourceRoot, targetRootElement);
+            return createMappingSet(sourceRoot, targetRootElement, settings);
         }
 
         private static List<string> getMappingPath(Element tagOwner, bool target)
@@ -42,8 +42,15 @@ namespace EAAddinFramework.Mapping
                 mappingPath = taggedValue.eaStringValue.Split(',').ToList();
             }
             return mappingPath;
-
         }
+        private static List<string> getMappingPath(TaggedValue mappingTag, bool target)
+        {
+            var mappingPath = new List<String>();
+            var pathString = target ? KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment) : KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment);
+            if (! string.IsNullOrEmpty(pathString)) mappingPath = pathString.Split(',').ToList();
+            return mappingPath;
+        }
+
         private static List<string> getMappingPath(Element nodeSource, MappingNode targetRootNode)
         {
             if (nodeSource.owner == null || nodeSource.uniqueID == targetRootNode.source.uniqueID) return new List<string>() { nodeSource.uniqueID };
@@ -51,10 +58,22 @@ namespace EAAddinFramework.Mapping
             path.Add(nodeSource.uniqueID);
             return path;
         }
+        public static Mapping getMapping(MappingNode startNode, TaggedValue mappingTag, MappingNode targetRootNode)
+        {
+            List<string> sourceMappingPath = getMappingPath(mappingTag, false);
+            List<string> targetMappingPath = getMappingPath(mappingTag, true);
+            Element targetElement = mappingTag.tagValue as Element;
+            return getMapping(mappingTag, targetElement, startNode, sourceMappingPath, targetMappingPath, targetRootNode);
+        }
         public static Mapping getMapping(MappingNode startNode, ConnectorWrapper mappingRelation, MappingNode targetRootNode)
         {
             var sourceMappingPath = getMappingPath(mappingRelation, false);
             var targetMappingPath = getMappingPath(mappingRelation, true);
+            Element targetElement = mappingRelation.targetElement;
+            return getMapping(mappingRelation, targetElement, startNode, sourceMappingPath, targetMappingPath, targetRootNode);
+        }
+        private static Mapping getMapping(UML.Extended.UMLItem mappingItem, Element mappingTarget, MappingNode startNode, List<string> sourceMappingPath, List<string> targetMappingPath, MappingNode targetRootNode)
+        {
             //check if the mappingPath of the source corresponds with the path of the node
             var startNodeMappingPath = startNode.getMappingPath();
             //source is OK if mapping corresponds, or no mapping found
@@ -62,7 +81,7 @@ namespace EAAddinFramework.Mapping
             // if no targetMapping found then we try to build a Mapping up to the target root node source element
             if (!targetMappingPath.Any())
             {
-                targetMappingPath = getMappingPath(mappingRelation.targetElement, targetRootNode);
+                targetMappingPath = getMappingPath(mappingTarget, targetRootNode);
             }
             //target is OK if the first item of the targetMappignPath corresponds to the targetRootNode
             var targetOK = targetMappingPath.FirstOrDefault() == targetRootNode.source.uniqueID;
@@ -71,21 +90,31 @@ namespace EAAddinFramework.Mapping
             //first create the targetMappingNode
             var targetMappingNode = targetRootNode.createMappingNode(targetMappingPath);
             //return the actual mapping
-            return new ConnectorMapping(mappingRelation, startNode, targetMappingNode);
+            return createMapping(mappingItem, startNode, targetMappingNode);
         }
-        public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent)
+        private static Mapping createMapping(UML.Extended.UMLItem mappingItem, MappingNode startNode, MappingNode targetNode)
+        {
+            var connector = mappingItem as ConnectorWrapper;
+            if (connector != null) return new ConnectorMapping(connector, startNode, targetNode);
+            var taggedValue = mappingItem as TaggedValue;
+            if (taggedValue != null) return new TaggedValueMapping(taggedValue, startNode, targetNode);
+            throw new ArgumentException("MappingItem should be Connector or TaggedValue");
+        }
+        
+
+        public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
         {
             //AttributeMappingNode
             var attributeSource = source as TSF.UmlToolingFramework.Wrappers.EA.Attribute;
-            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode);
+            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode, settings);
 
             //AssociationMappingNode
             var associationSource = source as Association;
-            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode);
+            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode, settings);
 
             //ClassifierMappingNode
             var classifierSource = source as ElementWrapper;
-            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent);
+            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent, settings);
 
             //not a valid source type, return null
             return null;
