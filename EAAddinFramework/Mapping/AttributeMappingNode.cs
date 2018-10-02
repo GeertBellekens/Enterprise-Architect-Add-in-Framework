@@ -10,8 +10,8 @@ namespace EAAddinFramework.Mapping
 {
     public class AttributeMappingNode : MappingNode
     {
-        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, MappingSettings settings) : this(sourceAttribute, null, settings) { }
-        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, ClassifierMappingNode parent, MappingSettings settings) : base(sourceAttribute, parent, settings) { }
+        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, null, settings, structure) { }
+        public AttributeMappingNode(TSF_EA.Attribute sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceAttribute, parent, settings, structure) { }
         internal TSF_EA.Attribute sourceAttribute
         {
             get
@@ -34,20 +34,20 @@ namespace EAAddinFramework.Mapping
             }
             //TODO: link to element feature connectors
             //loop subNodes
-            foreach (MappingNode childNode in this.childNodes)
+            foreach (MappingNode childNode in this.allChildNodes)
             {
                 foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
             }
             return foundMappings;
         }
 
-        protected override void setChildNodes()
+        public override void setChildNodes()
         {
             //the type of the attribute should be set as type
             var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
             if (attributeType != null)
             {
-                var childNode = new ClassifierMappingNode(attributeType, this, this.settings);
+                var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
             }
         }
     }

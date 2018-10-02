@@ -12,8 +12,8 @@ namespace EAAddinFramework.Mapping
 	public class ClassifierMappingNode:MappingNode
 	{
 
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings) : this(sourceElement, null, settings) { }
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings) : base(sourceElement, parent, settings) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceElement, parent, settings, structure) { }
         internal TSF_EA.ElementWrapper sourceElement
         {
             get
@@ -38,23 +38,23 @@ namespace EAAddinFramework.Mapping
                 if (mapping != null) foundMappings.Add(mapping);
             }
             //loop subNodes
-            foreach (MappingNode childNode in this.childNodes)
+            foreach (MappingNode childNode in this.allChildNodes)
             {
                 foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
             }
             return foundMappings;
         }
-        protected override void setChildNodes()
+        public override void setChildNodes()
         {
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in sourceElement.ownedAttributes)
             {
-                var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings);
+                var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure);
             }
             //create child nodes for each owned classifier
-            foreach(TSF_EA.ElementWrapper ownedClassifier in sourceElement.ownedElements.OfType<UML.Classes.Kernel.Classifier>())
+            foreach(TSF_EA.ElementWrapper ownedClassifier in sourceElement.ownedElements.OfType<UML.Classes.Kernel.Namespace>())
             {
-                var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings);
+                var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure);
             }
             //create child nodes for each owned association
             foreach(TSF_EA.Association ownedAssociation in this.sourceElement.getRelationships<TSF_EA.Association>())
@@ -62,7 +62,7 @@ namespace EAAddinFramework.Mapping
                 if (ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == this.sourceElement.uniqueID
                     || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == this.sourceElement.uniqueID)
                 {
-                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings);
+                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure);
                 }
             }
         }

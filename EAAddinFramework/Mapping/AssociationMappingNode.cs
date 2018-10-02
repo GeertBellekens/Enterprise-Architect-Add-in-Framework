@@ -10,8 +10,8 @@ namespace EAAddinFramework.Mapping
 {
     public class AssociationMappingNode : MappingNode
     {
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings) : this(sourceAssociation, null, settings) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings) : base(sourceAssociation, parent, settings) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, null, settings, structure) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceAssociation, parent, settings, structure) { }
 
         internal TSF_EA.Association sourceAssociation
         {
@@ -36,20 +36,24 @@ namespace EAAddinFramework.Mapping
                 if (mapping != null) foundMappings.Add(mapping);
             }
             //loop subNodes
-            foreach (MappingNode childNode in this.childNodes)
+            foreach (MappingNode childNode in this.allChildNodes)
             {
                 foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
             }
             return foundMappings;
         }
 
-        protected override void setChildNodes()
+        public override void setChildNodes()
         {
-            //create mapping node for target element
-            var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
-            if (targetElement != null)
+            //we only traverse associations in case of message structrure
+            if (this.structure == MP.ModelStructure.Message)
             {
-                var childNode = new ClassifierMappingNode(targetElement, this, this.settings);
+                //create mapping node for target element
+                var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
+                if (targetElement != null)
+                {
+                    var childNode = new ClassifierMappingNode(targetElement, this, this.settings, this.structure);
+                }
             }
         }
     }

@@ -18,7 +18,9 @@ namespace EAAddinFramework.Mapping
         public Mapping(MappingNode sourceEnd, MappingNode targetEnd)
         {
             _source = sourceEnd;
+            _source.addMapping(this);
             _target = targetEnd;
+            _target.addMapping(this);
         }
         public Mapping(MappingNode sourceEnd, MappingNode targetEnd, MappingLogic logic) : this(sourceEnd, targetEnd)
         {

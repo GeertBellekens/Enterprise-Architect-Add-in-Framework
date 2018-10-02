@@ -10,12 +10,13 @@ namespace EAAddinFramework.Mapping
     public abstract class MappingNode : MP.MappingNode
     {
         protected TSF_EA.Element _source;
-        protected MappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
+        protected MappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings, MP.ModelStructure structure)
         {
             this.source = source;
             this.parent = parent;
             this.settings = settings;
             this.parent?.addChildNode(this);
+            this.structure = structure;
         }
         public string name
         {
@@ -43,7 +44,10 @@ namespace EAAddinFramework.Mapping
                 //get the element corresponding to the (now) first guid.
                 var subElement = this._source.model.getItemFromGUID(mappingPath[0]) as UML.Classes.Kernel.NamedElement;
                 //TODO: check if subElement is actually somehow linked to this node?
-                var childNode = MappingFactory.createMappingNode(subElement, this, this.settings);
+                //check if a childNode for the given subElement is already present
+                var childNode  = this.allChildNodes.FirstOrDefault(x => x.source.uniqueID == subElement.uniqueID) as MappingNode;
+                //create new new node if not already present
+                if (childNode == null) childNode = MappingFactory.createMappingNode(subElement, this, this.settings);
                 return childNode?.createMappingNode(mappingPath);
             }
             else
@@ -64,22 +68,50 @@ namespace EAAddinFramework.Mapping
                 this._source = (TSF_EA.Element)value;
             }
         }
-        protected List<MappingNode> _childNodes = new List<MappingNode>();
-        public IEnumerable<MP.MappingNode> childNodes
+        protected List<MappingNode> _allChildNodes = new List<MappingNode>();
+        public IEnumerable<MP.MappingNode> allChildNodes
         {
             get
             {
-                return _childNodes;
+                return _allChildNodes;
             }
             set
             {
-                _childNodes = value.Cast<MappingNode>().ToList();
+                _allChildNodes = value.Cast<MappingNode>().ToList();
             }
         }
+        
         public MP.MappingNode parent { get; set; }
+
+        protected List<Mapping> _mappings = new List<Mapping>();
+        public IEnumerable<MP.Mapping> mappings { get { return this._mappings; } }
+
+        public MP.ModelStructure structure { get; set; }
+        public IEnumerable<MP.MappingNode> mappedChildNodes
+        {
+            get
+            {
+                return this.allChildNodes.Where(x => x.isMapped);
+            }
+        }
+
+        public IEnumerable<MP.MappingNode> childNodes
+        {
+            get => this.showAll ? this.allChildNodes: this.mappedChildNodes;
+        }
+        public bool showAll { get; set; }
+
+        public bool isMapped
+        {
+            get
+            {
+                return this.mappings.Any() || this.mappedChildNodes.Any();
+            }
+        }
+
         public void addChildNode(MP.MappingNode childNode)
         {
-            this._childNodes.Add((MappingNode)childNode);
+            this._allChildNodes.Add((MappingNode)childNode);
         }
 
         public abstract IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode);
@@ -89,12 +121,12 @@ namespace EAAddinFramework.Mapping
             //set immediate child nodes
             this.setChildNodes();
             //build deeper
-            foreach (MappingNode childNode in this.childNodes)
+            foreach (MappingNode childNode in this.allChildNodes)
             {
                 childNode.buildNodeTree();
             }
         }
-        protected abstract void setChildNodes();
+        public abstract void setChildNodes();
 
         public IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode)
         {
@@ -104,34 +136,10 @@ namespace EAAddinFramework.Mapping
             return this.getOwnedMappings(targetRootNode);
         }
 
-        //public IEnumerable<Mapping> getOwnedMappings(MappingModel targetMappingModel)
-        //{
-        //    //List<Mapping> returnedMappings = new List<Mapping>();
-        //    ////connectors to an attribute
-        //    //foreach (ConnectorWrapper mappedConnector in this.source.relationships.OfType<ConnectorWrapper>()
-        //    //         .Where(y => y.targetElement is AttributeWrapper))
-        //    //{
-        //    //    //create a mappingNode
-        //    //    var connectorNode = new 
-        //    //    //figure out if the mapping is actually going to the targetMappingModel
+        public void addMapping(MP.Mapping mapping)
+        {
+            this._mappings.Add((Mapping)mapping);
+        }
 
-        //    //    string connectorPath = basepath + "." + getConnectorString(mappedConnector);
-        //    //    var connectorMapping = new ConnectorMapping(mappedConnector, connectorPath, targetRootElement);
-        //    //    returnedMappings.Add(connectorMapping);
-        //    //}
-        //    ////loop owned attributes
-        //    //foreach (TSF.UmlToolingFramework.Wrappers.EA.Attribute ownedAttribute in ownerElement.ownedAttributes)
-        //    //{
-        //    //    returnedMappings.AddRange(createNewMappings(ownedAttribute, basepath, targetRootElement));
-        //    //}
-        //    ////loop owned Elements
-        //    //{
-        //    //    foreach (var ownedElement in ownerElement.ownedElements.OfType<ElementWrapper>())
-        //    //    {
-        //    //        returnedMappings.AddRange(createOwnedMappings(ownedElement, basepath + "." + ownedElement.name, targetRootElement));
-        //    //    }
-        //    //}
-        //    //return returnedMappings;
-        //}
     }
 }

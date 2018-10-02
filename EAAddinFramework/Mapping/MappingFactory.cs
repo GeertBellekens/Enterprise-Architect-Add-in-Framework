@@ -5,6 +5,7 @@ using EAAddinFramework.Utilities;
 using UML=TSF.UmlToolingFramework.UML;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using FileHelpers;
+using MP = MappingFramework;
 
 namespace EAAddinFramework.Mapping
 {
@@ -17,11 +18,16 @@ namespace EAAddinFramework.Mapping
 		const string mappingTargetPathName = "mappingTargetPath";
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings )
         {
-            //first create the mapping models
-            var sourceMappingModel = new ClassifierMappingNode(sourceRoot, settings);
-            var targetMappingModel = new ClassifierMappingNode(targetRoot, settings);
+            //first create the root nodes
+            //depending on the type of root we create a dataModel structure (Package) or a Message structure (class).
+            var sourceRootNode = sourceRoot is Package ?
+                    new ClassifierMappingNode(sourceRoot, settings, MP.ModelStructure.DataModel):
+                    new ClassifierMappingNode(sourceRoot, settings, MP.ModelStructure.Message);
+            var targetMappingModel = targetRoot is Package ?
+                    new ClassifierMappingNode(targetRoot, settings, MP.ModelStructure.DataModel):
+                    new ClassifierMappingNode(targetRoot, settings, MP.ModelStructure.Message);
             //then create the new mappingSet
-            var mappingSet = new MappingSet(sourceMappingModel, targetMappingModel, settings);
+            var mappingSet = new MappingSet(sourceRootNode, targetMappingModel, settings);
             return mappingSet;
         }
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
@@ -106,15 +112,15 @@ namespace EAAddinFramework.Mapping
         {
             //AttributeMappingNode
             var attributeSource = source as TSF.UmlToolingFramework.Wrappers.EA.Attribute;
-            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode, settings);
+            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode, settings, parent.structure);
 
             //AssociationMappingNode
             var associationSource = source as Association;
-            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode, settings);
+            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode, settings, parent.structure);
 
             //ClassifierMappingNode
             var classifierSource = source as ElementWrapper;
-            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent, settings);
+            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent, settings, parent.structure);
 
             //not a valid source type, return null
             return null;
