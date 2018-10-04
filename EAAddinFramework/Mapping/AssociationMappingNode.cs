@@ -50,7 +50,7 @@ namespace EAAddinFramework.Mapping
             {
                 //create mapping node for target element
                 var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
-                if (targetElement != null)
+                if (targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
                 {
                     var childNode = new ClassifierMappingNode(targetElement, this, this.settings, this.structure);
                 }

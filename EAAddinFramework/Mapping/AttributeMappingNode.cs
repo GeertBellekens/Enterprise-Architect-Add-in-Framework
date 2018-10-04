@@ -45,7 +45,7 @@ namespace EAAddinFramework.Mapping
         {
             //the type of the attribute should be set as type
             var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
-            if (attributeType != null)
+            if (attributeType != null && ! this.allChildNodes.Any(x => x.source?.uniqueID == attributeType.uniqueID))
             {
                 var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
             }

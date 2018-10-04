@@ -19,16 +19,18 @@ namespace EAAddinFramework.Mapping
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings )
         {
             //first create the root nodes
-            //depending on the type of root we create a dataModel structure (Package) or a Message structure (class).
-            var sourceRootNode = sourceRoot is Package ?
-                    new ClassifierMappingNode(sourceRoot, settings, MP.ModelStructure.DataModel):
-                    new ClassifierMappingNode(sourceRoot, settings, MP.ModelStructure.Message);
-            var targetMappingModel = targetRoot is Package ?
-                    new ClassifierMappingNode(targetRoot, settings, MP.ModelStructure.DataModel):
-                    new ClassifierMappingNode(targetRoot, settings, MP.ModelStructure.Message);
+            var sourceRootNode = createNewRootNode(sourceRoot, settings);
+            var targetRootNode = createNewRootNode(targetRoot, settings);
             //then create the new mappingSet
-            var mappingSet = new MappingSet(sourceRootNode, targetMappingModel, settings);
+            var mappingSet = new MappingSet(sourceRootNode, targetRootNode, settings);
             return mappingSet;
+        }
+        public static ClassifierMappingNode createNewRootNode(ElementWrapper rootElement, MappingSettings settings)
+        {
+            //depending on the type of root we create a dataModel structure (Package) or a Message structure (class).
+            return rootElement is Package ?
+                    new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.DataModel) :
+                    new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.Message);
         }
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
         {

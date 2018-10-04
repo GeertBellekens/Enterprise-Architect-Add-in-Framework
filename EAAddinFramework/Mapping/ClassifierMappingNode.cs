@@ -46,21 +46,29 @@ namespace EAAddinFramework.Mapping
         }
         public override void setChildNodes()
         {
+            if (sourceElement == null) return;
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in sourceElement.ownedAttributes)
             {
-                var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure);
+                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
+                {
+                    var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure);
+                }
             }
             //create child nodes for each owned classifier
             foreach(TSF_EA.ElementWrapper ownedClassifier in sourceElement.ownedElements.OfType<UML.Classes.Kernel.Namespace>())
             {
-                var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure);
+                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
+                {
+                    var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure);
+                }
             }
             //create child nodes for each owned association
-            foreach(TSF_EA.Association ownedAssociation in this.sourceElement.getRelationships<TSF_EA.Association>())
+            foreach(var ownedAssociation in this.sourceElement.getRelationships<TSF_EA.Association>())
             {
-                if (ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == this.sourceElement.uniqueID
+                if ((ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == this.sourceElement.uniqueID
                     || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == this.sourceElement.uniqueID)
+                    && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure);
                 }
