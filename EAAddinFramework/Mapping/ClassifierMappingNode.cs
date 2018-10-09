@@ -1,9 +1,11 @@
 ﻿using System;
 using MP = MappingFramework;
-using UML=TSF.UmlToolingFramework.UML;
+using UML = TSF.UmlToolingFramework.UML;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Collections.Generic;
 using System.Linq;
+using TSF.UmlToolingFramework.UML.Extended;
+
 namespace EAAddinFramework.Mapping
 {
 	/// <summary>
@@ -72,6 +74,23 @@ namespace EAAddinFramework.Mapping
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure);
                 }
+            }
+        }
+
+        protected override UMLItem createMappingItem(MappingNode targetNode)
+        {
+            var classifierTargetNode = targetNode as ClassifierMappingNode;
+            if (classifierTargetNode != null)
+            {
+                var trace = this.sourceElement.EAModel.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.sourceElement, "");
+                trace.addStereotype(this.sourceElement.EAModel.factory.createStereotype(trace, "trace"));
+                trace.target = classifierTargetNode.sourceElement;
+                trace.save();
+                return trace;
+            }
+            else
+            {
+                return this.createTaggedValueMappingItem(targetNode);
             }
         }
     }

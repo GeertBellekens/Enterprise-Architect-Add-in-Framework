@@ -100,7 +100,7 @@ namespace EAAddinFramework.Mapping
             //return the actual mapping
             return createMapping(mappingItem, startNode, targetMappingNode);
         }
-        private static Mapping createMapping(UML.Extended.UMLItem mappingItem, MappingNode startNode, MappingNode targetNode)
+        public static Mapping createMapping(UML.Extended.UMLItem mappingItem, MappingNode startNode, MappingNode targetNode)
         {
             var connector = mappingItem as ConnectorWrapper;
             if (connector != null) return new ConnectorMapping(connector, startNode, targetNode);
@@ -108,6 +108,7 @@ namespace EAAddinFramework.Mapping
             if (taggedValue != null) return new TaggedValueMapping(taggedValue, startNode, targetNode);
             throw new ArgumentException("MappingItem should be Connector or TaggedValue");
         }
+
         
 
         public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)

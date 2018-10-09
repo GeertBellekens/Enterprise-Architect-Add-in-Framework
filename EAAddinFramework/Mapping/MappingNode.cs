@@ -141,5 +141,18 @@ namespace EAAddinFramework.Mapping
             this._mappings.Add((Mapping)mapping);
         }
 
+        public MP.Mapping mapTo(MP.MappingNode targetNode)
+        {
+            var mappingItem =  this.createMappingItem((MappingNode)targetNode);
+            return MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
+        }
+        protected abstract UML.Extended.UMLItem createMappingItem(MappingNode targetNode);
+        public UML.Profiles.TaggedValue createTaggedValueMappingItem(MappingNode targetNode)
+        {
+            var tagName = targetNode is AssociationMappingNode ?
+                    this.settings.linkedAssociationTagName :
+                    this.settings.linkedAttributeTagName;
+            return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source);
+        }
     }
 }

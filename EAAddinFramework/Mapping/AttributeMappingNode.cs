@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using MP = MappingFramework;
+using TSF.UmlToolingFramework.UML.Extended;
 
 namespace EAAddinFramework.Mapping
 {
@@ -49,6 +50,11 @@ namespace EAAddinFramework.Mapping
             {
                 var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
             }
+        }
+
+        protected override UMLItem createMappingItem(MappingNode targetNode)
+        {
+            return this.createTaggedValueMappingItem(targetNode);
         }
     }
 }

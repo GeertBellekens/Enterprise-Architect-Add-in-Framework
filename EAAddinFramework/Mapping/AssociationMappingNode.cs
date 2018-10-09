@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TSF.UmlToolingFramework.UML.Extended;
 using MP = MappingFramework;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
@@ -55,6 +56,11 @@ namespace EAAddinFramework.Mapping
                     var childNode = new ClassifierMappingNode(targetElement, this, this.settings, this.structure);
                 }
             }
+        }
+
+        protected override UMLItem createMappingItem(MappingNode targetNode)
+        {
+            return this.createTaggedValueMappingItem(targetNode);
         }
     }
 }
