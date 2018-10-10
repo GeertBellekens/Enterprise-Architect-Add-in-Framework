@@ -18,36 +18,6 @@ namespace EAAddinFramework.Mapping
         {
             this.wrappedConnector = wrappedConnector;
         }
-        //public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath)
-        //{
-        //	this.wrappedConnector = wrappedConnector;
-        //}
-        //public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath,ElementWrapper targetRootElement):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath,targetRootElement)
-        //{
-        //	this.wrappedConnector = wrappedConnector;
-        //}
-        //public ConnectorMapping(ConnectorWrapper wrappedConnector,string basePath,string targetBasePath):base(wrappedConnector.sourceElement,wrappedConnector.targetElement,basePath,targetBasePath)
-        //{
-        //	this.wrappedConnector = wrappedConnector;
-        //}
-
-        //public ConnectorMapping(Element source, Element target, string sourcePath, string targetPath, MappingSettings settings):base(source,target,sourcePath,targetPath)
-        //{
-        //	var sourceAttribute  = source as TFS_EA.Attribute;
-        //	var targetAttribute = target as TFS_EA.Attribute;
-        //	ElementWrapper sourceOwner = sourceAttribute != null ? sourceAttribute.owner as ElementWrapper : source as ElementWrapper;
-        //	ElementWrapper targetOwner = targetAttribute != null ? targetAttribute.owner as ElementWrapper: null as ElementWrapper;
-        //	if (sourceOwner != null & targetOwner != null)
-        //	{
-        //		//create the connector
-        //		wrappedConnector = sourceOwner.EAModel.factory.createNewElement<UML.Classes.Kernel.Association>
-        //         		 					(sourceOwner,string.Empty) as Association;
-        //		//set source and target
-        //		wrappedConnector.source = source;
-        //		wrappedConnector.target = target;
-        //		wrappedConnector.save();
-        //	}			
-        //}
 
         #region implemented abstract members of Mapping
 
@@ -98,7 +68,9 @@ namespace EAAddinFramework.Mapping
 
 		public override void save()
 		{
-			this.wrappedConnector.save();
+            if (this._mappingLogic != null)
+                this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
+            this.wrappedConnector.save();
 		}
 
 		#endregion

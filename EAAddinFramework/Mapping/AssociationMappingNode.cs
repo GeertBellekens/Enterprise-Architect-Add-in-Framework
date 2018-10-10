@@ -25,6 +25,22 @@ namespace EAAddinFramework.Mapping
                 this.source = value;
             }
         }
+        public override string name
+        {
+            get
+            {
+                //check if source association has a name
+                if (!string.IsNullOrEmpty(this.sourceAssociation.name))
+                    return (this.sourceAssociation.name);
+                //return sourceClas.sourceRole.targetRole.TargetClass
+                var nameParts = new List<string>();
+                if (!string.IsNullOrEmpty(this.sourceAssociation.sourceName)) nameParts.Add(this.sourceAssociation.sourceName);
+                if (!string.IsNullOrEmpty(this.sourceAssociation.sourceEnd.name)) nameParts.Add(this.sourceAssociation.sourceEnd.name);
+                if (!string.IsNullOrEmpty(this.sourceAssociation.targetEnd.name)) nameParts.Add(this.sourceAssociation.targetEnd.name);
+                if (!string.IsNullOrEmpty(this.sourceAssociation.targetName)) nameParts.Add(this.sourceAssociation.targetName);
+                return string.Join(".", nameParts);
+            }
+        }
 
         public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {

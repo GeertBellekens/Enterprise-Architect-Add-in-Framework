@@ -14,36 +14,10 @@ namespace EAAddinFramework.Mapping
     public class TaggedValueMapping : Mapping
     {
         internal TaggedValue wrappedTaggedValue { get; private set; }
-        public TaggedValueMapping(TaggedValue wrappedTaggedValue, MappingNode source, MappingNode target) : base(source, target) { }
-
-        //public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath)
-        //{
-        //	this.wrappedTaggedValue = wrappedTaggedValue;
-        //}
-        //public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath,ElementWrapper targetRootElement):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath,targetRootElement)
-        //{
-        //	this.wrappedTaggedValue = wrappedTaggedValue;
-        //}
-        //public TaggedValueMapping(TaggedValue wrappedTaggedValue,string basePath,string targetBasePath):base((Element)wrappedTaggedValue.owner,wrappedTaggedValue.tagValue as Element,basePath,targetBasePath)
-        //{
-        //	this.wrappedTaggedValue = wrappedTaggedValue;
-        //}
-        //public TaggedValueMapping(Element source, Element target,string sourcePath,string targetPath,MappingSettings settings):base(source,target,sourcePath,targetPath)
-        //{
-        //	string tagName = settings.linkedAttributeTagName;
-        //	if (target is ConnectorWrapper)
-        //	{
-        //		tagName = settings.linkedAssociationTagName;
-        //	}
-        //	string tagComments =string.Empty;
-        //	if (!string.IsNullOrEmpty(sourcePath)) tagComments = 
-        //		KeyValuePairsHelper.setValueForKey("mappingSourcePath", this.stripPathFromElementName(source,sourcePath),tagComments);
-        //	if (!string.IsNullOrEmpty(targetPath)) tagComments = 
-        //		KeyValuePairsHelper.setValueForKey("mappingTargetPath", this.stripPathFromElementName(target, targetPath),tagComments);
-        //	this.wrappedTaggedValue = source.addTaggedValue(tagName,target.uniqueID,tagComments,true);
-        //}
-
-
+        public TaggedValueMapping(TaggedValue wrappedTaggedValue, MappingNode source, MappingNode target) : base(source, target)
+        {
+            this.wrappedTaggedValue = wrappedTaggedValue;
+        }
 
         #region implemented abstract members of Mapping
         public override MP.MappingLogic mappingLogic
@@ -83,6 +57,8 @@ namespace EAAddinFramework.Mapping
 
         public override void save()
         {
+            if (this._mappingLogic != null)
+                this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
             this.wrappedTaggedValue.save();
         }
 
