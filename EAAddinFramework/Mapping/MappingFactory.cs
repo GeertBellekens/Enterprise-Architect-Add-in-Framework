@@ -61,7 +61,7 @@ namespace EAAddinFramework.Mapping
 
         private static List<string> getMappingPath(Element nodeSource, MappingNode targetRootNode)
         {
-            if (nodeSource.owner == null || nodeSource.uniqueID == targetRootNode.source.uniqueID) return new List<string>() { nodeSource.uniqueID };
+            if (nodeSource.owner == null || targetRootNode.source == null || nodeSource.uniqueID == targetRootNode.source.uniqueID) return new List<string>() { nodeSource.uniqueID };
             var path = getMappingPath((Element)nodeSource.owner, targetRootNode);
             path.Add(nodeSource.uniqueID);
             return path;
@@ -92,7 +92,7 @@ namespace EAAddinFramework.Mapping
                 targetMappingPath = getMappingPath(mappingTarget, targetRootNode);
             }
             //target is OK if the first item of the targetMappignPath corresponds to the targetRootNode
-            var targetOK = targetMappingPath.FirstOrDefault() == targetRootNode.source.uniqueID;
+            var targetOK = targetMappingPath.FirstOrDefault() == targetRootNode.source?.uniqueID;
             //if target or source is not OK then we return null
             if (!sourceOK || !targetOK) return null;
             //first create the targetMappingNode
