@@ -343,6 +343,7 @@
     <ProjectReference Include="..\..\UML-Tooling-Framework\MappingFramework\MappingFramework.csproj">
       <Project>{b56abb9c-5ac0-4621-97b4-92d59c976f2f}</Project>
       <Name>MappingFramework</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\RequirementsFramework\RequirementsFramework.csproj">
       <Project>{f0a6e35e-1a1d-4bdd-876b-99d3edfa7afc}</Project>
