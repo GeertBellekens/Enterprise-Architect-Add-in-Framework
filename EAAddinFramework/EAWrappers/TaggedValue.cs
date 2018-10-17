@@ -172,8 +172,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public void delete()
         {
-            throw new NotImplementedException();
+            var eaTaggedValues = ((Element)this.owner).eaTaggedValuesCollection;
+            ((Element)this.owner).removeTaggedValue(this);
+
         }
+        internal abstract bool equalsTagObject(Object eaTag);
+        
 
         public bool makeWritable(bool overrideLocks)
         {

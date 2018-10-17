@@ -38,6 +38,16 @@ namespace EAAddinFramework.Mapping
         }
 
         public abstract void save();
+
+        public abstract void deleteWrappedItem();
+        public void delete()
+        {
+            //remove from source and target
+            this.source.removeMapping(this);
+            this.target.removeMapping(this);
+            this.deleteWrappedItem();
+        }
+
         public abstract MP.MappingLogic mappingLogic { get; set; }
         public string mappingLogicDescription
         {

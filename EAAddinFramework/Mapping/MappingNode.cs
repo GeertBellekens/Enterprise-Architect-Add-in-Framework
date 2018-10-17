@@ -106,6 +106,8 @@ namespace EAAddinFramework.Mapping
             //build deeper
             foreach (MappingNode childNode in this.allChildNodes)
             {
+                //check if childnode is not already somewhere in the parents to avoid infinite loops
+                if (!this.getMappingPath().Any( x => x == childNode.source.uniqueID))
                 childNode.buildNodeTree();
             }
         }
@@ -124,6 +126,11 @@ namespace EAAddinFramework.Mapping
             this._mappings.Add((Mapping)mapping);
         }
 
+        public void removeMapping(MP.Mapping mapping)
+        {
+            this._mappings.Remove((Mapping)mapping);
+        }
+
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
             var mappingItem = this.createMappingItem((MappingNode)targetNode);
@@ -137,5 +144,7 @@ namespace EAAddinFramework.Mapping
                     this.settings.linkedAttributeTagName;
             return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source);
         }
+
+        
     }
 }

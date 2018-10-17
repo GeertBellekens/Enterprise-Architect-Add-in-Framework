@@ -36,7 +36,7 @@ namespace EAAddinFramework.Mapping
 				if (_mappingLogic == null)
 				{
 					var mappingtag = this.wrappedConnector.taggedValues
-						.FirstOrDefault( x => x.name.Equals("mappingLogic",StringComparison.InvariantCultureIgnoreCase));
+						.FirstOrDefault( x => x.name.Equals(MappingFactory.mappingLogicName,StringComparison.InvariantCultureIgnoreCase));
 					if (mappingtag != null && 
 					    ! string.IsNullOrEmpty(mappingtag.tagValue.ToString()))
 					{
@@ -50,13 +50,13 @@ namespace EAAddinFramework.Mapping
 				var mappingElementWrapper = value.mappingElement as ElementWrapper;
 				if (mappingElementWrapper != null)
 				{
-					this.wrappedConnector.addTaggedValue("mappinglogic",mappingElementWrapper.uniqueID);
+					this.wrappedConnector.addTaggedValue(MappingFactory.mappingLogicName, mappingElementWrapper.uniqueID);
 					//TODO get this working for at least notes and constraints, for now we go with a tagged value
 					// this.wrappedConnector.addLinkedElement(mappingElementWrapper);
 				}
 				else
 				{
-					this.wrappedConnector.addTaggedValue("mappingLogic",value.description);
+					this.wrappedConnector.addTaggedValue(MappingFactory.mappingLogicName, value.description);
 				}
 				
 			}
@@ -70,9 +70,23 @@ namespace EAAddinFramework.Mapping
 		{
             if (this._mappingLogic != null)
                 this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
+                                                        //set mapping path
+            if (this.source.structure == MP.ModelStructure.Message)
+            {
+                this.wrappedConnector.addTaggedValue(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).getMappingPath()));
+            }
+            if (this.target.structure == MP.ModelStructure.Message)
+            {
+                this.wrappedConnector.addTaggedValue(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()));
+            }
             this.wrappedConnector.save();
 		}
 
-		#endregion
-	}
+        public override void deleteWrappedItem()
+        {
+            this.wrappedConnector?.delete();
+        }
+
+        #endregion
+    }
 }

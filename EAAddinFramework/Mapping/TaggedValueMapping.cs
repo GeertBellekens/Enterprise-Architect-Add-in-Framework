@@ -30,7 +30,7 @@ namespace EAAddinFramework.Mapping
                     string mappingLogicString = "";
                     if (this.wrappedTaggedValue != null)
                     {
-                        mappingLogicString = KeyValuePairsHelper.getValueForKey("mappingLogic", this.wrappedTaggedValue.comment);
+                        mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
                     }
                     if (Guid.TryParse(mappingLogicString, out mappingElementGUID))
                     {
@@ -48,7 +48,7 @@ namespace EAAddinFramework.Mapping
             {
                 string logicString = value.description;
                 if (value.mappingElement != null) logicString = value.mappingElement.uniqueID;
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey("mappingLogic", logicString, this.wrappedTaggedValue.comment);
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
             }
         }
         #endregion
@@ -59,7 +59,21 @@ namespace EAAddinFramework.Mapping
         {
             if (this._mappingLogic != null)
                 this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
+            //set mapping path
+            if (this.source.structure == MP.ModelStructure.Message)
+            {
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingSourcePathName, string.Join(".",((MappingNode)this.source).getMappingPath()), this.wrappedTaggedValue.comment);
+            }
+            if (this.target.structure == MP.ModelStructure.Message)
+            {
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()), this.wrappedTaggedValue.comment);
+            }
             this.wrappedTaggedValue.save();
+        }
+
+        public override void deleteWrappedItem()
+        {
+            this.wrappedTaggedValue?.delete();
         }
 
         #endregion

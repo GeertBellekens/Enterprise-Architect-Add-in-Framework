@@ -157,6 +157,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         protected Element _owner;
         public abstract UML.Classes.Kernel.Element owner
         { get; set; }
+
+        internal void removeTaggedValue(TaggedValue taggedValue)
+        {
+            for (short i = 0; i < this.eaTaggedValuesCollection.Count; i++)
+            {
+                var eaTag = eaTaggedValuesCollection.GetAt(i);
+                //if the eaTag equals the wrapped tag then we delete it
+                if (taggedValue.equalsTagObject(eaTag))
+                {
+                    eaTaggedValuesCollection.DeleteAt(i, false);
+                    break;
+                }
+            }
+        }
+
+
+
         /// <summary>
         /// returns a list of all owners starting with the owner of this element up to the root package of the model
         /// </summary>
