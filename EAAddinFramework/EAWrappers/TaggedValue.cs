@@ -9,10 +9,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal Model model { get; set; }
-
-        internal TaggedValue(Model model)
+        protected Element _owner;
+        internal TaggedValue(Model model, Element owner)
         {
             this.model = model;
+            this._owner = owner;
         }
 
         /// <summary>
@@ -172,9 +173,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public void delete()
         {
-            var eaTaggedValues = ((Element)this.owner).eaTaggedValuesCollection;
             ((Element)this.owner).removeTaggedValue(this);
-
         }
         internal abstract bool equalsTagObject(Object eaTag);
         

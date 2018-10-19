@@ -160,6 +160,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         internal void removeTaggedValue(TaggedValue taggedValue)
         {
+            //make sure the collection is current
+            this.eaTaggedValuesCollection.Refresh();
+            //delete in EA
             for (short i = 0; i < this.eaTaggedValuesCollection.Count; i++)
             {
                 var eaTag = eaTaggedValuesCollection.GetAt(i);
@@ -170,6 +173,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     break;
                 }
             }
+            // remove from list
+            this._taggedValues?.Remove(taggedValue);
         }
 
 
@@ -360,7 +365,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //make sure we have the latest set of tagged values
                     this.eaTaggedValuesCollection.Refresh();
                     //create the tagged values from the EA collection
-                    _taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this.eaTaggedValuesCollection));
+                    _taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
                 }
                 return _taggedValues;
             }

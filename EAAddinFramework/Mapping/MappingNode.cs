@@ -19,16 +19,27 @@ namespace EAAddinFramework.Mapping
         }
         public virtual string name => this._source.name;
         public MappingSettings settings { get; set; }
+        private List<string> _mappingPath;
         public List<string> getMappingPath()
         {
-            if (this.parent == null)
+            if (this._mappingPath == null)
             {
-                return new List<string>() { this.source.uniqueID };
+                if (this.parent == null)
+                {
+                    this._mappingPath = new List<string>() { this.source.uniqueID };
+                }
+                else
+                {
+                    var path = ((MappingNode)this.parent).getMappingPath();
+                    path.Add(this.source.uniqueID);
+                    this._mappingPath = path;
+                }
             }
-
-            var path = ((MappingNode)this.parent).getMappingPath();
-            path.Add(this.source.uniqueID);
-            return path;
+            return this._mappingPath;
+        }
+        public string getMappingPathString()
+        {
+            return string.Join(".", this.getMappingPath());
         }
         public MappingNode createMappingNode(List<string> mappingPath)
         {
@@ -107,8 +118,10 @@ namespace EAAddinFramework.Mapping
             foreach (MappingNode childNode in this.allChildNodes)
             {
                 //check if childnode is not already somewhere in the parents to avoid infinite loops
-                if (!this.getMappingPath().Any( x => x == childNode.source.uniqueID))
-                childNode.buildNodeTree();
+                if (!this.getMappingPath().Any(x => x == childNode.source.uniqueID))
+                {
+                    childNode.buildNodeTree();
+                }
             }
         }
         public abstract void setChildNodes();
@@ -134,7 +147,9 @@ namespace EAAddinFramework.Mapping
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
             var mappingItem = this.createMappingItem((MappingNode)targetNode);
-            return MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
+            var mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
+            mapping.save();
+            return mapping;
         }
         protected abstract UML.Extended.UMLItem createMappingItem(MappingNode targetNode);
         public UML.Profiles.TaggedValue createTaggedValueMappingItem(MappingNode targetNode)
@@ -145,6 +160,10 @@ namespace EAAddinFramework.Mapping
             return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source);
         }
 
-        
+        public bool isChildOf(MP.MappingNode parentNode)
+        {
+            return this.parent != null &&
+                ( parentNode == this.parent || this.parent.isChildOf(parentNode));
+        }
     }
 }

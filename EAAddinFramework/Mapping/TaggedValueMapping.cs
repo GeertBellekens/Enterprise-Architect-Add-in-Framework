@@ -62,11 +62,11 @@ namespace EAAddinFramework.Mapping
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message)
             {
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingSourcePathName, string.Join(".",((MappingNode)this.source).getMappingPath()), this.wrappedTaggedValue.comment);
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingSourcePathName, ((MappingNode)this.source).getMappingPathString(), this.wrappedTaggedValue.comment);
             }
             if (this.target.structure == MP.ModelStructure.Message)
             {
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()), this.wrappedTaggedValue.comment);
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingTargetPathName, ((MappingNode)this.target).getMappingPathString(), this.wrappedTaggedValue.comment);
             }
             this.wrappedTaggedValue.save();
         }

@@ -6,7 +6,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal global::EA.AttributeTag wrappedTaggedValue { get; set; }
-        internal AttributeTag(Model model, global::EA.AttributeTag eaTag) : base(model)
+        internal AttributeTag(Model model, Element owner, global::EA.AttributeTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -14,10 +14,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// return the unique ID of this element
         /// </summary>
         public override string uniqueID => this.wrappedTaggedValue.TagGUID;
-        public override string comment {
-        get => this.wrappedTaggedValue.Notes;
-        set => this.wrappedTaggedValue.Notes = value;
-    }
+        public override string comment
+        {
+            get => this.wrappedTaggedValue.Notes;
+            set => this.wrappedTaggedValue.Notes = value;
+        }
         public override string eaStringValue
         {
             get => this.wrappedTaggedValue.Value;
@@ -30,10 +31,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => throw new NotImplementedException();
         }
 
-        public override TSF.UmlToolingFramework.UML.Classes.Kernel.Element owner {
-        get => this.model.getAttributeWrapperByID(this.wrappedTaggedValue.AttributeID);
-        set => throw new NotImplementedException();
-    }
+        public override UML.Classes.Kernel.Element owner
+        {
+            get
+            {
+                if (this._owner == null)
+                {
+                    this._owner = this.model.getAttributeWrapperByID(this.wrappedTaggedValue.AttributeID);
+                }
+                return this._owner;
+            }
+            set => throw new NotImplementedException();
+        }
+
 
         public override string ea_guid => this.wrappedTaggedValue.TagGUID;
 

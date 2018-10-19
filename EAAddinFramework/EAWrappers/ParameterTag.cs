@@ -6,7 +6,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal global::EA.ParamTag wrappedTaggedValue { get; set; }
-        internal ParameterTag(Model model, global::EA.ParamTag eaTag) : base(model)
+        internal ParameterTag(Model model, Element owner, global::EA.ParamTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -38,7 +38,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override UML.Classes.Kernel.Element owner
         {
-            get => this.model.getParameterByGUID(this.wrappedTaggedValue.ElementGUID);
+            get
+            {
+                if (this._owner == null)
+                {
+                    this._owner = this.model.getParameterByGUID(this.wrappedTaggedValue.ElementGUID);
+                }
+                return this._owner;
+            }
             set => throw new NotImplementedException();
         }
 

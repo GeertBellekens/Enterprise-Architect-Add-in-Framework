@@ -677,10 +677,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     }
 	public override UML.Profiles.TaggedValue createNewTaggedValue(UML.Classes.Kernel.Element owner, string name)
 	{
-		if (owner is Element)
+            var myOwner = owner as Element;
+        if (myOwner != null)
 		{
-			global::EA.Collection eaTaggedValues = ((Element)owner).eaTaggedValuesCollection;
-			return this.createTaggedValue( eaTaggedValues.AddNew(name,""));
+			var eaTaggedValues = myOwner.eaTaggedValuesCollection;
+			return this.createTaggedValue( myOwner, eaTaggedValues.AddNew(name,""));
 		}
 		else
 		{
@@ -867,59 +868,59 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     	return EADiagramtype;
     }
   	
-	public override UML.Profiles.TaggedValue createTaggedValue(object objectToWrap)
+	public override UML.Profiles.TaggedValue createTaggedValue(UML.Classes.Kernel.Element owner, object objectToWrap)
 	{
 		UML.Profiles.TaggedValue newTaggedValue = null;
 		if (objectToWrap is global::EA.TaggedValue)
 		{
-			newTaggedValue = this.createElementTag((global::EA.TaggedValue) objectToWrap);
+			newTaggedValue = this.createElementTag((Element) owner, (global::EA.TaggedValue) objectToWrap);
 		}
 		else if (objectToWrap is global::EA.AttributeTag)
 		{
-			newTaggedValue = this.createAttributeTag((global::EA.AttributeTag)objectToWrap);
+			newTaggedValue = this.createAttributeTag((Element)owner, (global::EA.AttributeTag)objectToWrap);
 		}
 		else if (objectToWrap is global::EA.MethodTag)
 		{
-			newTaggedValue = this.createOperationTag((global::EA.MethodTag)objectToWrap);
+			newTaggedValue = this.createOperationTag((Element)owner, (global::EA.MethodTag)objectToWrap);
 		}
 		else if (objectToWrap is global::EA.ConnectorTag)
 		{
-			newTaggedValue = this.createRelationTag((global::EA.ConnectorTag)objectToWrap);
+			newTaggedValue = this.createRelationTag((Element)owner, (global::EA.ConnectorTag)objectToWrap);
 		}
 		else if (objectToWrap is global::EA.ParamTag)
 		{
-			newTaggedValue = this.createParameterTag((global::EA.ParamTag)objectToWrap);
+			newTaggedValue = this.createParameterTag((Element)owner, (global::EA.ParamTag)objectToWrap);
 		}
 		else if (objectToWrap is global::EA.RoleTag)
 		{
-			newTaggedValue = this.createRoleTag((global::EA.RoleTag)objectToWrap);
+			newTaggedValue = this.createRoleTag((Element)owner, (global::EA.RoleTag)objectToWrap);
 		}
 		return newTaggedValue;
 	}
 	
-	public ElementTag createElementTag(global::EA.TaggedValue objectToWrap)
+	public ElementTag createElementTag(Element owner, global::EA.TaggedValue objectToWrap)
 	{
-		return new ElementTag((Model)this.model,objectToWrap);
+		return new ElementTag((Model)this.model,owner,objectToWrap);
 	}
-	public AttributeTag createAttributeTag(global::EA.AttributeTag objectToWrap)
+	public AttributeTag createAttributeTag(Element owner, global::EA.AttributeTag objectToWrap)
 	{
-		return new AttributeTag((Model)this.model,objectToWrap);
+		return new AttributeTag((Model)this.model, owner, objectToWrap);
 	}
-	public OperationTag createOperationTag(global::EA.MethodTag objectToWrap)
+	public OperationTag createOperationTag(Element owner, global::EA.MethodTag objectToWrap)
 	{
-		return new OperationTag((Model)this.model,objectToWrap);
+		return new OperationTag((Model)this.model, owner, objectToWrap);
 	}
-	public RelationTag createRelationTag(global::EA.ConnectorTag objectToWrap)
+	public RelationTag createRelationTag(Element owner, global::EA.ConnectorTag objectToWrap)
 	{
-		return new RelationTag((Model)this.model,objectToWrap);
+		return new RelationTag((Model)this.model, owner, objectToWrap);
 	}
-	public ParameterTag createParameterTag(global::EA.ParamTag objectToWrap)
+	public ParameterTag createParameterTag(Element owner, global::EA.ParamTag objectToWrap)
 	{
-		return new ParameterTag((Model)this.model,objectToWrap);
+		return new ParameterTag((Model)this.model, owner, objectToWrap);
 	}
-	public RoleTag createRoleTag(global::EA.RoleTag objectToWrap)
+	public RoleTag createRoleTag(Element owner, global::EA.RoleTag objectToWrap)
 	{
-		return new RoleTag((Model)this.model,objectToWrap);
+		return new RoleTag((Model)this.model, owner, objectToWrap);
 	}
 	public DescriptionComment createDescriptionComment(Element owner)
 	{

@@ -6,7 +6,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal global::EA.RoleTag wrappedTaggedValue { get; set; }
-        internal RoleTag(Model model, global::EA.RoleTag eaTag) : base(model)
+        internal RoleTag(Model model, Element owner,  global::EA.RoleTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -40,15 +40,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                var owningRelation = this.model.getRelationByGUID(this.wrappedTaggedValue.ElementGUID) as ConnectorWrapper;
-                if (this.wrappedTaggedValue.BaseClass == "ASSOCIATION_TARGET")
+                if (this._owner == null)
                 {
-                    return owningRelation.targetEnd;
+                    var owningRelation = this.model.getRelationByGUID(this.wrappedTaggedValue.ElementGUID) as ConnectorWrapper;
+                    if (this.wrappedTaggedValue.BaseClass == "ASSOCIATION_TARGET")
+                    {
+                        this._owner = owningRelation.targetEnd;
+                    }
+                    else
+                    {
+                        this._owner = owningRelation.sourceEnd;
+                    }
                 }
-                else
-                {
-                    return owningRelation.sourceEnd;
-                }
+                return this._owner;
             }
             set => throw new NotImplementedException();
         }

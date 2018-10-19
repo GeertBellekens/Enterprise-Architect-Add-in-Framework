@@ -6,7 +6,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal global::EA.ConnectorTag wrappedTaggedValue { get; set; }
-        internal RelationTag(Model model, global::EA.ConnectorTag eaTag) : base(model)
+        internal RelationTag(Model model, Element owner, global::EA.ConnectorTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -33,7 +33,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override UML.Classes.Kernel.Element owner
         {
-            get => this.model.getRelationByID(this.wrappedTaggedValue.ConnectorID);
+            get
+            {
+                if (this._owner == null)
+                {
+                    this._owner = this.model.getRelationByID(this.wrappedTaggedValue.ConnectorID);
+                }
+                return this._owner;
+            }
             set => throw new NotImplementedException();
         }
 

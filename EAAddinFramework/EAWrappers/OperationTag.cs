@@ -6,7 +6,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
         internal global::EA.MethodTag wrappedTaggedValue { get; set; }
-        internal OperationTag(Model model, global::EA.MethodTag eaTag) : base(model)
+        internal OperationTag(Model model, Element owner, global::EA.MethodTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -29,7 +29,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override UML.Classes.Kernel.Element owner
         {
-            get => this.model.getOperationByID(this.wrappedTaggedValue.MethodID);
+            get
+            {
+                if (this._owner == null)
+                {
+                    this._owner = this.model.getOperationByID(this.wrappedTaggedValue.MethodID);
+                }
+                return this._owner;
+            }
             set => throw new NotImplementedException();
         }
 
