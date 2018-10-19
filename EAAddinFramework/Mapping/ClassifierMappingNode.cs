@@ -5,6 +5,7 @@ using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Extended;
+using TSF.UmlToolingFramework.UML.Profiles;
 
 namespace EAAddinFramework.Mapping
 {
@@ -16,6 +17,8 @@ namespace EAAddinFramework.Mapping
 
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceElement, parent, settings, structure) { }
+        protected override List<TaggedValue> sourceTaggedValues => this.sourceElement?.taggedValues.ToList();
+
         internal TSF_EA.ElementWrapper sourceElement
         {
             get
@@ -31,20 +34,16 @@ namespace EAAddinFramework.Mapping
         public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {
             var foundMappings = new List<MP.Mapping>();
+            //get the mappings using trace relations
             //TODO: is this fast enough?
             foreach (var trace in this.sourceElement.getRelationships<TSF_EA.Abstraction>().Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
             {
-                //check if this trace represents a mappingNode to somewhere in in the targetNode
-                //get the mapping path
+                //get the mappings based on traces
                 var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
                 if (mapping != null) foundMappings.Add(mapping);
-                //TODO: and in the source node
             }
-            //loop subNodes
-            foreach (MappingNode childNode in this.allChildNodes)
-            {
-                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
-            }
+            //also add the base mappings
+            foundMappings.AddRange(base.getOwnedMappings(targetRootNode));
             return foundMappings;
         }
         public override void setChildNodes()
@@ -56,6 +55,18 @@ namespace EAAddinFramework.Mapping
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
                 {
                     var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure);
+                }
+            }
+            //create child nodes for all enum values
+            var sourceEnum = this.sourceElement as TSF_EA.Enumeration;
+            if (sourceEnum != null)
+            {
+                foreach(var enumLiteral in sourceEnum.ownedLiterals)
+                {
+                    if (!this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
+                    {
+                        var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure);
+                    }
                 }
             }
             //create child nodes for each owned classifier

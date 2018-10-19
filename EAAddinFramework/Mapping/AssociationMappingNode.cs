@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TSF.UmlToolingFramework.UML.Extended;
 using MP = MappingFramework;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Mapping
 {
@@ -13,6 +14,7 @@ namespace EAAddinFramework.Mapping
     {
         public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, null, settings, structure) { }
         public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceAssociation, parent, settings, structure) { }
+        protected override List<UML.Profiles.TaggedValue> sourceTaggedValues => this.sourceAssociation?.taggedValues.ToList();
 
         internal TSF_EA.Association sourceAssociation
         {
@@ -42,23 +44,7 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
-        {
-            //the mappings are stored in a tagged value
-            var foundMappings = new List<MP.Mapping>();
-            //Mappings are stored in tagged values
-            foreach (var mappingTag in this.sourceAssociation.taggedValues.Where(x => x.name == this.settings.linkedAttributeTagName))
-            {
-                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
-                if (mapping != null) foundMappings.Add(mapping);
-            }
-            //loop subNodes
-            foreach (MappingNode childNode in this.allChildNodes)
-            {
-                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
-            }
-            return foundMappings;
-        }
+
 
         public override void setChildNodes()
         {

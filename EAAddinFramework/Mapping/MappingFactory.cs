@@ -37,7 +37,7 @@ namespace EAAddinFramework.Mapping
         {
             //get target mapping root
             ElementWrapper targetRootElement = null;
-            var packageTrace = sourceRoot.relationships.OfType<Abstraction>().FirstOrDefault(x => x.target is ElementWrapper && x.stereotypes.Any(y => y.name == "trace"));
+            var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.target is ElementWrapper && x.stereotypes.Any(y => y.name == "trace"));
             if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
             return createMappingSet(sourceRoot, targetRootElement, settings);
         }
@@ -117,7 +117,7 @@ namespace EAAddinFramework.Mapping
         public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
         {
             //AttributeMappingNode
-            var attributeSource = source as TSF.UmlToolingFramework.Wrappers.EA.Attribute;
+            var attributeSource = source as AttributeWrapper;
             if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode, settings, parent.structure);
 
             //AssociationMappingNode

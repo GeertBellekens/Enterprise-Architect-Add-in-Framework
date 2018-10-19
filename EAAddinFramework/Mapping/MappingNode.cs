@@ -107,7 +107,23 @@ namespace EAAddinFramework.Mapping
             this._allChildNodes.Add((MappingNode)childNode);
         }
 
-        public abstract IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode);
+        public virtual IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
+        {
+            var foundMappings = new List<MP.Mapping>();
+            //Mappings are stored in tagged values
+            foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
+                                                                                 || x.name == this.settings.linkedAssociationTagName))
+            {
+                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
+                if (mapping != null) foundMappings.Add(mapping);
+            }
+            //loop subnodes
+            foreach (MappingNode childNode in this.allChildNodes)
+            {
+                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
+            }
+            return foundMappings;
+        }
 
         public void buildNodeTree()
         {
@@ -132,6 +148,8 @@ namespace EAAddinFramework.Mapping
             //then get mappings
             return this.getOwnedMappings(targetRootNode);
         }
+        protected abstract List<UML.Profiles.TaggedValue> sourceTaggedValues { get; }
+
 
         public void addMapping(MP.Mapping mapping)
         {
@@ -156,7 +174,7 @@ namespace EAAddinFramework.Mapping
             var tagName = targetNode is AssociationMappingNode ?
                     this.settings.linkedAssociationTagName :
                     this.settings.linkedAttributeTagName;
-            return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source);
+            return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source, null, true);
         }
 
         public bool isChildOf(MP.MappingNode parentNode)
