@@ -48,15 +48,17 @@ namespace EAAddinFramework.Mapping
             var taggedValue = target ? tagOwner.getTaggedValue(mappingTargetPathName) : tagOwner.getTaggedValue(mappingSourcePathName);
             if (taggedValue != null)
             {
-                mappingPath = taggedValue.eaStringValue.Split(',').ToList();
+                mappingPath = taggedValue.eaStringValue.Split('.').ToList();
             }
             return mappingPath;
         }
         private static List<string> getMappingPath(TaggedValue mappingTag, bool target)
         {
             var mappingPath = new List<String>();
-            var pathString = target ? KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment) : KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment);
-            if (! string.IsNullOrEmpty(pathString)) mappingPath = pathString.Split(',').ToList();
+            var pathString = target ? 
+                KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment) : 
+                KeyValuePairsHelper.getValueForKey(mappingSourcePathName, mappingTag.comment);
+            if (! string.IsNullOrEmpty(pathString)) mappingPath = pathString.Split('.').ToList();
             return mappingPath;
         }
 

@@ -32,12 +32,13 @@ namespace EAAddinFramework.Mapping
         {
             var foundMappings = new List<MP.Mapping>();
             //TODO: is this fast enough?
-            foreach (var trace in this.sourceElement.relationships.OfType<TSF_EA.Abstraction>().Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
+            foreach (var trace in this.sourceElement.getRelationships<TSF_EA.Abstraction>().Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
             {
                 //check if this trace represents a mappingNode to somewhere in in the targetNode
                 //get the mapping path
                 var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
                 if (mapping != null) foundMappings.Add(mapping);
+                //TODO: and in the source node
             }
             //loop subNodes
             foreach (MappingNode childNode in this.allChildNodes)

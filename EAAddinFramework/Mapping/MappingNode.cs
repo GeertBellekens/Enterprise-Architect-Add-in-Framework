@@ -30,9 +30,8 @@ namespace EAAddinFramework.Mapping
                 }
                 else
                 {
-                    var path = ((MappingNode)this.parent).getMappingPath();
-                    path.Add(this.source.uniqueID);
-                    this._mappingPath = path;
+                    this._mappingPath = new List<string>( ((MappingNode)this.parent).getMappingPath());
+                    this._mappingPath.Add(this.source.uniqueID);
                 }
             }
             return this._mappingPath;
