@@ -112,7 +112,8 @@ namespace EAAddinFramework.Mapping
             var foundMappings = new List<MP.Mapping>();
             //Mappings are stored in tagged values
             foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
-                                                                                 || x.name == this.settings.linkedAssociationTagName))
+                                                                                 || x.name == this.settings.linkedAssociationTagName
+                                                                                 || x.name == this.settings.linkedElementTagName))
             {
                 var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
                 if (mapping != null) foundMappings.Add(mapping);
@@ -171,9 +172,15 @@ namespace EAAddinFramework.Mapping
         protected abstract UML.Extended.UMLItem createMappingItem(MappingNode targetNode);
         public UML.Profiles.TaggedValue createTaggedValueMappingItem(MappingNode targetNode)
         {
-            var tagName = targetNode is AssociationMappingNode ?
-                    this.settings.linkedAssociationTagName :
-                    this.settings.linkedAttributeTagName;
+            //get the appropriate tagname
+            string tagName;
+            if (targetNode is AssociationMappingNode)
+                tagName = this.settings.linkedAssociationTagName;
+            else if (targetNode is AttributeMappingNode)
+                tagName = this.settings.linkedAttributeTagName;
+            else
+                tagName = this.settings.linkedElementTagName;
+            //add the tagged value;
             return ((TSF_EA.Element)this.source).addTaggedValue(tagName, targetNode.source, null, true);
         }
 

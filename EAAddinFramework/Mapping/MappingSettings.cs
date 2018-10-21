@@ -15,21 +15,23 @@ namespace EAAddinFramework.Mapping
 		/// If false we use relations with "link to element feature"
 		/// </summary>
 		bool useTaggedValues {get;set;}
-	    
         /// <summary>
-        /// the tagged value to use for attributes when using tagged values for the links (only for newly created items)
+        /// the tagged value to use for mappings to attributes
         /// </summary>
 		string linkedAttributeTagName {get;set;}
-		
-		/// <summary>
-		/// the tagge value to use for associations when using tagged values for the links (only for newly created items)
-		/// </summary>
-        string linkedAssociationTagName {get;set;}
-        
         /// <summary>
-		/// indicates that we use inline mapping logic (only description) in the comments of the tagged value when adding mapping logic.
-		/// this only applies when using tagged values for mapping. (only for newly created items)
-		/// </summary>
+        /// the tagged value to use for mappings to associations
+        /// </summary>
+        string linkedAssociationTagName {get;set;}
+        /// <summary>
+        /// <summary>
+        /// the tagged value to use for mappings to classifiers
+        /// </summary>
+        string linkedElementTagName { get; set; }
+        /// <summary>
+        /// indicates that we use inline mapping logic (only description) in the comments of the tagged value when adding mapping logic.
+        /// this only applies when using tagged values for mapping. (only for newly created items)
+        /// </summary>
         bool useInlineMappingLogic {get;set;}
 	    
        	/// <summary>
