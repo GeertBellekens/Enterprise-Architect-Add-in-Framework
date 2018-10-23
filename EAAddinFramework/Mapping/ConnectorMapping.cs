@@ -75,11 +75,11 @@ namespace EAAddinFramework.Mapping
                 this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
             }
             //set mapping path
-            if (this.source.structure == MP.ModelStructure.Message)
+            if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
                 this.wrappedConnector.addTaggedValue(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).getMappingPath()));
             }
-            if (this.target.structure == MP.ModelStructure.Message)
+            if (this.target.structure == MP.ModelStructure.Message || this.target.isVirtual)
             {
                 this.wrappedConnector.addTaggedValue(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()));
             }

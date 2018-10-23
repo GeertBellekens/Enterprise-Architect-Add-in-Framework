@@ -16,7 +16,8 @@ namespace EAAddinFramework.Mapping
 	{
 
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceElement, parent, settings, structure) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
+        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
         protected override List<TaggedValue> sourceTaggedValues => this.sourceElement?.taggedValues.ToList();
 
         internal TSF_EA.ElementWrapper sourceElement
@@ -48,44 +49,57 @@ namespace EAAddinFramework.Mapping
         }
         public override void setChildNodes()
         {
-            if (sourceElement == null) return;
+            addElementPropertiesToChildNodes(null);
+        }
+        private void addElementPropertiesToChildNodes(TSF_EA.ElementWrapper virtualElement)
+        {
+            //figure out the if we have virtual element
+            var element = virtualElement != null ? virtualElement : this.sourceElement;
+
+            if (element == null) return; //failsafe 
+
             //create child nodes for each attribute
-            foreach (TSF_EA.Attribute ownedAttribute in sourceElement.ownedAttributes)
+            foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes)
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
                 {
-                    var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure);
+                    var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure, virtualElement);
                 }
             }
             //create child nodes for all enum values
-            var sourceEnum = this.sourceElement as TSF_EA.Enumeration;
+            var sourceEnum = element as TSF_EA.Enumeration;
             if (sourceEnum != null)
             {
-                foreach(var enumLiteral in sourceEnum.ownedLiterals)
+                foreach (var enumLiteral in sourceEnum.ownedLiterals)
                 {
                     if (!this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
                     {
-                        var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure);
+                        var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure, virtualElement);
                     }
                 }
             }
             //create child nodes for each owned classifier
-            foreach(TSF_EA.ElementWrapper ownedClassifier in sourceElement.ownedElements.OfType<UML.Classes.Kernel.Namespace>())
+            foreach (TSF_EA.ElementWrapper ownedClassifier in element.ownedElements.OfType<UML.Classes.Kernel.Namespace>())
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
-                    var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure);
+                    var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement);
                 }
             }
             //create child nodes for each owned association
-            foreach(var ownedAssociation in this.sourceElement.getRelationships<TSF_EA.Association>())
+            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>())
             {
-                if ((ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == this.sourceElement.uniqueID
-                    || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == this.sourceElement.uniqueID)
+                if ((ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == element.uniqueID
+                    || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == element.uniqueID)
                     && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
-                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure);
+                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }
+            }
+            //do the same for all superclasses
+            foreach (var superClass in element.superClasses)
+            {
+                addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
             }
         }
 

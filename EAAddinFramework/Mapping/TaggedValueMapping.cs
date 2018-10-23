@@ -51,20 +51,17 @@ namespace EAAddinFramework.Mapping
                 this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
             }
         }
-        #endregion
-
-        #region implemented abstract members of Mapping
 
         public override void save()
         {
             if (this._mappingLogic != null)
                 this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
             //set mapping path
-            if (this.source.structure == MP.ModelStructure.Message)
+            if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
                 this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingSourcePathName, ((MappingNode)this.source).getMappingPathString(), this.wrappedTaggedValue.comment);
             }
-            if (this.target.structure == MP.ModelStructure.Message)
+            if (this.target.structure == MP.ModelStructure.Message || this.target.isVirtual)
             {
                 this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingTargetPathName, ((MappingNode)this.target).getMappingPathString(), this.wrappedTaggedValue.comment);
             }

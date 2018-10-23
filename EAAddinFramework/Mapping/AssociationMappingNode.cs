@@ -13,7 +13,8 @@ namespace EAAddinFramework.Mapping
     public class AssociationMappingNode : MappingNode
     {
         public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, null, settings, structure) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base(sourceAssociation, parent, settings, structure) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, parent, settings, structure, null) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceAssociation, parent, settings, structure, virtualOwner) { }
         protected override List<UML.Profiles.TaggedValue> sourceTaggedValues => this.sourceAssociation?.taggedValues.ToList();
 
         internal TSF_EA.Association sourceAssociation

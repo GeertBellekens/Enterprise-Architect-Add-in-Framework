@@ -11,7 +11,8 @@ namespace EAAddinFramework.Mapping
     public class AttributeMappingNode : MappingNode
     {
         public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, null, settings, structure) { }
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, parent, settings, structure, null) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner) { }
 
         protected override List<TaggedValue> sourceTaggedValues => this.sourceAttribute?.taggedValues.ToList();
 
