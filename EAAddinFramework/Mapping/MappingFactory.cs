@@ -37,7 +37,9 @@ namespace EAAddinFramework.Mapping
         {
             //get target mapping root
             ElementWrapper targetRootElement = null;
-            var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.target is ElementWrapper && x.stereotypes.Any(y => y.name == "trace"));
+            var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.source.uniqueID == sourceRoot.uniqueID
+                                                                                        && x.target is ElementWrapper 
+                                                                                        && x.stereotypes.Any(y => y.name == "trace"));
             if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
             return createMappingSet(sourceRoot, targetRootElement, settings);
         }
