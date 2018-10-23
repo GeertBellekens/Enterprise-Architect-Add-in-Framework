@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using MP = MappingFramework;
@@ -199,6 +200,14 @@ namespace EAAddinFramework.Mapping
         {
             return this.parent != null &&
                 ( parentNode == this.parent || this.parent.isChildOf(parentNode));
+        }
+
+        internal string getMappingPathExportString()
+        {
+            if (this.parent == null)
+                return this.name;
+            else
+                return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
         }
     }
 }
