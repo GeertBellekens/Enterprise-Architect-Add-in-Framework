@@ -140,7 +140,7 @@ namespace EAAddinFramework.Mapping
             foreach (MappingNode childNode in this.allChildNodes)
             {
                 //check if childnode is not already somewhere in the parents to avoid infinite loops
-                if (!this.getMappingPath().Any(x => x == childNode.source.uniqueID))
+                if (!this.isChildOf(childNode.source.uniqueID))
                 {
                     childNode.buildNodeTree();
                 }
@@ -200,6 +200,11 @@ namespace EAAddinFramework.Mapping
         {
             return this.parent != null &&
                 ( parentNode == this.parent || this.parent.isChildOf(parentNode));
+        }
+        public bool isChildOf(string uniqueID)
+        {
+            return this.parent != null &&
+                (this.parent.source?.uniqueID == uniqueID || this.parent.isChildOf(uniqueID));
         }
 
         internal string getMappingPathExportString()

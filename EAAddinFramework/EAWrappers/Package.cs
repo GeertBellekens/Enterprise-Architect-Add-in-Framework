@@ -421,9 +421,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     }
                 }
             }
+            else if (ownedElement is ConnectorWrapper)
+            {
+                for (short i = 0; i < this.WrappedPackage.Connectors.Count; i++)
+                {
+                    var eaConnector = this.WrappedPackage.Connectors.GetAt(i) as global::EA.Connector;
+                    if (eaConnector.ConnectorGUID == ownedElement.guid)
+                    {
+                        this.WrappedPackage.Connectors.Delete(i);
+                        this.WrappedPackage.Connectors.Refresh();
+                        this.resetRelationships();
+                        break;
+                    }
+                }
+            }
             else
             {
-                //currently only deleting elements is supported
+                //type not supported (yet)
                 throw new NotImplementedException();
             }
         }
