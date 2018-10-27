@@ -64,6 +64,8 @@ namespace EAAddinFramework.Mapping
                 }
             }
         }
+
+        public abstract bool isEmpty { get; set; }
         #endregion
     }
 }

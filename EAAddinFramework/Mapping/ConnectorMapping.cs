@@ -63,6 +63,24 @@ namespace EAAddinFramework.Mapping
 
             }
         }
+        private bool? _isEmpty = null;
+        public override bool isEmpty
+        {
+            get
+            {
+                if (!this._isEmpty.HasValue)
+                {
+                    var emptyTag = this.wrappedConnector.taggedValues
+                        .FirstOrDefault(x => x.name.Equals(MappingFactory.isEmptyMappingName, StringComparison.InvariantCultureIgnoreCase));
+                    return "True".Equals(emptyTag?.tagValue.ToString(), StringComparison.InvariantCultureIgnoreCase); 
+                }
+                return this._isEmpty.Value;
+            }
+            set
+            {
+                this.wrappedConnector.addTaggedValue(MappingFactory.isEmptyMappingName, value.ToString());
+            }
+        }
 
         #endregion
 

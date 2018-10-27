@@ -1,10 +1,7 @@
-﻿using System;
-using EAAddinFramework.Utilities;
-using MP = MappingFramework;
-using UML = TSF.UmlToolingFramework.UML;
+﻿using EAAddinFramework.Utilities;
+using System;
 using TSF.UmlToolingFramework.Wrappers.EA;
-using System.Collections.Generic;
-using System.Linq;
+using MP = MappingFramework;
 
 namespace EAAddinFramework.Mapping
 {
@@ -24,7 +21,7 @@ namespace EAAddinFramework.Mapping
         {
             get
             {
-                if (_mappingLogic == null)
+                if (this._mappingLogic == null)
                 {
                     Guid mappingElementGUID;
                     string mappingLogicString = "";
@@ -35,27 +32,57 @@ namespace EAAddinFramework.Mapping
                     if (Guid.TryParse(mappingLogicString, out mappingElementGUID))
                     {
                         ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;
-                        if (mappingLogicElement != null) _mappingLogic = new MappingLogic(mappingLogicElement);
+                        if (mappingLogicElement != null)
+                        {
+                            this._mappingLogic = new MappingLogic(mappingLogicElement);
+                        }
                     }
-                    if (_mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
+                    if (this._mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
                     {
-                        _mappingLogic = new MappingLogic(mappingLogicString);
+                        this._mappingLogic = new MappingLogic(mappingLogicString);
                     }
                 }
-                return _mappingLogic;
+                return this._mappingLogic;
             }
             set
             {
                 string logicString = value.description;
-                if (value.mappingElement != null) logicString = value.mappingElement.uniqueID;
+                if (value.mappingElement != null)
+                {
+                    logicString = value.mappingElement.uniqueID;
+                }
+
                 this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
+            }
+        }
+
+        private bool? _isEmpty = null;
+        public override bool isEmpty
+        {
+            get
+            {
+                if (!this._isEmpty.HasValue)
+                {
+                    if (this.wrappedTaggedValue != null)
+                    {
+                        var isEmptyString = KeyValuePairsHelper.getValueForKey(MappingFactory.isEmptyMappingName, this.wrappedTaggedValue.comment);
+                        this._isEmpty = "True".Equals(isEmptyString, StringComparison.InvariantCultureIgnoreCase);
+                    }
+                }
+                return this._isEmpty.Value;
+            }
+            set
+            {
+                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.isEmptyMappingName, value.ToString(), this.wrappedTaggedValue.comment);
             }
         }
 
         public override void save()
         {
             if (this._mappingLogic != null)
+            {
                 this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
+            }
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {

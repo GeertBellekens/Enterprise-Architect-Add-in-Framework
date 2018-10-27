@@ -181,6 +181,18 @@ namespace EAAddinFramework.Mapping
             mapping.save();
             return mapping;
         }
+
+        public MP.Mapping createEmptyMapping(MP.MappingNode targetRootNode)
+        {
+            var newMapping = this.mapTo(targetRootNode);
+            newMapping.isEmpty = true;
+            newMapping.mappingLogicDescription = "Empty mapping";
+            newMapping.save();
+            //remove from target node
+            targetRootNode.removeMapping(newMapping);
+            return newMapping;
+        }
+
         protected abstract UML.Extended.UMLItem createMappingItem(MappingNode targetNode);
         public UML.Profiles.TaggedValue createTaggedValueMappingItem(MappingNode targetNode)
         {
@@ -214,5 +226,7 @@ namespace EAAddinFramework.Mapping
             else
                 return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
         }
+
+
     }
 }

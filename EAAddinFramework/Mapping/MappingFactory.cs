@@ -18,6 +18,7 @@ namespace EAAddinFramework.Mapping
 		public const string mappingSourcePathName = "mappingSourcePath";
         public const string mappingTargetPathName = "mappingTargetPath";
         public const string mappingLogicName = "mappingLogic";
+        public const string isEmptyMappingName = "isEmptyMapping";
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings )
         {
             //first create the root nodes
