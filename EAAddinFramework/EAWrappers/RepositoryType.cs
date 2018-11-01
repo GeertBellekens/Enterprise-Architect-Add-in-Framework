@@ -11,7 +11,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// 3 - ORACLE
 	/// 4 - POSTGRES
 	/// 5 - ASA
-	/// 7 - OPENEDGE
 	/// 8 - ACCESS2007
 	/// 9 - FireBird
 	/// </summary>
@@ -23,7 +22,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		ORACLE,
 		POSTGRES,
 		ASA,
-		OPENEDGE,
 		ACCESS2007,
 		FIREBIRD
 	}

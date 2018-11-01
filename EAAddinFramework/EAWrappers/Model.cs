@@ -904,51 +904,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <returns></returns>
         public RepositoryType getRepositoryType()
         {
-            string connectionString = this.wrappedModel.ConnectionString;
-            RepositoryType repoType = RepositoryType.ADOJET; //default to .eap file
-
-            // if it is a .feap file then it surely is a firebird db
-            if (connectionString.ToLower().EndsWith(".feap"))
+            var eaType = this.wrappedModel.RepositoryType();
+            switch(eaType)
             {
-                repoType = RepositoryType.FIREBIRD;
+                case "JET":
+                    return RepositoryType.ADOJET;
+                case "FIREBIRD":
+                    return RepositoryType.FIREBIRD;
+                case "ACCESS2007":
+                    return RepositoryType.ACCESS2007;
+                case "ASA":
+                    return RepositoryType.ASA;
+                case "SQLSVR":
+                    return RepositoryType.SQLSVR;
+                case "MYSQL":
+                    return RepositoryType.MYSQL;
+                case "ORACLE":
+                    return RepositoryType.ORACLE;
+                case "POSTGRES":
+                    return RepositoryType.POSTGRES;
+                default:
+                    return RepositoryType.ADOJET;
             }
-            else
-            {
-                //if it is a .eap file we check the size of it. if less then 1 MB then it is a shortcut file and we have to open it as a text file to find the actual connection string
-                if (connectionString.ToLower().EndsWith(".eap"))
-                {
-                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(connectionString);
-                    if (fileInfo.Length > 1000)
-                    {
-                        //local .eap file, ms access syntax
-                        repoType = RepositoryType.ADOJET;
-                    }
-                    else
-                    {
-                        //open the file as a text file to find the connectionstring.
-                        System.IO.FileStream fileStream = new System.IO.FileStream(connectionString, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
-                        System.IO.StreamReader reader = new System.IO.StreamReader(fileStream);
-                        //replace connectionstring with the file contents
-                        connectionString = reader.ReadToEnd();
-                        reader.Close();
-                    }
-                }
-                if (!connectionString.ToLower().EndsWith(".eap"))
-                {
-                    string dbTypeString = "DBType=";
-                    int dbIndex = connectionString.IndexOf(dbTypeString) + dbTypeString.Length;
-                    if (dbIndex > dbTypeString.Length)
-                    {
-                        int dbNumber;
-                        string dbNumberString = connectionString.Substring(dbIndex, 1);
-                        if (int.TryParse(dbNumberString, out dbNumber))
-                        {
-                            repoType = (RepositoryType)dbNumber;
-                        }
-                    }
-                }
-            }
-            return repoType;
         }
         /// <summary>
         /// saves unsaved changes to an opened diagram
