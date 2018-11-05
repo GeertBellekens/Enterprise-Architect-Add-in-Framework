@@ -144,12 +144,27 @@ namespace EAAddinFramework.Databases
             //make sure the BaseDataTypes are loaded
             if (!modelBaseDataTypes.ContainsKey(model)) loadBaseDataTypes(model);
             //find the database types
-            Dictionary<string, BaseDataType> datatypes = new Dictionary<string, BaseDataType>();
+            var datatypes = new Dictionary<string, BaseDataType>();
             foreach (var baseDataType in modelBaseDataTypes[model])
             {
                 if (baseDataType.databaseProduct.Equals(databaseType, StringComparison.InvariantCultureIgnoreCase))
                 {
                     datatypes.Add(baseDataType.name, baseDataType);
+                }
+            }
+            return datatypes;
+        }
+        public static List<BaseDataType> getBaseDatatypesByName(string name, Model model)
+        {
+            //make sure the BaseDataTypes are loaded
+            if (!modelBaseDataTypes.ContainsKey(model)) loadBaseDataTypes(model);
+            //find the base datatypes by their name
+            var datatypes = new List<BaseDataType>();
+            foreach (var baseDataType in modelBaseDataTypes[model])
+            {
+                if (baseDataType.name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    datatypes.Add(baseDataType);
                 }
             }
             return datatypes;
