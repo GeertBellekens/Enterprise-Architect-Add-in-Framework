@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Xml;
-using EAAddinFramework.Utilities;
-using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -24,27 +21,38 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public ElementWrapper(Model model, global::EA.Element wrappedElement)
           : base(model)
         {
-            initialize(wrappedElement);
+            this.initialize(wrappedElement);
         }
 
         protected virtual void initialize(global::EA.Element wrappedElement)
         {
             this.wrappedElement = wrappedElement;
             this.isDirty = false;
-            if (wrappedElement != null) this._uniqueID = wrappedElement.ElementGUID;
+            if (wrappedElement != null)
+            {
+                this._uniqueID = wrappedElement.ElementGUID;
+            }
         }
         protected UML.Classes.Kernel.Package _owningPackage;
         public override UML.Classes.Kernel.Package owningPackage
         {
             get
             {
-                if (this._owningPackage == null) _owningPackage = base.owningPackage;
+                if (this._owningPackage == null)
+                {
+                    this._owningPackage = base.owningPackage;
+                }
+
                 return base.owningPackage;
             }
             set
             {
-                if (this._owningPackage == null) _owningPackage = base.owningPackage;
-                this.setProperty(getPropertyNameName(), value, _owningPackage);
+                if (this._owningPackage == null)
+                {
+                    this._owningPackage = base.owningPackage;
+                }
+
+                this.setProperty(getPropertyNameName(), value, this._owningPackage);
             }
         }
 
@@ -53,29 +61,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         internal void resetRelationships()
         {
-            _allRelationships = null;
+            this._allRelationships = null;
         }
         /// <summary>
         /// resets the cached attributes
         /// </summary>
         internal void resetAttributes()
         {
-            _attributes = null;
-            _attributeWrappers = null;
+            this._attributes = null;
+            this._attributeWrappers = null;
         }
         public string linkedDocument
         {
             get
             {
-                if (_linkedDocument != null)
+                if (this._linkedDocument != null)
                 {
-                    _linkedDocument = this.wrappedElement.GetLinkedDocument();
+                    this._linkedDocument = this.wrappedElement.GetLinkedDocument();
                 }
-                return _linkedDocument;
+                return this._linkedDocument;
             }
             set
             {
-                if (value != _linkedDocument)
+                if (value != this._linkedDocument)
                 {
                     //write the value to a temp file
                     string tempFile = Path.GetTempFileName();
@@ -95,14 +103,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public ElementWrapper classifier
         {
-            get
-            {
-                return this.EAModel.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(), this.wrappedElement.ClassifierID));
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value.id, this.wrappedElement.ClassifierID);
-            }
+            get => this.EAModel.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(), this.wrappedElement.ClassifierID));
+            set => this.setProperty(getPropertyNameName(), value.id, this.wrappedElement.ClassifierID);
         }
         public override string name
         {
@@ -122,114 +124,57 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return prop ?? (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Name);
                 }
             }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Name);
-            }
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Name);
         }
         public string alias
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Alias);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Alias);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Alias);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Alias);
         }
         public string status
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Status);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Status);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Status);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Status);
         }
         public string header1
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.RunState);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.RunState);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.RunState);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.RunState);
         }
         public string genLinks
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Genlinks);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Genlinks);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Genlinks);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Genlinks);
         }
         public string phase
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Phase);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Phase);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Phase);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Phase);
         }
         public override String notes
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Notes);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Notes);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Notes);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Notes);
         }
         /// indicates whether this element is abstract.
         /// In the EA API this is stored as a string with the values "0" or "1"
         public bool isAbstract
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Abstract) == "1";
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value ? "1" : "0", this.wrappedElement.Abstract);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Abstract) == "1";
+            set => this.setProperty(getPropertyNameName(), value ? "1" : "0", this.wrappedElement.Abstract);
 
         }
         public override int position
         {
-            get
-            {
-                return (int)this.getProperty(getPropertyNameName(), this.wrappedElement.TreePos);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.TreePos);
-            }
+            get => (int)this.getProperty(getPropertyNameName(), this.wrappedElement.TreePos);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.TreePos);
         }
         /// the visibility indicates the scope of the element
         public UML.Classes.Kernel.VisibilityKind visibility
         {
-            get
-            {
-                return VisibilityKind.getUMLVisibilityKind((string)this.getProperty(getPropertyNameName(), this.wrappedElement.Visibility),
+            get => VisibilityKind.getUMLVisibilityKind((string)this.getProperty(getPropertyNameName(), this.wrappedElement.Visibility),
                 UML.Classes.Kernel.VisibilityKind._public);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), VisibilityKind.getEAVisibility(value), this.wrappedElement.Visibility);
-            }
+            set => this.setProperty(getPropertyNameName(), VisibilityKind.getEAVisibility(value), this.wrappedElement.Visibility);
         }
         public void setStereotype(string stereotype)
         {
@@ -237,46 +182,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override HashSet<UML.Profiles.Stereotype> stereotypes
         {
-            get
-            {
-                return ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.wrappedElement.StereotypeEx));
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), Stereotype.getStereotypeEx(value), this.wrappedElement.StereotypeEx);
-            }
+            get => ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.wrappedElement.StereotypeEx));
+            set => this.setProperty(getPropertyNameName(), Stereotype.getStereotypeEx(value), this.wrappedElement.StereotypeEx);
         }
 
         public string author
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Author);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Author);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Author);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Author);
         }
 
         public string version
         {
-            get
-            {
-                return (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Version);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Version);
-            }
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Version);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Version);
         }
 
         public List<string> keywords
         {
-            get
-            {
-                return ((string)this.getProperty(getPropertyNameName(), this.wrappedElement.Tag)).Split(',').ToList();
-            }
+            get => ((string)this.getProperty(getPropertyNameName(), this.wrappedElement.Tag)).Split(',').ToList();
             set
             {
                 string string_value = value == null ? "" : string.Join(",", value);
@@ -286,42 +210,70 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public DateTime created
         {
-            get
-            {
-                return (DateTime)this.getProperty(getPropertyNameName(), this.wrappedElement.Created);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Created);
-            }
+            get => (DateTime)this.getProperty(getPropertyNameName(), this.wrappedElement.Created);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Created);
         }
 
         public DateTime modified
         {
-            get
-            {
-                return (DateTime)this.getProperty(getPropertyNameName(), this.wrappedElement.Modified);
-            }
-            set
-            {
-                this.setProperty(getPropertyNameName(), value, this.wrappedElement.Modified);
-            }
+            get => (DateTime)this.getProperty(getPropertyNameName(), this.wrappedElement.Modified);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Modified);
         }
 
 
 
         internal override void saveElement()
         {
-            if (this.getProperty("name") != null) this.wrappedElement.Name = (string)this.getProperty("name");
-            if (this.getProperty("alias") != null) this.wrappedElement.Alias = (string)this.getProperty("alias");
-            if (this.getProperty("genLinks") != null) this.wrappedElement.Genlinks = (string)this.getProperty("genLinks");
-            if (this.getProperty("subType") != null) this.wrappedElement.Subtype = (int)this.getProperty("subType");
-            if (this.getProperty("notes") != null) this.wrappedElement.Notes = (string)this.getProperty("notes");
-            if (this.getProperty("isAbstract") != null) this.wrappedElement.Abstract = (string)this.getProperty("isAbstract");
-            if (this.getProperty("position") != null) this.wrappedElement.TreePos = (int)this.getProperty("position");
-            if (this.getProperty("visibility") != null) this.wrappedElement.Visibility = (string)this.getProperty("visibility");
-            if (this.getProperty("stereotypes") != null) this.wrappedElement.StereotypeEx = (string)this.getProperty("stereotypes");
-            if (this.getProperty("classifier") != null) this.wrappedElement.ClassifierID = (int)this.getProperty("classifier");
+            if (this.getProperty("name") != null)
+            {
+                this.wrappedElement.Name = (string)this.getProperty("name");
+            }
+
+            if (this.getProperty("alias") != null)
+            {
+                this.wrappedElement.Alias = (string)this.getProperty("alias");
+            }
+
+            if (this.getProperty("genLinks") != null)
+            {
+                this.wrappedElement.Genlinks = (string)this.getProperty("genLinks");
+            }
+
+            if (this.getProperty("subType") != null)
+            {
+                this.wrappedElement.Subtype = (int)this.getProperty("subType");
+            }
+
+            if (this.getProperty("notes") != null)
+            {
+                this.wrappedElement.Notes = (string)this.getProperty("notes");
+            }
+
+            if (this.getProperty("isAbstract") != null)
+            {
+                this.wrappedElement.Abstract = (string)this.getProperty("isAbstract");
+            }
+
+            if (this.getProperty("position") != null)
+            {
+                this.wrappedElement.TreePos = (int)this.getProperty("position");
+            }
+
+            if (this.getProperty("visibility") != null)
+            {
+                this.wrappedElement.Visibility = (string)this.getProperty("visibility");
+            }
+
+            if (this.getProperty("stereotypes") != null)
+            {
+                this.wrappedElement.StereotypeEx = (string)this.getProperty("stereotypes");
+            }
+
+            if (this.getProperty("classifier") != null)
+            {
+                this.wrappedElement.ClassifierID = (int)this.getProperty("classifier");
+            }
+
             if (this.getProperty("owner") != null)
             {
                 if (this.getProperty("owner") is Package)
@@ -333,25 +285,86 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this.wrappedElement.ParentID = ((ElementWrapper)this.getProperty("owner")).id;
                 }
             }
-            if (this.getProperty("owningPackage") != null) this.wrappedElement.PackageID = ((Package)this.getProperty("owningPackage")).packageID;
+            if (this.getProperty("owningPackage") != null)
+            {
+                this.wrappedElement.PackageID = ((Package)this.getProperty("owningPackage")).packageID;
+            }
 
-            if (this.getProperty("author") != null) this.wrappedElement.Author = (string)this.getProperty("author");
-            if (this.getProperty("version") != null) this.wrappedElement.Version = (string)this.getProperty("version");
-            if (this.getProperty("status") != null) this.wrappedElement.Status = (string)this.getProperty("status");
-            if (this.getProperty("keywords") != null) this.wrappedElement.Tag = (string)this.getProperty("keywords");
-            if (this.getProperty("created") != null) this.wrappedElement.Created = (DateTime)this.getProperty("created");
-            if (this.getProperty("modified") != null) this.wrappedElement.Modified = (DateTime)this.getProperty("modified");
-            if (this.getProperty("modifier") != null) this.addTaggedValue("modifier", (string)this.getProperty("modifier"));
+            if (this.getProperty("author") != null)
+            {
+                this.wrappedElement.Author = (string)this.getProperty("author");
+            }
 
-            if (this.getProperty("notes") != null) this.wrappedElement.Notes = (string)this.getProperty("notes");
-            if (this.getProperty("domain") != null) this.addTaggedValue("domain", (string)this.getProperty("domain"));
+            if (this.getProperty("version") != null)
+            {
+                this.wrappedElement.Version = (string)this.getProperty("version");
+            }
 
-            if (this.getProperty("label") != null) this.addTaggedValue("label", (string)this.getProperty("label"));
-            if (this.getProperty("type") != null) this.addTaggedValue("type", (string)this.getProperty("type"));
-            if (this.getProperty("size") != null) this.addTaggedValue("size", (string)this.getProperty("size"));
-            if (this.getProperty("format") != null) this.addTaggedValue("format", (string)this.getProperty("format"));
-            if (this.getProperty("initialValue") != null) this.addTaggedValue("initialValue", (string)this.getProperty("initialValue"));
-            if (this.getProperty("header1") != null) this.wrappedElement.Header1 = (string)this.getProperty("header1");
+            if (this.getProperty("status") != null)
+            {
+                this.wrappedElement.Status = (string)this.getProperty("status");
+            }
+
+            if (this.getProperty("keywords") != null)
+            {
+                this.wrappedElement.Tag = (string)this.getProperty("keywords");
+            }
+
+            if (this.getProperty("created") != null)
+            {
+                this.wrappedElement.Created = (DateTime)this.getProperty("created");
+            }
+
+            if (this.getProperty("modified") != null)
+            {
+                this.wrappedElement.Modified = (DateTime)this.getProperty("modified");
+            }
+
+            if (this.getProperty("modifier") != null)
+            {
+                this.addTaggedValue("modifier", (string)this.getProperty("modifier"));
+            }
+
+            if (this.getProperty("notes") != null)
+            {
+                this.wrappedElement.Notes = (string)this.getProperty("notes");
+            }
+
+            if (this.getProperty("domain") != null)
+            {
+                this.addTaggedValue("domain", (string)this.getProperty("domain"));
+            }
+
+            if (this.getProperty("label") != null)
+            {
+                this.addTaggedValue("label", (string)this.getProperty("label"));
+            }
+
+            if (this.getProperty("type") != null)
+            {
+                this.addTaggedValue("type", (string)this.getProperty("type"));
+            }
+
+            if (this.getProperty("size") != null)
+            {
+                this.addTaggedValue("size", (string)this.getProperty("size"));
+            }
+
+            if (this.getProperty("format") != null)
+            {
+                this.addTaggedValue("format", (string)this.getProperty("format"));
+            }
+
+            if (this.getProperty("initialValue") != null)
+            {
+                this.addTaggedValue("initialValue", (string)this.getProperty("initialValue"));
+            }
+
+            if (this.getProperty("header1") != null)
+            {
+                this.wrappedElement.Header1 = (string)this.getProperty("header1");
+            }
+
             this.wrappedElement.Update();
         }
         public List<string> primitiveParentNames
@@ -376,20 +389,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
         }
 
-        public virtual string EAElementType
-        {
-            get { return this.wrappedElement.Type; }
-        }
+        public virtual string EAElementType => this.wrappedElement.Type;
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID
-        {
-            get
-            {
-                return this.wrappedElement.ElementGUID;
-            }
-        }
+        public override string uniqueID => this.wrappedElement.ElementGUID;
         public string subType
         {
             get
@@ -397,7 +401,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 int subType = (int)this.getProperty(getPropertyNameName(), this.wrappedElement.Subtype);
                 string wrappedType = this.wrappedElement.Type;
                 //PackagingComponents have Package as Type and 20 as subtype
-                if (wrappedType == "Package" && wrappedElement.Subtype == 20)
+                if (wrappedType == "Package" && this.wrappedElement.Subtype == 20)
                 {
                     wrappedType = "PackagingComponent";
                 }
@@ -461,18 +465,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return wrappedType;
             }
             //TODO: properly translate subtypes to their integer value. This now only works if the integer value is used directly.
-            set { this.setProperty(getPropertyNameName(), int.Parse(value), this.wrappedElement.Subtype); }
+            set => this.setProperty(getPropertyNameName(), int.Parse(value), this.wrappedElement.Subtype);
         }
 
         public virtual global::EA.Element WrappedElement
         {
-            get { return this.wrappedElement; }
-            set { this.wrappedElement = value; }
+            get => this.wrappedElement;
+            set => this.wrappedElement = value;
         }
 
         public global::EA._CustomProperty getCustomProperty(string propertyName)
         {
-            foreach (global::EA._CustomProperty property in wrappedElement.CustomProperties)
+            foreach (global::EA._CustomProperty property in this.wrappedElement.CustomProperties)
             {
                 if (property.Name == propertyName)
                 {
@@ -490,8 +494,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// is is unclear what exactly the difference is.
         public HashSet<UML.Classes.Kernel.Property> ownedAttributes
         {
-            get { return this.attributes; }
-            set { throw new NotImplementedException(); }
+            get => this.attributes;
+            set => throw new NotImplementedException();
         }
 
         public HashSet<Constraint> constraints
@@ -504,12 +508,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this._constraints = new HashSet<Constraint>();
                     foreach (var constraint in this.EAModel.factory.createElements(this.wrappedElement.Constraints).Cast<Constraint>())
                     {
-                        _constraints.Add(constraint);
+                        this._constraints.Add(constraint);
                     }
                 }
                 return this._constraints;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
 
         public HashSet<UML.Classes.Kernel.Property> attributes
@@ -525,7 +529,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return this._attributes;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
 
         public HashSet<AttributeWrapper> attributeWrappers
@@ -547,10 +551,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 
         /// represents the internal EA's elementID
-        public int id
-        {
-            get { return this.wrappedElement.ElementID; }
-        }
+        public int id => this.wrappedElement.ElementID;
 
         public override HashSet<UML.Classes.Kernel.Element> ownedElements
         {
@@ -564,7 +565,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 elements.AddRange(this.ownedOperations.Cast<UML.Classes.Kernel.Element>());
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
 
 
@@ -598,28 +599,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// EA provides a shortcut tot the superclasses through its 
         /// element.BaseClasses
         /// Normally we would get those via the element.generalizations.general
-        public HashSet<UML.Classes.Kernel.Class> superClasses
+        public HashSet<UML.Classes.Kernel.Classifier> superClasses
         {
-            get
-            {
-                return new HashSet<UML.Classes.Kernel.Class>
+            get => new HashSet<UML.Classes.Kernel.Classifier>
                   (this.EAModel.factory.createElements(this.wrappedElement.BaseClasses)
-                  .Cast<UML.Classes.Kernel.Class>());
-            }
-            set { throw new NotImplementedException(); }
+                  .OfType<UML.Classes.Kernel.Classifier>());
+            set => throw new NotImplementedException();
         }
 
         /// EA provides a shortcut tot the superclasses through its 
         /// element.BaseClasses
         /// Normally we would get those via the element.generalizations.general
-        public HashSet<UML.Classes.Kernel.Class> subClasses
+        public HashSet<UML.Classes.Kernel.Classifier> subClasses
         {
             get
             {
-                var returnedSubclasses = new HashSet<UML.Classes.Kernel.Class>();
-                foreach (var subclass in this.generalizations.Where(x => this.Equals(x.target)).Select(y => y.source as Class))
+                var returnedSubclasses = new HashSet<UML.Classes.Kernel.Classifier>();
+                foreach (var subclass in this.generalizations.Where(x => this.Equals(x.target)).Select(y => y.source as UML.Classes.Kernel.Classifier))
                 {
-                    if (subclass != null) returnedSubclasses.Add(subclass);
+                    if (subclass != null)
+                    {
+                        returnedSubclasses.Add(subclass);
+                    }
                 }
                 return returnedSubclasses;
             }
@@ -627,23 +628,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// the generalisations (inheritance relations) of this element
         public HashSet<UML.Classes.Kernel.Generalization> generalizations
         {
-            get
-            {
-                return new HashSet<UML.Classes.Kernel.Generalization>
+            get => new HashSet<UML.Classes.Kernel.Generalization>
                   (this.getRelationships<UML.Classes.Kernel.Generalization>());
-            }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
         /// the operations owned by this element
         public HashSet<UML.Classes.Kernel.Operation> ownedOperations
         {
-            get
-            {
-                return new HashSet<UML.Classes.Kernel.Operation>
+            get => new HashSet<UML.Classes.Kernel.Operation>
                   (this.EAModel.factory.createElements(this.wrappedElement.Methods)
                   .Cast<UML.Classes.Kernel.Operation>());
-            }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
 
         /// <summary>
@@ -678,8 +673,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override List<UML.Classes.Kernel.Relationship> relationships
         {
-            get { return this.getRelationships<UML.Classes.Kernel.Relationship>(); }
-            set { throw new NotImplementedException(); }
+            get => this.getRelationships<UML.Classes.Kernel.Relationship>();
+            set => throw new NotImplementedException();
         }
 
         /// from Dependencies.Named Element.
@@ -700,7 +695,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return returnedDependencies;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
         /// from Dependencies.Named Element.
         /// contains the dependencies that have this element as supplier
@@ -720,22 +715,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return returnedDependencies;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
 
         public String qualifiedName
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
         public UML.Classes.Kernel.Namespace owningNamespace
         {
-            get
-            {
-                return this.EAModel.getElementWrapperByPackageID(wrappedElement.PackageID) as Package;
-            }
-            set { throw new NotImplementedException(); }
+            get => this.EAModel.getElementWrapperByPackageID(this.wrappedElement.PackageID) as Package;
+            set => throw new NotImplementedException();
         }
 
         /// two elementwrappers represent the same object 
@@ -823,10 +815,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return diagrams;
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => throw new NotImplementedException();
         }
         //returns a list of diagrams that somehow use this element.
         public override HashSet<T> getUsingDiagrams<T>()
@@ -1039,36 +1028,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return null;
                 }
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => throw new NotImplementedException();
         }
 
         public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram
         {
-            get { return this.EAModel.factory.createDiagram(this.wrappedElement.CompositeDiagram); }
-            set { this.wrappedElement.SetCompositeDiagram(((Diagram)value).diagramGUID); }
+            get => this.EAModel.factory.createDiagram(this.wrappedElement.CompositeDiagram);
+            set => this.wrappedElement.SetCompositeDiagram(((Diagram)value).diagramGUID);
         }
 
 
 
 
-        internal override global::EA.Collection eaTaggedValuesCollection
-        {
-            get
-            {
-                return this.wrappedElement.TaggedValues;
-            }
-        }
+        internal override global::EA.Collection eaTaggedValuesCollection => this.wrappedElement.TaggedValues;
 
-        public override string guid
-        {
-            get
-            {
-                return this.WrappedElement.ElementGUID;
-            }
-        }
+        public override string guid => this.WrappedElement.ElementGUID;
         protected override string getTaggedValueQuery(string taggedValueName)
         {
             return @"select tv.ea_guid from t_objectproperties tv
@@ -1180,9 +1154,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		public override bool makeWritable(bool overrideLocks)
         {
             //if security is not enabled then it is always writeable
-            if (!this.EAModel.isSecurityEnabled) return true;
+            if (!this.EAModel.isSecurityEnabled)
+            {
+                return true;
+            }
             //if already writable return true
-            if (!this.isReadOnly) return true;
+            if (!this.isReadOnly)
+            {
+                return true;
+            }
             //TODO: override locks
             if (!this.isLocked)
             {
@@ -1212,10 +1192,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return this._ownedLiterals;
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => throw new NotImplementedException();
         }
 
         List<Attribute> getOwnedAttributes(string attributeName)
@@ -1312,9 +1289,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 string firstpart = descriptionParts[0];
                 //start by finding an element with the given name
                 var candidateItems = new List<Element>();
-                candidateItems.AddRange(getOwnedElements(firstpart));
-                candidateItems.AddRange(getOwnedAttributes(firstpart));
-                candidateItems.AddRange(getRelatedAssociationEnds(firstpart));
+                candidateItems.AddRange(this.getOwnedElements(firstpart));
+                candidateItems.AddRange(this.getOwnedAttributes(firstpart));
+                candidateItems.AddRange(this.getRelatedAssociationEnds(firstpart));
                 if (descriptionParts.Count > 1)
                 {
                     //remove the first part
@@ -1331,7 +1308,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //only one item so add the direct owned elements
                     ownedItems.AddRange(candidateItems);
                     //Add also the diagrams owned by this package
-                    ownedItems.AddRange(getOwnedDiagrams(firstpart));
+                    ownedItems.AddRange(this.getOwnedDiagrams(firstpart));
                 }
             }
             return ownedItems;
