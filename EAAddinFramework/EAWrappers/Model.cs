@@ -18,7 +18,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private IWin32Window _mainEAWindow;
         private RepositoryType? _repositoryType;
         private static string _applicationFullPath;
-        private bool useCache = false;
+
+        public bool useCache { get; private set; } = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
         private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
 
@@ -265,13 +266,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get { return Factory.getInstance(this); }
         }
 
-
-        /// Finds the EA.Element with the given id and returns an EAElementwrapper 
-        /// wrapping this element.
-        public ElementWrapper getElementWrapperByID(int id)
+        public ElementWrapper getElementFromCache(int id)
         {
-            //don't even try if the ID is not a positive number
-            if (id <= 0) return null;
             //check if element exists in cache and return it if found
             ElementWrapper elementWrapper;
             if (this.useCache)
@@ -281,6 +277,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return elementWrapper;
                 }
             }
+            //nothing found, return null
+            return null;
+        }
+        /// Finds the EA.Element with the given id and returns an EAElementwrapper 
+        /// wrapping this element.
+        public ElementWrapper getElementWrapperByID(int id)
+        {
+            //don't even try if the ID is not a positive number
+            if (id <= 0) return null;
+            //check if element exists in cache and return it if found
+            ElementWrapper elementWrapper = this.getElementFromCache(id);
+            if (elementWrapper != null) return elementWrapper; //found it
+            
+            //not found in cache (or cache not used) get the regular way
             global::EA.Element eaElement;
             try
             {
@@ -344,10 +354,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return it
             return elementWrapper;
         }
-        private void addElementToCache(ElementWrapper element)
+        public void addElementToCache(ElementWrapper element)
         {
-            this.elementsByID.Add(element.id, element);
-            this.elementsByGUID.Add(element.uniqueID, element);
+            if (!this.elementsByID.ContainsKey(element.id))
+                this.elementsByID.Add(element.id, element);
+            if (!this.elementsByGUID.ContainsKey(element.uniqueID))
+                this.elementsByGUID.Add(element.uniqueID, element);
         }
 
         public void refreshDiagram(Diagram diagram)

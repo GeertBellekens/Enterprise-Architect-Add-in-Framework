@@ -649,6 +649,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             if (this._allRelationships == null)
             {
+                //check if we can find them quickly via a query
+                var typedRelations = getRelationsByQuery<T>();
+                if (typedRelations != null) return typedRelations;
+                //get them the regular way
                 //to make sure the connectors collection is still accurate we do a refresh first
                 this.WrappedElement.Connectors.Refresh();
                 this._allRelationships = this.EAModel.factory.createElements(this.wrappedElement.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
@@ -669,6 +673,50 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
             }
             return returnedRelationships;
+        }
+        /// <summary>
+        /// gets the relations of the given type using a query (a lot faster)
+        /// will return an empty list if no relations found. 
+        /// will return null if the type is not supported
+        /// </summary>
+        /// <typeparam name="T">the type of relation</typeparam>
+        /// <returns>the relations of the given type connected to this element</returns>
+        private List<T> getRelationsByQuery<T>()
+        {
+            var relationTypeName = typeof(T).Name;
+            var eaRelationType = relationTypeName;
+            switch (relationTypeName)
+            {
+                //these are the supported types. Add translation if needed
+                case "Association":
+                case "Dependency":
+                case "Generalization":
+                case "Abstraction":
+                    break;
+                default:
+                    //not one of the supported types
+                    return null;
+            }
+            //create the query
+            var relationQuery = " select c.Connector_ID                                    " +
+                                " from t_connector c                                       " +
+                                " inner join t_object o on o.Object_ID = c.Start_Object_ID " +
+                                $" 					and o.ea_guid = '{this.uniqueID}'      " +
+                                " where                                                    " +
+                                $" c.Connector_Type = '{eaRelationType}'                   " +
+                                " union                                                    " +
+                                " select c.Connector_ID                                    " +
+                                " from t_connector c                                       " +
+                                " inner join t_object o on o.Object_ID = c.End_Object_ID   " +
+                                $" 					and o.ea_guid = '{this.uniqueID}'      " +
+                                " where                                                    " +
+                                $" c.Connector_Type = '{eaRelationType}'                   ";
+            //return the found connectors
+            return this.EAModel.getRelationsByQuery(relationQuery).OfType<T>().ToList();
+
+
+
+
         }
 
         public override List<UML.Classes.Kernel.Relationship> relationships

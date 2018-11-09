@@ -89,6 +89,8 @@ namespace EAAddinFramework.Mapping
         }
         private static Mapping getMapping(UML.Extended.UMLItem mappingItem, Element mappingTarget, MappingNode startNode, List<string> sourceMappingPath, List<string> targetMappingPath, MappingNode targetRootNode)
         {
+            //do nothing if mappign target is null
+            if (mappingTarget == null) return null;
             //check if the mappingPath of the source corresponds with the path of the node
             var startNodeMappingPath = startNode.getMappingPath();
             //source is OK if mapping corresponds, or no mapping found
