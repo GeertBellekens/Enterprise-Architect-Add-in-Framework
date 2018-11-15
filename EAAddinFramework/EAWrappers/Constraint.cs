@@ -87,7 +87,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			throw new NotImplementedException();
 		}
 
-		public override List<T> getRelationships<T>() 
+		public override List<T> getRelationships<T>(bool outgoing = true, bool incoming = true) 
 		{
 			throw new NotImplementedException();
 		}

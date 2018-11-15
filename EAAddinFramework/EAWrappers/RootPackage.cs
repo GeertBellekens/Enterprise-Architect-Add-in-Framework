@@ -97,7 +97,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		/// Rootpackages don't have relationships
 		/// </summary>
 		/// <returns>an empty list</returns>
-		public override List<T> getRelationships<T>()
+		public override List<T> getRelationships<T>(bool outgoing = true, bool incoming = true)
 		{
 			return new List<T>();
 		}

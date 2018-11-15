@@ -16,7 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	{
 		throw new NotImplementedException();
 	}
-	public List<T> getRelationships<T>() where T : UML.Classes.Kernel.Relationship
+	public List<T> getRelationships<T>(bool outgoing = true, bool incoming = true) where T : UML.Classes.Kernel.Relationship
 	{
 		throw new NotImplementedException();
 	}

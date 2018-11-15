@@ -282,7 +282,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         /// default implementation returns an empty list because there is only one
         /// subclass that can actually implement this operation: EAElementWrapper.
-        public virtual List<T> getRelationships<T>()
+        public virtual List<T> getRelationships<T>(bool outgoing = true, bool incoming = true)
           where T : UML.Classes.Kernel.Relationship
         {
             return this.relationships.OfType<T>().ToList();

@@ -645,12 +645,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// returns the Relationships with the given type T
         /// </summary>
         /// <returns>the relations of type T</returns>
-        public override List<T> getRelationships<T>()
+        public override List<T> getRelationships<T>(bool outgoing = true, bool incoming = true)
         {
             if (this._allRelationships == null)
             {
                 //check if we can find them quickly via a query
-                var typedRelations = getRelationsByQuery<T>();
+                var typedRelations = getRelationsByQuery<T>(outgoing, incoming);
                 if (typedRelations != null) return typedRelations;
                 //get them the regular way
                 //to make sure the connectors collection is still accurate we do a refresh first
@@ -667,7 +667,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     {
                         if (this.Equals(relatedElement))
                         {
-                            returnedRelationships.Add((T)relationship);
+                            if (incoming && outgoing)
+                                returnedRelationships.Add((T)relationship);
+                            else if (incoming && this.Equals(((ConnectorWrapper) relationship).sourceElement))
+                                returnedRelationships.Add((T)relationship);
+                            else if (outgoing && this.Equals(((ConnectorWrapper)relationship).targetElement))
+                                returnedRelationships.Add((T)relationship);
                         }
                     }
                 }
@@ -681,8 +686,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         /// <typeparam name="T">the type of relation</typeparam>
         /// <returns>the relations of the given type connected to this element</returns>
-        private List<T> getRelationsByQuery<T>()
+        private List<T> getRelationsByQuery<T>(bool outgoing, bool incoming)
         {
+            var foundRelations = new List<T>();
             var relationTypeName = typeof(T).Name;
             var eaRelationType = relationTypeName;
             switch (relationTypeName)
@@ -698,24 +704,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return null;
             }
             //create the query
-            var relationQuery = " select c.Connector_ID                                    " +
-                                " from t_connector c                                       " +
-                                " inner join t_object o on o.Object_ID = c.Start_Object_ID " +
-                                $" 					and o.ea_guid = '{this.uniqueID}'      " +
-                                " where                                                    " +
-                                $" c.Connector_Type = '{eaRelationType}'                   " +
-                                " union                                                    " +
-                                " select c.Connector_ID                                    " +
-                                " from t_connector c                                       " +
-                                " inner join t_object o on o.Object_ID = c.End_Object_ID   " +
-                                $" 					and o.ea_guid = '{this.uniqueID}'      " +
-                                " where                                                    " +
-                                $" c.Connector_Type = '{eaRelationType}'                   ";
+            var incomingquery = " select c.Connector_ID                                     " +
+                                " from t_connector c                                        " +
+                                " inner join t_object o on (o.Object_ID = c.Start_Object_ID " +
+                                $" 					and o.ea_guid = '{this.uniqueID}')      " +
+                                " where                                                     " +
+                                $" c.Connector_Type = '{eaRelationType}'                    ";
+            if (incoming)
+                foundRelations.AddRange(this.EAModel.getRelationsByQuery(incomingquery).OfType<T>().ToList());
+            var outgoingQuery = " select c.Connector_ID                                     " +
+                                " from t_connector c                                        " +
+                                " inner join t_object o on (o.Object_ID = c.End_Object_ID   " +
+                                $" 					and o.ea_guid = '{this.uniqueID}')      " +
+                                " where                                                     " +
+                                $" c.Connector_Type = '{eaRelationType}'                    ";
+            if (outgoing)
+                foundRelations.AddRange(this.EAModel.getRelationsByQuery(outgoingQuery).OfType<T>().ToList());
             //return the found connectors
-            return this.EAModel.getRelationsByQuery(relationQuery).OfType<T>().ToList();
-
-
-
+            return foundRelations;
 
         }
 
