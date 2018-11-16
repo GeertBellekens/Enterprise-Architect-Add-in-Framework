@@ -96,10 +96,13 @@ namespace EAAddinFramework.Mapping
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }
             }
-            //do the same for all superclasses
-            foreach (var superClass in element.superClasses)
+            if (this.structure == MP.ModelStructure.Message)
             {
-                addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
+                //do the same for all superclasses
+                foreach (var superClass in element.superClasses)
+                {
+                    addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
+                }
             }
         }
 

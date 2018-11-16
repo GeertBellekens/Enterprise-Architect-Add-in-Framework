@@ -26,11 +26,15 @@ namespace EAAddinFramework.Mapping
 
         public override void setChildNodes()
         {
-            //the type of the attribute should be set as type
-            var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
-            if (attributeType != null && !this.allChildNodes.Any(x => x.source?.uniqueID == attributeType.uniqueID))
+            //only for message structures
+            if (this.structure == MP.ModelStructure.Message)
             {
-                var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
+                //the type of the attribute should be set as type
+                var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
+                if (attributeType != null && !this.allChildNodes.Any(x => x.source?.uniqueID == attributeType.uniqueID))
+                {
+                    var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
+                }
             }
         }
 
