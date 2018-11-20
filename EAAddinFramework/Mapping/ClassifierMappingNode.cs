@@ -79,7 +79,7 @@ namespace EAAddinFramework.Mapping
                 }
             }
             //create child nodes for each owned classifier
-            foreach (TSF_EA.ElementWrapper ownedClassifier in element.ownedElements.OfType<UML.Classes.Kernel.Namespace>())
+            foreach (var ownedClassifier in element.ownedElements.OfType<UML.Classes.Kernel.Namespace>().OfType<TSF_EA.ElementWrapper>())
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {

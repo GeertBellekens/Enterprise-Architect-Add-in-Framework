@@ -393,7 +393,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID => this.wrappedElement.ElementGUID;
+        public override string uniqueID => this._uniqueID;
+
         public string subType
         {
             get

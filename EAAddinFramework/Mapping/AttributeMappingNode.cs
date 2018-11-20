@@ -14,7 +14,25 @@ namespace EAAddinFramework.Mapping
         public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, parent, settings, structure, null) { }
         public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner) { }
 
-        protected override List<TaggedValue> sourceTaggedValues => this.sourceAttribute?.taggedValues.ToList();
+        protected override List<TaggedValue> sourceTaggedValues
+        {
+            get
+            {
+                //first check if the are any relevant tagged Values defined here to improve performance
+                var sqlExistTaggedValues = "select tv.PropertyID from t_attributetag tv " +
+                                           $" where tv.ElementID = {this.sourceAttribute.id} " +
+                                           $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
+                var queryResult = this.sourceAttribute.EAModel.SQLQuery(sqlExistTaggedValues);
+                if (queryResult.SelectSingleNode(this.sourceAttribute.EAModel.formatXPath("//PropertyID")) != null)
+                {
+                    return this.sourceAttribute?.taggedValues.ToList();
+                }
+                else
+                {
+                    return new List<TaggedValue>();
+                }
+            }
+        }
 
 
         internal TSF_EA.AttributeWrapper sourceAttribute

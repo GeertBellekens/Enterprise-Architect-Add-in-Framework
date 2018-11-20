@@ -37,13 +37,18 @@ namespace EAAddinFramework.Mapping
         }
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
         {
+            //debug
+            Logger.log("Starting createMappingSet");
             //get target mapping root
             ElementWrapper targetRootElement = null;
             var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.source.uniqueID == sourceRoot.uniqueID
                                                                                         && x.target is ElementWrapper 
                                                                                         && x.stereotypes.Any(y => y.name == "trace"));
             if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
-            return createMappingSet(sourceRoot, targetRootElement, settings);
+            var mappingSet =  createMappingSet(sourceRoot, targetRootElement, settings);
+            //debug
+            Logger.log("Finished createMappingSet");
+            return mappingSet;
         }
 
         private static List<string> getMappingPath(Element tagOwner, bool target)
