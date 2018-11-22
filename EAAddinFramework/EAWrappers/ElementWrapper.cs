@@ -704,26 +704,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //not one of the supported types
                     return null;
             }
-            //create the query
-            var incomingquery = " select c.Connector_ID                                     " +
+            //create the queries
+            if (outgoing)
+            {
+                var outgoingQuery = " select c.Connector_ID                                     " +
                                 " from t_connector c                                        " +
                                 " inner join t_object o on (o.Object_ID = c.Start_Object_ID " +
                                 $" 					and o.ea_guid = '{this.uniqueID}')      " +
                                 " where                                                     " +
                                 $" c.Connector_Type = '{eaRelationType}'                    ";
+
+                foundRelations.AddRange(this.EAModel.getRelationsByQuery(outgoingQuery).OfType<T>().ToList());
+            }
             if (incoming)
-                foundRelations.AddRange(this.EAModel.getRelationsByQuery(incomingquery).OfType<T>().ToList());
-            var outgoingQuery = " select c.Connector_ID                                     " +
+            {
+                var incomingquery = " select c.Connector_ID                                     " +
                                 " from t_connector c                                        " +
                                 " inner join t_object o on (o.Object_ID = c.End_Object_ID   " +
                                 $" 					and o.ea_guid = '{this.uniqueID}')      " +
                                 " where                                                     " +
                                 $" c.Connector_Type = '{eaRelationType}'                    ";
-            if (outgoing)
-                foundRelations.AddRange(this.EAModel.getRelationsByQuery(outgoingQuery).OfType<T>().ToList());
+
+                foundRelations.AddRange(this.EAModel.getRelationsByQuery(incomingquery).OfType<T>().ToList());
+            }
             //return the found connectors
             return foundRelations;
-
         }
 
         public override List<UML.Classes.Kernel.Relationship> relationships

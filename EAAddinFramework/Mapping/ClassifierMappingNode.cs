@@ -37,7 +37,7 @@ namespace EAAddinFramework.Mapping
             var foundMappings = new List<MP.Mapping>();
             //get the mappings using trace relations
             //TODO: is this fast enough?
-            foreach (var trace in this.sourceElement.getRelationships<TSF_EA.Abstraction>().Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
+            foreach (var trace in this.sourceElement.getRelationships<TSF_EA.Abstraction>(true, false).Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
             {
                 //get the mappings based on traces
                 var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
@@ -87,11 +87,9 @@ namespace EAAddinFramework.Mapping
                 }
             }
             //create child nodes for each owned association
-            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>())
+            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true,false))
             {
-                if ((ownedAssociation.targetEnd.isNavigable && ownedAssociation.sourceElement.uniqueID == element.uniqueID
-                    || ownedAssociation.sourceEnd.isNavigable && ownedAssociation.targetElement.uniqueID == element.uniqueID)
-                    && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
+                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }
