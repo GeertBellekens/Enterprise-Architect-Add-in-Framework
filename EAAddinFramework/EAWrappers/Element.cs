@@ -483,9 +483,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else
             {
-                //we allow "duplicate" tagged values, but only if the value is different.
+                //we allow "duplicate" tagged values, but only if the value or the comment is different
                 newTaggedValue = this.taggedValues.FirstOrDefault(x => x.name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
-                                                            && ((TaggedValue)x).eaStringValue.Equals(tagValue, StringComparison.InvariantCultureIgnoreCase)) as TaggedValue;
+                                                            && ((TaggedValue)x).eaStringValue.Equals(tagValue, StringComparison.InvariantCultureIgnoreCase)
+                                                            && ((TaggedValue)x).comment.Equals(comment, StringComparison.InvariantCultureIgnoreCase)) as TaggedValue;
             }
             if (newTaggedValue == null)
             {

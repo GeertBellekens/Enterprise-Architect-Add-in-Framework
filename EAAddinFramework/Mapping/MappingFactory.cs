@@ -37,8 +37,10 @@ namespace EAAddinFramework.Mapping
         }
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
         {
-            //debug
-            Logger.log("Starting createMappingSet");
+
+            //log progress
+            var startTime = DateTime.Now;
+            EAOutputLogger.log($"Start creating mapping set for {sourceRoot.name}", sourceRoot.id);
             //get target mapping root
             ElementWrapper targetRootElement = null;
             var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.source.uniqueID == sourceRoot.uniqueID
@@ -46,8 +48,10 @@ namespace EAAddinFramework.Mapping
                                                                                         && x.stereotypes.Any(y => y.name == "trace"));
             if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
             var mappingSet =  createMappingSet(sourceRoot, targetRootElement, settings);
-            //debug
-            Logger.log("Finished createMappingSet");
+            //log progress
+            var endTime = DateTime.Now;
+            var processingTime = (endTime - startTime).TotalSeconds;
+            EAOutputLogger.log($"Finished creating mapping set for {sourceRoot.name} in {processingTime.ToString("N0")} seconds", sourceRoot.id);
             return mappingSet;
         }
 
@@ -80,9 +84,9 @@ namespace EAAddinFramework.Mapping
         }
         public static Mapping getMapping(MappingNode startNode, TaggedValue mappingTag, MappingNode targetRootNode)
         {
-            List<string> sourceMappingPath = getMappingPath(mappingTag, false);
-            List<string> targetMappingPath = getMappingPath(mappingTag, true);
-            Element targetElement = mappingTag.tagValue as Element;
+            var sourceMappingPath = getMappingPath(mappingTag, false);
+            var targetMappingPath = getMappingPath(mappingTag, true);
+            var targetElement = mappingTag.tagValue as Element;
             return getMapping(mappingTag, targetElement, startNode, sourceMappingPath, targetMappingPath, targetRootNode);
         }
         public static Mapping getMapping(MappingNode startNode, ConnectorWrapper mappingRelation, MappingNode targetRootNode)
@@ -98,8 +102,8 @@ namespace EAAddinFramework.Mapping
             if (mappingTarget == null) return null;
             //check if the mappingPath of the source corresponds with the path of the node
             var startNodeMappingPath = startNode.getMappingPath();
-            //source is OK if mapping corresponds, or no mapping found
-            var sourceOK = sourceMappingPath.SequenceEqual(startNodeMappingPath) || !sourceMappingPath.Any();
+            //source is OK if mapping corresponds, or no mappingPath found and it is not virtual
+            var sourceOK = sourceMappingPath.SequenceEqual(startNodeMappingPath) || (!sourceMappingPath.Any() && ! startNode.isVirtual);
             // if no targetMapping found then we try to build a Mapping up to the target root node source element
             if (!targetMappingPath.Any())
             {

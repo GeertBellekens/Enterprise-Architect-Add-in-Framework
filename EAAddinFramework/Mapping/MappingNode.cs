@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EAAddinFramework.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
@@ -134,6 +135,8 @@ namespace EAAddinFramework.Mapping
 
         public void buildNodeTree()
         {
+            //log progress
+            //EAOutputLogger.log($"Loading '{this.name}'");
             //set immediate child nodes
             this.setChildNodes();
             //build deeper

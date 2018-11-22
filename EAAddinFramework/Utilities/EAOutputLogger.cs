@@ -75,7 +75,7 @@ namespace EAAddinFramework.Utilities
 					break;
 			}
 			//log to output
-			logger.logToOutput(message,elementID);
+			logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}",elementID);
 		}
 		/// <summary>
 		/// logs a message to the currently active outputlogger

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Extended;
 using TSF.UmlToolingFramework.UML.Profiles;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinFramework.Mapping
 {
@@ -18,7 +19,25 @@ namespace EAAddinFramework.Mapping
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
-        protected override List<TaggedValue> sourceTaggedValues => this.sourceElement?.taggedValues.ToList();
+        protected override List<TaggedValue> sourceTaggedValues
+        {
+            get
+            {
+                //first check if the are any relevant tagged Values defined here to improve performance
+                var sqlExistTaggedValues = "select tv.PropertyID from t_objectproperties tv " +
+                                           $" where tv.Object_ID = {this.sourceElement.id} " +
+                                           $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
+                var queryResult = this.sourceElement.EAModel.SQLQuery(sqlExistTaggedValues);
+                if (queryResult.SelectSingleNode(this.sourceElement.EAModel.formatXPath("//PropertyID")) != null)
+                {
+                    return this.sourceElement?.taggedValues.ToList();
+                }
+                else
+                {
+                    return new List<TaggedValue>();
+                }
+            }
+        }
 
         internal TSF_EA.ElementWrapper sourceElement
         {
@@ -49,6 +68,8 @@ namespace EAAddinFramework.Mapping
         }
         public override void setChildNodes()
         {
+            // log progress
+            EAOutputLogger.log($"Loading '{this.name}'");
             addElementPropertiesToChildNodes(null);
         }
         private void addElementPropertiesToChildNodes(TSF_EA.ElementWrapper virtualElement)
@@ -94,14 +115,14 @@ namespace EAAddinFramework.Mapping
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }
             }
-            if (this.structure == MP.ModelStructure.Message)
-            {
+            //if (this.structure == MP.ModelStructure.Message)
+            //{
                 //do the same for all superclasses
                 foreach (var superClass in element.superClasses)
                 {
                     addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
                 }
-            }
+            //}
         }
 
         protected override UMLItem createMappingItem(MappingNode targetNode)
