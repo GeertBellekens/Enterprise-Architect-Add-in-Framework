@@ -230,6 +230,33 @@ namespace EAAddinFramework.Mapping
                 return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
         }
 
-
+        public MP.MappingNode findNode(List<string> mappingPathNames)
+        {
+            //the mappingPathNames should start with this nodes name
+            if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase))
+            {
+                //if there is only one item then return this node
+                if (mappingPathNames.Count == 1 )
+                {
+                    return this;
+                }
+                else
+                {
+                    //remove the first name
+                    mappingPathNames.RemoveAt(0);
+                    //loop child nodes
+                    foreach(var childNode in this.allChildNodes)
+                    {
+                        var foundNode = childNode.findNode(mappingPathNames);
+                        if (foundNode != null )
+                        {
+                            return foundNode;
+                        }
+                    }
+                }
+            }
+            //return null if nothing found
+            return null;
+        }
     }
 }

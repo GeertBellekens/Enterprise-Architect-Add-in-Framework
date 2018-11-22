@@ -270,14 +270,7 @@ namespace EAAddinFramework.Mapping
 		{
 			MappingSet newMappingSet = null;
             IEnumerable<CSVMappingRecord> mappingRecords;
-            //read the csv file
-            using (var textReader = new StreamReader(filePath))
-            {
-                var csv = new CSV.CsvReader(textReader, false);
-                csv.Configuration.RegisterClassMap<CSVMappingRecordMap>();
-                csv.Configuration.Delimiter = ";";
-                mappingRecords = csv.GetRecords<CSVMappingRecord>();
-            }
+
             //create the new mapping set
             newMappingSet = createMappingSet(sourceRootElement, targetRootElement, settings);
             //remove all existing mappings
@@ -288,116 +281,39 @@ namespace EAAddinFramework.Mapping
             }
             //make sure the target node tree has been build
             ((MappingNode)newMappingSet.target).buildNodeTree();
-            //now loop the records
-            foreach (var csvRecord in mappingRecords)
+            //read the csv file
+            using (var textReader = new StreamReader(filePath))
             {
-                EAOutputLogger.log(model, settings.outputName
-                                    , $"Parsed source: '{csvRecord.sourcePath}' target: '{csvRecord.targetPath}' logic: '{csvRecord.mappingLogic}'"
-                                    , 0, LogTypeEnum.log);
+                var csv = new CSV.CsvReader(textReader, false);
+                csv.Configuration.RegisterClassMap<CSVMappingRecordMap>();
+                csv.Configuration.Delimiter = ";";
+                mappingRecords = csv.GetRecords<CSVMappingRecord>();
+                //now loop the records
+                foreach (var csvRecord in mappingRecords)
+                {
+                    //find the source
+                    var sourceNode = newMappingSet.source.findNode(csvRecord.sourcePath.Split('.').ToList());
+                    if (sourceNode == null)
+                    {
+                        EAOutputLogger.log($"Could not find source element corresponding to '{csvRecord.sourcePath}'", 0,LogTypeEnum.warning);
+                    }
+                    //find the target
+                    var targetNode = newMappingSet.target.findNode(csvRecord.targetPath.Split('.').ToList());
+                    if (targetNode == null)
+                    {
+                        EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);
+                    }
+                    //if we found both then we map them
+                    if(sourceNode != null && targetNode != null )
+                    {
+                        var newMapping = sourceNode.mapTo(targetNode);
+                        newMapping.mappingLogicDescription = csvRecord.mappingLogic;
+                        newMapping.save();
+                        EAOutputLogger.log($"Mapping created from '{csvRecord.sourcePath}' to '{csvRecord.targetPath}'", 0);
+                    }
+                }
             }
             return newMappingSet;
-            //         int i = 1;
-            //Package rootPackage = null;
-            //foreach (CSVMappingRecord mappingRecord in parsedFile) 
-            //{
-
-            //	//find source
-            //	var source = findElement(model, mappingRecord.sourcePath, sourceRootElement);
-            //	//find target
-            //	var target = findElement(model, mappingRecord.targetPath,targetRootElement);
-            //	if (source == null )
-            //	{
-            //		EAOutputLogger.log(model,settings.outputName
-            //		                   ,string.Format("Could not find element that matches: '{0}'",mappingRecord.sourcePath)
-            //		                   ,0,LogTypeEnum.error);
-            //	}
-            //	else if( target == null)
-            //	{
-            //		EAOutputLogger.log(model,settings.outputName
-            //		                   ,string.Format("Could not find element that matches: '{0}'",mappingRecord.targetPath)
-            //		                   ,0,LogTypeEnum.error);
-            //	}
-            //	else
-            //	{
-            //		//first check if the mappingSet is already created
-            //		if (newMappingSet == null)
-            //		{
-            //			//determine if this should be a PackageMappingSet or an ElementMappingSet
-            //			if (sourceRootElement is Package)
-            //			{
-            //				rootPackage = sourceRootElement as Package;
-            //				//newMappingSet = new PackageMappingSet(sourceRootElement as Package);
-            //			}
-            //			else if (sourceRootElement is ElementWrapper)
-            //			{
-            //				rootPackage = sourceRootElement.owningPackage as Package;
-            //				//newMappingSet = new ElementMappingSet(sourceRootElement as ElementWrapper);
-            //			}
-            //			else
-            //			{
-            //				rootPackage = source.owningPackage as Package;
-            //				//newMappingSet = new PackageMappingSet((Package)source.owningPackage);
-            //			}
-
-            //		}
-            //		MappingLogic newMappingLogic = null;
-            //		//check if there is any mapping logic
-            //		if (! string.IsNullOrEmpty(mappingRecord.mappingLogic))
-            //		{
-            //			if (settings.useInlineMappingLogic)
-            //			{
-            //				newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
-            //			}
-            //			else
-            //			{
-            //				 //Check fo an existing mapping logic
-            //				 newMappingLogic = getExistingMappingLogic(model, settings, mappingRecord.mappingLogic, rootPackage);
-
-            //				 if (newMappingLogic == null) 
-            //				 {
-
-            //					 var mappingElement = model.factory.createNewElement(rootPackage, "mapping logic " + i,settings.mappingLogicType) as ElementWrapper;
-            //					 if (mappingElement != null)
-            //					 {
-            //					 	//increase counter for new mapping element name
-            //				 	 	i++;
-            //					 	mappingElement.notes = mappingRecord.mappingLogic;
-            //					 	mappingElement.save();
-            //					 	//create the mappingLogic
-            //					 	newMappingLogic = new MappingLogic(mappingElement);
-            //					 }
-            //					 else
-            //					 {
-            //					 	//else we create an inline mapping logic anyway
-            //					 	newMappingLogic = new MappingLogic(mappingRecord.mappingLogic);
-            //					 } 
-            //				 }
-            //			}
-            //		}
-            //		Mapping newMapping = null;
-            //		var sourceAssociationEnd = source as AssociationEnd;
-            //		var targetAssociationEnd = target as AssociationEnd;
-            //		//create the new mapping
-            //		//we can't create connector mappings for mappings to or from associations so we have to use tagged value mappings for those.
-            //		if (settings.useTaggedValues
-            //		   || sourceAssociationEnd != null || targetAssociationEnd != null)
-            //		{
-            //			//if the source or target are associationEnds then we replace them by their association
-            //			if (sourceAssociationEnd != null) source = sourceAssociationEnd.association as Element;
-            //			if (targetAssociationEnd != null) target = targetAssociationEnd.association as Element;
-            //			//newMapping = new TaggedValueMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
-            //		}
-            //		else
-            //		{
-            //			//newMapping = new ConnectorMapping(source,target,mappingRecord.sourcePath,mappingRecord.targetPath,settings);
-            //		}
-            //		if (newMappingLogic != null) newMapping.mappingLogic = newMappingLogic;
-            //		newMapping.save();
-            //		newMappingSet.addMapping(newMapping);
-
-            //	}
-            //}
-
         }
 		public static void exportMappingSet(MappingSet mappingSet, string filePath)
 		{
@@ -442,30 +358,6 @@ namespace EAAddinFramework.Mapping
 											" and o.Object_Type = '" + EAMappingType + "' ";
 			var mappingElement = model.getElementWrappersByQuery(sqlGetExistingMapping).FirstOrDefault();
 			return mappingElement != null ? new MappingLogic(mappingElement) : null; //return null if no mapping element found
-		}
-		/// <summary>
-		/// find an element based on a descriptor
-		/// </summary>
-		/// <param name="model">the model to searc in</param>
-		/// <param name="elementDescriptor">the descriptor to search for</param>
-		/// <param name="rootElement">the root element to start from</param>
-		/// <returns>the element that corresponds to the descriptor</returns>
-		public static Element findElement(Model model, string elementDescriptor, Element rootElement)
-		{
-			Element foundElement = null;
-
-			if (rootElement == null)
-			{
-				//try with fully qualified name
-				foundElement = model.getItemFromFQN(elementDescriptor) as Element;
-			}
-			else
-			{
-				//find as owned item 
-				foundElement = rootElement.findOwnedItems(elementDescriptor).OfType<Element>().FirstOrDefault();
-			}
-			return foundElement;
-				
 		}
 	}
 }

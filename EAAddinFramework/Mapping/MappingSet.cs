@@ -57,6 +57,7 @@ namespace EAAddinFramework.Mapping
         {
             this._mappings.Add((Mapping)mapping);
         }
+
         #endregion
     }
 }
