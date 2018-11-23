@@ -35,26 +35,7 @@ namespace EAAddinFramework.Mapping
                     new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.DataModel) :
                     new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.Message);
         }
-        public static MappingSet createMappingSet(ElementWrapper sourceRoot, MappingSettings settings)
-        {
-
-            //log progress
-            var startTime = DateTime.Now;
-            EAOutputLogger.log($"Start creating mapping set for {sourceRoot.name}", sourceRoot.id);
-            //get target mapping root
-            ElementWrapper targetRootElement = null;
-            var packageTrace = sourceRoot.getRelationships<Abstraction>().FirstOrDefault(x => x.source.uniqueID == sourceRoot.uniqueID
-                                                                                        && x.target is ElementWrapper 
-                                                                                        && x.stereotypes.Any(y => y.name == "trace"));
-            if (packageTrace != null) targetRootElement = packageTrace.target as ElementWrapper;
-            var mappingSet =  createMappingSet(sourceRoot, targetRootElement, settings);
-            //log progress
-            var endTime = DateTime.Now;
-            var processingTime = (endTime - startTime).TotalSeconds;
-            EAOutputLogger.log($"Finished creating mapping set for {sourceRoot.name} in {processingTime.ToString("N0")} seconds", sourceRoot.id);
-            return mappingSet;
-        }
-
+        
         private static List<string> getMappingPath(Element tagOwner, bool target)
         {
             var mappingPath = new List<String>();
@@ -148,139 +129,22 @@ namespace EAAddinFramework.Mapping
         }
 
 
-        public static List<Mapping> createNewMappings(TSF.UmlToolingFramework.Wrappers.EA.Attribute attribute,string basepath,ElementWrapper targetRootElement)
-		{
-			List<Mapping> returnedMappings = new List<Mapping>();
-			//connectors from owned attributes
-			foreach (ConnectorWrapper mappedConnector in attribute.relationships.OfType<ConnectorWrapper>())
-			{
-				if (! mappedConnector.taggedValues.Any( x => x.name == mappingSourcePathName && x.tagValue.ToString() != basepath))
-				{
-					//get the target base path
-					ConnectorMapping connectorMapping;
-					var targetTV = mappedConnector.taggedValues.FirstOrDefault(x => x.name == mappingTargetPathName);
-					string targetBasePath = string.Empty;
-					if (targetTV != null) targetBasePath = targetTV.tagValue.ToString();
-					if (! string.IsNullOrEmpty(targetBasePath))
-					{
-						//connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetBasePath);
-					}
-					else
-					{
-						//connectorMapping = new ConnectorMapping(mappedConnector,basepath,targetRootElement);
-					}
-					//returnedMappings.Add(connectorMapping);
-				}
-			}
-			//tagged value references from owned attributes	
-			foreach (TaggedValue mappedTaggedValue in attribute.taggedValues.Where(x => x.tagValue is Element) )
-			{
-				string mappingSourcePath = KeyValuePairsHelper.getValueForKey(mappingSourcePathName,mappedTaggedValue.comment);
-				string targetBasePath = KeyValuePairsHelper.getValueForKey(mappingTargetPathName,mappedTaggedValue.comment);
 
-				//if not filled in or corresponds to the attributeBasePath or the attributeBasePath + the name of the attribute
-				if (string.IsNullOrEmpty(mappingSourcePath) || mappingSourcePath == basepath 
-				    || mappingSourcePath == basepath + "." + attribute.name)
-				{
-					TaggedValueMapping tagMapping;
-					if (! string.IsNullOrEmpty(targetBasePath))
-					{
-						//tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetBasePath);
-					}
-					else
-					{
-						//tagMapping = new TaggedValueMapping(mappedTaggedValue,basepath,targetRootElement);
-					}	
-					//returnedMappings.Add(tagMapping);
-				}
-			}
-			//add the mappings for the type of the attribute
-			var attributeType = attribute.type as ElementWrapper;
-			if (attributeType != null) returnedMappings.AddRange(createOwnedMappings(attributeType,basepath + "." + attribute.name,false));
-			return returnedMappings;
-		}
-		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,ElementWrapper targetRootElement,bool includeOwnedElements)
+        /// <summary>
+        /// import the mapings specified in the file into the given mappingSet
+        /// </summary>
+        /// <param name="mappingSet">the mappingset to import the mappings into</param>
+        /// <param name="filePath">the path to the file containing the mappings</param>
+        public static void importMappings(MappingSet mappingSet, string filePath)
 		{
-			List<Mapping> returnedMappings = new List<Mapping>();
-			//connectors to an attribute
-			foreach (ConnectorWrapper mappedConnector in ownerElement.relationships.OfType<ConnectorWrapper>()
-			         .Where(y => y.targetElement is AttributeWrapper)) 
-			{
-				
-				string connectorPath = basepath + "." + getConnectorString(mappedConnector);
-				//var connectorMapping = new ConnectorMapping(mappedConnector,connectorPath,targetRootElement);
-				//returnedMappings.Add(connectorMapping);
-			}			
-			//loop owned attributes
-			foreach (TSF.UmlToolingFramework.Wrappers.EA.Attribute ownedAttribute in ownerElement.ownedAttributes) 
-			{
-				returnedMappings.AddRange(createNewMappings(ownedAttribute,basepath, targetRootElement));
-			}
-			//loop owned Elements
-			if (includeOwnedElements)
-			{
-				foreach (var ownedElement in ownerElement.ownedElements.OfType<ElementWrapper>()) 
-				{
-					returnedMappings.AddRange(createOwnedMappings(ownedElement,basepath + "." + ownedElement.name,targetRootElement,includeOwnedElements));
-				}
-			}
-			return returnedMappings;
-		}
-		public static List<Mapping> createOwnedMappings(ElementWrapper ownerElement,string basepath,bool includeOwnedElements )
-		{
-			return createOwnedMappings( ownerElement, basepath,null,includeOwnedElements);
-		}
-		public static List<Mapping> createRootMappings(ElementWrapper root,string basepath)
-		{
-			//get the owned mappings
-			var returnedMappings =  MappingFactory.createOwnedMappings(root,basepath,false);
-			//get the mappings of all associated elements
-			foreach (var assocation in root.relationships
-			         					.OfType<Association>()
-			         					.Where (x => x.source.Equals(root))) 
-			{
-				var targetElement = assocation.target as ElementWrapper;
-				if (targetElement != null) returnedMappings.AddRange(createRootMappings(targetElement,basepath + "." + getConnectorString(assocation)));
-			}
-			//get the owned mappings of all owned elements
-			foreach (var ownedElement in root.ownedElements.OfType<ElementWrapper>()) 
-			{
-				returnedMappings.AddRange(createRootMappings(ownedElement,basepath + "." + ownedElement.name));
-			}
-			return returnedMappings;
-		}
-		public static string getConnectorString(ConnectorWrapper mappedConnector)
-		{
-			//check if the connector has a target role name
-			string connectorString = mappedConnector.targetEnd.name;
-			//if no rolename then try the association name
-			if (string.IsNullOrEmpty(connectorString)) connectorString = mappedConnector.name;
-			//if no associationName then we take the name of the target element
-			if (string.IsNullOrEmpty(connectorString)) connectorString = mappedConnector.target.name;
-			return connectorString;
-		}
-
-		/// <summary>
-		/// create a mappingSet based on the data in the CSV file
-		/// </summary>
-		/// <param name="model">the model that contains the elements</param>
-		/// <param name="filePath">the path to the CSV file</param>
-		/// <returns>a mapping set representing the mapping in the file</returns>
-		public static MappingSet createMappingSet(Model model, string filePath,MappingSettings settings, ElementWrapper sourceRootElement, ElementWrapper targetRootElement)
-		{
-			MappingSet newMappingSet = null;
             IEnumerable<CSVMappingRecord> mappingRecords;
-
-            //create the new mapping set
-            newMappingSet = createMappingSet(sourceRootElement, targetRootElement, settings);
             //remove all existing mappings
-            //TODO: warn if mappings exist?
-            foreach(var mapping in newMappingSet.mappings)
+            foreach (var mapping in mappingSet.mappings)
             {
                 mapping.delete();
             }
             //make sure the target node tree has been build
-            ((MappingNode)newMappingSet.target).buildNodeTree();
+            ((MappingNode)mappingSet.target).buildNodeTree();
             //read the csv file
             using (var textReader = new StreamReader(filePath))
             {
@@ -292,13 +156,13 @@ namespace EAAddinFramework.Mapping
                 foreach (var csvRecord in mappingRecords)
                 {
                     //find the source
-                    var sourceNode = newMappingSet.source.findNode(csvRecord.sourcePath.Split('.').ToList());
+                    var sourceNode = mappingSet.source.findNode(csvRecord.sourcePath.Split('.').ToList());
                     if (sourceNode == null)
                     {
                         EAOutputLogger.log($"Could not find source element corresponding to '{csvRecord.sourcePath}'", 0,LogTypeEnum.warning);
                     }
                     //find the target
-                    var targetNode = newMappingSet.target.findNode(csvRecord.targetPath.Split('.').ToList());
+                    var targetNode = mappingSet.target.findNode(csvRecord.targetPath.Split('.').ToList());
                     if (targetNode == null)
                     {
                         EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);
@@ -313,7 +177,6 @@ namespace EAAddinFramework.Mapping
                     }
                 }
             }
-            return newMappingSet;
         }
 		public static void exportMappingSet(MappingSet mappingSet, string filePath)
 		{

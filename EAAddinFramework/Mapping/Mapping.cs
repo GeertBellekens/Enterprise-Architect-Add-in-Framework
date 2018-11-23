@@ -54,7 +54,7 @@ namespace EAAddinFramework.Mapping
             get => this.mappingLogic != null ? this.mappingLogic.description : string.Empty;
             set
             {
-                if (this.mappingLogic == null)
+                if (this.mappingLogic == null && string.IsNullOrEmpty(value))
                 {
                     this.mappingLogic = new MappingLogic(value);
                 }
