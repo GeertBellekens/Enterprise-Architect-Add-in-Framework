@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TSF.UmlToolingFramework.UML.Extended;
 using MP = MappingFramework;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
@@ -19,31 +16,49 @@ namespace EAAddinFramework.Mapping
 
         internal TSF_EA.Association sourceAssociation
         {
-            get
-            {
-                return this.source as TSF_EA.Association;
-            }
-            set
-            {
-                this.source = value;
-            }
+            get => this.source as TSF_EA.Association;
+            set => this.source = value;
         }
         public override string name
         {
             get
             {
+                //check if target role is filled in
+                if (!string.IsNullOrEmpty(this.sourceAssociation.targetEnd.name))
+                {
+                    return this.sourceAssociation.targetEnd.name;
+                }
                 //check if source association has a name
                 if (!string.IsNullOrEmpty(this.sourceAssociation.name))
-                    return (this.sourceAssociation.name);
-                //return sourceClas.sourceRole.targetRole.TargetClass
-                var nameParts = new List<string>();
-                if (!string.IsNullOrEmpty(this.sourceAssociation.sourceName)) nameParts.Add(this.sourceAssociation.sourceName);
-                if (!string.IsNullOrEmpty(this.sourceAssociation.sourceEnd.name)) nameParts.Add(this.sourceAssociation.sourceEnd.name);
-                if (!string.IsNullOrEmpty(this.sourceAssociation.targetEnd.name)) nameParts.Add(this.sourceAssociation.targetEnd.name);
-                if (!string.IsNullOrEmpty(this.sourceAssociation.targetName)) nameParts.Add(this.sourceAssociation.targetName);
-                return string.Join(".", nameParts);
+                {
+                    return this.sourceAssociation.name;
+                }
+                //else just return the name of the associated class
+                return this.sourceAssociation.targetName;
             }
         }
+        public override string displayName
+        {
+            get
+            {
+                if (this.structure == MP.ModelStructure.DataModel)
+                {
+                    //check if target role is filled in
+                    if (!string.IsNullOrEmpty(this.sourceAssociation.targetEnd.name))
+                    {
+                        return this.sourceAssociation.targetEnd.name + "." + this.sourceAssociation.targetName;
+                    }
+                    //check if source association has a name
+                    else if (!string.IsNullOrEmpty(this.sourceAssociation.name))
+                    {
+                        return this.sourceAssociation.name + "." + this.sourceAssociation.targetName;
+                    }
+                }
+                //default case
+                return base.displayName;
+            }
+        }
+
 
 
 

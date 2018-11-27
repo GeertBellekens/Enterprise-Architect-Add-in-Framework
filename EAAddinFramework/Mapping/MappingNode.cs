@@ -24,6 +24,7 @@ namespace EAAddinFramework.Mapping
         }
 
         public virtual string name => this._source.name;
+        public virtual string displayName => this.name;
         public MappingSettings settings { get; set; }
         private List<string> _mappingPath;
         public List<string> getMappingPath()
@@ -177,6 +178,9 @@ namespace EAAddinFramework.Mapping
             this._mappings.Remove((Mapping)mapping);
         }
         public bool isReadOnly => this.source != null ? this.source.isReadOnly : false;
+
+       
+
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
             if (this.isReadOnly)
