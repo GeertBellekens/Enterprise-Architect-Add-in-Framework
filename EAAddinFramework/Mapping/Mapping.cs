@@ -1,5 +1,4 @@
 ﻿using System;
-using TSF.UmlToolingFramework.Wrappers.EA;
 using MP = MappingFramework;
 
 namespace EAAddinFramework.Mapping
@@ -37,11 +36,23 @@ namespace EAAddinFramework.Mapping
             set => this._target = (MappingNode)value;
         }
 
-        public abstract void save();
+        public void save()
+        {
+            if (this.isReadOnly)
+            {
+                throw new InvalidOperationException($"Element {this.source.name} is read-only");
+            }
+            this.saveMe();
+        }
+        protected abstract void saveMe();
 
         public abstract void deleteWrappedItem();
         public void delete()
         {
+            if (this.isReadOnly)
+            {
+                throw new InvalidOperationException($"Element {this.source.name} is read-only");
+            }
             //remove from source and target
             this.source.removeMapping(this);
             this.target.removeMapping(this);
@@ -54,18 +65,33 @@ namespace EAAddinFramework.Mapping
             get => this.mappingLogic != null ? this.mappingLogic.description : string.Empty;
             set
             {
-                if (this.mappingLogic == null && string.IsNullOrEmpty(value))
+                if (this.mappingLogic == null )
                 {
-                    this.mappingLogic = new MappingLogic(value);
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        this.mappingLogic = new MappingLogic(value);
+                    }
                 }
                 else
                 {
-                    this.mappingLogic.description = value;
+                    if(!string.IsNullOrEmpty(value))
+                    {
+                        //set the value
+                        this.mappingLogic.description = value;
+                    }
+                    else
+                    {
+                        //delete the mapping
+                        this.mappingLogic.delete();
+                        this.mappingLogic = null;
+                    }
                 }
             }
         }
 
         public abstract bool isEmpty { get; set; }
+
+        public bool isReadOnly => this.source.isReadOnly;
         #endregion
     }
 }

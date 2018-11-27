@@ -141,5 +141,65 @@ namespace EAAddinFramework.Mapping
                 return this.createTaggedValueMappingItem(targetNode);
             }
         }
+        public override MP.MappingNode findNode(List<string> mappingPathNames)
+        {
+            var foundNode = base.findNode(mappingPathNames);
+            if (foundNode != null )
+            {
+                return foundNode;
+            }
+            //if not found then it might be a Class.attribute reference (or Class.Association)
+            //So if there are only two names in the mapping path, AND the source node is a package,
+            //we check if we can find a class with the given name in the package or sub-packages
+            if (mappingPathNames.Count == 2 && this.source is TSF_EA.Package)
+            {
+                var ownedItems = ((TSF_EA.Package)this.sourceElement)
+                        .findOwnedItems(string.Join(".", mappingPathNames)).OfType<TSF_EA.Element>();
+                foreach (var ownedItem in ownedItems)
+                {
+                    var nodePath = this.findPath(ownedItem);
+                    if (nodePath.Any())
+                    {
+                        return nodePath.Last();
+                    }
+                }
+            }
+            //not found, return null
+            return null;
+        }
+        private List<MappingNode> findPath(TSF_EA.Element itemToFind)
+        {
+            //if itemToFind is null we return an empty list
+            if (itemToFind == null)
+            {
+                return new List<MappingNode>();
+            }
+            //check if this node's source is equal to the itemToFind
+            if (this.source.Equals(itemToFind))
+            {
+                //found it, return this node in the list
+                return new List<MappingNode> { this };
+            }
+            //not found, check owner
+            var owner = itemToFind.owner;
+            if (owner != null)
+            {
+                var ownerPath = findPath((TSF_EA.Element) owner);
+                if (ownerPath.Any())
+                {
+                    var subNode = ownerPath.Last().allChildNodes.FirstOrDefault(x => x.source.Equals(itemToFind));
+                    if (subNode != null)
+                    {
+                        ownerPath.Add((MappingNode)subNode);
+                    }
+                }
+                return ownerPath;
+            }
+            else
+            {
+                //reach the root node without finding a match
+                return new List<MappingNode>();
+            }
+        }
     }
 }

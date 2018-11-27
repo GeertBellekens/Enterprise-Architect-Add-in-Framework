@@ -50,6 +50,12 @@ namespace EAAddinFramework.Mapping
 			}
 		}
 
-		#endregion
-	}
+        public void delete()
+        {
+            //delete the element if present
+            this.mappingElement?.delete();
+        }
+
+        #endregion
+    }
 }

@@ -77,7 +77,7 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        public override void save()
+        protected override void saveMe()
         {
             if (this._mappingLogic != null)
             {

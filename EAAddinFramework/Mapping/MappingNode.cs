@@ -176,9 +176,13 @@ namespace EAAddinFramework.Mapping
         {
             this._mappings.Remove((Mapping)mapping);
         }
-
+        public bool isReadOnly => this.source != null ? this.source.isReadOnly : false;
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
+            if (this.isReadOnly)
+            {
+                throw new InvalidOperationException($"Element {this.source.name} is read-only");
+            }
             var mappingItem = this.createMappingItem((MappingNode)targetNode);
             var mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
             mapping.save();
@@ -230,8 +234,9 @@ namespace EAAddinFramework.Mapping
                 return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
         }
 
-        public MP.MappingNode findNode(List<string> mappingPathNames)
+        public virtual MP.MappingNode findNode(List<string> mappingPathNames)
         {
+            //first try to fin the node based on the full set of mapping path names 
             //the mappingPathNames should start with this nodes name
             if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase))
             {
