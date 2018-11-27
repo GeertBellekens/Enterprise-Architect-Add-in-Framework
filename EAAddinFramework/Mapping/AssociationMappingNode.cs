@@ -58,7 +58,25 @@ namespace EAAddinFramework.Mapping
                 return base.displayName;
             }
         }
-
+        public override MP.MappingNode findNode(List<string> mappingPathNames)
+        {
+            var foundNode = base.findNode(mappingPathNames);
+            //if the node is not found then we look further. It might be using the UN/CEFACT naming standard.
+            //in those cases the name of a node is targetRole + target ElementName with all "_" removed
+            if (this.structure == MP.ModelStructure.Message
+                && foundNode == null 
+                && mappingPathNames.Any())
+            {
+                var nameToFind = mappingPathNames.First();
+                var unCefactName = (this.sourceAssociation.targetEnd.name + this.sourceAssociation.targetName).Replace("_", string.Empty);
+                if (unCefactName == nameToFind)
+                {
+                    //return the first (and only) childnode
+                    foundNode = this.childNodes.FirstOrDefault();
+                }
+            }
+            return foundNode;
+        }
 
 
 

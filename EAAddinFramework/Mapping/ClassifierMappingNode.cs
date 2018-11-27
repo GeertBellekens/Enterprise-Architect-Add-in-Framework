@@ -1,20 +1,19 @@
-﻿using System;
-using MP = MappingFramework;
-using UML = TSF.UmlToolingFramework.UML;
-using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+﻿using EAAddinFramework.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Extended;
 using TSF.UmlToolingFramework.UML.Profiles;
-using EAAddinFramework.Utilities;
+using MP = MappingFramework;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Mapping
 {
-	/// <summary>
-	/// Description of ElementMappingSet.
-	/// </summary>
-	public class ClassifierMappingNode:MappingNode
-	{
+    /// <summary>
+    /// Description of ElementMappingSet.
+    /// </summary>
+    public class ClassifierMappingNode : MappingNode
+    {
 
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
         public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
@@ -41,14 +40,8 @@ namespace EAAddinFramework.Mapping
 
         internal TSF_EA.ElementWrapper sourceElement
         {
-            get
-            {
-                return this.source as TSF_EA.ElementWrapper;
-            }
-            set
-            {
-                this.source = value;
-            }
+            get => this.source as TSF_EA.ElementWrapper;
+            set => this.source = value;
         }
 
         public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
@@ -60,7 +53,10 @@ namespace EAAddinFramework.Mapping
             {
                 //get the mappings based on traces
                 var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
-                if (mapping != null) foundMappings.Add(mapping);
+                if (mapping != null)
+                {
+                    foundMappings.Add(mapping);
+                }
             }
             //also add the base mappings
             foundMappings.AddRange(base.getOwnedMappings(targetRootNode));
@@ -70,14 +66,17 @@ namespace EAAddinFramework.Mapping
         {
             // log progress
             EAOutputLogger.log($"Loading '{this.name}'");
-            addElementPropertiesToChildNodes(null);
+            this.addElementPropertiesToChildNodes(null);
         }
         private void addElementPropertiesToChildNodes(TSF_EA.ElementWrapper virtualElement)
         {
             //figure out the if we have virtual element
             var element = virtualElement != null ? virtualElement : this.sourceElement;
 
-            if (element == null) return; //failsafe 
+            if (element == null)
+            {
+                return; //failsafe 
+            }
 
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes)
@@ -99,8 +98,12 @@ namespace EAAddinFramework.Mapping
                     }
                 }
             }
-            //create child nodes for each owned classifier
-            foreach (var ownedClassifier in element.ownedElements.OfType<UML.Classes.Kernel.Namespace>().OfType<TSF_EA.ElementWrapper>())
+            //create child nodes for each owned element
+            foreach (var ownedClassifier in element.ownedElements.OfType<TSF_EA.ElementWrapper>()
+                                    .Where(x => x.EAElementType == "Class"
+                                            || x.EAElementType == "Enumeration"
+                                            || x.EAElementType == "DataType"
+                                            || x.EAElementType == "Package"))
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
@@ -108,21 +111,20 @@ namespace EAAddinFramework.Mapping
                 }
             }
             //create child nodes for each owned association
-            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true,false))
+            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true, false))
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }
             }
-            //if (this.structure == MP.ModelStructure.Message)
-            //{
-                //do the same for all superclasses
-                foreach (var superClass in element.superClasses)
-                {
-                    addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
-                }
-            //}
+
+            //do the same for all superclasses
+            foreach (var superClass in element.superClasses)
+            {
+                this.addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
+            }
+
         }
 
         protected override UMLItem createMappingItem(MappingNode targetNode)
@@ -144,7 +146,7 @@ namespace EAAddinFramework.Mapping
         public override MP.MappingNode findNode(List<string> mappingPathNames)
         {
             var foundNode = base.findNode(mappingPathNames);
-            if (foundNode != null )
+            if (foundNode != null)
             {
                 return foundNode;
             }
@@ -184,7 +186,7 @@ namespace EAAddinFramework.Mapping
             var owner = itemToFind.owner;
             if (owner != null)
             {
-                var ownerPath = findPath((TSF_EA.Element) owner);
+                var ownerPath = this.findPath((TSF_EA.Element)owner);
                 if (ownerPath.Any())
                 {
                     var subNode = ownerPath.Last().allChildNodes.FirstOrDefault(x => x.source.Equals(itemToFind));

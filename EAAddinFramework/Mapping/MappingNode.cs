@@ -240,7 +240,7 @@ namespace EAAddinFramework.Mapping
 
         public virtual MP.MappingNode findNode(List<string> mappingPathNames)
         {
-            //first try to fin the node based on the full set of mapping path names 
+            //first try to find the node based on the full set of mapping path names 
             //the mappingPathNames should start with this nodes name
             if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase))
             {
