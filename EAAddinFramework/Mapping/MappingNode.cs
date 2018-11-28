@@ -242,7 +242,11 @@ namespace EAAddinFramework.Mapping
         {
             //first try to find the node based on the full set of mapping path names 
             //the mappingPathNames should start with this nodes name
-            if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase))
+            //check for UN/CEFACT convention in case of message structure
+            if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase)
+                || (this.structure == MP.ModelStructure.Message 
+                    && this.name.Replace("_", string.Empty).Equals(mappingPathNames.FirstOrDefault()
+                    , StringComparison.InvariantCultureIgnoreCase)))
             {
                 //if there is only one item then return this node
                 if (mappingPathNames.Count == 1 )
@@ -252,11 +256,11 @@ namespace EAAddinFramework.Mapping
                 else
                 {
                     //remove the first name
-                    mappingPathNames.RemoveAt(0);
+                    var reducedPathNames = mappingPathNames.Where((v, i) => i != 0).ToList();
                     //loop child nodes
-                    foreach(var childNode in this.allChildNodes)
+                    foreach (var childNode in this.allChildNodes)
                     {
-                        var foundNode = childNode.findNode(mappingPathNames);
+                        var foundNode = childNode.findNode(reducedPathNames);
                         if (foundNode != null )
                         {
                             return foundNode;

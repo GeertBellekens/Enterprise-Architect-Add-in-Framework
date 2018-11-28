@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TSF.UmlToolingFramework.UML.Extended;
 using TSF.UmlToolingFramework.UML.Profiles;
@@ -41,7 +42,35 @@ namespace EAAddinFramework.Mapping
             set => this.source = value as UML.Classes.Kernel.NamedElement;
         }
 
+        public override MP.MappingNode findNode(List<string> mappingPathNames)
+        {
+            var foundNode = base.findNode(mappingPathNames);
+            //if the node is not found then we look further. It might be using the UN/CEFACT naming standard.
+            //in those cases the name of a node is targetRole + target ElementName with all "_" removed
+            if (foundNode == null
+                && mappingPathNames.Count > 1)
+            {
+                if (this.name.Equals(mappingPathNames.FirstOrDefault(), StringComparison.InvariantCultureIgnoreCase)
+                || (this.structure == MP.ModelStructure.Message
+                    && this.name.Replace("_", string.Empty).Equals(mappingPathNames.FirstOrDefault()
+                    , StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    //remove the first name
+                    var reducedPathNames = mappingPathNames.Where((v, i) => i != 0).ToList();
+                    //loop child nodes skipping one level for the type of the attribute
+                    foreach (var childNode in this.allChildNodes.FirstOrDefault()?.allChildNodes)
+                    {
+                        foundNode = childNode.findNode(reducedPathNames);
+                        if (foundNode != null)
+                        {
+                            break;
+                        }
+                    }
 
+                }
+            }
+            return foundNode;
+        }
         public override void setChildNodes()
         {
             //only for message structures

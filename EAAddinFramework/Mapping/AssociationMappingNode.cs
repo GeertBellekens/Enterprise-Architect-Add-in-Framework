@@ -46,12 +46,12 @@ namespace EAAddinFramework.Mapping
                     //check if target role is filled in
                     if (!string.IsNullOrEmpty(this.sourceAssociation.targetEnd.name))
                     {
-                        return this.sourceAssociation.targetEnd.name + "." + this.sourceAssociation.targetName;
+                        return this.sourceAssociation.targetEnd.name + "." + this.sourceAssociation.target.name;
                     }
                     //check if source association has a name
                     else if (!string.IsNullOrEmpty(this.sourceAssociation.name))
                     {
-                        return this.sourceAssociation.name + "." + this.sourceAssociation.targetName;
+                        return this.sourceAssociation.name + "." + this.sourceAssociation.target.name;
                     }
                 }
                 //default case
@@ -68,11 +68,27 @@ namespace EAAddinFramework.Mapping
                 && mappingPathNames.Any())
             {
                 var nameToFind = mappingPathNames.First();
-                var unCefactName = (this.sourceAssociation.targetEnd.name + this.sourceAssociation.targetName).Replace("_", string.Empty);
-                if (unCefactName == nameToFind)
+                var unCefactName = (this.sourceAssociation.targetEnd.name + this.sourceAssociation.target.name).Replace("_", string.Empty);
+                if (nameToFind.Equals(unCefactName,System.StringComparison.InvariantCultureIgnoreCase))
                 {
-                    //return the first (and only) childnode
-                    foundNode = this.childNodes.FirstOrDefault();
+                    if (mappingPathNames.Count == 1)
+                    {
+                        foundNode = this.allChildNodes.FirstOrDefault();
+                    }
+                    else
+                    {
+                        //remove the first name
+                        var reducedPathNames = mappingPathNames.Where((v, i) => i != 0).ToList();
+                        //loop child nodes
+                        foreach (var childNode in this.allChildNodes.FirstOrDefault()?.allChildNodes)
+                        {
+                            foundNode = childNode.findNode(reducedPathNames);
+                            if (foundNode != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             return foundNode;
