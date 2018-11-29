@@ -187,9 +187,14 @@ namespace EAAddinFramework.Mapping
             {
                 throw new InvalidOperationException($"Element {this.source.name} is read-only");
             }
-            var mappingItem = this.createMappingItem((MappingNode)targetNode);
-            var mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
-            mapping.save();
+            //check if not already mapped
+            var mapping = this.mappings.FirstOrDefault(x => x.target.Equals(targetNode));
+            if (mapping == null && targetNode.source != null)
+            {
+                var mappingItem = this.createMappingItem((MappingNode)targetNode);
+                mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
+                mapping.save();
+            }
             return mapping;
         }
 
@@ -270,6 +275,20 @@ namespace EAAddinFramework.Mapping
             }
             //return null if nothing found
             return null;
+        }
+        public override bool Equals(object obj)
+        {
+            return this == obj
+                || (obj != null
+                && obj is MappingNode
+                && this.source != null
+                && ((MappingNode)obj).source != null
+                && this.source.Equals(((MappingNode)obj).source));
+
+        }
+        public override int GetHashCode()
+        {
+            return this.source != null ? this.source.GetHashCode() : base.GetHashCode();
         }
     }
 }

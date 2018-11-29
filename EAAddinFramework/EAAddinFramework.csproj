@@ -271,7 +271,7 @@
     <Compile Include="Mapping\AttributeMappingNode.cs" />
     <Compile Include="Mapping\ConnectorMapping.cs" />
     <Compile Include="Mapping\CSVMappingRecord.cs" />
-    <Compile Include="Mapping\ClassifierMappingNode.cs" />
+    <Compile Include="Mapping\ElementMappingNode.cs" />
     <Compile Include="Mapping\Mapping.cs" />
     <Compile Include="Mapping\MappingFactory.cs" />
     <Compile Include="Mapping\MappingLogic.cs" />

@@ -28,12 +28,12 @@ namespace EAAddinFramework.Mapping
             var mappingSet = new MappingSet(sourceRootNode, targetRootNode, settings);
             return mappingSet;
         }
-        public static ClassifierMappingNode createNewRootNode(ElementWrapper rootElement, MappingSettings settings)
+        public static ElementMappingNode createNewRootNode(ElementWrapper rootElement, MappingSettings settings)
         {
             //depending on the type of root we create a dataModel structure (Package) or a Message structure (class).
             return rootElement is Package ?
-                    new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.DataModel) :
-                    new ClassifierMappingNode(rootElement, settings, MP.ModelStructure.Message);
+                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.DataModel) :
+                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.Message);
         }
         
         private static List<string> getMappingPath(Element tagOwner, bool target)
@@ -114,15 +114,15 @@ namespace EAAddinFramework.Mapping
         {
             //AttributeMappingNode
             var attributeSource = source as AttributeWrapper;
-            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ClassifierMappingNode, settings, parent.structure);
+            if (attributeSource != null) return new AttributeMappingNode(attributeSource, parent as ElementMappingNode, settings, parent.structure);
 
             //AssociationMappingNode
             var associationSource = source as Association;
-            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ClassifierMappingNode, settings, parent.structure);
+            if (associationSource != null) return new AssociationMappingNode(associationSource, parent as ElementMappingNode, settings, parent.structure);
 
             //ClassifierMappingNode
             var classifierSource = source as ElementWrapper;
-            if (classifierSource != null) return new ClassifierMappingNode(classifierSource, parent, settings, parent.structure);
+            if (classifierSource != null) return new ElementMappingNode(classifierSource, parent, settings, parent.structure);
 
             //not a valid source type, return null
             return null;
@@ -152,6 +152,8 @@ namespace EAAddinFramework.Mapping
                 csv.Configuration.RegisterClassMap<CSVMappingRecordMap>();
                 csv.Configuration.Delimiter = ";";
                 mappingRecords = csv.GetRecords<CSVMappingRecord>();
+                var sourceNodes = new Dictionary<string, MP.MappingNode>();
+                var targetNodes = new Dictionary<string, MP.MappingNode>();
                 //now loop the records
                 foreach (var csvRecord in mappingRecords)
                 {
@@ -162,13 +164,39 @@ namespace EAAddinFramework.Mapping
                         continue;
                     }
                     //find the source
-                    var sourceNode = mappingSet.source.findNode(csvRecord.sourcePath.Split('.').ToList());
+                    //first check if we already known the node
+                    MP.MappingNode sourceNode;
+                    if (! sourceNodes.TryGetValue(csvRecord.sourcePath, out sourceNode))
+                    {
+                        //find out if we know a parent node of this node
+                        var parentNode = findParentNode(sourceNodes, csvRecord.sourcePath);
+                        if (parentNode == null)
+                        {
+                            //no parent found, start at the top
+                            parentNode = mappingSet.source;
+                        }
+                        //find the node from the parent
+                        sourceNode = parentNode.findNode(csvRecord.sourcePath.Split('.').ToList());
+                    }
                     if (sourceNode == null)
                     {
-                        EAOutputLogger.log($"Could not find source element corresponding to '{csvRecord.sourcePath}'", 0,LogTypeEnum.warning);
+                        EAOutputLogger.log($"Could not find source element corresponding to '{csvRecord.sourcePath}'", 0, LogTypeEnum.warning);
                     }
                     //find the target
-                    var targetNode = mappingSet.target.findNode(csvRecord.targetPath.Split('.').ToList());
+                    MP.MappingNode targetNode;
+                    //first check if we already known the node
+                    if (!targetNodes.TryGetValue(csvRecord.targetPath, out targetNode))
+                    {
+                        //find out if we know a parent node of this node
+                        var parentNode = findParentNode(targetNodes, csvRecord.targetPath);
+                        if (parentNode == null)
+                        {
+                            //no parent found, start at the top
+                            parentNode = mappingSet.target;
+                        }
+                        //find the node from the parent
+                        targetNode = parentNode.findNode(csvRecord.targetPath.Split('.').ToList());
+                    }
                     if (targetNode == null)
                     {
                         EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);
@@ -183,6 +211,23 @@ namespace EAAddinFramework.Mapping
                     }
                 }
             }
+        }
+        private static MP.MappingNode findParentNode (Dictionary<string, MP.MappingNode> nodes, string nodePath)
+        {
+            //check if exact match
+            if (nodes.ContainsKey(nodePath))
+            {
+                return nodes[nodePath];
+            }
+            //remove one level and search again
+            var nodePathNames = nodePath.Split('.').ToList();
+            if (nodePathNames.Count >= 2)
+            {
+                nodePathNames.Remove(nodePathNames.Last());
+                return findParentNode(nodes, string.Join(".", nodePathNames));
+            }
+            //not found
+            return null;
         }
 		public static void exportMappingSet(MappingSet mappingSet, string filePath)
 		{

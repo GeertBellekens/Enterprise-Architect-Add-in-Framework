@@ -10,8 +10,8 @@ namespace EAAddinFramework.Mapping
     public class AssociationMappingNode : MappingNode
     {
         public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, null, settings, structure) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, parent, settings, structure, null) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceAssociation, parent, settings, structure, virtualOwner) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, parent, settings, structure, null) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceAssociation, parent, settings, structure, virtualOwner) { }
         protected override List<UML.Profiles.TaggedValue> sourceTaggedValues => this.sourceAssociation?.taggedValues.ToList();
 
         internal TSF_EA.Association sourceAssociation
@@ -105,7 +105,7 @@ namespace EAAddinFramework.Mapping
                 var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
                 if (targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
                 {
-                    var childNode = new ClassifierMappingNode(targetElement, this, this.settings, this.structure);
+                    var childNode = new ElementMappingNode(targetElement, this, this.settings, this.structure);
                 }
             }
         }

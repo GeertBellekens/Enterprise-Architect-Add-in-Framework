@@ -12,12 +12,12 @@ namespace EAAddinFramework.Mapping
     /// <summary>
     /// Description of ElementMappingSet.
     /// </summary>
-    public class ClassifierMappingNode : MappingNode
+    public class ElementMappingNode : MappingNode
     {
 
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
-        public ClassifierMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
         protected override List<TaggedValue> sourceTaggedValues
         {
             get
@@ -107,7 +107,7 @@ namespace EAAddinFramework.Mapping
             {
                 if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
-                    var childNode = new ClassifierMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement);
+                    var childNode = new ElementMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement);
                 }
             }
             //create child nodes for each owned association
@@ -129,7 +129,7 @@ namespace EAAddinFramework.Mapping
 
         protected override UMLItem createMappingItem(MappingNode targetNode)
         {
-            var classifierTargetNode = targetNode as ClassifierMappingNode;
+            var classifierTargetNode = targetNode as ElementMappingNode;
             if (classifierTargetNode != null)
             {
                 var trace = this.sourceElement.EAModel.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.sourceElement, "");
@@ -170,7 +170,7 @@ namespace EAAddinFramework.Mapping
                             return nodePath.Last();
                         }
                         //from this node find the attribute
-                        foundNode = nodePath.Last().findNode(new List<string> { mappingPathNames[1] });
+                        foundNode = nodePath.Last().findNode(mappingPathNames);
                         if (foundNode != null)
                         {
                             return foundNode;

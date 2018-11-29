@@ -12,8 +12,8 @@ namespace EAAddinFramework.Mapping
     public class AttributeMappingNode : MappingNode
     {
         public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, null, settings, structure) { }
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, parent, settings, structure, null) { }
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ClassifierMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, parent, settings, structure, null) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner) { }
 
         protected override List<TaggedValue> sourceTaggedValues
         {
@@ -80,7 +80,7 @@ namespace EAAddinFramework.Mapping
                 var attributeType = this.sourceAttribute.type as TSF_EA.ElementWrapper;
                 if (attributeType != null && !this.allChildNodes.Any(x => x.source?.uniqueID == attributeType.uniqueID))
                 {
-                    var childNode = new ClassifierMappingNode(attributeType, this, this.settings, this.structure);
+                    var childNode = new ElementMappingNode(attributeType, this, this.settings, this.structure);
                 }
             }
         }
