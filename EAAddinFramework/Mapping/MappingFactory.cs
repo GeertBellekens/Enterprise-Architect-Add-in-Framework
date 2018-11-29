@@ -155,6 +155,12 @@ namespace EAAddinFramework.Mapping
                 //now loop the records
                 foreach (var csvRecord in mappingRecords)
                 {
+                    if(string.IsNullOrEmpty(csvRecord.sourcePath) 
+                        ||  string.IsNullOrEmpty(csvRecord.targetPath))
+                    {
+                        //don't even bother if not both fields are filled in
+                        continue;
+                    }
                     //find the source
                     var sourceNode = mappingSet.source.findNode(csvRecord.sourcePath.Split('.').ToList());
                     if (sourceNode == null)

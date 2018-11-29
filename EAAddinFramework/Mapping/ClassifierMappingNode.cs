@@ -153,16 +153,28 @@ namespace EAAddinFramework.Mapping
             //if not found then it might be a Class.attribute reference (or Class.Association)
             //So if there are only two names in the mapping path, AND the source node is a package,
             //we check if we can find a class with the given name in the package or sub-packages
-            if (mappingPathNames.Count == 2 && this.source is TSF_EA.Package)
+            if (mappingPathNames.Any() 
+                && mappingPathNames.Count <= 2 
+                && this.source is TSF_EA.Package)
             {
-                var ownedItems = ((TSF_EA.Package)this.sourceElement)
-                        .findOwnedItems(string.Join(".", mappingPathNames)).OfType<TSF_EA.Element>();
-                foreach (var ownedItem in ownedItems)
+                var classes = ((TSF_EA.Package)this.sourceElement)
+                        .findOwnedItems(mappingPathNames[0]).OfType<TSF_EA.Element>();
+                foreach (var classElement in classes)
                 {
-                    var nodePath = this.findPath(ownedItem);
+                    var nodePath = this.findPath(classElement);
                     if (nodePath.Any())
                     {
-                        return nodePath.Last();
+                        if (mappingPathNames.Count == 1)
+                        {
+                            //only className was given, return immediately
+                            return nodePath.Last();
+                        }
+                        //from this node find the attribute
+                        foundNode = nodePath.Last().findNode(new List<string> { mappingPathNames[1] });
+                        if (foundNode != null)
+                        {
+                            return foundNode;
+                        }
                     }
                 }
             }
