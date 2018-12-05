@@ -183,14 +183,15 @@ namespace EAAddinFramework.Mapping
 
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
-            if (this.isReadOnly)
-            {
-                throw new InvalidOperationException($"Element {this.source.name} is read-only");
-            }
             //check if not already mapped
             var mapping = this.mappings.FirstOrDefault(x => x.target.Equals(targetNode));
             if (mapping == null && targetNode.source != null)
             {
+                //check if not read-only
+                if (this.isReadOnly)
+                {
+                    throw new InvalidOperationException($"Element {this.source.name} is read-only");
+                }
                 var mappingItem = this.createMappingItem((MappingNode)targetNode);
                 mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
                 mapping.save();

@@ -474,7 +474,7 @@ namespace EAAddinFramework.SchemaBuilder
                                            + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
                                            + $" where p.Property = '{this.settings.elementTagName}'"
                                            + $"  and p.Value = '{classGUID}'"
-                                           + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+                                           + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
                     }
                     else
                     {
@@ -485,7 +485,7 @@ namespace EAAddinFramework.SchemaBuilder
                                                + "               and c.Stereotype = 'trace'))"
                                                + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
                                                + $"    where ot.ea_guid = '{classGUID}'"
-                                               + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).getPackageTreeIDString()})";
+                                               + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
                     }
                     //get the elements
                     subsetElementsToDelete = new HashSet<Classifier>(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>());

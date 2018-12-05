@@ -158,7 +158,8 @@ namespace EAAddinFramework.Mapping
                 && this.source is TSF_EA.Package)
             {
                 var classes = ((TSF_EA.Package)this.sourceElement)
-                        .findOwnedItems(mappingPathNames[0]).OfType<TSF_EA.Element>();
+                        .findOwnedItems(mappingPathNames[0]).OfType<TSF_EA.ElementWrapper>()
+                        .Where(x => x is TSF_EA.Class || x is TSF_EA.DataType || x is TSF_EA.Enumeration);
                 foreach (var classElement in classes)
                 {
                     var nodePath = this.findPath(classElement);

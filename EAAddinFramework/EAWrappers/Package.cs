@@ -17,6 +17,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private Boolean dontSave = false;
         private string _fqn = string.Empty;
         internal global::EA.Package wrappedPackage { get; set; }
+        internal string _packageTreeIDString;
+        public string packageTreeIDString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_packageTreeIDString))
+                {
+                    _packageTreeIDString = getPackageTreeIDString();
+                }
+                return _packageTreeIDString;
+            }
+            private set
+            {
+                this._packageTreeIDString = value;
+            }
+        }
         public override global::EA.Element WrappedElement
         {
             get
@@ -48,7 +64,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public List<T> getOwnedElementWrappers<T>(string stereotype, bool recursive) where T : ElementWrapper
         {
-            string packageIDString = recursive ? this.getPackageTreeIDString() : this.packageID.ToString();
+            string packageIDString = recursive ? this.packageTreeIDString : this.packageID.ToString();
             string getGetOwnedElements = "select * from t_object o" +
                                         " inner join t_xref x on x.Client = o.ea_guid " +
                                         " where o.Object_Type = '" + typeof(T).Name + "' " +
@@ -290,7 +306,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 if (!this.EAModel.isSecurityEnabled) return true;
                 //security is enabled. We assume the option Require User Locks To Edit is used
                 //Query to check if there are any elements or diagrams that are not locked by this user
-                var treeIDs = this.getPackageTreeIDString();
+                var treeIDs = this.packageTreeIDString;
                 var userID = this.EAModel.currentUserID;
                 var sqlGetUnlockedCount = " select count(total.ea_guid) AS UnlockedCount from "
                                         + " ( "
@@ -598,7 +614,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             string idString = string.Join(",", ids);
             return idString;
         }
-        public List<string> getPackageTreeIDs(List<string> parentIDs = null)
+        private List<string> getPackageTreeIDs(List<string> parentIDs = null)
         {
             List<string> allPackageIDs = new List<string>();
             List<string> subPackageIDs = new List<string>();
@@ -623,7 +639,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return allPackageIDs;
         }
-        public string getPackageTreeIDString()
+        private string getPackageTreeIDString()
         {
             return string.Join(",", this.getPackageTreeIDs());
         }
