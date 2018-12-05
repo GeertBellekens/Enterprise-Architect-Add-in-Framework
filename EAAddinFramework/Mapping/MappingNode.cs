@@ -184,7 +184,9 @@ namespace EAAddinFramework.Mapping
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
             //check if not already mapped
-            var mapping = this.mappings.FirstOrDefault(x => x.target.Equals(targetNode));
+            var mapping = this.mappings.FirstOrDefault(x => x.target != null &&
+                                                        x.target.source != null 
+                                                        && x.target.source.Equals(targetNode?.source));
             if (mapping == null && targetNode.source != null)
             {
                 //check if not read-only
@@ -236,7 +238,7 @@ namespace EAAddinFramework.Mapping
                 (this.parent.source?.uniqueID == uniqueID || this.parent.isChildOf(uniqueID));
         }
 
-        internal string getMappingPathExportString()
+        public string getMappingPathExportString()
         {
             if (this.parent == null)
                 return this.name;
@@ -276,20 +278,6 @@ namespace EAAddinFramework.Mapping
             }
             //return null if nothing found
             return null;
-        }
-        public override bool Equals(object obj)
-        {
-            return this == obj
-                || (obj != null
-                && obj is MappingNode
-                && this.source != null
-                && ((MappingNode)obj).source != null
-                && this.source.Equals(((MappingNode)obj).source));
-
-        }
-        public override int GetHashCode()
-        {
-            return this.source != null ? this.source.GetHashCode() : base.GetHashCode();
         }
     }
 }
