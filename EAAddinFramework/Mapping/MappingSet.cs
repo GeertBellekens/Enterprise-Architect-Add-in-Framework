@@ -20,7 +20,9 @@ namespace EAAddinFramework.Mapping
         public MappingSet(MP.MappingNode source, MP.MappingNode target, MappingSettings settings)
         {
             this.source = source;
+            this.source.mappingSet = this;
             this.target = target;
+            this.target.mappingSet = this;
             this.settings = settings;
             //get the list of mappings
             this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();

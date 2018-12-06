@@ -17,6 +17,7 @@ namespace EAAddinFramework.Mapping
         {
             this.source = source;
             this.parent = parent;
+            this.mappingSet = parent?.mappingSet;
             this.settings = settings;
             this.parent?.addChildNode(this);
             this.structure = structure;
@@ -179,7 +180,7 @@ namespace EAAddinFramework.Mapping
         }
         public bool isReadOnly => this.source != null ? this.source.isReadOnly : false;
 
-       
+        public MP.MappingSet mappingSet { get; set; }
 
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
@@ -197,6 +198,8 @@ namespace EAAddinFramework.Mapping
                 var mappingItem = this.createMappingItem((MappingNode)targetNode);
                 mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
                 mapping.save();
+                //add the mapping tot he mappingset
+                this.mappingSet.addMapping(mapping);
             }
             return mapping;
         }
