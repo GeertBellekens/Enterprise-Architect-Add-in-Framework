@@ -83,7 +83,7 @@ namespace EAAddinFramework.Mapping
                     {
                         //delete the mapping
                         this.mappingLogic.delete();
-                        this.mappingLogic = null;
+                        this._mappingLogic = null;
                     }
                 }
             }

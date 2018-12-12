@@ -18,7 +18,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public override string eaStringValue
         {
             get => this.wrappedTaggedValue.Value;
-            set => this.wrappedTaggedValue.Value = value;
+            set
+            {
+                if (value?.Length > 255)
+                {
+                    throw new ArgumentOutOfRangeException("The provided string for this tagged value is too long");
+                }
+                this.wrappedTaggedValue.Value = value;
+            }
         }
         public override string comment
         {

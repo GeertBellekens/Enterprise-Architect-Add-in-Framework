@@ -37,19 +37,17 @@ namespace EAAddinFramework.Mapping
                 // check via tagged value
                 if (this._mappingLogic == null)
                 {
-                    var mappingtag = this.wrappedConnector.taggedValues
-                        .FirstOrDefault(x => x.name.Equals(MappingFactory.mappingLogicName, StringComparison.InvariantCultureIgnoreCase));
-                    if (mappingtag != null &&
-                        !string.IsNullOrEmpty(mappingtag.tagValue.ToString()))
+                    var logicString = getTaggedValueSafe(MappingFactory.mappingLogicName);
+                    if (!string.IsNullOrEmpty(logicString))
                     {
-                        this._mappingLogic = new MappingLogic(mappingtag.tagValue.ToString());
+                        this._mappingLogic = new MappingLogic(logicString);
                     }
                 }
                 return this._mappingLogic;
             }
             set
             {
-                var mappingElementWrapper = value.mappingElement as ElementWrapper;
+                var mappingElementWrapper = value?.mappingElement as ElementWrapper;
                 if (mappingElementWrapper != null)
                 {
                     this.wrappedConnector.addTaggedValue(MappingFactory.mappingLogicName, mappingElementWrapper.uniqueID);
@@ -58,7 +56,7 @@ namespace EAAddinFramework.Mapping
                 }
                 else
                 {
-                    this.wrappedConnector.addTaggedValue(MappingFactory.mappingLogicName, value.description);
+                    addTaggedValueSafe(MappingFactory.mappingLogicName, value.description);   
                 }
 
             }
@@ -95,11 +93,11 @@ namespace EAAddinFramework.Mapping
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
-                this.wrappedConnector.addTaggedValue(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).getMappingPath()));
+                addTaggedValueSafe(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).getMappingPath()));
             }
             if (this.target.structure == MP.ModelStructure.Message || this.target.isVirtual)
             {
-                this.wrappedConnector.addTaggedValue(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()));
+                addTaggedValueSafe(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()));
             }
             this.wrappedConnector.save();
         }
@@ -107,6 +105,25 @@ namespace EAAddinFramework.Mapping
         public override void deleteWrappedItem()
         {
             this.wrappedConnector?.delete();
+        }
+        private void addTaggedValueSafe(string tagName, string value)
+        {
+            if (value.Length < 255)
+            {
+                this.wrappedConnector.addTaggedValue(tagName, value);
+            }
+            else
+            {
+                this.wrappedConnector.addTaggedValue(tagName, "<memo>", value);
+            }
+        }
+        private string getTaggedValueSafe(string tagName)
+        {
+            //get the tag
+            var tag = this.wrappedConnector.taggedValues
+                        .FirstOrDefault(x => x.name.Equals(tagName, StringComparison.InvariantCultureIgnoreCase));
+            //return string value
+            return tag?.tagValue?.ToString() == "<memo>" ? tag?.comment : tag?.tagValue?.ToString();
         }
 
         #endregion

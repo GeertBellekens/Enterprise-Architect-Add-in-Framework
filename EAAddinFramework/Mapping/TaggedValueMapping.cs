@@ -46,12 +46,12 @@ namespace EAAddinFramework.Mapping
             }
             set
             {
-                string logicString = value.description;
-                if (value.mappingElement != null)
+                this._mappingLogic = (MappingLogic)value;
+                string logicString = this._mappingLogic?.description;
+                if (this._mappingLogic?.mappingElement != null)
                 {
                     logicString = value.mappingElement.uniqueID;
                 }
-
                 this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
             }
         }

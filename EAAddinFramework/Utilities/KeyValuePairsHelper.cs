@@ -71,7 +71,7 @@ namespace EAAddinFramework.Utilities
 					}
 				}
 			}
-			//if nothing found then weadd it
+			//if nothing found then we add it
 			keyValuePairs.Add(key + "=" + value);
 			return string.Join(";",keyValuePairs);
 		}

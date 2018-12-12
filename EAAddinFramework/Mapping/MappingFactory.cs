@@ -43,7 +43,12 @@ namespace EAAddinFramework.Mapping
             var taggedValue = target ? tagOwner.getTaggedValue(mappingTargetPathName) : tagOwner.getTaggedValue(mappingSourcePathName);
             if (taggedValue != null)
             {
-                mappingPath = taggedValue.eaStringValue.Split('.').ToList();
+                var tagValueString = taggedValue.eaStringValue;
+                if (tagValueString == "<memo>")
+                {
+                    tagValueString = taggedValue.comment;
+                }
+                mappingPath = tagValueString.Split('.').ToList();
             }
             return mappingPath;
         }
@@ -159,15 +164,17 @@ namespace EAAddinFramework.Mapping
                 foreach (var csvRecord in mappingRecords)
                 {
                     if(string.IsNullOrEmpty(csvRecord.sourcePath) 
-                        ||  string.IsNullOrEmpty(csvRecord.targetPath))
+                        || ( string.IsNullOrEmpty(csvRecord.targetPath) 
+                            && string.IsNullOrEmpty(csvRecord.mappingLogic)))
                     {
                         //don't even bother if not both fields are filled in
                         continue;
                     }
                     //find the source
                     //first check if we already known the node
-                    MP.MappingNode sourceNode;
-                    if (! sourceNodes.TryGetValue(csvRecord.sourcePath, out sourceNode))
+                    MP.MappingNode sourceNode = null;
+                    if  (!string.IsNullOrEmpty(csvRecord.sourcePath) 
+                        && !sourceNodes.TryGetValue(csvRecord.sourcePath, out sourceNode))
                     {
                         //find out if we know a parent node of this node
                         var parentNode = findParentNode(sourceNodes, csvRecord.sourcePath);
@@ -182,11 +189,14 @@ namespace EAAddinFramework.Mapping
                     if (sourceNode == null)
                     {
                         EAOutputLogger.log($"Could not find source element corresponding to '{csvRecord.sourcePath}'", 0, LogTypeEnum.warning);
+                        //don't bother going any further
+                        continue;
                     }
                     //find the target
-                    MP.MappingNode targetNode;
+                    MP.MappingNode targetNode = null;
                     //first check if we already known the node
-                    if (!targetNodes.TryGetValue(csvRecord.targetPath, out targetNode))
+                    if (!string.IsNullOrEmpty(csvRecord.targetPath)
+                        && !targetNodes.TryGetValue(csvRecord.targetPath, out targetNode))
                     {
                         //find out if we know a parent node of this node
                         var parentNode = findParentNode(targetNodes, csvRecord.targetPath);
@@ -197,18 +207,29 @@ namespace EAAddinFramework.Mapping
                         }
                         //find the node from the parent
                         targetNode = parentNode.findNode(csvRecord.targetPath.Split('.').ToList());
+                        if (targetNode == null)
+                        {
+                            EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);
+                        }
                     }
-                    if (targetNode == null)
-                    {
-                        EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);
-                    }
+
                     //if we found both then we map them
-                    if(sourceNode != null && targetNode != null )
+                    if(sourceNode != null  )
                     {
-                        var newMapping = sourceNode.mapTo(targetNode);
-                        newMapping.mappingLogicDescription = csvRecord.mappingLogic;
-                        newMapping.save();
-                        EAOutputLogger.log($"Mapping created from '{csvRecord.sourcePath}' to '{csvRecord.targetPath}'", 0);
+                        if (targetNode != null)
+                        {
+                            var newMapping = sourceNode.mapTo(targetNode);
+                            newMapping.mappingLogicDescription = csvRecord.mappingLogic;
+                            newMapping.save();
+                            EAOutputLogger.log($"Mapping created from '{csvRecord.sourcePath}' to '{csvRecord.targetPath}'", 0);
+                        }
+                        else
+                        {
+                            var newMapping = sourceNode.createEmptyMapping();
+                            newMapping.mappingLogicDescription = csvRecord.mappingLogic.Replace("\n", Environment.NewLine);
+                            newMapping.save();
+                            EAOutputLogger.log($"Empty mapping created for '{csvRecord.sourcePath}' ", 0);
+                        }
                     }
                 }
             }

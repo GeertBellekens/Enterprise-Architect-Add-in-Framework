@@ -204,14 +204,14 @@ namespace EAAddinFramework.Mapping
             return mapping;
         }
 
-        public MP.Mapping createEmptyMapping(MP.MappingNode targetRootNode)
+        public MP.Mapping createEmptyMapping()
         {
-            var newMapping = this.mapTo(targetRootNode);
+            var newMapping = this.mapTo(this.mappingSet.target);
             newMapping.isEmpty = true;
             newMapping.mappingLogicDescription = "Empty mapping";
             newMapping.save();
             //remove from target node
-            targetRootNode.removeMapping(newMapping);
+            this.mappingSet.target.removeMapping(newMapping);
             return newMapping;
         }
 
