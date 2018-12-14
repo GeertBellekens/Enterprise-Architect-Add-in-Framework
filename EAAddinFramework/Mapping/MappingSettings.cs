@@ -43,7 +43,11 @@ namespace EAAddinFramework.Mapping
 		/// the name of the output log
 		/// </summary>
         string outputName {get;set;}
-        
+
+        /// <summary>
+        /// the name of the output log
+        /// </summary>
+        string contextQuery { get; set; }
     }
 		
 }

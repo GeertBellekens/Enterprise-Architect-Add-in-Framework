@@ -29,6 +29,19 @@ namespace EAAddinFramework.Mapping
             //map source to target
             this.source.mapTo(target);
         }
+        private List<ElementWrapper> _contexts;
+        public List<ElementWrapper> contexts
+        {
+            get
+            {
+                if (_contexts == null)
+                {
+                    _contexts = this._source.model?.getElementWrappersByQuery(
+                        this.settings.contextQuery.Replace("#ea_guid#",this.source.source?.uniqueID));
+                }
+                return _contexts;
+            }
+        }
 
 
         #region MappingSet implementation

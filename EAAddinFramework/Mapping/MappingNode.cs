@@ -23,7 +23,7 @@ namespace EAAddinFramework.Mapping
             this.structure = structure;
             this.virtualOwner = virtualOwner;
         }
-
+        public TSF_EA.Model model => ((TSF_EA.Element)this.source)?.EAModel;
         public virtual string name => this._source.name;
         public virtual string displayName => this.name;
         public MappingSettings settings { get; set; }
@@ -208,7 +208,7 @@ namespace EAAddinFramework.Mapping
         {
             var newMapping = this.mapTo(this.mappingSet.target);
             newMapping.isEmpty = true;
-            newMapping.mappingLogicDescription = "Empty mapping";
+            newMapping.addMappingLogic(new MappingLogic("Empty mapping"));
             newMapping.save();
             //remove from target node
             this.mappingSet.target.removeMapping(newMapping);

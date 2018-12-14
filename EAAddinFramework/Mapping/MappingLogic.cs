@@ -1,29 +1,36 @@
-﻿
-using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using MP = MappingFramework;
-using UML=TSF.UmlToolingFramework.UML;
-using TSF.UmlToolingFramework.Wrappers.EA;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Mapping
 {
-	/// <summary>
-	/// Description of MappingLogic.
-	/// </summary>
-	public class MappingLogic:MP.MappingLogic
+    /// <summary>
+    /// Description of MappingLogic.
+    /// </summary>
+    public class MappingLogic:MP.MappingLogic
 	{
 		private string _description;
-		internal ElementWrapper _wrappedElement;
+		internal TSF_EA.ElementWrapper _wrappedElement;
+        private TSF_EA.ElementWrapper _context;
 
 		public UML.Classes.Kernel.Element mappingElement 
 		{
 			get{return _wrappedElement;}
-			set{this._wrappedElement = value as ElementWrapper;}
+			set{this._wrappedElement = value as TSF_EA.ElementWrapper; }
 		}
-		public MappingLogic(string logicDescription)
+        private MappingLogic(TSF_EA.ElementWrapper context)
+        {
+            this._context = context;
+        }
+		public MappingLogic(string logicDescription, TSF_EA.ElementWrapper context = null) :this(context)
 		{
 			_description = logicDescription;
 		}
-		public MappingLogic(ElementWrapper wrappedElement)
+		public MappingLogic(TSF_EA.ElementWrapper wrappedElement, TSF_EA.ElementWrapper context):this(context)
 		{
 			this.mappingElement = wrappedElement;
 		}
@@ -50,11 +57,72 @@ namespace EAAddinFramework.Mapping
 			}
 		}
 
+        public NamedElement context
+        {
+            get
+            {
+                return this._context;
+            }
+            set
+            {
+                this._context = (TSF_EA.ElementWrapper)value;
+            }
+        }
+
         public void delete()
         {
             //delete the element if present
             this.mappingElement?.delete();
         }
+        public string logicString => this.context?.uniqueID + this.description;
+        
+        public static string getMappingLogicString(List<MappingLogic> mappingLogics)
+        {
+            if (!mappingLogics.Any())
+            {
+                return string.Empty;
+            }
+            string logicString = string.Empty;
+            var xdoc = new XDocument();
+            var bodyNode = new XElement("mappingLogics");
+            xdoc.Add(bodyNode);
+            foreach(var mappingLogic in mappingLogics)
+            {
+                bodyNode.Add(new XElement("mappingLogic",
+                                    new XElement("context", mappingLogic.context?.uniqueID),
+                                    new XElement("description", mappingLogic.description))
+                                    );
+            }
+            return xdoc.ToString();
+        }
+        public static List<MappingLogic> getMappingLogicsFromString(string logicsString, TSF_EA.Model model)
+        {
+            var mappingLogics = new List<MappingLogic>();
+            if (!string.IsNullOrEmpty(logicsString))
+            {
+                try
+                {
+                    XDocument xdoc = XDocument.Load(new System.IO.StringReader(logicsString));
+                    foreach (var logicNode in xdoc.Descendants("mappingLogic"))
+                    {
+                        string contextID = logicNode.Elements("context").FirstOrDefault()?.Value;
+                        TSF_EA.ElementWrapper contextElement = model.getElementWrapperByGUID(contextID);
+                        string description = logicNode.Elements("description").FirstOrDefault()?.Value;
+                        if (!string.IsNullOrEmpty(description))
+                        {
+                            mappingLogics.Add(new MappingLogic(description, contextElement));
+                        }
+                    }
+                }
+                catch (System.Xml.XmlException)
+                {
+                    //no xml found, just plain text
+                    mappingLogics.Add(new MappingLogic(logicsString));
+                }
+            }
+            return mappingLogics;
+        }
+
 
         #endregion
     }

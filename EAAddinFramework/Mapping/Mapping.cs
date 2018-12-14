@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MP = MappingFramework;
 
 namespace EAAddinFramework.Mapping
@@ -10,7 +12,6 @@ namespace EAAddinFramework.Mapping
     {
         internal MappingNode _source;
         internal MappingNode _target;
-        internal MappingLogic _mappingLogic;
         public Mapping(MappingNode sourceEnd, MappingNode targetEnd)
         {
             this._source = sourceEnd;
@@ -18,9 +19,9 @@ namespace EAAddinFramework.Mapping
             this._target = targetEnd;
             this._target.addMapping(this);
         }
-        public Mapping(MappingNode sourceEnd, MappingNode targetEnd, MappingLogic logic) : this(sourceEnd, targetEnd)
+        public Mapping(MappingNode sourceEnd, MappingNode targetEnd, IEnumerable<MappingLogic> logics) : this(sourceEnd, targetEnd)
         {
-            this._mappingLogic = logic;
+            this.mappingLogics = logics;
         }
         #region Mapping implementation
 
@@ -59,39 +60,76 @@ namespace EAAddinFramework.Mapping
             this.deleteWrappedItem();
         }
 
-        public abstract MP.MappingLogic mappingLogic { get; set; }
-        public string mappingLogicDescription
+        public void addMappingLogic(MP.MappingLogic mappingLogic)
         {
-            get => this.mappingLogic != null ? this.mappingLogic.description : string.Empty;
+            this.EAMappingLogics.Add((MappingLogic)mappingLogic);
+        }
+
+        public void removeMappingLogic(MP.MappingLogic mappingLogic)
+        {
+            this.EAMappingLogics.Remove((MappingLogic)mappingLogic);
+        }
+
+        private List<MappingLogic> _EAMappingLogics;
+
+        protected List<MappingLogic> EAMappingLogics
+        {
+            get
+            {
+                if (this._EAMappingLogics == null)
+                {
+                    this._EAMappingLogics = this.loadMappingLogics();
+                }
+                return this._EAMappingLogics;
+            }
             set
             {
-                if (this.mappingLogic == null )
-                {
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        this.mappingLogic = new MappingLogic(value);
-                    }
-                }
-                else
-                {
-                    if(!string.IsNullOrEmpty(value))
-                    {
-                        //set the value
-                        this.mappingLogic.description = value;
-                    }
-                    else
-                    {
-                        //delete the mapping
-                        this.mappingLogic.delete();
-                        this._mappingLogic = null;
-                    }
-                }
+                this._EAMappingLogics = value;
             }
         }
+
+        protected abstract List<MappingLogic> loadMappingLogics();
+
+        public IEnumerable<MP.MappingLogic> mappingLogics
+        {
+            get => this.EAMappingLogics;
+            set => this.EAMappingLogics = value.Cast<MappingLogic>().ToList();
+        }
+
+        //public string mappingLogicDescription
+        //{
+        //    get => this.mappingLogic != null ? this.mappingLogic.description : string.Empty;
+        //    set
+        //    {
+        //        if (this.mappingLogic == null )
+        //        {
+        //            if (!string.IsNullOrEmpty(value))
+        //            {
+        //                this.mappingLogic = new MappingLogic(value);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if(!string.IsNullOrEmpty(value))
+        //            {
+        //                //set the value
+        //                this.mappingLogic.description = value;
+        //            }
+        //            else
+        //            {
+        //                //delete the mapping
+        //                this.mappingLogic.delete();
+        //                this._mappingLogic = null;
+        //            }
+        //        }
+        //    }
+        //}
 
         public abstract bool isEmpty { get; set; }
 
         public bool isReadOnly => this.source.isReadOnly;
+
+        public string defaultMappingLogicDescription { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
     }
 }

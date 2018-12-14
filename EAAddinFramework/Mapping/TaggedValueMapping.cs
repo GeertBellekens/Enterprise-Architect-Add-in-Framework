@@ -1,5 +1,6 @@
 ﻿using EAAddinFramework.Utilities;
 using System;
+using System.Collections.Generic;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using MP = MappingFramework;
 
@@ -17,44 +18,45 @@ namespace EAAddinFramework.Mapping
         }
 
         #region implemented abstract members of Mapping
-        public override MP.MappingLogic mappingLogic
-        {
-            get
-            {
-                if (this._mappingLogic == null)
-                {
-                    Guid mappingElementGUID;
-                    string mappingLogicString = "";
-                    if (this.wrappedTaggedValue != null)
-                    {
-                        mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
-                    }
-                    if (Guid.TryParse(mappingLogicString, out mappingElementGUID))
-                    {
-                        ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;
-                        if (mappingLogicElement != null)
-                        {
-                            this._mappingLogic = new MappingLogic(mappingLogicElement);
-                        }
-                    }
-                    if (this._mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
-                    {
-                        this._mappingLogic = new MappingLogic(mappingLogicString);
-                    }
-                }
-                return this._mappingLogic;
-            }
-            set
-            {
-                this._mappingLogic = (MappingLogic)value;
-                string logicString = this._mappingLogic?.description;
-                if (this._mappingLogic?.mappingElement != null)
-                {
-                    logicString = value.mappingElement.uniqueID;
-                }
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
-            }
-        }
+        //public override MP.MappingLogic mappingLogic
+        //{
+        //    get
+        //    {
+        //        if (this._mappingLogic == null)
+        //        {
+        //            Guid mappingElementGUID;
+        //            string mappingLogicString = "";
+        //            if (this.wrappedTaggedValue != null)
+        //            {
+        //                mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
+        //            }
+        //            if (Guid.TryParse(mappingLogicString, out mappingElementGUID))
+        //            {
+        //                ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;
+        //                if (mappingLogicElement != null)
+        //                {
+        //                    this._mappingLogic = new MappingLogic(mappingLogicElement);
+        //                }
+        //            }
+        //            if (this._mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
+        //            {
+        //                this._mappingLogic = new MappingLogic(mappingLogicString);
+        //            }
+        //        }
+        //        return this._mappingLogic;
+        //    }
+        //    set
+        //    {
+        //        this._mappingLogic = (MappingLogic)value;
+        //        string logicString = this._mappingLogic?.description;
+        //        if (this._mappingLogic?.mappingElement != null)
+        //        {
+        //            logicString = value.mappingElement.uniqueID;
+        //        }
+
+        //        this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
+        //    }
+        //}
 
         private bool? _isEmpty = null;
         public override bool isEmpty
@@ -79,10 +81,7 @@ namespace EAAddinFramework.Mapping
 
         protected override void saveMe()
         {
-            if (this._mappingLogic != null)
-            {
-                this.mappingLogic = this._mappingLogic; //make sure to set the mapping logic value correctly
-            }
+            this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, MappingLogic.getMappingLogicString(this.EAMappingLogics), this.wrappedTaggedValue.comment);
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
@@ -98,6 +97,12 @@ namespace EAAddinFramework.Mapping
         public override void deleteWrappedItem()
         {
             this.wrappedTaggedValue?.delete();
+        }
+
+        protected override List<MappingLogic> loadMappingLogics()
+        {
+            var mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
+            return MappingLogic.getMappingLogicsFromString(mappingLogicString, this.wrappedTaggedValue.model);
         }
 
         #endregion
