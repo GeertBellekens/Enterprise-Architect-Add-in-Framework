@@ -522,8 +522,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             foreach (TaggedValue taggedValue in sourceElement.taggedValues)
             {
-                this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue);
-
+                this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue,taggedValue.comment);
             }
         }
 

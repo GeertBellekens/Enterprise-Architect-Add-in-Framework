@@ -704,14 +704,17 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="target">the target element</param>
         public void copyTaggedValues(TSF_EA.Element source, TSF_EA.Element target)
         {
+            //build a dictionary of tagged value pairs
+            var matchedPairs = new Dictionary<TSF_EA.TaggedValue, TSF_EA.TaggedValue>();
+            //get a copy of the list of target tagged values
+            var targetTaggedValues = target.taggedValues.OfType<TSF_EA.TaggedValue>().ToList();
             //copy tagged values
             foreach (TSF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
             {
                 bool updateTaggedValue = true;
+                var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);
                 if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name))
                 {
-                    TSF_EA.TaggedValue targetTaggedValue =
-                        target.getTaggedValue(sourceTaggedValue.name);
                     if (targetTaggedValue != null &&
                         targetTaggedValue.eaStringValue != string.Empty)
                     {
@@ -721,10 +724,75 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 if (updateTaggedValue)
                 {
-                    target.addTaggedValue(sourceTaggedValue.name,
-                        sourceTaggedValue.eaStringValue, sourceTaggedValue.comment);
+                    if (targetTaggedValue != null)
+                    {
+                        //check if neededs to be updated
+                        if (targetTaggedValue.eaStringValue != sourceTaggedValue.eaStringValue
+                            && targetTaggedValue.comment != sourceTaggedValue.comment)
+                        {
+                            targetTaggedValue.eaStringValue = sourceTaggedValue.eaStringValue;
+                            targetTaggedValue.comment = sourceTaggedValue.comment;
+                            targetTaggedValue.save();
+                        }
+                    }
+                    else
+                    {
+                        //create new tagged value
+                        target.addTaggedValue(sourceTaggedValue.name,sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
+                    }
                 }
             }
+        }
+        private TSF_EA.TaggedValue popTargetTaggedValue(List<TSF_EA.TaggedValue> targetTaggedValues, TSF_EA.TaggedValue sourceTaggedValue)
+        {
+            TSF_EA.TaggedValue targetTaggedValue = null;
+            var nameMatches = targetTaggedValues.Where(x => x.name.Equals(sourceTaggedValue.name, StringComparison.InvariantCultureIgnoreCase));
+            if (!nameMatches.Any())
+            {
+                return null;
+            }
+            //found some matches by name
+            //check if only one found
+            if (nameMatches.Count() == 1)
+            {
+                targetTaggedValue = nameMatches.First();
+            }
+            if (targetTaggedValue == null)
+            {
+                //multiple found, check if any of them as the same value
+                var valueMatches = nameMatches.Where(x => x.eaStringValue == sourceTaggedValue.eaStringValue);
+                if (! valueMatches.Any())
+                {
+                    targetTaggedValue = nameMatches.First();
+                }
+                else 
+                {
+                    if (valueMatches.Count() == 1)
+                    {
+                        targetTaggedValue = valueMatches.First();
+                    }
+                    else
+                    {
+                        //multiple value matches, check for comments
+                        var commentMatches = valueMatches.Where(x => x.comment == sourceTaggedValue.comment);
+                        if (!commentMatches.Any())
+                        {
+                            targetTaggedValue = valueMatches.First();
+                        }
+                        else
+                        {
+                            targetTaggedValue = commentMatches.First();
+                        }
+                    }
+                }
+            }
+            //pop from the list of target tagged values
+            if (targetTaggedValue != null)
+            {
+                targetTaggedValues.Remove(targetTaggedValue);
+            }
+            //return
+            return targetTaggedValue;
         }
     }
 }
