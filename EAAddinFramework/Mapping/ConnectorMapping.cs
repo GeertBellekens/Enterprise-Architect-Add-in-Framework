@@ -19,49 +19,7 @@ namespace EAAddinFramework.Mapping
 
         #region implemented abstract members of Mapping
 
-        //public override MP.MappingLogic mappingLogic
-        //{
-        //    get
-        //    {
-        //        //check via linked element
-        //        //TODO: implement in a faster way if mapping via elements is supported again
-        //        //if (this._mappingLogic == null)
-        //        //{
-        //        //    //check links to notes or constraints
-        //        //    //TODO: make a difference between regular notes and mapping logic?
-        //        //    var connectedElement = this.wrappedConnector.getLinkedElements().OfType<ElementWrapper>().FirstOrDefault(x => x.notes.Length > 0);
-        //        //    if (connectedElement != null)
-        //        //    {
-        //        //        this._mappingLogic = new MappingLogic(connectedElement);
-        //        //    }
-        //        //}
-        //        // check via tagged value
-        //        if (this._mappingLogic == null)
-        //        {
-        //            var logicString = getTaggedValueSafe(MappingFactory.mappingLogicName);
-        //            if (!string.IsNullOrEmpty(logicString))
-        //            {
-        //                this._mappingLogic = new MappingLogic(logicString);
-        //            }
-        //        }
-        //        return this._mappingLogic;
-        //    }
-        //    set
-        //    {
-        //        var mappingElementWrapper = value?.mappingElement as ElementWrapper;
-        //        if (mappingElementWrapper != null)
-        //        {
-        //            this.wrappedConnector.addTaggedValue(MappingFactory.mappingLogicName, mappingElementWrapper.uniqueID);
-        //            //TODO get this working for at least notes and constraints, for now we go with a tagged value
-        //            // this.wrappedConnector.addLinkedElement(mappingElementWrapper);
-        //        }
-        //        else
-        //        {
-        //            addTaggedValueSafe(MappingFactory.mappingLogicName, value.description);   
-        //        }
 
-        //    }
-        //}
         private bool? _isEmpty = null;
         public override bool isEmpty
         {

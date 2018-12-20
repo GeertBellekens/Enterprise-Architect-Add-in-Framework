@@ -252,14 +252,14 @@ namespace EAAddinFramework.Mapping
                         if (targetNode != null)
                         {
                             var newMapping = sourceNode.mapTo(targetNode);
-                            newMapping.mappingLogics = createMappingLogicsFromCSVString(csvRecord.mappingLogic, mappingSet.contexts, model);
+                            newMapping.mappingLogics = createMappingLogicsFromCSVString(csvRecord.mappingLogic, mappingSet.EAContexts, model);
                             newMapping.save();
                             EAOutputLogger.log($"Mapping created from '{csvRecord.sourcePath}' to '{csvRecord.targetPath}'", 0);
                         }
                         else
                         {
                             var newMapping = sourceNode.createEmptyMapping();
-                            newMapping.mappingLogics = createMappingLogicsFromCSVString(csvRecord.mappingLogic, mappingSet.contexts, model);
+                            newMapping.mappingLogics = createMappingLogicsFromCSVString(csvRecord.mappingLogic, mappingSet.EAContexts, model);
                             newMapping.save();
                             EAOutputLogger.log($"Empty mapping created for '{csvRecord.sourcePath}' ", 0);
                         }

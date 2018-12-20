@@ -87,6 +87,25 @@ namespace EAAddinFramework.Mapping
                 this._EAMappingLogics = value;
             }
         }
+        private void validateContexts()
+        {
+            var updated = false;
+            foreach (var mappingLogic in this._EAMappingLogics)
+            {
+                //if the contex it not allowed in the mappingset then remove it
+                if (mappingLogic.context != null && 
+                    ! this.source.mappingSet.contexts.Any(x => x.uniqueID == mappingLogic.context.uniqueID))
+                {
+                    mappingLogic.context = null;
+                    updated = true;
+                }
+            }
+            if (updated)
+            {
+                //save if any of the contexts have been cleared.
+                this.save();
+            }
+        }
 
         protected abstract List<MappingLogic> loadMappingLogics();
 
@@ -96,40 +115,11 @@ namespace EAAddinFramework.Mapping
             set => this.EAMappingLogics = value.Cast<MappingLogic>().ToList();
         }
 
-        //public string mappingLogicDescription
-        //{
-        //    get => this.mappingLogic != null ? this.mappingLogic.description : string.Empty;
-        //    set
-        //    {
-        //        if (this.mappingLogic == null )
-        //        {
-        //            if (!string.IsNullOrEmpty(value))
-        //            {
-        //                this.mappingLogic = new MappingLogic(value);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if(!string.IsNullOrEmpty(value))
-        //            {
-        //                //set the value
-        //                this.mappingLogic.description = value;
-        //            }
-        //            else
-        //            {
-        //                //delete the mapping
-        //                this.mappingLogic.delete();
-        //                this._mappingLogic = null;
-        //            }
-        //        }
-        //    }
-        //}
 
         public abstract bool isEmpty { get; set; }
 
         public bool isReadOnly => this.source.isReadOnly;
 
-        public string defaultMappingLogicDescription { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
     }
 }

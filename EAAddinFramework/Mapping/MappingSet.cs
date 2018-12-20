@@ -5,6 +5,7 @@ using MP = MappingFramework;
 using UML = TSF.UmlToolingFramework.UML;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Linq;
+using TSF.UmlToolingFramework.UML.Classes.Kernel;
 
 namespace EAAddinFramework.Mapping
 {
@@ -30,7 +31,7 @@ namespace EAAddinFramework.Mapping
             this.source.mapTo(target);
         }
         private List<ElementWrapper> _contexts;
-        public List<ElementWrapper> contexts
+        public List<ElementWrapper> EAContexts
         {
             get
             {
@@ -68,6 +69,8 @@ namespace EAAddinFramework.Mapping
             get { return this._target; }
             set { this._target = (MappingNode)value; }
         }
+
+        public IEnumerable<NamedElement> contexts => this.EAContexts;
 
         public void addMapping(MP.Mapping mapping)
         {
