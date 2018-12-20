@@ -308,7 +308,7 @@ namespace EAAddinFramework.Mapping
                         var contexTextName = line.Substring(2, line.Length - 4);
                         //get the context from the list
                         var newContext = contexts.FirstOrDefault(x => x.name.Equals(contexTextName, StringComparison.InvariantCultureIgnoreCase));
-                        if (newContext == null)
+                        if (newContext == null && contexTextName.Equals("Default", StringComparison.CurrentCultureIgnoreCase))
                         {
                             EAOutputLogger.log($"Could not find context with name '{contexTextName}'", 0, LogTypeEnum.warning);
                         }
@@ -405,9 +405,10 @@ namespace EAAddinFramework.Mapping
                 {
                     mappingLogicString += Environment.NewLine;
                 }
-                if (mappingLogic.context != null)
+                if (mapping.mappingLogics.Any(x => x.context != null))
                 {
-                    mappingLogicString += $"--{mappingLogic.context.name}--{Environment.NewLine}";
+                    var contextName = mappingLogic.context?.name ?? "Default";
+                    mappingLogicString += $"--{contextName}--{Environment.NewLine}";
                 }
                 mappingLogicString += mappingLogic.description;
             }
