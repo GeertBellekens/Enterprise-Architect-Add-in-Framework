@@ -130,10 +130,10 @@ namespace EAAddinFramework.SchemaBuilder
 				}
 			}
 			((UTF_EA.Element)this.subSetLiteral).save();
-			//copy tagged values
-			((UTF_EA.Element)this.subSetLiteral).copyTaggedValues((UTF_EA.Element)this.sourceLiteral);
-			//add tagged value with reference to source literal value
-			((UTF_EA.Element)this.subSetLiteral).addTaggedValue(this.owner.owner.settings.sourceAttributeTagName,((UTF_EA.Element)this.sourceLiteral).guid);
+            //copy tagged values
+            ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceLiteral, (UTF_EA.Element)this.subSetLiteral);
+            //add tagged value with reference to source literal value
+            ((UTF_EA.Element)this.subSetLiteral).addTaggedValue(this.owner.owner.settings.sourceAttributeTagName,((UTF_EA.Element)this.sourceLiteral).guid);
 
 		}
 	}
