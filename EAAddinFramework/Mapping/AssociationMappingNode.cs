@@ -103,7 +103,8 @@ namespace EAAddinFramework.Mapping
             {
                 //create mapping node for target element
                 var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
-                if (targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
+                if (!existAsParent(targetElement)
+                    && targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
                 {
                     var childNode = new ElementMappingNode(targetElement, this, this.settings, this.structure);
                 }

@@ -48,6 +48,11 @@ namespace EAAddinFramework.Mapping
         {
             return string.Join(".", this.getMappingPath());
         }
+        protected bool existAsParent(UML.Extended.UMLItem umlItem)
+        {
+            return umlItem != null 
+                && ((MappingNode)this.parent)?.getMappingPath().Contains(umlItem.uniqueID) == true;
+        }
         public MappingNode createMappingNode(List<string> mappingPath)
         {
             //if the path is empty we return this node

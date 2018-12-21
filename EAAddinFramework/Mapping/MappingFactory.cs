@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using CSV = CsvHelper;
 using MP = MappingFramework;
@@ -55,14 +56,22 @@ namespace EAAddinFramework.Mapping
         private static List<string> getMappingPath(TaggedValue mappingTag, bool target)
         {
             var mappingPath = new List<String>();
-            var pathString = target ?
-                KeyValuePairsHelper.getValueForKey(mappingTargetPathName, mappingTag.comment) :
-                KeyValuePairsHelper.getValueForKey(mappingSourcePathName, mappingTag.comment);
-            if (!string.IsNullOrEmpty(pathString))
+            try
             {
-                mappingPath = pathString.Split('.').ToList();
+                //read from xml 
+                var xdoc = XDocument.Load(new StringReader(mappingTag.comment));
+                var pathString = target ?
+                    xdoc.Descendants(mappingTargetPathName).FirstOrDefault()?.Value :
+                    xdoc.Descendants(mappingSourcePathName).FirstOrDefault()?.Value;
+                if (!string.IsNullOrEmpty(pathString))
+                {
+                    mappingPath = pathString.Split('.').ToList();
+                }
             }
-
+            catch (System.Xml.XmlException)
+            {
+                //parse error. empty mapping path is returned
+            }
             return mappingPath;
         }
 

@@ -80,6 +80,8 @@ namespace EAAddinFramework.Mapping
                 {
                     this._EAMappingLogics = this.loadMappingLogics();
                 }
+                //make sure all the contexts are valid
+                this.validateContexts();
                 return this._EAMappingLogics;
             }
             set

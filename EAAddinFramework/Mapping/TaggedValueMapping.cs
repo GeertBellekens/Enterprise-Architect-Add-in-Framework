@@ -1,6 +1,5 @@
-﻿using EAAddinFramework.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Xml.Linq;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using MP = MappingFramework;
 
@@ -12,85 +11,54 @@ namespace EAAddinFramework.Mapping
     public class TaggedValueMapping : Mapping
     {
         internal TaggedValue wrappedTaggedValue { get; private set; }
+        private XDocument _xdoc = null;
         public TaggedValueMapping(TaggedValue wrappedTaggedValue, MappingNode source, MappingNode target) : base(source, target)
         {
             this.wrappedTaggedValue = wrappedTaggedValue;
         }
-
-        #region implemented abstract members of Mapping
-        //public override MP.MappingLogic mappingLogic
-        //{
-        //    get
-        //    {
-        //        if (this._mappingLogic == null)
-        //        {
-        //            Guid mappingElementGUID;
-        //            string mappingLogicString = "";
-        //            if (this.wrappedTaggedValue != null)
-        //            {
-        //                mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
-        //            }
-        //            if (Guid.TryParse(mappingLogicString, out mappingElementGUID))
-        //            {
-        //                ElementWrapper mappingLogicElement = this.wrappedTaggedValue.model.getElementByGUID(mappingLogicString) as ElementWrapper;
-        //                if (mappingLogicElement != null)
-        //                {
-        //                    this._mappingLogic = new MappingLogic(mappingLogicElement);
-        //                }
-        //            }
-        //            if (this._mappingLogic == null && !string.IsNullOrEmpty(mappingLogicString))
-        //            {
-        //                this._mappingLogic = new MappingLogic(mappingLogicString);
-        //            }
-        //        }
-        //        return this._mappingLogic;
-        //    }
-        //    set
-        //    {
-        //        this._mappingLogic = (MappingLogic)value;
-        //        string logicString = this._mappingLogic?.description;
-        //        if (this._mappingLogic?.mappingElement != null)
-        //        {
-        //            logicString = value.mappingElement.uniqueID;
-        //        }
-
-        //        this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, logicString, this.wrappedTaggedValue.comment);
-        //    }
-        //}
-
-        private bool? _isEmpty = null;
-        public override bool isEmpty
+        private XDocument xdoc
         {
             get
             {
-                if (!this._isEmpty.HasValue)
+                if (this._xdoc == null)
                 {
-                    if (this.wrappedTaggedValue != null)
+                    try
                     {
-                        var isEmptyString = KeyValuePairsHelper.getValueForKey(MappingFactory.isEmptyMappingName, this.wrappedTaggedValue.comment);
-                        this._isEmpty = "True".Equals(isEmptyString, StringComparison.InvariantCultureIgnoreCase);
+                        this._xdoc = XDocument.Load(new System.IO.StringReader(this.wrappedTaggedValue.comment));
+                    }
+                    catch (System.Xml.XmlException)
+                    {
+                        this._xdoc = new XDocument();
                     }
                 }
-                return this._isEmpty.Value;
+                return this._xdoc;
             }
-            set
-            {
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.isEmptyMappingName, value.ToString(), this.wrappedTaggedValue.comment);
-            }
+            set => this._xdoc = value;
         }
+
+        #region implemented abstract members of Mapping
+
+        public override bool isEmpty { get; set; } = false;
 
         protected override void saveMe()
         {
-            this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingLogicName, MappingLogic.getMappingLogicString(this.EAMappingLogics), this.wrappedTaggedValue.comment);
+            //create XDocument 
+            this.xdoc = new XDocument();
+            var bodyNode = new XElement("mapping");
+            this.xdoc.Add(bodyNode);
+            bodyNode.Add(MappingLogic.getMappingLogicElement(this.EAMappingLogics));
+            bodyNode.Add(new XElement(MappingFactory.isEmptyMappingName, this.isEmpty.ToString()));
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingSourcePathName, ((MappingNode)this.source).getMappingPathString(), this.wrappedTaggedValue.comment);
+                bodyNode.Add(new XElement(MappingFactory.mappingSourcePathName, ((MappingNode)this.source).getMappingPathString()));
             }
             if (this.target.structure == MP.ModelStructure.Message || this.target.isVirtual)
             {
-                this.wrappedTaggedValue.comment = KeyValuePairsHelper.setValueForKey(MappingFactory.mappingTargetPathName, ((MappingNode)this.target).getMappingPathString(), this.wrappedTaggedValue.comment);
+                bodyNode.Add(new XElement(MappingFactory.mappingTargetPathName, ((MappingNode)this.target).getMappingPathString()));
             }
+            //set comment
+            this.wrappedTaggedValue.comment = this.xdoc.ToString();
             this.wrappedTaggedValue.save();
         }
 
@@ -101,7 +69,7 @@ namespace EAAddinFramework.Mapping
 
         protected override List<MappingLogic> loadMappingLogics()
         {
-            var mappingLogicString = KeyValuePairsHelper.getValueForKey(MappingFactory.mappingLogicName, this.wrappedTaggedValue.comment);
+            var mappingLogicString = this.xdoc.ToString();
             return MappingLogic.getMappingLogicsFromString(mappingLogicString, this.wrappedTaggedValue.model);
         }
 

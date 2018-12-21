@@ -81,7 +81,8 @@ namespace EAAddinFramework.Mapping
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes)
             {
-                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
+                if (!existAsParent(ownedAttribute)
+                    && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
                 {
                     var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure, virtualElement);
                 }
@@ -92,7 +93,8 @@ namespace EAAddinFramework.Mapping
             {
                 foreach (var enumLiteral in sourceEnum.ownedLiterals)
                 {
-                    if (!this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
+                    if (!existAsParent(enumLiteral)
+                        && !this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
                     {
                         var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure, virtualElement);
                     }
@@ -105,7 +107,8 @@ namespace EAAddinFramework.Mapping
                                             || x.EAElementType == "DataType"
                                             || x.EAElementType == "Package"))
             {
-                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
+                if (!existAsParent(ownedClassifier)
+                    && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
                     var childNode = new ElementMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement);
                 }
@@ -113,7 +116,8 @@ namespace EAAddinFramework.Mapping
             //create child nodes for each owned association
             foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true, false))
             {
-                if (!this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
+                if (! existAsParent(ownedAssociation)
+                    &&! this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
                 }

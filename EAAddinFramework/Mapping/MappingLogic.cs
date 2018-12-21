@@ -76,11 +76,11 @@ namespace EAAddinFramework.Mapping
         }
         public string logicString => this.context?.uniqueID + this.description;
         
-        public static string getMappingLogicString(List<MappingLogic> mappingLogics)
+        public static XElement getMappingLogicElement(List<MappingLogic> mappingLogics)
         {
             if (!mappingLogics.Any())
             {
-                return string.Empty;
+                return null;
             }
             string logicString = string.Empty;
             var xdoc = new XDocument();
@@ -93,7 +93,11 @@ namespace EAAddinFramework.Mapping
                                     new XElement("description", mappingLogic.description))
                                     );
             }
-            return xdoc.ToString();
+            return bodyNode;
+        }
+        public static string getMappingLogicString(List<MappingLogic> mappingLogics)
+        {
+            return getMappingLogicElement(mappingLogics)?.ToString();
         }
         public static List<MappingLogic> getMappingLogicsFromString(string logicsString, TSF_EA.Model model)
         {
