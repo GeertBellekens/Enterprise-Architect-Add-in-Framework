@@ -111,9 +111,6 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        protected override UMLItem createMappingItem(MappingNode targetNode)
-        {
-            return this.createTaggedValueMappingItem(targetNode);
-        }
+
     }
 }

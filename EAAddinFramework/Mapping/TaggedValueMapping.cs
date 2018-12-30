@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using MP = MappingFramework;
@@ -38,7 +39,27 @@ namespace EAAddinFramework.Mapping
 
         #region implemented abstract members of Mapping
 
-        public override bool isEmpty { get; set; } = false;
+        private bool? _isEmpty;
+        public override bool isEmpty
+        {
+            get
+            {
+                bool emptyResult;
+                if (bool.TryParse(xdoc.Descendants(MappingFactory.isEmptyMappingName).FirstOrDefault()?.Value, out emptyResult))
+                {
+                    _isEmpty = emptyResult;
+                }
+                else
+                {
+                    _isEmpty = false;
+                }
+                return _isEmpty.Value;
+            }
+            set
+            {
+                this._isEmpty = value;
+            }
+        }
 
         protected override void saveMe()
         {

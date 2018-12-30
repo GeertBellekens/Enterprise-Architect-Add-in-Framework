@@ -7,7 +7,7 @@ using MP = MappingFramework;
 namespace EAAddinFramework.Mapping
 {
     /// <summary>
-    /// Description of ConnectorMapping.
+    /// Not used anymore. All mappings are stored as tagged values.
     /// </summary>
     public class ConnectorMapping : Mapping
     {
@@ -67,6 +67,7 @@ namespace EAAddinFramework.Mapping
         }
         private void addTaggedValueSafe(string tagName, string value)
         {
+            value = value ?? string.Empty;//avoid nullpointer exceptions
             if (value.Length < 255)
             {
                 this.wrappedConnector.addTaggedValue(tagName, value);

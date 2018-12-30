@@ -128,24 +128,6 @@ namespace EAAddinFramework.Mapping
             {
                 this.addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
             }
-
-        }
-
-        protected override UMLItem createMappingItem(MappingNode targetNode)
-        {
-            var classifierTargetNode = targetNode as ElementMappingNode;
-            if (classifierTargetNode != null)
-            {
-                var trace = this.sourceElement.EAModel.factory.createNewElement<UML.Classes.Dependencies.Abstraction>(this.sourceElement, "");
-                trace.addStereotype(this.sourceElement.EAModel.factory.createStereotype(trace, "trace"));
-                trace.target = classifierTargetNode.sourceElement;
-                trace.save();
-                return trace;
-            }
-            else
-            {
-                return this.createTaggedValueMappingItem(targetNode);
-            }
         }
         public override MP.MappingNode findNode(List<string> mappingPathNames)
         {

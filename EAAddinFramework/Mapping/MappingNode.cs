@@ -106,7 +106,7 @@ namespace EAAddinFramework.Mapping
         public MP.MappingNode parent { get; set; }
 
         protected List<Mapping> _mappings = new List<Mapping>();
-        public IEnumerable<MP.Mapping> mappings => this._mappings;
+        public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this || x.target == this && !x.isEmpty);
 
         public MP.ModelStructure structure { get; set; }
         public IEnumerable<MP.MappingNode> mappedChildNodes => this.allChildNodes.Where(x => x.isMapped);
@@ -200,7 +200,7 @@ namespace EAAddinFramework.Mapping
                 {
                     throw new InvalidOperationException($"Element {this.source.name} is read-only");
                 }
-                var mappingItem = this.createMappingItem((MappingNode)targetNode);
+                var mappingItem = this.createTaggedValueMappingItem((MappingNode)targetNode);
                 mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
                 mapping.save();
                 //add the mapping tot he mappingset
@@ -220,7 +220,6 @@ namespace EAAddinFramework.Mapping
             return newMapping;
         }
 
-        protected abstract UML.Extended.UMLItem createMappingItem(MappingNode targetNode);
         public UML.Profiles.TaggedValue createTaggedValueMappingItem(MappingNode targetNode)
         {
             //get the appropriate tagname
