@@ -189,6 +189,8 @@ namespace EAAddinFramework.Mapping
             {
                 mapping.delete();
             }
+            //map source and target to be sure
+            mappingSet.source.mapTo(mappingSet.target);
             //make sure the target node tree has been build
             ((MappingNode)mappingSet.target).buildNodeTree();
             //read the csv file

@@ -40,7 +40,6 @@ namespace EAAddinFramework.Utilities
 		}
         private void logToOutput(string message, int elementID = 0)
 		{
-			this.model.wrappedModel.EnsureOutputVisible(this.name);
 			this.model.wrappedModel.WriteOutput(this.name,message,elementID);
 		}
 		private void clear()

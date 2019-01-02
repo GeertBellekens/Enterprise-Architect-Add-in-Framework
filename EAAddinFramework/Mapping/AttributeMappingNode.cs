@@ -17,22 +17,23 @@ namespace EAAddinFramework.Mapping
 
         protected override List<TaggedValue> sourceTaggedValues
         {
-            get
-            {
-                //first check if the are any relevant tagged Values defined here to improve performance
-                var sqlExistTaggedValues = "select tv.PropertyID from t_attributetag tv " +
-                                           $" where tv.ElementID = {this.sourceAttribute.id} " +
-                                           $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
-                var queryResult = this.sourceAttribute.EAModel.SQLQuery(sqlExistTaggedValues);
-                if (queryResult.SelectSingleNode(this.sourceAttribute.EAModel.formatXPath("//PropertyID")) != null)
-                {
-                    return this.sourceAttribute?.taggedValues.ToList();
-                }
-                else
-                {
-                    return new List<TaggedValue>();
-                }
-            }
+            get => this.sourceAttribute?.taggedValues.ToList();
+            //get
+            //{
+            //    //first check if the are any relevant tagged Values defined here to improve performance
+            //    var sqlExistTaggedValues = "select tv.PropertyID from t_attributetag tv " +
+            //                               $" where tv.ElementID = {this.sourceAttribute.id} " +
+            //                               $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
+            //    var queryResult = this.sourceAttribute.EAModel.SQLQuery(sqlExistTaggedValues);
+            //    if (queryResult.SelectSingleNode(this.sourceAttribute.EAModel.formatXPath("//PropertyID")) != null)
+            //    {
+            //        return this.sourceAttribute?.taggedValues.ToList();
+            //    }
+            //    else
+            //    {
+            //        return new List<TaggedValue>();
+            //    }
+            //}
         }
 
 

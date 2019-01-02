@@ -596,15 +596,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
         }
 
-
+        private HashSet<UML.Classes.Kernel.Classifier> _superClasses;
         /// EA provides a shortcut tot the superclasses through its 
         /// element.BaseClasses
         /// Normally we would get those via the element.generalizations.general
         public HashSet<UML.Classes.Kernel.Classifier> superClasses
         {
-            get => new HashSet<UML.Classes.Kernel.Classifier>
-                  (this.EAModel.factory.createElements(this.wrappedElement.BaseClasses)
-                  .OfType<UML.Classes.Kernel.Classifier>());
+            get
+            {
+                if (_superClasses == null)
+                {
+                   _superClasses = new HashSet<UML.Classes.Kernel.Classifier>
+                                    (this.EAModel.factory.createElements(this.wrappedElement.BaseClasses)
+                                    .OfType<UML.Classes.Kernel.Classifier>());
+                }
+                return _superClasses;
+            }
+            
             set => throw new NotImplementedException();
         }
 

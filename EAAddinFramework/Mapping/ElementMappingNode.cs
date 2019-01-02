@@ -20,22 +20,23 @@ namespace EAAddinFramework.Mapping
         public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
         protected override List<TaggedValue> sourceTaggedValues
         {
-            get
-            {
-                //first check if the are any relevant tagged Values defined here to improve performance
-                var sqlExistTaggedValues = "select tv.PropertyID from t_objectproperties tv " +
-                                           $" where tv.Object_ID = {this.sourceElement.id} " +
-                                           $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
-                var queryResult = this.sourceElement.EAModel.SQLQuery(sqlExistTaggedValues);
-                if (queryResult.SelectSingleNode(this.sourceElement.EAModel.formatXPath("//PropertyID")) != null)
-                {
-                    return this.sourceElement?.taggedValues.ToList();
-                }
-                else
-                {
-                    return new List<TaggedValue>();
-                }
-            }
+            get => this.sourceElement?.taggedValues.ToList();
+            //get
+            //{
+            //    //first check if the are any relevant tagged Values defined here to improve performance
+            //    var sqlExistTaggedValues = "select tv.PropertyID from t_objectproperties tv " +
+            //                               $" where tv.Object_ID = {this.sourceElement.id} " +
+            //                               $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
+            //    var queryResult = this.sourceElement.EAModel.SQLQuery(sqlExistTaggedValues);
+            //    if (queryResult.SelectSingleNode(this.sourceElement.EAModel.formatXPath("//PropertyID")) != null)
+            //    {
+            //        return this.sourceElement?.taggedValues.ToList();
+            //    }
+            //    else
+            //    {
+            //        return new List<TaggedValue>();
+            //    }
+            //}
         }
 
         internal TSF_EA.ElementWrapper sourceElement
@@ -44,24 +45,7 @@ namespace EAAddinFramework.Mapping
             set => this.source = value;
         }
 
-        public override IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
-        {
-            var foundMappings = new List<MP.Mapping>();
-            //get the mappings using trace relations
-            //TODO: is this fast enough?
-            foreach (var trace in this.sourceElement.getRelationships<TSF_EA.Abstraction>(true, false).Where(x => x.target is TSF_EA.Element && x.stereotypes.Any(y => y.name == "trace")))
-            {
-                //get the mappings based on traces
-                var mapping = MappingFactory.getMapping(this, trace, (MappingNode)targetRootNode);
-                if (mapping != null)
-                {
-                    foundMappings.Add(mapping);
-                }
-            }
-            //also add the base mappings
-            foundMappings.AddRange(base.getOwnedMappings(targetRootNode));
-            return foundMappings;
-        }
+
         public override void setChildNodes()
         {
             // log progress
@@ -114,7 +98,8 @@ namespace EAAddinFramework.Mapping
                 }
             }
             //create child nodes for each owned association
-            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true, false))
+            foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true, false)
+                                            .OrderBy(x => this.getSequence(x)).ThenBy(x => x.orderingName))
             {
                 if (! existAsParent(ownedAssociation)
                     &&! this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
@@ -123,12 +108,29 @@ namespace EAAddinFramework.Mapping
                 }
             }
 
+
             //do the same for all superclasses
             foreach (var superClass in element.superClasses)
             {
                 this.addElementPropertiesToChildNodes((TSF_EA.ElementWrapper)superClass);
             }
         }
+        private int getSequence(TSF_EA.Association association)
+        {
+            int sequence;
+            if (int.TryParse(association.taggedValues.FirstOrDefault
+                (x => x.name.Equals("sequencingKey", System.StringComparison.InvariantCultureIgnoreCase))
+                ?.tagValue.ToString()
+                , out sequence))
+            {
+                return sequence;
+            }
+            else
+            {
+                return int.MaxValue; //no tag found, return max number
+            }
+        }
+
         public override MP.MappingNode findNode(List<string> mappingPathNames)
         {
             var foundNode = base.findNode(mappingPathNames);

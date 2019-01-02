@@ -44,14 +44,17 @@ namespace EAAddinFramework.Mapping
         {
             get
             {
-                bool emptyResult;
-                if (bool.TryParse(xdoc.Descendants(MappingFactory.isEmptyMappingName).FirstOrDefault()?.Value, out emptyResult))
+                if (!this._isEmpty.HasValue)
                 {
-                    _isEmpty = emptyResult;
-                }
-                else
-                {
-                    _isEmpty = false;
+                    bool emptyResult;
+                    if (bool.TryParse(xdoc.Descendants(MappingFactory.isEmptyMappingName).FirstOrDefault()?.Value, out emptyResult))
+                    {
+                        _isEmpty = emptyResult;
+                    }
+                    else
+                    {
+                        _isEmpty = false;
+                    }
                 }
                 return _isEmpty.Value;
             }
