@@ -80,6 +80,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get { return this.wrappedDiagram.Name; }
             set { this.wrappedDiagram.Name = value; }
         }
+        public string diagramType
+        {
+            get => this.wrappedDiagram.Type;
+        }
 
         /// find the diagramlink object (if any) that represents the given 
         /// relation
