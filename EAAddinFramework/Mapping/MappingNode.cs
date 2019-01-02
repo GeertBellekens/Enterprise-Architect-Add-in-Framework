@@ -107,6 +107,7 @@ namespace EAAddinFramework.Mapping
 
         protected List<Mapping> _mappings = new List<Mapping>();
         public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this || x.target == this && !x.isEmpty);
+        public int mappingCount => this.mappings.Count();
 
         public MP.ModelStructure structure { get; set; }
         public IEnumerable<MP.MappingNode> mappedChildNodes => this.allChildNodes.Where(x => x.isMapped);
