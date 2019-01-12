@@ -108,7 +108,7 @@ namespace EAAddinFramework.Mapping
                 return null;
             }
             //check if the mappingPath of the source corresponds with the path of the node
-            var startNodeMappingPath = startNode.getMappingPath();
+            var startNodeMappingPath = startNode.mappingPath;
             //source is OK if mapping corresponds, or no mappingPath found and it is not virtual
             var sourceOK = sourceMappingPath.SequenceEqual(startNodeMappingPath) || (!sourceMappingPath.Any() && !startNode.isVirtual);
             // if no targetMapping found then we try to build a Mapping up to the target root node source element

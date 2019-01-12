@@ -52,11 +52,11 @@ namespace EAAddinFramework.Mapping
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
-                addTaggedValueSafe(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).getMappingPath()));
+                addTaggedValueSafe(MappingFactory.mappingSourcePathName, string.Join(".", ((MappingNode)this.source).mappingPath));
             }
             if (this.target.structure == MP.ModelStructure.Message || this.target.isVirtual)
             {
-                addTaggedValueSafe(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).getMappingPath()));
+                addTaggedValueSafe(MappingFactory.mappingTargetPathName, string.Join(".", ((MappingNode)this.target).mappingPath));
             }
             this.wrappedConnector.save();
         }

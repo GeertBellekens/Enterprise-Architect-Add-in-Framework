@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Xml;
 
 using EAAddinFramework.EASpecific;
+using EAAddinFramework.Utilities;
 using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
@@ -183,18 +184,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.wrappedModel.ActivateTab(title);
         }
+        [Obsolete("Use EAAddinFramework.Utilities.ScriptingInteropHelper.toArrayList() ")]
         public ArrayList toArrayList(IEnumerable collection)
         {
-            ArrayList arrayList = new ArrayList();
-            foreach (object element in collection)
-            {
-                arrayList.Add(element);
-            }
-            return arrayList;
+            return new ScriptingInteropHelper().toArrayList(collection);
         }
+        [Obsolete("Use EAAddinFramework.Utilities.ScriptingInteropHelper.toObject() ")]
         public Object toObject(object someObject)
         {
-            return someObject as Object;
+            return new ScriptingInteropHelper().toObject(someObject);
         }
         public UML.Classes.Kernel.Package selectedTreePackage
         {

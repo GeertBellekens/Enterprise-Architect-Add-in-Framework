@@ -28,30 +28,33 @@ namespace EAAddinFramework.Mapping
         public virtual string displayName => this.name;
         public MappingSettings settings { get; set; }
         private List<string> _mappingPath;
-        public List<string> getMappingPath()
+        public List<string> mappingPath
         {
-            if (this._mappingPath == null)
+            get
             {
-                if (this.parent == null)
+                if (this._mappingPath == null)
                 {
-                    this._mappingPath = new List<string>() { this.source.uniqueID };
+                    if (this.parent == null)
+                    {
+                        this._mappingPath = new List<string>() { this.source.uniqueID };
+                    }
+                    else
+                    {
+                        this._mappingPath = new List<string>(((MappingNode)this.parent).mappingPath);
+                        this._mappingPath.Add(this.source.uniqueID);
+                    }
                 }
-                else
-                {
-                    this._mappingPath = new List<string>( ((MappingNode)this.parent).getMappingPath());
-                    this._mappingPath.Add(this.source.uniqueID);
-                }
+                return this._mappingPath;
             }
-            return this._mappingPath;
         }
         public string getMappingPathString()
         {
-            return string.Join(".", this.getMappingPath());
+            return string.Join(".", this.mappingPath);
         }
         protected bool existAsParent(UML.Extended.UMLItem umlItem)
         {
             return umlItem != null 
-                && ((MappingNode)this.parent)?.getMappingPath().Contains(umlItem.uniqueID) == true;
+                && ((MappingNode)this.parent)?.mappingPath.Contains(umlItem.uniqueID) == true;
         }
         public MappingNode createMappingNode(List<string> mappingPath)
         {

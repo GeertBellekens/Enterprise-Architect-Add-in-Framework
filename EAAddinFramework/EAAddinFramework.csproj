@@ -309,6 +309,7 @@
     <Compile Include="Utilities\KeyValuePairsHelper.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\LogTypeEnum.cs" />
+    <Compile Include="Utilities\ScriptingInteropHelper.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="Requirements\DoorsNG\DoorsNGSettings.cs" />
     <Compile Include="WorkTracking\Project.cs" />
