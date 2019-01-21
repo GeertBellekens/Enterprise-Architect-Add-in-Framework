@@ -22,6 +22,10 @@ namespace EAAddinFramework.Utilities
         {
             return someObject as object;
         }
+        public string getObjectTypeName(object someObject)
+        {
+            return someObject.GetType().Name;
+        }
         /// <summary>
         /// get an enumerated property by name
         /// </summary>
