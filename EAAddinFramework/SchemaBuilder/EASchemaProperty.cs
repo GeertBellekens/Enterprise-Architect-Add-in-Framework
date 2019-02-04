@@ -82,7 +82,7 @@ namespace EAAddinFramework.SchemaBuilder
 		public void createSubsetProperty()
 		{
 			//no need to do anything if the subset element does not exist
-			if (this.owner.subsetElement != null)
+			if (this.owner.subsetElement != null && this.sourceProperty != null)
 			{
 				HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 				if (this.subSetProperty == null)
