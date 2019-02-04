@@ -684,7 +684,7 @@ namespace EAAddinFramework.SchemaBuilder
 				{
 					//we have the same attribute if the given attribute has a tagged value 
 					//called sourceAttribute that refences the source attribute of the schema Property
-					if (((TSF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral).guid == tagReference)
+					if (((TSF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral)?.guid == tagReference)
 					{
 						result = schemaLiteral;
 						break;

@@ -79,7 +79,13 @@ namespace EAAddinFramework.SchemaBuilder
 		/// </summary>
 		public void createSubsetLiteral()
 		{
-			HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
+            //no need to do anything if the subset element does not exist
+            if (this.owner.subsetElement == null || this.sourceLiteral == null)
+            {
+                return;
+            }
+
+            HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
 			if (this.subSetLiteral == null)
 			{
 				this.isNew = true;
