@@ -1,10 +1,9 @@
-﻿using System;
+﻿using EAAddinFramework.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Runtime.InteropServices;
-using EAAddinFramework.Utilities;
-using UML = TSF.UmlToolingFramework.UML;
+using System.Xml;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -22,16 +21,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                if (string.IsNullOrEmpty(_packageTreeIDString))
+                if (string.IsNullOrEmpty(this._packageTreeIDString))
                 {
-                    _packageTreeIDString = getPackageTreeIDString();
+                    this._packageTreeIDString = this.getPackageTreeIDString();
                 }
-                return _packageTreeIDString;
+                return this._packageTreeIDString;
             }
-            private set
-            {
-                this._packageTreeIDString = value;
-            }
+            private set => this._packageTreeIDString = value;
         }
         public override global::EA.Element WrappedElement
         {
@@ -43,19 +39,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 return base.wrappedElement;
             }
-            set
-            {
-                base.WrappedElement = value;
-            }
+            set => base.WrappedElement = value;
         }
-        public int packageID
-        {
-            get { return this.wrappedPackage.PackageID; }
-        }
-        public override string uniqueID
-        {
-            get { return this.wrappedPackage.PackageGUID; }
-        }
+        public int packageID => this.wrappedPackage.PackageID;
+        public override string uniqueID => this.wrappedPackage.PackageGUID;
         public Package(Model model, global::EA.Package package) : base(model, Package.getElementForPackage(model, package))
         {
             //when saving a package we don't want to save all its owned elements
@@ -71,7 +58,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                         " and o.Package_ID in (" + packageIDString + ") " +
                                         " and x.Name = 'Stereotypes' " +
                                         " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
-            return EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
+            return this.EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
         }
         public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
         {
@@ -87,23 +74,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             base.initialize(Package.getElementForPackage(this.EAModel, package));
             this.wrappedPackage = package;
-            if (string.IsNullOrEmpty(this._uniqueID)) this._uniqueID = package.PackageGUID;
+            if (string.IsNullOrEmpty(this._uniqueID))
+            {
+                this._uniqueID = package.PackageGUID;
+            }
         }
         public override String notes
         {
-            get { return this.WrappedPackage.Notes; }
-            set { this.WrappedPackage.Notes = value; }
+            get => this.WrappedPackage.Notes;
+            set => this.WrappedPackage.Notes = value;
         }
-        public global::EA.Package WrappedPackage
-        {
-            get { return this.wrappedPackage; }
-        }
+        public global::EA.Package WrappedPackage => this.wrappedPackage;
         public override UML.Classes.Kernel.Element owner
         {
-            get
-            {
-                return base.owner;
-            }
+            get => base.owner;
             set
             {
                 base.owner = value;
@@ -112,10 +96,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override UML.Classes.Kernel.Package owningPackage
         {
-            get
-            {
-                return base.owningPackage;
-            }
+            get => base.owningPackage;
             set
             {
                 try
@@ -133,10 +114,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     {
                         string sqlUpdatePackageParent = "update t_package set Parent_ID = " + newParent.packageID
                             + " where ea_guid = '" + this.uniqueID + "'";
-                        EAModel.executeSQL(sqlUpdatePackageParent);
+                        this.EAModel.executeSQL(sqlUpdatePackageParent);
                         string sqlUpdateObjectParent = "update t_object set Package_ID = " + newParent.packageID
                             + " where ea_guid = '" + this.uniqueID + "'";
-                        EAModel.executeSQL(sqlUpdateObjectParent);
+                        this.EAModel.executeSQL(sqlUpdateObjectParent);
                         //reload from the database
                         this._owner = (Package)value;
                         this.dontSave = true;
@@ -171,64 +152,41 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public UML.Classes.Kernel.PackageableElement ownedMembers
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
         public HashSet<UML.Classes.Kernel.Type> ownedTypes
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
-
+        private HashSet<UML.Classes.Kernel.Package> _nestedPackages;
         public HashSet<UML.Classes.Kernel.Package> nestedPackages
         {
             get
             {
-                this.wrappedPackage.Packages.Refresh(); // make sure that the most up to date list of packages
-                var packages = this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Package>();
-                return new HashSet<UML.Classes.Kernel.Package>(packages);
+                if (this._nestedPackages == null)
+                {
+                    this.wrappedPackage.Packages.Refresh(); // make sure that the most up to date list of packages
+                    var packages = this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Package>();
+                    this._nestedPackages = new HashSet<UML.Classes.Kernel.Package>(packages);
+                }
+                return this._nestedPackages;
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => throw new NotImplementedException();
         }
 
         public UML.Classes.Kernel.Package nestingPackage
         {
-            get
-            {
-                return this.owningPackage;
-            }
-            set
-            {
-                this.owningPackage = value;
-            }
+            get => this.owningPackage;
+            set => this.owningPackage = value;
         }
 
         public HashSet<UML.Classes.Kernel.PackageMerge> packageMerges
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
         public bool isEmpty
@@ -259,10 +217,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => throw new NotImplementedException();
         }
         public override HashSet<UML.Diagrams.Diagram> ownedDiagrams
         {
@@ -272,11 +227,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 foreach (var eaDiagram in this.wrappedPackage.Diagrams)
                 {
                     var newDiagram = ((Factory)this.EAModel.factory).createDiagram(eaDiagram);
-                    if (newDiagram != null) diagrams.Add(newDiagram);
+                    if (newDiagram != null)
+                    {
+                        diagrams.Add(newDiagram);
+                    }
                 }
                 return diagrams;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
         public override string fqn
         {
@@ -289,13 +247,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._fqn;
             }
         }
-        public override string guid
-        {
-            get
-            {
-                return this.wrappedPackage.PackageGUID;
-            }
-        }
+        public override string guid => this.wrappedPackage.PackageGUID;
 
         public bool isCompletelyWritable
         {
@@ -303,7 +255,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 //get the result through a query as opposed to checkign each and every object recursively for performance reasons.
                 //if security is not enable then it is writable
-                if (!this.EAModel.isSecurityEnabled) return true;
+                if (!this.EAModel.isSecurityEnabled)
+                {
+                    return true;
+                }
                 //security is enabled. We assume the option Require User Locks To Edit is used
                 //Query to check if there are any elements or diagrams that are not locked by this user
                 var treeIDs = this.packageTreeIDString;
@@ -351,7 +306,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 int parentID;
                 if (parentIDNode != null && int.TryParse(parentIDNode.InnerText, out parentID))
                 {
-                    newFQN = getFQN(newFQN, parentID);
+                    newFQN = this.getFQN(newFQN, parentID);
                 }
             }
             return newFQN;
@@ -481,16 +436,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             List<UML.Extended.UMLItem> foundItems = new List<UML.Extended.UMLItem>();
             //first try to find it in a faster way
             //get the idstrings of this package and all its owned packages
-            string packageTreeIDString = this.getPackageIDString(getNestedPackageTree(true));
+            string packageTreeIDString = this.getPackageIDString(this.getNestedPackageTree(true));
             //get the individual parts
             var descriptorParts = itemDescriptor.Split('.').ToList();
             //if there's only one part then look for an element with that name, then for a diagram
             if (descriptorParts.Count == 1)
             {
                 //look for element
-                foundItems.AddRange(getOwnedElements(descriptorParts[0], packageTreeIDString));
+                foundItems.AddRange(this.getOwnedElements(descriptorParts[0], packageTreeIDString));
                 //look for a diagram
-                foundItems.AddRange(getOwnedDiagrams(descriptorParts[0], packageTreeIDString));
+                foundItems.AddRange(this.getOwnedDiagrams(descriptorParts[0], packageTreeIDString));
             }
             else if (descriptorParts.Count == 2)
             {
@@ -498,14 +453,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 string ownerName = descriptorParts[0];
                 string attributeName = descriptorParts[1];
                 //first look for an attribute
-                foundItems.AddRange(getOwnedAttributes(ownerName, attributeName, packageTreeIDString));
+                foundItems.AddRange(this.getOwnedAttributes(ownerName, attributeName, packageTreeIDString));
             }
             if (descriptorParts.Count >= 2
                   && !foundItems.Any())
             {
                 //top down approach
                 //start by the elemnts directly owned by the package
-                foundItems.AddRange(findOwnedItems(descriptorParts));
+                foundItems.AddRange(this.findOwnedItems(descriptorParts));
                 if (!foundItems.Any())
                 {
                     //if still nothing found then we start by all elements somewhere in the package tree that match the first part
@@ -518,7 +473,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
             }
             //if still nothing found then get the base implemetation
-            if (foundItems.Count == 0) foundItems.AddRange(base.findOwnedItems(itemDescriptor));
+            if (foundItems.Count == 0)
+            {
+                foundItems.AddRange(base.findOwnedItems(itemDescriptor));
+            }
+
             return foundItems;
         }
 
@@ -529,7 +488,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 string firstpart = descriptionParts[0];
                 //start by finding an element with the given name
-                var directOwnedElements = getOwnedElements(firstpart, this.packageID.ToString());
+                var directOwnedElements = this.getOwnedElements(firstpart, this.packageID.ToString());
                 if (descriptionParts.Count > 1)
                 {
                     //loop the owned elements and get their owned items 
@@ -546,7 +505,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //only one item so add the direct owned elements
                     ownedItems.AddRange(directOwnedElements);
                     //Add also the diagrams owned by this package
-                    ownedItems.AddRange(getOwnedDiagrams(firstpart, this.packageID.ToString()));
+                    ownedItems.AddRange(this.getOwnedDiagrams(firstpart, this.packageID.ToString()));
                 }
             }
             return ownedItems;
@@ -582,9 +541,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public HashSet<UML.Classes.Kernel.Package> getNestedPackageTree(bool includeThis)
         {
-            var nestedPackageTree = this.nestedPackages;
+            var nestedPackageTree = new HashSet<UML.Classes.Kernel.Package>(this.nestedPackages);
             //add this package if needed
-            if (includeThis) nestedPackageTree.Add(this);
+            if (includeThis)
+            {
+                nestedPackageTree.Add(this);
+            }
             foreach (var subPackage in this.nestedPackages)
             {
                 foreach (var subSubPackage in subPackage.getNestedPackageTree(false))
@@ -635,7 +597,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //if subpackages found then go a level deeper
             if (subPackageIDs.Any())
             {
-                allPackageIDs.AddRange(getPackageTreeIDs(subPackageIDs));
+                allPackageIDs.AddRange(this.getPackageTreeIDs(subPackageIDs));
             }
             return allPackageIDs;
         }

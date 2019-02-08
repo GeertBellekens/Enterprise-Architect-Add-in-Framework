@@ -442,7 +442,7 @@ namespace EAAddinFramework.SchemaBuilder
                 if (correspondingNode == null)
                 {
                     //add node to elementsToCreate
-                    var elementToCreate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                    var elementToCreate = this.elements.FirstOrDefault(x => x.sourceElement?.uniqueID == classGUID) as EASchemaElement;
                     if (elementToCreate != null) elementsToCreate.Add(elementToCreate);
                 }
                 else
@@ -450,7 +450,7 @@ namespace EAAddinFramework.SchemaBuilder
                     //compare both nodes
                     if (!XNode.DeepEquals(node, correspondingNode))
                     {
-                        var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement.uniqueID == classGUID) as EASchemaElement;
+                        var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement?.uniqueID == classGUID) as EASchemaElement;
                         if (elementsToUpdate != null) elementsToUpdate.Add(elementToUpdate);
                     }
                 }
