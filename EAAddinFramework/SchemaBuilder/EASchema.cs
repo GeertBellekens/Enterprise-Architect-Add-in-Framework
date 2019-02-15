@@ -165,7 +165,8 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 foreach (EASchemaElement schemaElement in this.elements)
                 {
-                    if (schemaElement.name == subsetElement.name)
+                    if (schemaElement.name == subsetElement.name
+                        && schemaElement.sourceElement != null)
                     {
                         //check on if there is a tagged value that references the source element
                         if (this.settings.tvInsteadOfTrace)
