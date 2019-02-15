@@ -1129,7 +1129,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedElement.Elements.Count; i++)
                 {
                     var eaElement = this.WrappedElement.Elements.GetAt(i) as global::EA.Element;
-                    if (eaElement.ElementGUID == ownedElement.guid)
+                    if (eaElement?.ElementGUID == ownedElement.guid)
                     {
                         this.WrappedElement.Elements.Delete(i);
                         this.WrappedElement.Elements.Refresh();
@@ -1142,7 +1142,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedElement.Attributes.Count; i++)
                 {
                     var eaAttribute = this.WrappedElement.Attributes.GetAt(i) as global::EA.Attribute;
-                    if (eaAttribute.AttributeGUID == ownedElement.guid)
+                    if (eaAttribute?.AttributeGUID == ownedElement.guid)
                     {
                         this.WrappedElement.Attributes.Delete(i);
                         this.WrappedElement.Attributes.Refresh();
@@ -1156,7 +1156,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedElement.Connectors.Count; i++)
                 {
                     var eaConnector = this.WrappedElement.Connectors.GetAt(i) as global::EA.Connector;
-                    if (eaConnector.ConnectorGUID == ownedElement.guid)
+                    if (eaConnector?.ConnectorGUID == ownedElement.guid)
                     {
                         this.WrappedElement.Connectors.Delete(i);
                         this.WrappedElement.Connectors.Refresh();
@@ -1170,7 +1170,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedElement.Methods.Count; i++)
                 {
                     var eaMethod = this.WrappedElement.Methods.GetAt(i) as global::EA.Method;
-                    if (eaMethod.MethodGUID == ownedElement.guid)
+                    if (eaMethod?.MethodGUID == ownedElement.guid)
                     {
                         this.WrappedElement.Methods.Delete(i);
                         this.WrappedElement.Methods.Refresh();
