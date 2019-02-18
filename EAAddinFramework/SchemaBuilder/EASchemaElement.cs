@@ -181,6 +181,10 @@ namespace EAAddinFramework.SchemaBuilder
 		
 		public UML.Classes.Kernel.Classifier createSubsetElement(UML.Classes.Kernel.Package destinationPackage)
 		{
+            if (this.sourceElement == null)
+            {
+                return null;
+            }
 			//first create the element in the destination Package
 			if (this.subsetElement == null)
 			{

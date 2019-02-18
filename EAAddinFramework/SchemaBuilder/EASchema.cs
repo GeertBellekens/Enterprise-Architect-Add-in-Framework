@@ -272,8 +272,11 @@ namespace EAAddinFramework.SchemaBuilder
                             schemaElement.addAttributeTypeDependencies();
                         }
                         //order the attributes
-                        if (!this.settings.keepOriginalAttributeOrder)
+                        if (!this.settings.keepOriginalAttributeOrder
+                            && !this.settings.setAttributeOrderZero)
+                        {
                             schemaElement.orderAttributes();
+                        }
                         //order the associations
                         if (this.settings.orderAssociationsAlphabetically)
                         {
@@ -452,7 +455,7 @@ namespace EAAddinFramework.SchemaBuilder
                     if (!XNode.DeepEquals(node, correspondingNode))
                     {
                         var elementToUpdate = this.elements.FirstOrDefault(x => x.sourceElement?.uniqueID == classGUID) as EASchemaElement;
-                        if (elementsToUpdate != null) elementsToUpdate.Add(elementToUpdate);
+                        if (elementToUpdate != null) elementsToUpdate.Add(elementToUpdate);
                     }
                 }
             }
