@@ -360,37 +360,67 @@ namespace EAAddinFramework.SchemaBuilder
 		{
 			if (this.subsetElement != null)
 			{
-				var listToBeOrdered = new List<TSF_EA.Element>();
-				//add the associations
-				var allAssociations = this.subsetElement.getRelationships<Association>()
-									.Cast<TSF_EA.Association>();
-				listToBeOrdered.AddRange(allAssociations.Where( y => y.source.Equals(this.subsetElement)));
-				int i;
-				//add attributes depending on the settings
-				if(listToBeOrdered.Count > 0 && this.owner.settings.orderAssociationsAmongstAttributes)
-				{
-					//add attributes
-					listToBeOrdered.AddRange(this.subsetElement.attributes.Cast<TSF_EA.Attribute>());
-					i = 1;
-				}
-				else
-				{
-					//start associations after the attributes
-					i = this.subsetElement.attributes.Count +1;
-				}
-				foreach (var element in listToBeOrdered.OrderBy(x => x.orderingName))
-				{
-					var association = element as TSF_EA.Association;
-					if (association != null)
-					{
-						association.sourceEnd.addTaggedValue("position",i.ToString());
-					}
-					i++;
-				}
+				var orderedList = new List<TSF_EA.Element>();
+                //add the associations
+                var associations = this.subsetElement.getRelationships<Association>(true, false)
+                                    .Cast<TSF_EA.Association>().OrderBy(x => x.orderingName); 
+                IEnumerable<TSF_EA.Association> choiceAssociations = new List<TSF_EA.Association>();
+                if (this.owner.settings.orderXmlChoiceBeforeAttributes)
+                {
+                    //get the associations to XmlChoice elements
+                    choiceAssociations = associations.Where(x => x.targetElement.HasStereotype("XSDchoice"))
+                                                    .OrderBy(x => x.orderingName);
+                    //get the other associations
+                    associations = associations.Where(x => !choiceAssociations.Contains(x)).OrderBy(x => x.orderingName); 
+                }
+                
+                //add attributes depending on the settings
+                if (associations.Any() || choiceAssociations.Any())
+                {
+                    //get the attributes
+                    var attributes = this.subsetElement.attributes.Cast<TSF_EA.Attribute>().OrderBy(x => x.orderingName);
+                    //add attributes and associations
+                    orderedList.AddRange(attributes);
+                    orderedList.AddRange(associations);
+                    //order if needed
+                    if (this.owner.settings.orderAssociationsAmongstAttributes)
+                    {
+                        //order again
+                        orderedList = orderedList.OrderBy(x => x.orderingName).ToList();
+                    }
+                    //add choice associations if needed
+                    if (this.owner.settings.orderXmlChoiceBeforeAttributes)
+                    {
+                        orderedList.InsertRange(0, choiceAssociations);
+                    }
+                    int i = 1;
+                    //set the order for both associations and Attributes
+                    foreach (var element in orderedList)
+                    {
+                        var association = element as TSF_EA.Association;
+                        if (association != null)
+                        {
+                            association.sourceEnd.addTaggedValue("position", i.ToString());
+                        }
+                        else
+                        {
+                            var attribute = element as TSF_EA.Attribute;
+                            if (attribute != null)
+                            {
+                                attribute.addTaggedValue("position", i.ToString());
+                            }
+                        }
+                        //up the counter
+                        i++;
+                    }
+                }
 			}
 		}
 		
-		internal void setAssociationClassProperties()
+
+
+
+        internal void setAssociationClassProperties()
 		{
 			//TODO
 			//create the link tot he association if the association is in the subset

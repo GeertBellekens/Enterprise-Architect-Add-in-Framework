@@ -354,7 +354,9 @@ namespace EAAddinFramework.SchemaBuilder
                     var response = MessageBox.Show(this.model.mainEAWindow,
                                                     $"Elements to update: {elementsToUpdate.Count}\n" +
                                                     $"Elements to create: {elementsToCreate.Count}\n" +
-                                                    $"Elements to delete: {subsetElementsToDelete.Count}"
+                                                    $"Elements to delete: {subsetElementsToDelete.Count}\n" +
+                                                    "YES to generate only changes\n" +
+                                                    "NO to generate the whole schema"
                                                     , "Generate only changes?"
                                                     , MessageBoxButtons.YesNoCancel
                                                     , MessageBoxIcon.Question);
@@ -732,7 +734,7 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         //check if neededs to be updated
                         if (targetTaggedValue.eaStringValue != sourceTaggedValue.eaStringValue
-                            && targetTaggedValue.comment != sourceTaggedValue.comment)
+                            || targetTaggedValue.comment != sourceTaggedValue.comment)
                         {
                             targetTaggedValue.eaStringValue = sourceTaggedValue.eaStringValue;
                             targetTaggedValue.comment = sourceTaggedValue.comment;
