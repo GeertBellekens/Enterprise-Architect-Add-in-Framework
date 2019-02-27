@@ -146,6 +146,12 @@
     <Compile Include="Databases\Strategy\DB2\DB2Strategy.cs" />
     <Compile Include="Databases\Strategy\DB2\DB2StrategyFactory.cs" />
     <Compile Include="Databases\Strategy\DB2\DB2TableStrategy.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLColumnStrategy.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLForeignKeyStrategy.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLPrimaryKeyStrategy.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLStrategy.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLStrategyFactory.cs" />
+    <Compile Include="Databases\Strategy\MySQL\MySQLTableStrategy.cs" />
     <Compile Include="Databases\Strategy\StrategyFactory.cs" />
     <Compile Include="Databases\Table.cs" />
     <Compile Include="Databases\Transformation\DB2\DB2ColumnTransformer.cs" />
@@ -159,6 +165,11 @@
     <Compile Include="Databases\Transformation\EAForeignKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\EAPrimaryKeyTransformer.cs" />
     <Compile Include="Databases\Transformation\EATableTransformer.cs" />
+    <Compile Include="Databases\Transformation\MySQL\MySQLColumnTransformer.cs" />
+    <Compile Include="Databases\Transformation\MySQL\MySQLDatabaseTransformer.cs" />
+    <Compile Include="Databases\Transformation\MySQL\MySQLForeignKeyTransformer.cs" />
+    <Compile Include="Databases\Transformation\MySQL\MySQLPrimaryKeyTransformer.cs" />
+    <Compile Include="Databases\Transformation\MySQL\MySQLTableTransformer.cs" />
     <Compile Include="Databases\Transformation\NameTranslation.cs" />
     <Compile Include="Databases\Transformation\NameTranslator.cs" />
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />

@@ -182,7 +182,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public void showTab(string title)
         {
-            this.wrappedModel.ActivateTab(title);
+            try
+            {
+                this.wrappedModel.ActivateTab(title);
+            } catch   { }
         }
         [Obsolete("Use EAAddinFramework.Utilities.ScriptingInteropHelper.toArrayList() ")]
         public ArrayList toArrayList(IEnumerable collection)

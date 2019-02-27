@@ -43,8 +43,8 @@ namespace EAAddinTester
             //        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
             //			addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
             //			addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
-            //			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
-            addins.Add(new GlossaryManager.GlossaryManagerAddin());
+             			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
+           // addins.Add(new GlossaryManager.GlossaryManagerAddin());
         }
         private static void initializeAddins()
         {

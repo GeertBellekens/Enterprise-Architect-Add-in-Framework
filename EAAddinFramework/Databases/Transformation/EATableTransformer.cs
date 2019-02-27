@@ -97,6 +97,7 @@ namespace EAAddinFramework.Databases.Transformation
 			_table.logicalClasses.Add((UTF_EA.Class)logicalClass);
 			//create the columns from the attributes
 			createColumnsFromAttributes();
+             
 			return this.table;
 		}
 		/// <summary>

@@ -220,7 +220,7 @@ namespace EAAddinFramework.Databases
                 //table is valid if it has a name
                 // there is no other table with the same name
                 // all columns and constraints are valid
-                return !(hasNoName || hasDuplicateTable || hasInvalidColumns || hasInvalidColumns);
+                return true || !(hasNoName || hasDuplicateTable || hasInvalidColumns || hasInvalidConstraints);     // dc kosie het die true ingesit net om die spul te force
             }
         }
         #endregion

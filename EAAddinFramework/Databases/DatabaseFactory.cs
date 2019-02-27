@@ -136,6 +136,7 @@ namespace EAAddinFramework.Databases
                 {
                     newBaseDataTypes.Add(new BaseDataType(eaDataType));
                 }
+    //dc            Console.WriteLine(eaDataType.Name + ":"+ eaDataType.Type + ":" + eaDataType.Product);
             }
             modelBaseDataTypes[model] = newBaseDataTypes;
         }
