@@ -194,9 +194,8 @@ namespace EAAddinFramework.Mapping
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
             //check if not already mapped
-            var mapping = this.mappings.FirstOrDefault(x => x.target != null &&
-                                                        x.target.source != null 
-                                                        && x.target.source.Equals(targetNode?.source));
+            var mapping = this.mappings.FirstOrDefault(x => x.target != null
+                                                        && x.target.getMappingPathString() == targetNode?.getMappingPathString());
             if (mapping == null && targetNode.source != null)
             {
                 //check if not read-only
