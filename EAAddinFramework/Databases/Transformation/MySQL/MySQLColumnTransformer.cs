@@ -14,8 +14,6 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 	/// </summary>
 	public class MySQLColumnTransformer:EAColumnTransformer
 	{
-        // NF added this string to append errors
-        public string errorString;
 		private MySQLTableTransformer _dependingTransformer = null;
 		Column _involvedColumn = null;
 		public Column getPKInvolvedColumn()
@@ -104,10 +102,7 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
                 Logger.logError(string.Format("Attribute {0}.{1} does not have a element as datatype"
                                         , attribute.owner.name, attribute.name));
                 EAOutputLogger.log(string.Format("Attribute {0}.{1} does not have a element as datatype"
-                                        , attribute.owner.name, attribute.name));
-                errorString += string.Format("| Attribute {0}.{1} does not have a element as datatype"
-                                        , attribute.owner.name, attribute.name);
-                
+                                        , attribute.owner.name, attribute.name));               
             }
             else
             {
@@ -118,8 +113,6 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
                                                  , attributeType.alias, attribute.owner.name, attribute.name));
                     EAOutputLogger.log(string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
                                                  , attributeType.alias, attribute.owner.name, attribute.name));
-                    errorString += string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
-                                                 , attributeType.alias, attribute.owner.name, attribute.name);
                 }
                 else
                 {
