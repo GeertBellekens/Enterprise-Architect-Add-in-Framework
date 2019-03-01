@@ -14,7 +14,8 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 	/// </summary>
 	public class MySQLColumnTransformer:EAColumnTransformer
 	{
-		
+        // NF added this string to append errors
+        public string errorString;
 		private MySQLTableTransformer _dependingTransformer = null;
 		Column _involvedColumn = null;
 		public Column getPKInvolvedColumn()
@@ -96,20 +97,35 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 			}
 			this.column = new Column(this._table, attribute.alias);
 			this.column.isEqualDirty = isEqualDirty;
-			//get base type
+			//get base type                                                     NF datatype error/creating datatype     send these errors back up to top!
 			var attributeType = attribute.type as UTF_EA.ElementWrapper;
-			if (attributeType == null) Logger.logError (string.Format("Attribute {0}.{1} does not have a element as datatype"
-			                                                    ,attribute.owner.name, attribute.name));
-			else
-			{
-				DataType datatype = _table._owner._factory.createDataType(attributeType.alias);
-				if (datatype == null) Logger.logError (string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
-				                                                    ,attributeType.alias, attribute.owner.name, attribute.name));
-				else
-				{
-					column.type = datatype;
-				}
-			}
+            if (attributeType == null)
+            {
+                Logger.logError(string.Format("Attribute {0}.{1} does not have a element as datatype"
+                                        , attribute.owner.name, attribute.name));
+                EAOutputLogger.log(string.Format("Attribute {0}.{1} does not have a element as datatype"
+                                        , attribute.owner.name, attribute.name));
+                errorString += string.Format("| Attribute {0}.{1} does not have a element as datatype"
+                                        , attribute.owner.name, attribute.name);
+                
+            }
+            else
+            {
+                DataType datatype = _table._owner._factory.createDataType(attributeType.alias);
+                if (datatype == null)
+                {
+                    Logger.logError(string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
+                                                 , attributeType.alias, attribute.owner.name, attribute.name));
+                    EAOutputLogger.log(string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
+                                                 , attributeType.alias, attribute.owner.name, attribute.name));
+                    errorString += string.Format("Could not find {0} as Datatype for attribute {1}.{2}"
+                                                 , attributeType.alias, attribute.owner.name, attribute.name);
+                }
+                else
+                {
+                    column.type = datatype;
+                }
+            }
 			//set not null property
 			if (attribute.lower == 0)
 			{
