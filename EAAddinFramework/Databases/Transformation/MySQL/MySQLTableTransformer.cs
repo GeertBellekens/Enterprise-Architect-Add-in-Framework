@@ -7,6 +7,7 @@ using UML=TSF.UmlToolingFramework.UML;
 using UTF_EA=TSF.UmlToolingFramework.Wrappers.EA;
 using DB=DatabaseFramework;
 using DB_EA = EAAddinFramework.Databases;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinFramework.Databases.Transformation.MySQL
 {
@@ -115,8 +116,9 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 		public void addRemoteColumnsAndKeys()
 		{
 			List<DB_EA.Column> PKInvolvedColumns = new List<DB_EA.Column>();
-			//check attributes
-			foreach (var attributes in allLogicalClasses.Select(z => z.attributes.Where(x => x.isID)))
+            
+
+            foreach (var attributes in getPKCandidates("masterId"))      // NF TODO: send in the package tag for PK rules
 			{
 				foreach (var attribute in attributes.OrderBy(x => x.position))
 				{
@@ -131,7 +133,7 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 			//add the columns for the primary key of the dependent table
 			foreach (var dependKeyValue in this.dependingTransformers) 
 			{
-				if (dependKeyValue.Value.table.primaryKey != null)
+				if (dependKeyValue.Value.table.primaryKey != null)      
 				{
 					var dependingColumnTransfomers = new List<MySQLColumnTransformer>();
 					foreach (Column column in dependKeyValue.Value.table.primaryKey.involvedColumns.OrderBy(x => x.position))
@@ -151,7 +153,7 @@ namespace EAAddinFramework.Databases.Transformation.MySQL
 					}
 					if (FKInvolvedColumns.Count > 0 )
 					{
-						this._foreignKeyTransformers.Add(new MySQLForeignKeyTransformer(this._table,FKInvolvedColumns,dependKeyValue.Value,dependKeyValue.Key,_nameTranslator));
+						this._foreignKeyTransformers.Add(new MySQLForeignKeyTransformer(this._table,FKInvolvedColumns,dependKeyValue.Value,dependKeyValue.Key,_nameTranslator));    // NF this looks like where FKs are added. Doesn't ever reach here atm
 
 					}
 				}
@@ -187,17 +189,21 @@ inner join t_object ot on ot.Object_ID = c.End_Object_ID
 where c.Connector_Type in ('Association', 'Aggregation')
 and ot.Object_Type = 'Class'
 and os.Object_Type = 'Class'
-and c.DestCard like '%1'
 and os.Object_ID in (" + logicalClassIDs +")"
-+@" union 
++ @"and(c.SourceCard is not null or c.DestCard is not null or c.styleex is not null)
+and(c.SourceCard <> '1' or c.SourceCard is null or c.DestCard <> '*' or c.DestCard is null or c.styleex not LIKE('LFSP%'))
+and(c.SourceCard <> '*' or c.SourceCard is null or c.DestCard <> '1' or c.DestCard is null or c.styleex not LIKE('LFEP%'))"
++ @" union 
 select c.Connector_ID from t_connector c
 inner join t_object os on os.Object_ID = c.Start_Object_ID
 inner join t_object ot on ot.Object_ID = c.End_Object_ID
 where c.Connector_Type in ('Association', 'Aggregation')
 and ot.Object_Type = 'Class'
 and os.Object_Type = 'Class'
-and c.SourceCard like '%1'
-and ot.Object_ID in ("+ logicalClassIDs +")";
+and ot.Object_ID in ("+ logicalClassIDs +")"
++ @"and(c.SourceCard is not null or c.DestCard is not null or c.styleex is not null)
+and(c.SourceCard <> '1' or c.SourceCard is null or c.DestCard <> '*' or c.DestCard is null or c.styleex not LIKE('LFSP%'))
+and(c.SourceCard <> '*' or c.SourceCard is null or c.DestCard <> '1' or c.DestCard is null or c.styleex not LIKE('LFEP%'))";
 			var allAssociations = this.logicalClass.EAModel.getRelationsByQuery(getAssociationsSQL);
 			
 			foreach (var currentClass in this.allLogicalClasses) 
@@ -223,23 +229,32 @@ and ot.Object_ID in ("+ logicalClassIDs +")";
 								}
 								//the other end is not an ID either, 
 								// then we use the association direction to determine wher the FK should be placed
-								if (! otherEnd.isID
-								         && association.targetEnd == end)
+								if (! otherEnd.isID && association.targetEnd == end)
 								{
 									dependingAssociationEnds.Add(end);
 									break;
-								}
-							}
-							else
-							{
-								dependingAssociationEnds.Add(end);
-								break;
-							}
+								}                               
+                            }
 						}
 					}
 				}
+
 			}
 			return dependingAssociationEnds;
 		}
-	}
+
+        // returns a list of all pk candidates based on the naming rules specified in package tag
+        public IEnumerable<IEnumerable<UML.Classes.Kernel.Property>> getPKCandidates(string pkgTag)
+        {
+            switch (pkgTag)
+            {
+                case "masterId":
+                    return allLogicalClasses.Select(z => z.attributes.Where(x => x.name.Equals("masterId")));
+                case "tableId":
+                    return allLogicalClasses.Select(z => z.attributes.Where(x => x.name.ToLower().Equals(z.name.ToLower() + "id")));
+                default:
+                    return allLogicalClasses.Select(z => z.attributes.Where(x => x.isID));
+            }
+        }
+    }
 }
