@@ -404,10 +404,13 @@ namespace EAAddinFramework.SchemaBuilder
                         }
                         else
                         {
-                            var attribute = element as TSF_EA.Attribute;
-                            if (attribute != null)
+                            if (this.owner.settings.orderAssociationsAmongstAttributes)
                             {
-                                attribute.addTaggedValue("position", i.ToString());
+                                var attribute = element as TSF_EA.Attribute;
+                                if (attribute != null)
+                                {
+                                    attribute.addTaggedValue("position", i.ToString());
+                                }
                             }
                         }
                         //up the counter
