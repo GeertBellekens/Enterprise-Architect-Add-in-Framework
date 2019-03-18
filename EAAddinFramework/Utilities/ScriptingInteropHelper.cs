@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace EAAddinFramework.Utilities
 {
@@ -57,23 +58,35 @@ namespace EAAddinFramework.Utilities
         /// <returns></returns>
         public object executeStaticMethod(string qualifiedClassName, string operationName, object parameters)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            try
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-
-                    if (type.Namespace + "." + type.Name == qualifiedClassName 
-                        && type.IsClass)
+                    foreach (var type in assembly.GetTypes())
                     {
-                        var methodInfo = type.GetMethod(operationName, (BindingFlags.Static | BindingFlags.Public));
-                        if (methodInfo != null)
+
+                        if (type.Namespace + "." + type.Name == qualifiedClassName
+                            && type.IsClass)
                         {
-                            return methodInfo.Invoke(null,(object[]) parameters);
+                            var methodInfo = type.GetMethod(operationName, (BindingFlags.Static | BindingFlags.Public));
+                            if (methodInfo != null)
+                            {
+                                return methodInfo.Invoke(null, (object[])parameters);
+                            }
                         }
                     }
                 }
+                throw new ArgumentException($"Static method {qualifiedClassName}.{operationName}() does not exist or is not loaded");
             }
-            throw new ArgumentException($"Static method {qualifiedClassName}.{operationName}() does not exist or is not loaded");
+            catch (Exception e)
+            {
+                Logger.logError(e.Message + Environment.NewLine + e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    Logger.logError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace);
+                }
+                throw e;
+            }
         }
     }
 }
