@@ -112,7 +112,8 @@ namespace EAAddinFramework.Mapping
                         string contextID = logicNode.Elements("context").FirstOrDefault()?.Value;
                         TSF_EA.ElementWrapper contextElement = model.getElementWrapperByGUID(contextID);
                         string description = logicNode.Elements("description").FirstOrDefault()?.Value;
-                        if (!string.IsNullOrEmpty(description))
+                        //only create mapping logic if the description exists, or the contextElement exists.
+                        if (!string.IsNullOrEmpty(description) || contextElement != null)
                         {
                             mappingLogics.Add(new MappingLogic(description, contextElement));
                         }
