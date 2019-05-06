@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UML = TSF.UmlToolingFramework.UML;
 using System.Runtime.CompilerServices;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
@@ -20,29 +19,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         protected object getProperty(string propertyName, object initialValue)
         {
-            if (!properties.ContainsKey(propertyName))
+            if (!this.properties.ContainsKey(propertyName))
             {
-                properties.Add(propertyName, new PropertyInfo(initialValue, initialValue));
+                this.properties.Add(propertyName, new PropertyInfo(initialValue, initialValue));
             }
-            return properties[propertyName].propertyValue;
+            return this.properties[propertyName].propertyValue;
         }
         protected object getProperty(string propertyName)
         {
-            return properties.ContainsKey(propertyName) ? properties[propertyName].propertyValue : null;
+            return this.properties.ContainsKey(propertyName) ? this.properties[propertyName].propertyValue : null;
         }
         protected PropertyInfo getPropertyInfo(string propertyName)
         {
-            return properties.ContainsKey(propertyName) ? properties[propertyName] : null;
+            return this.properties.ContainsKey(propertyName) ? this.properties[propertyName] : null;
         }
         protected void setProperty(string propertyName, object propertyValue, object initialValue)
         {
-            if (properties.ContainsKey(propertyName))
+            if (this.properties.ContainsKey(propertyName))
             {
-                properties[propertyName].propertyValue = propertyValue;
+                this.properties[propertyName].propertyValue = propertyValue;
             }
             else
             {
-                properties.Add(propertyName, new PropertyInfo(propertyValue, initialValue));
+                this.properties.Add(propertyName, new PropertyInfo(propertyValue, initialValue));
             }
         }
         public static string getPropertyNameName([CallerMemberName] string name = null)
@@ -51,13 +50,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
         public Model EAModel { get; internal set; }
-        public UML.Extended.UMLModel model
-        {
-            get
-            {
-                return this.EAModel;
-            }
-        }
+        public UML.Extended.UMLModel model => this.EAModel;
 
         internal Element(Model model)
         {
@@ -80,10 +73,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         public virtual int position
         {
-            get
-            {
-                return 0;
-            }
+            get => 0;
             set
             {
                 //do nothing
@@ -92,13 +82,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// the name to be used when ordering elemnts of this type alphabetically
         /// </summary>
-        public virtual string orderingName
-        {
-            get
-            {
-                return this.name;
-            }
-        }
+        public virtual string orderingName => this.name;
         //indicates whether or not this element is new
         internal bool isNew { get; set; }
         private bool? _isDirty = true;
@@ -106,29 +90,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                if (isNew)
+                if (this.isNew)
                 {
-                    _isDirty = true;
+                    this._isDirty = true;
                 }
                 else
                 {
                     var dirtyProperties = this.properties.Any() && this.properties.Values.Any(x => x.isDirty);
                     if (dirtyProperties)
                     {
-                        _isDirty = true;
+                        this._isDirty = true;
                     }
-                    else if (!_isDirty.HasValue)
+                    else if (!this._isDirty.HasValue)
                     {
                         return false;
                     }
 
                 }
-                return _isDirty.HasValue ? _isDirty.Value : false;
+                return this._isDirty.HasValue ? this._isDirty.Value : false;
             }
-            set
-            {
-                _isDirty = value;
-            }
+            set => this._isDirty = value;
         }
         public virtual bool isPropertyDirty(string propertyName)
         {
@@ -165,11 +146,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //delete in EA
             for (short i = 0; i < this.eaTaggedValuesCollection.Count; i++)
             {
-                var eaTag = eaTaggedValuesCollection.GetAt(i);
+                var eaTag = this.eaTaggedValuesCollection.GetAt(i);
                 //if the eaTag equals the wrapped tag then we delete it
                 if (taggedValue.equalsTagObject(eaTag))
                 {
-                    eaTaggedValuesCollection.DeleteAt(i, false);
+                    this.eaTaggedValuesCollection.DeleteAt(i, false);
                     break;
                 }
             }
@@ -206,13 +187,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
         }
 
-        public virtual string uniqueID
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public virtual string uniqueID => null;
 
         public Stereotype AddStereotype(string text)
         {
@@ -276,7 +251,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// subclass that can actually implement this operation: ElementWrapper.
         public virtual List<UML.Classes.Kernel.Relationship> relationships
         {
-            get { return new List<UML.Classes.Kernel.Relationship>(); }
+            get => new List<UML.Classes.Kernel.Relationship>();
             set { /* do nothing */ }
         }
 
@@ -293,7 +268,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public virtual void save()
         {
-            if (isDirty)
+            if (this.isDirty)
             {
                 this.saveElement();
                 //after saving the element is not new anymore
@@ -305,7 +280,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     property.initialValue = property.propertyValue;
                 }
             }
-            if (saveOwnedElements)
+            if (this.saveOwnedElements)
             {
                 foreach (UML.Classes.Kernel.Element element in this.ownedElements)
                 {
@@ -316,7 +291,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         //default empty implemenation
         public virtual UML.Diagrams.Diagram compositeDiagram
         {
-            get { return null; }
+            get => null;
             set { }//do absolutely nothing
         }
 
@@ -346,10 +321,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public virtual string name
         {
-            get
-            {
-                return string.Empty;
-            }
+            get => string.Empty;
             set { }
         }
         protected HashSet<UML.Profiles.TaggedValue> _taggedValues;
@@ -360,16 +332,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                if (_taggedValues == null)
+                if (this._taggedValues == null)
                 {
                     //make sure we have the latest set of tagged values
                     this.eaTaggedValuesCollection.Refresh();
                     //create the tagged values from the EA collection
-                    _taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
+                    this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
                 }
-                return _taggedValues;
+                return this._taggedValues;
             }
-            set { throw new NotImplementedException(); }
+            set => throw new NotImplementedException();
         }
         protected abstract string getTaggedValueQuery(string taggedValueName);
         /// <summary>
@@ -381,8 +353,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public TaggedValue getTaggedValue(string taggedValueName)
         {
             //bool getTag = true;
-            bool getTag = _taggedValues != null;
-            if (_taggedValues == null)
+            bool getTag = this._taggedValues != null;
+            if (this._taggedValues == null)
             {
                 //check if tagged value exists
                 var xDoc = this.EAModel.SQLQuery(this.getTaggedValueQuery(taggedValueName));
@@ -493,10 +465,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //no existing tagged value found, or we need to create duplicates
                 newTaggedValue = (TaggedValue)this.EAModel.factory.createNewTaggedValue(this, name);
                 //add it to the local list of tagged values
-                if (_taggedValues != null) _taggedValues.Add(newTaggedValue);
+                if (this._taggedValues != null)
+                {
+                    this._taggedValues.Add(newTaggedValue);
+                }
             }
             newTaggedValue.tagValue = tagValue;
-            if (comment != null) newTaggedValue.comment = comment;
+            if (comment != null)
+            {
+                newTaggedValue.comment = comment;
+            }
+
             newTaggedValue.save();
             return newTaggedValue;
         }
@@ -522,7 +501,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             foreach (TaggedValue taggedValue in sourceElement.taggedValues)
             {
-                this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue,taggedValue.comment);
+                this.addTaggedValue(taggedValue.name, taggedValue.eaStringValue, taggedValue.comment);
             }
         }
 
@@ -532,7 +511,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         public virtual void delete()
         {
-            if (this.owner != null) ((Element)this.owner).deleteOwnedElement(this);
+            if (this.owner != null)
+            {
+                ((Element)this.owner).deleteOwnedElement(this);
+            }
         }
         public abstract void deleteOwnedElement(Element ownedElement);
         /// <summary>
@@ -545,7 +527,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 var ownerPackage = this.owner as UML.Classes.Kernel.Package;
                 //if the owner is a package then return the owner
-                if (ownerPackage == null) ownerPackage = ((Element)this.owner).owningPackage;
+                if (ownerPackage == null)
+                {
+                    ownerPackage = ((Element)this.owner).owningPackage;
+                }
+
                 return (UML.Classes.Kernel.Package)this.getProperty(getPropertyNameName(), ownerPackage);
             }
             set
@@ -561,7 +547,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get
             {
                 //first check if locking is enabled
-                if (!this.EAModel.isSecurityEnabled) return false;
+                if (!this.EAModel.isSecurityEnabled)
+                {
+                    return false;
+                }
 
                 if (this.isLocked)
                 {
@@ -582,13 +571,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// returns true if currently locked
         /// </summary>
         /// <returns>true if currently locked</returns>
-        public bool isLocked
+        public bool isLocked => (this.getLockedUser() != string.Empty);
+
+        public virtual HashSet<UML.Classes.Kernel.Constraint> constraints
         {
-            get
-            {
-                return (this.getLockedUser() != string.Empty);
-            }
+            get => new HashSet<UML.Classes.Kernel.Constraint>();//default implementation empty list
+            set => throw new NotImplementedException();
         }
+
         /// <summary>
         /// finds the element based on the given descriptor
         /// </summary>
@@ -605,12 +595,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 descriptorParts.RemoveAt(0);
             }
-            ownedItems.AddRange(findOwnedItems(descriptorParts));
+            ownedItems.AddRange(this.findOwnedItems(descriptorParts));
             //if not found anything directly then try with FQN
             if (!ownedItems.Any())
             {
                 var item = this.EAModel.getItemFromFQN(this.fqn + "." + itemDescriptor);
-                if (item != null) ownedItems.Add(item);
+                if (item != null)
+                {
+                    ownedItems.Add(item);
+                }
             }
             return ownedItems;
         }

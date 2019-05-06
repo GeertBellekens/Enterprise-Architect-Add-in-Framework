@@ -52,7 +52,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public List<T> getOwnedElementWrappers<T>(string stereotype, bool recursive) where T : ElementWrapper
         {
             string packageIDString = recursive ? this.packageTreeIDString : this.packageID.ToString();
-            string getGetOwnedElements = "select * from t_object o" +
+            string getGetOwnedElements = "select o.Object_ID from t_object o" +
                                         " inner join t_xref x on x.Client = o.ea_guid " +
                                         " where o.Object_Type = '" + typeof(T).Name + "' " +
                                         " and o.Package_ID in (" + packageIDString + ") " +

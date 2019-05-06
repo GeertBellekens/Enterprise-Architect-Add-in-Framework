@@ -131,7 +131,7 @@ namespace EAAddinFramework.Databases
 					if (attributeType != null)
 					{
 						//check if attributeType as any constraints
-						var typeConstraint = attributeType.constraints.FirstOrDefault();
+						var typeConstraint = attributeType.constraints.OfType<TSF_EA.Constraint>().FirstOrDefault();
 						if (typeConstraint != null)
 						{
 							//add a check constraint

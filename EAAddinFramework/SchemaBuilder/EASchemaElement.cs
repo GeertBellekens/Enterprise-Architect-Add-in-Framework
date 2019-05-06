@@ -232,6 +232,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
 
             }
+            copyConstraints();
             //save the new subset element
             ((TSF_EA.Element)this.subsetElement).save();
             //copy tagged values
@@ -259,6 +260,38 @@ namespace EAAddinFramework.SchemaBuilder
             //return the new element
             return this.subsetElement;
         }
+
+        private void copyConstraints()
+        {
+            //return if no subset elemnet exists
+            if (this.subsetElement == null || this.sourceElement == null) return;
+            //get the subset element constraints
+            var tempSubsetContraints = new List<Constraint>(this.subsetElement.constraints);
+            //copy constraints
+            foreach (var constraint in this.sourceElement?.constraints)
+            {
+                //compare each of the constraints with the source element constraints
+                var subsetConstraint = tempSubsetContraints.FirstOrDefault(x => x.name == constraint.name);
+                if (subsetConstraint != null)
+                {
+                    tempSubsetContraints.Remove(subsetConstraint);
+                }
+                else
+                {
+                    subsetConstraint =  this.model.factory.createNewElement<Constraint>(this.subsetElement, constraint.name);
+                }
+                //synch notes
+                subsetConstraint.specification = constraint.specification;
+                //save
+                subsetConstraint.save();
+            }
+            //remove all remaining subset constraints
+            foreach(var subsetConstraint in tempSubsetContraints)
+            {
+                subsetConstraint.delete();
+            }
+        }
+
         /// <summary>
         /// If all attributes are coming from the same source element, and the order of the existing attributes corresponds exactly to that of the
         /// source element, then we use the same order as the order of the source element. That means that attributes will be inserted in the sequence.

@@ -61,7 +61,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			}
 			set 
 			{
-				throw new NotImplementedException();
+                if (this.wrappedConstraint != null)
+                {
+                    this.wrappedConstraint.Notes = value;
+                }
 			}
 		}
 		internal string convertFromEANotes( string newFormat)

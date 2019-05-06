@@ -14,7 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private List<UML.Classes.Kernel.Relationship> _allRelationships;
         private HashSet<AttributeWrapper> _attributeWrappers;
         private HashSet<UML.Classes.Kernel.EnumerationLiteral> _ownedLiterals;
-        private HashSet<Constraint> _constraints;
+        private HashSet<UML.Classes.Kernel.Constraint> _constraints;
         private string _linkedDocument;
         protected string _uniqueID;
 
@@ -499,14 +499,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => throw new NotImplementedException();
         }
 
-        public HashSet<Constraint> constraints
+        public override HashSet<UML.Classes.Kernel.Constraint> constraints
         {
             get
             {
                 if (this._constraints == null)
                 {
                     //refresh attributes to make sure we have an up-to-date list
-                    this._constraints = new HashSet<Constraint>();
+                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
                     foreach (var constraint in this.EAModel.factory.createElements(this.wrappedElement.Constraints).Cast<Constraint>())
                     {
                         this._constraints.Add(constraint);
