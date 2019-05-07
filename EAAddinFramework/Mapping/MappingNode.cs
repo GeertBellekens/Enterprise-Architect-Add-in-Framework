@@ -109,7 +109,7 @@ namespace EAAddinFramework.Mapping
         public MP.MappingNode parent { get; set; }
 
         protected List<Mapping> _mappings = new List<Mapping>();
-        public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this || x.target == this && !x.isEmpty);
+        public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this && ! x.isReverseEmpty || x.target == this && !(x.isEmpty && !x.isReverseEmpty) );
         public int mappingCount => this.mappings.Count();
 
         public MP.ModelStructure structure { get; set; }
@@ -212,10 +212,19 @@ namespace EAAddinFramework.Mapping
             return mapping;
         }
 
-        public MP.Mapping createEmptyMapping()
+        public MP.Mapping createEmptyMapping(bool reverse)
         {
-            var newMapping = this.mapTo(this.mappingSet.target);
+            MP.Mapping newMapping;
+            if (reverse)
+            {
+                newMapping = this.mappingSet.source.mapTo(this);
+            }
+            else
+            {
+                newMapping = this.mapTo(this.mappingSet.target);
+            }
             newMapping.isEmpty = true;
+            newMapping.isReverseEmpty = reverse;
             newMapping.addMappingLogic(new MappingLogic("Empty mapping"));
             newMapping.save();
             //remove from target node

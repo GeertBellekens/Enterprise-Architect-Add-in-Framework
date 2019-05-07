@@ -20,6 +20,7 @@ namespace EAAddinFramework.Mapping
         public const string mappingTargetPathName = "mappingTargetPath";
         public const string mappingLogicName = "mappingLogic";
         public const string isEmptyMappingName = "isEmptyMapping";
+        public const string isReverseEmptyName = "isReverseEmpty";
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings)
         {
             //first create the root nodes
@@ -269,7 +270,7 @@ namespace EAAddinFramework.Mapping
                         }
                         else
                         {
-                            var newMapping = sourceNode.createEmptyMapping();
+                            var newMapping = sourceNode.createEmptyMapping(false);
                             newMapping.mappingLogics = createMappingLogicsFromCSVString(csvRecord.mappingLogic, mappingSet.EAContexts, model);
                             newMapping.save();
                             EAOutputLogger.log($"Empty mapping created for '{csvRecord.sourcePath}' ", 0);

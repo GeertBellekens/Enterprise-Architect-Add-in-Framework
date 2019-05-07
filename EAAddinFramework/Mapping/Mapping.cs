@@ -119,6 +119,7 @@ namespace EAAddinFramework.Mapping
 
 
         public abstract bool isEmpty { get; set; }
+        public abstract bool isReverseEmpty { get; set; }
 
         public bool isReadOnly => this.source.isReadOnly;
 

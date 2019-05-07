@@ -38,6 +38,24 @@ namespace EAAddinFramework.Mapping
                 this.wrappedConnector.addTaggedValue(MappingFactory.isEmptyMappingName, value.ToString());
             }
         }
+        private bool? _isReverseEmpty = null;
+        public override bool isReverseEmpty
+        {
+            get
+            {
+                if (!this._isReverseEmpty.HasValue)
+                {
+                    var emptyTag = this.wrappedConnector.taggedValues
+                        .FirstOrDefault(x => x.name.Equals(MappingFactory.isReverseEmptyName, StringComparison.InvariantCultureIgnoreCase));
+                    return "True".Equals(emptyTag?.tagValue.ToString(), StringComparison.InvariantCultureIgnoreCase);
+                }
+                return this._isReverseEmpty.Value;
+            }
+            set
+            {
+                this.wrappedConnector.addTaggedValue(MappingFactory.isReverseEmptyName, value.ToString());
+            }
+        }
 
         #endregion
 

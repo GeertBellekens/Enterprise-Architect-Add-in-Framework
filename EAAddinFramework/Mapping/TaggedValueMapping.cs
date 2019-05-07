@@ -63,6 +63,30 @@ namespace EAAddinFramework.Mapping
                 this._isEmpty = value;
             }
         }
+        private bool? _isReverseEmpty = null;
+        public override bool isReverseEmpty
+        {
+            get
+            {
+                if (!this._isReverseEmpty.HasValue)
+                {
+                    bool reverseEmptyResult;
+                    if (bool.TryParse(xdoc.Descendants(MappingFactory.isReverseEmptyName).FirstOrDefault()?.Value, out reverseEmptyResult))
+                    {
+                        _isReverseEmpty = reverseEmptyResult;
+                    }
+                    else
+                    {
+                        _isReverseEmpty = false;
+                    }
+                }
+                return _isReverseEmpty.Value;
+            }
+            set
+            {
+                this._isReverseEmpty = value;
+            }
+        }
 
         protected override void saveMe()
         {
@@ -71,7 +95,10 @@ namespace EAAddinFramework.Mapping
             var bodyNode = new XElement("mapping");
             this.xdoc.Add(bodyNode);
             bodyNode.Add(MappingLogic.getMappingLogicElement(this.EAMappingLogics));
+            //add isEmpty Node
             bodyNode.Add(new XElement(MappingFactory.isEmptyMappingName, this.isEmpty.ToString()));
+            //add isReverseEmptyNode
+            bodyNode.Add(new XElement(MappingFactory.isReverseEmptyName, this.isReverseEmpty.ToString()));
             //set mapping path
             if (this.source.structure == MP.ModelStructure.Message || this.source.isVirtual)
             {
