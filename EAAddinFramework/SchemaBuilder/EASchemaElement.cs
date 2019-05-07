@@ -218,10 +218,12 @@ namespace EAAddinFramework.SchemaBuilder
             //genlinks
             ((TSF_EA.ElementWrapper)this.subsetElement).genLinks = ((TSF_EA.ElementWrapper)this.sourceElement).genLinks;
             //notes only update them if they are empty
-            if (this.subsetElement.ownedComments.Count == 0 || !this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
+            if (this.subsetElement.ownedComments.Count == 0 || !this.subsetElement.ownedComments.Any(x => x.body.Length > 0)
+                || this.owner.settings.keepNotesInSync)
             {
                 this.subsetElement.ownedComments = this.sourceElement.ownedComments;
-                if (this.owner.settings.prefixNotes
+                if (! this.owner.settings.keepNotesInSync
+                    && this.owner.settings.prefixNotes
                     && this.owner.settings.prefixNotesText.Length > 0
                     && this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
                 {

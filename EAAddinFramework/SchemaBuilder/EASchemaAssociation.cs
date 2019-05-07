@@ -348,11 +348,13 @@ namespace EAAddinFramework.SchemaBuilder
                                               ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
                                               , LogTypeEnum.warning);				
 			}
-            //notes only update them if they are empty
-			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
+            //notes only update them if they are empty or if settings
+			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0)
+                || this.owner.owner.settings.keepNotesInSync)
 			{
 				subSetAssociation.ownedComments = this.sourceAssociation.ownedComments;
-				if (this.owner.owner.settings.prefixNotes
+				if (!this.owner.owner.settings.keepNotesInSync
+                    && this.owner.owner.settings.prefixNotes
 				    && this.owner.owner.settings.prefixNotesText.Length > 0
 				    && subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
 				{

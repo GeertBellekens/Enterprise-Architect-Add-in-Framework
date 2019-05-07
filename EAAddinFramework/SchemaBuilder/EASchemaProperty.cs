@@ -142,10 +142,12 @@ namespace EAAddinFramework.SchemaBuilder
                                               , LogTypeEnum.warning);
                 }
                 //notes only update them if they are empty
-                if (this.subSetProperty.ownedComments.Count == 0 || !this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
+                if (this.subSetProperty.ownedComments.Count == 0 || !this.subSetProperty.ownedComments.Any(x => x.body.Length > 0)
+                    || this.owner.owner.settings.keepNotesInSync)
                 {
                     this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
-                    if (this.owner.owner.settings.prefixNotes
+                    if (! this.owner.owner.settings.keepNotesInSync
+                        && this.owner.owner.settings.prefixNotes
                         && this.owner.owner.settings.prefixNotesText.Length > 0
                         && this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
                     {
