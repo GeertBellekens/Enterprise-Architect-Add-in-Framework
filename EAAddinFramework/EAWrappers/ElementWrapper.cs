@@ -616,9 +616,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => throw new NotImplementedException();
         }
 
-        /// EA provides a shortcut tot the superclasses through its 
-        /// element.BaseClasses
-        /// Normally we would get those via the element.generalizations.general
         public HashSet<UML.Classes.Kernel.Classifier> subClasses
         {
             get
@@ -632,6 +629,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     }
                 }
                 return returnedSubclasses;
+            }
+        }
+        /// <summary>
+        /// all the subclasses, including the subclasses of the subclasses recursively
+        /// </summary>
+        public HashSet<UML.Classes.Kernel.Classifier> allSubClasses
+        {
+            get
+            {
+                var _allSubclasses = this.subClasses.Cast<ElementWrapper>().ToList();
+                var directSubClasses = new List<ElementWrapper>(_allSubclasses);
+                foreach(var directSubClass in directSubClasses)
+                {
+                    _allSubclasses.AddRange(directSubClass.allSubClasses.Cast<ElementWrapper>());
+                }
+                return new HashSet<UML.Classes.Kernel.Classifier>(_allSubclasses.Cast<UML.Classes.Kernel.Classifier>());
             }
         }
         /// the generalisations (inheritance relations) of this element

@@ -15,28 +15,16 @@ namespace EAAddinFramework.Mapping
     public class ElementMappingNode : MappingNode
     {
 
-        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, null, settings, structure) { }
-        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceElement, parent, settings, structure, null) { }
-        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceElement, parent, settings, structure, virtualOwner) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+            : this(sourceElement, null, settings, structure, isTarget) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+            : this(sourceElement, parent, settings, structure, null, isTarget) { }
+        public ElementMappingNode(TSF_EA.ElementWrapper sourceElement, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner, bool isTarget) 
+            : base(sourceElement, parent, settings, structure, virtualOwner, isTarget) { }
+
         protected override List<TaggedValue> sourceTaggedValues
         {
             get => this.sourceElement?.taggedValues.ToList();
-            //get
-            //{
-            //    //first check if the are any relevant tagged Values defined here to improve performance
-            //    var sqlExistTaggedValues = "select tv.PropertyID from t_objectproperties tv " +
-            //                               $" where tv.Object_ID = {this.sourceElement.id} " +
-            //                               $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
-            //    var queryResult = this.sourceElement.EAModel.SQLQuery(sqlExistTaggedValues);
-            //    if (queryResult.SelectSingleNode(this.sourceElement.EAModel.formatXPath("//PropertyID")) != null)
-            //    {
-            //        return this.sourceElement?.taggedValues.ToList();
-            //    }
-            //    else
-            //    {
-            //        return new List<TaggedValue>();
-            //    }
-            //}
         }
 
         internal TSF_EA.ElementWrapper sourceElement
@@ -45,6 +33,34 @@ namespace EAAddinFramework.Mapping
             set => this.source = value;
         }
 
+        public override IEnumerable<MP.Mapping> subClassMappings
+        {
+            get
+            {
+                var foundMappings = new List<MP.Mapping>();
+                //get subclasses
+                var subClasses = this.sourceElement.allSubClasses;
+                //exit now if there are no subclasses
+                if (! subClasses.Any())
+                {
+                    return foundMappings;
+                }
+                //get all other elementMappingNodes
+                var otherElementMappingNodes = this.isTarget ?
+                    this.mappingSet.mappings.Where(x => x.target is ElementMappingNode)
+                    : this.mappingSet.mappings.Where(x => x.source is ElementMappingNode);
+                foreach (var subClass in subClasses)
+                {
+                    //get the mappings to theis subclass
+                    var correspondingMappings = this.isTarget ?
+                                            otherElementMappingNodes.Where(x => x.target.source.uniqueID == subClass.uniqueID)
+                                            : otherElementMappingNodes.Where(x => x.source.source.uniqueID == subClass.uniqueID);
+                    //add those mappings to the list of mappings
+                    foundMappings.AddRange(correspondingMappings);
+                }
+                return foundMappings;
+            }
+        }
 
         public override void setChildNodes()
         {
@@ -68,7 +84,7 @@ namespace EAAddinFramework.Mapping
                 if (!existAsParent(ownedAttribute)
                     && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
                 {
-                    var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure, virtualElement);
+                    var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure, virtualElement, this.isTarget);
                 }
             }
             //create child nodes for all enum values
@@ -80,7 +96,7 @@ namespace EAAddinFramework.Mapping
                     if (!existAsParent(enumLiteral)
                         && !this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
                     {
-                        var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure, virtualElement);
+                        var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure, virtualElement, this.isTarget);
                     }
                 }
             }
@@ -94,7 +110,7 @@ namespace EAAddinFramework.Mapping
                 if (!existAsParent(ownedClassifier)
                     && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
-                    var childNode = new ElementMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement);
+                    var childNode = new ElementMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement, this.isTarget);
                 }
             }
             //create child nodes for each owned association
@@ -104,7 +120,7 @@ namespace EAAddinFramework.Mapping
                 if (! existAsParent(ownedAssociation)
                     &&! this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
-                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement);
+                    var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement, this.isTarget);
                 }
             }
 

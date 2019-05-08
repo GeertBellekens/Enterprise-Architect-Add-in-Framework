@@ -24,19 +24,21 @@ namespace EAAddinFramework.Mapping
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings)
         {
             //first create the root nodes
-            var sourceRootNode = createNewRootNode(sourceRoot, settings);
-            var targetRootNode = createNewRootNode(targetRoot, settings);
+            var sourceRootNode = createNewRootNode(sourceRoot, settings, false);
+            var targetRootNode = createNewRootNode(targetRoot, settings, true);
             //then create the new mappingSet
             var mappingSet = new MappingSet(sourceRootNode, targetRootNode, settings);
             //return
             return mappingSet;
         }
-        public static ElementMappingNode createNewRootNode(ElementWrapper rootElement, MappingSettings settings)
+        public static ElementMappingNode createNewRootNode(ElementWrapper rootElement, MappingSettings settings, bool isTarget)
         {
             //depending on the type of root we create a dataModel structure (Package) or a Message structure (class).
-            return rootElement is Package ?
-                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.DataModel) :
-                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.Message);
+            var newRootNode = rootElement is Package ?
+                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.DataModel, isTarget) :
+                    new ElementMappingNode(rootElement, settings, MP.ModelStructure.Message, isTarget);
+            newRootNode.isTarget = isTarget;
+            return newRootNode;
         }
 
         private static List<string> getMappingPath(Element tagOwner, bool target)
@@ -154,21 +156,21 @@ namespace EAAddinFramework.Mapping
             var attributeSource = source as AttributeWrapper;
             if (attributeSource != null)
             {
-                return new AttributeMappingNode(attributeSource, parent as ElementMappingNode, settings, parent.structure);
+                return new AttributeMappingNode(attributeSource, parent as ElementMappingNode, settings, parent.structure, parent.isTarget);
             }
 
             //AssociationMappingNode
             var associationSource = source as Association;
             if (associationSource != null)
             {
-                return new AssociationMappingNode(associationSource, parent as ElementMappingNode, settings, parent.structure);
+                return new AssociationMappingNode(associationSource, parent as ElementMappingNode, settings, parent.structure, parent.isTarget);
             }
 
             //ClassifierMappingNode
             var classifierSource = source as ElementWrapper;
             if (classifierSource != null)
             {
-                return new ElementMappingNode(classifierSource, parent, settings, parent.structure);
+                return new ElementMappingNode(classifierSource, parent, settings, parent.structure, parent.isTarget);
             }
 
             //not a valid source type, return null

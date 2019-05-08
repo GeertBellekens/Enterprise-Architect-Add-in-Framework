@@ -11,29 +11,49 @@ namespace EAAddinFramework.Mapping
 {
     public class AttributeMappingNode : MappingNode
     {
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, null, settings, structure) { }
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAttribute, parent, settings, structure, null) { }
-        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, MappingSettings settings, MP.ModelStructure structure, bool isTarget)
+            : this(sourceAttribute, null, settings, structure, isTarget) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+            : this(sourceAttribute, parent, settings, structure, null, isTarget) { }
+        public AttributeMappingNode(TSF_EA.AttributeWrapper sourceAttribute, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner, bool isTarget) 
+            : base((UML.Classes.Kernel.NamedElement)sourceAttribute, parent, settings, structure, virtualOwner, isTarget) { }
+        public override IEnumerable<MP.Mapping> subClassMappings
+        {
+            get
+            {
+                var foundMappings = new List<MP.Mapping>();
+                var parent = this.parent.source as TSF_EA.ElementWrapper;
+                //exit if no parent found
+                if (parent == null) return foundMappings;
+                //get the subclasses
+                var allSubClasses = parent.allSubClasses;
+                //exit if there are no subclasses
+                if (!allSubClasses.Any()) return foundMappings;
+                //get all other mappings to/from this attribute
+                var allAttributeMappings = this.isTarget ?
+                        this.mappingSet.mappings.Where(x => x.target.source.uniqueID == this.source.uniqueID && x.target != this)
+                        : this.mappingSet.mappings.Where(x => x.source.source.uniqueID == this.source.uniqueID && x.source != this);
+                //loop mappings and find the ones whose parent is a subclass of this attributes parent
+                foreach (var mapping in allAttributeMappings)
+                {
+                    var otherAttributeNode = this.isTarget ?
+                                            (AttributeMappingNode)mapping.target
+                                            : (AttributeMappingNode)mapping.source;
+                    //check of parentNode of the other attribute node points to a subclass of this attribute's parent node
+                    if (allSubClasses.Any(x => x.uniqueID == otherAttributeNode.parent.source.uniqueID))
+                    {
+                        //found one, return it.
+                        foundMappings.Add(mapping);
+                    }
+                }
+                return foundMappings;
+            }
+        }
+        
 
         protected override List<TaggedValue> sourceTaggedValues
         {
             get => this.sourceAttribute?.taggedValues.ToList();
-            //get
-            //{
-            //    //first check if the are any relevant tagged Values defined here to improve performance
-            //    var sqlExistTaggedValues = "select tv.PropertyID from t_attributetag tv " +
-            //                               $" where tv.ElementID = {this.sourceAttribute.id} " +
-            //                               $" and tv.Property in ('{this.settings.linkedAssociationTagName}', '{this.settings.linkedAttributeTagName}', '{this.settings.linkedElementTagName}')";
-            //    var queryResult = this.sourceAttribute.EAModel.SQLQuery(sqlExistTaggedValues);
-            //    if (queryResult.SelectSingleNode(this.sourceAttribute.EAModel.formatXPath("//PropertyID")) != null)
-            //    {
-            //        return this.sourceAttribute?.taggedValues.ToList();
-            //    }
-            //    else
-            //    {
-            //        return new List<TaggedValue>();
-            //    }
-            //}
         }
 
 
@@ -82,7 +102,7 @@ namespace EAAddinFramework.Mapping
                 if (! this.existAsParent(attributeType)
                     && attributeType != null && !this.allChildNodes.Any(x => x.source?.uniqueID == attributeType.uniqueID))
                 {
-                    var childNode = new ElementMappingNode(attributeType, this, this.settings, this.structure);
+                    var childNode = new ElementMappingNode(attributeType, this, this.settings, this.structure, this.isTarget);
                 }
             }
         }

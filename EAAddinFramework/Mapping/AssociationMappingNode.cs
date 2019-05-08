@@ -9,9 +9,12 @@ namespace EAAddinFramework.Mapping
 {
     public class AssociationMappingNode : MappingNode
     {
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, null, settings, structure) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure) : this(sourceAssociation, parent, settings, structure, null) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner) : base(sourceAssociation, parent, settings, structure, virtualOwner) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+            : this(sourceAssociation, null, settings, structure, isTarget) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+            : this(sourceAssociation, parent, settings, structure, null, isTarget) { }
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner, bool isTarget) 
+            : base(sourceAssociation, parent, settings, structure, virtualOwner, isTarget) { }
         protected override List<UML.Profiles.TaggedValue> sourceTaggedValues => this.sourceAssociation?.taggedValues.ToList();
 
         internal TSF_EA.Association sourceAssociation
@@ -58,6 +61,40 @@ namespace EAAddinFramework.Mapping
                 return base.displayName;
             }
         }
+
+        public override IEnumerable<MP.Mapping> subClassMappings
+        {
+            get
+            {
+                var foundMappings = new List<MP.Mapping>();
+                var parent = this.parent.source as TSF_EA.ElementWrapper;
+                //exit if no parent found
+                if (parent == null) return foundMappings;
+                //get the subclasses
+                var allSubClasses = parent.allSubClasses;
+                //exit if there are no subclasses
+                if (!allSubClasses.Any()) return foundMappings;
+                //get all other mappings to/from this association
+                var allAssociationMappings = this.isTarget ?
+                        this.mappingSet.mappings.Where(x => x.target.source.uniqueID == this.source.uniqueID && x.target != this)
+                        : this.mappingSet.mappings.Where(x => x.source.source.uniqueID == this.source.uniqueID && x.source != this);
+                //loop mappings and find the ones whose parent is a subclass of this attributes parent
+                foreach (var mapping in allAssociationMappings)
+                {
+                    var otherAssociationNode = this.isTarget ?
+                                            (AssociationMappingNode)mapping.target
+                                            : (AssociationMappingNode)mapping.source;
+                    //check of parentNode of the other associaton node points to a subclass of this association's parent node
+                    if (allSubClasses.Any(x => x.uniqueID == otherAssociationNode.parent.source.uniqueID))
+                    {
+                        //found one, return it.
+                        foundMappings.Add(mapping);
+                    }
+                }
+                return foundMappings;
+            }
+        }
+
         public override MP.MappingNode findNode(List<string> mappingPathNames)
         {
             var foundNode = base.findNode(mappingPathNames);
@@ -106,7 +143,7 @@ namespace EAAddinFramework.Mapping
                 if (!existAsParent(targetElement)
                     && targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
                 {
-                    var childNode = new ElementMappingNode(targetElement, this, this.settings, this.structure);
+                    var childNode = new ElementMappingNode(targetElement, this, this.settings, this.structure, this.isTarget);
                 }
             }
         }

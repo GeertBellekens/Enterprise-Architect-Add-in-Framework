@@ -13,7 +13,7 @@ namespace EAAddinFramework.Mapping
     {
         protected TSF_EA.Element _source;
         protected TSF_EA.Element _virtualOwner;
-        protected MappingNode(NamedElement source, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, NamedElement virtualOwner)
+        protected MappingNode(NamedElement source, MappingNode parent, MappingSettings settings, MP.ModelStructure structure, NamedElement virtualOwner, bool isTarget)
         {
             this.source = source;
             this.parent = parent;
@@ -22,10 +22,22 @@ namespace EAAddinFramework.Mapping
             this.parent?.addChildNode(this);
             this.structure = structure;
             this.virtualOwner = virtualOwner;
+            this.isTarget = isTarget;
         }
         public TSF_EA.Model model => ((TSF_EA.Element)this.source)?.EAModel;
         public virtual string name => this._source.name;
         public virtual string displayName => this.name;
+        public string displayMappingCount
+        {
+            get
+            {
+                var subClassMappingCount = this.subClassMappings.Count();
+                return subClassMappingCount > 0 ?
+                    $"{this.mappingCount} ({subClassMappingCount})"
+                    : $"{this.mappingCount}";
+            }
+            
+        }
         public MappingSettings settings { get; set; }
         private List<string> _mappingPath;
         public List<string> mappingPath
@@ -111,6 +123,7 @@ namespace EAAddinFramework.Mapping
         protected List<Mapping> _mappings = new List<Mapping>();
         public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this && ! x.isReverseEmpty || x.target == this && !(x.isEmpty && !x.isReverseEmpty) );
         public int mappingCount => this.mappings.Count();
+        public abstract IEnumerable<MP.Mapping> subClassMappings { get; }
 
         public MP.ModelStructure structure { get; set; }
         public IEnumerable<MP.MappingNode> mappedChildNodes => this.allChildNodes.Where(x => x.isMapped);
@@ -190,6 +203,7 @@ namespace EAAddinFramework.Mapping
         public bool isReadOnly => this.source != null ? this.source.isReadOnly : false;
 
         public MP.MappingSet mappingSet { get; set; }
+        public bool isTarget { get; set; }
 
         public MP.Mapping mapTo(MP.MappingNode targetNode)
         {
