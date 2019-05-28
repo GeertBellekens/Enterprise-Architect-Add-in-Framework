@@ -282,15 +282,22 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     subsetConstraint =  this.model.factory.createNewElement<Constraint>(this.subsetElement, constraint.name);
                 }
-                //synch notes
-                subsetConstraint.specification = constraint.specification;
-                //save
-                subsetConstraint.save();
+                //only update if not in the list of ignored constraint types
+                if (!this.ownerSchema.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
+                {
+                    //synch notes
+                    subsetConstraint.specification = constraint.specification;
+                    //save
+                    subsetConstraint.save();
+                }
             }
             //remove all remaining subset constraints
             foreach(var subsetConstraint in tempSubsetContraints)
             {
-                subsetConstraint.delete();
+                if (!this.ownerSchema.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
+                {
+                    subsetConstraint.delete();
+                }
             }
         }
 
