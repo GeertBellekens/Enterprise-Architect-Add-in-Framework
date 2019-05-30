@@ -588,9 +588,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             allPackageIDs.AddRange(parentIDs);
             //get the id's from the subpackages
             string parentIDString = string.Join(",", parentIDs);
-            string getSubpackageSQL = "select p.Package_ID as Package_ID from t_package p where p.Parent_ID in (" + parentIDString + ")";
+            string getSubpackageSQL = "select p.Package_ID from t_package p where p.Parent_ID in (" + parentIDString + ")";
             var queryResult = this.EAModel.SQLQuery(getSubpackageSQL);
-            foreach (XmlNode packageIdNode in queryResult.SelectNodes("//Package_ID"))
+            foreach (XmlNode packageIdNode in queryResult.SelectNodes(this.EAModel.formatXPath("//Package_ID")))
             {
                 subPackageIDs.Add(packageIdNode.InnerText);
             }
