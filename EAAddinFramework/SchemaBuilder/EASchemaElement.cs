@@ -391,7 +391,7 @@ namespace EAAddinFramework.SchemaBuilder
                 if (this.owner.settings.orderXmlChoiceBeforeAttributes)
                 {
                     //get the associations to XmlChoice elements
-                    choiceAssociations = associations.Where(x => x.targetElement.HasStereotype("XSDchoice"))
+                    choiceAssociations = associations.Where(x => x.targetElement.hasStereotype("XSDchoice"))
                                                     .OrderBy(x => x.orderingName);
                     //get the other associations
                     associations = associations.Where(x => !choiceAssociations.Contains(x)).OrderBy(x => x.orderingName);

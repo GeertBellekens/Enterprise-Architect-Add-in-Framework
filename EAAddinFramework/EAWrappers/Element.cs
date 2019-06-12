@@ -189,14 +189,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public virtual string uniqueID => null;
 
-        public Stereotype AddStereotype(string text)
+        public Stereotype addStereotype(string text)
         {
             Stereotype stereotype = (Stereotype)this.EAModel.factory.createStereotype(this, text);
             this.addStereotype(stereotype);
             return stereotype;
         }
 
-        public bool HasStereotype(string stereotype)
+        public bool hasStereotype(string stereotype)
         {
             return this.stereotypes.Any(
           x => x.name.Equals(

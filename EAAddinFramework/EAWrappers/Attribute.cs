@@ -324,23 +324,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => !this.wrappedAttribute.AllowDuplicates;
             set => this.wrappedAttribute.AllowDuplicates = !value;
         }
-
-
-
         public UML.Classes.Kernel.ValueSpecification upperValue
         {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
-
         public UML.Classes.Kernel.ValueSpecification lowerValue
         {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
-
-
-
         public bool getIsNavigable() { throw new NotImplementedException(); }
 
         public List<UML.Classes.Dependencies.Dependency> clientDependencies
@@ -354,8 +347,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
-
-
 
         public bool isNavigable
         {
