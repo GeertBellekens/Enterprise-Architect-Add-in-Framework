@@ -273,7 +273,8 @@ namespace EAAddinFramework.SchemaBuilder
                         }
                         //order the attributes
                         if (!this.settings.keepOriginalAttributeOrder
-                            && !this.settings.setAttributeOrderZero)
+                            && !this.settings.setAttributeOrderZero
+                            && ! (this.settings.orderAssociationsAlphabetically && this.settings.orderAssociationsAmongstAttributes))
                         {
                             schemaElement.orderAttributes();
                         }
@@ -719,7 +720,8 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 bool updateTaggedValue = true;
                 var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);
-                if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name))
+                if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name)
+                    || sourceTaggedValue.name.Equals(this.settings.customPositionTag, StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (targetTaggedValue != null &&
                         targetTaggedValue.eaStringValue != string.Empty)

@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// </summary>
 	public class UnlimitedNatural:UML.Classes.Kernel.UnlimitedNatural
 	{
-		public bool isUnlimited {get;private set;}
+		public override bool isUnlimited {get;set;}
 		public uint numericValue {get;private set;}
 		public UnlimitedNatural(string valueString)
 		{

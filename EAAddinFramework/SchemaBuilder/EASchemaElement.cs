@@ -222,7 +222,7 @@ namespace EAAddinFramework.SchemaBuilder
                 || this.owner.settings.keepNotesInSync)
             {
                 this.subsetElement.ownedComments = this.sourceElement.ownedComments;
-                if (! this.owner.settings.keepNotesInSync
+                if (!this.owner.settings.keepNotesInSync
                     && this.owner.settings.prefixNotes
                     && this.owner.settings.prefixNotesText.Length > 0
                     && this.subsetElement.ownedComments.Any(x => x.body.Length > 0))
@@ -234,7 +234,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
 
             }
-            copyConstraints();
+            this.copyConstraints();
             //save the new subset element
             ((TSF_EA.Element)this.subsetElement).save();
             //copy tagged values
@@ -266,7 +266,10 @@ namespace EAAddinFramework.SchemaBuilder
         private void copyConstraints()
         {
             //return if no subset elemnet exists
-            if (this.subsetElement == null || this.sourceElement == null) return;
+            if (this.subsetElement == null || this.sourceElement == null)
+            {
+                return;
+            }
             //get the subset element constraints
             var tempSubsetContraints = new List<Constraint>(this.subsetElement.constraints);
             //copy constraints
@@ -280,7 +283,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 else
                 {
-                    subsetConstraint =  this.model.factory.createNewElement<Constraint>(this.subsetElement, constraint.name);
+                    subsetConstraint = this.model.factory.createNewElement<Constraint>(this.subsetElement, constraint.name);
                 }
                 //only update if not in the list of ignored constraint types
                 if (!this.ownerSchema.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
@@ -292,7 +295,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
             //remove all remaining subset constraints
-            foreach(var subsetConstraint in tempSubsetContraints)
+            foreach (var subsetConstraint in tempSubsetContraints)
             {
                 if (!this.ownerSchema.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
                 {
@@ -397,6 +400,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //add attributes depending on the settings
 
                 //get the attributes
+                //TODO: get the enumeration literals as well and order them together.
                 var attributes = this.subsetElement.attributes.Cast<TSF_EA.Attribute>().OrderBy(x => x.orderingName);
                 //add attributes and associations
                 orderedList.AddRange(attributes);
@@ -416,10 +420,14 @@ namespace EAAddinFramework.SchemaBuilder
                 //set the order for both associations and Attributes
                 foreach (var element in orderedList)
                 {
+                    var customPosition = this.getCustomPosition(element);
+                    var positionValue = customPosition.HasValue
+                                        ? customPosition.Value.ToString()
+                                        : i.ToString();
                     var association = element as TSF_EA.Association;
                     if (association != null)
                     {
-                        association.sourceEnd.addTaggedValue("position", i.ToString());
+                        association.sourceEnd.addTaggedValue("position", positionValue);
                     }
                     else
                     {
@@ -428,7 +436,7 @@ namespace EAAddinFramework.SchemaBuilder
                             var attribute = element as TSF_EA.Attribute;
                             if (attribute != null)
                             {
-                                attribute.addTaggedValue("position", i.ToString());
+                                attribute.addTaggedValue("position", positionValue);
                             }
                         }
                     }
@@ -438,6 +446,27 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
 
+        internal int? getCustomPosition(TSF_EA.Element element)
+        {
+            int? customPosition = null;
+            //check if setting is filled in
+            if (!string.IsNullOrEmpty(this.owner.settings.customPositionTag))
+            {
+                //check if tag exists
+                var customPositionTag = element.taggedValues
+                    .FirstOrDefault(x => x.name.Equals(this.owner.settings.customPositionTag, StringComparison.InvariantCultureIgnoreCase));
+                int foundCustomPosition;
+                //get custom position value from tag
+                if (customPositionTag != null
+                    && !string.IsNullOrWhiteSpace(customPositionTag.tagValue.ToString())
+                    && int.TryParse(customPositionTag.tagValue.ToString(), out foundCustomPosition))
+                {
+                    customPosition = foundCustomPosition;
+                }
+            }
+            //return
+            return customPosition;
+        }
 
 
 
