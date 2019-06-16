@@ -430,9 +430,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public void refresh()
         {
 
-            if (this.EAModel.EAVersion >= 1400 )
+            if (this.EAModel.EAVersion >= 1308 )
             {
-                reloadPackage(); //new feature since v14
+                reloadPackage(); //new feature since v13
             }
             else
             {
