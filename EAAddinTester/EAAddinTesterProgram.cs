@@ -38,13 +38,14 @@ namespace EAAddinTester
         }
         private static void addAddIns()
         {
-            //        	addins.Add(new MyAddin.MyAddinClass());
-            //        	addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
-            //        	addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
-            //			addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
-            //			addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
-            //			addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
-            addins.Add(new GlossaryManager.GlossaryManagerAddin());
+            //addins.Add(new MyAddin.MyAddinClass());
+            //addins.Add(new TSF.UmlToolingFramework.EANavigator.EAAddin());
+            //addins.Add(new EAWorksetSharing.EAWorksetSharingAddin());
+            //addins.Add(new EAScriptAddin.EAScriptAddinAddinClass());
+            //addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
+            //addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
+            //addins.Add(new GlossaryManager.GlossaryManagerAddin());
+            addins.Add(new EAJSON.EAJSONAddin());
         }
         private static void initializeAddins()
         {

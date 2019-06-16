@@ -398,12 +398,17 @@ namespace EAAddinFramework.SchemaBuilder
                 }
 
                 //add attributes depending on the settings
-
                 //get the attributes
-                //TODO: get the enumeration literals as well and order them together.
-                var attributes = this.subsetElement.attributes.Cast<TSF_EA.Attribute>().OrderBy(x => x.orderingName);
+                var attributesAndLiterals = new List<TSF_EA.AttributeWrapper>();
+                attributesAndLiterals.AddRange(this.subsetElement.attributes.Cast<TSF_EA.Attribute>());
+                //get the enumerationLiterals
+                var subsetEnum = this.subsetElement as TSF_EA.Enumeration;
+                if (subsetEnum != null)
+                {
+                    attributesAndLiterals.AddRange(subsetEnum.ownedLiterals.Cast<TSF_EA.EnumerationLiteral>());
+                }
                 //add attributes and associations
-                orderedList.AddRange(attributes);
+                orderedList.AddRange(attributesAndLiterals.OrderBy(x => x.orderingName));
                 orderedList.AddRange(associations);
                 //order if needed
                 if (this.owner.settings.orderAssociationsAmongstAttributes)
@@ -433,7 +438,7 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         if (this.owner.settings.orderAssociationsAmongstAttributes)
                         {
-                            var attribute = element as TSF_EA.Attribute;
+                            var attribute = element as TSF_EA.AttributeWrapper;
                             if (attribute != null)
                             {
                                 attribute.addTaggedValue("position", positionValue);

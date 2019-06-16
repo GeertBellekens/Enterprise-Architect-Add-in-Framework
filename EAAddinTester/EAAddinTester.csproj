@@ -129,6 +129,10 @@
       <Project>{fa1df927-ed65-49ed-87d5-8aa59e18ca73}</Project>
       <Name>EADatabaseTransformer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EAJSON\EAJSON.csproj">
+      <Project>{1daa7217-bb2f-4521-9764-f5759f594447}</Project>
+      <Name>EAJSON</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EANavigator\EANavigator.csproj">
       <Project>{2BFBE8B8-528D-4844-BE0D-ECC68FE1CD1D}</Project>
       <Name>EANavigator</Name>
