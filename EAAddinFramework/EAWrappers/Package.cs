@@ -429,7 +429,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public void refresh()
         {
-            this.EAModel.wrappedModel.RefreshModelView(this.packageID);
+
+            if (this.EAModel.EAVersion >= 1400 )
+            {
+                reloadPackage(); //new feature since v14
+            }
+            else
+            {
+                this.EAModel.wrappedModel.RefreshModelView(this.packageID);
+            }
+        }
+        private void reloadPackage()
+        {
+            this.EAModel.wrappedModel.ReloadPackage(this.packageID);
         }
         public override List<UML.Extended.UMLItem> findOwnedItems(string itemDescriptor)
         {
