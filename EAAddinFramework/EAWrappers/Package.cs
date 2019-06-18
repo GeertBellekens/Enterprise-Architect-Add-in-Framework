@@ -482,7 +482,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         foundItems.AddRange(candiate.findOwnedItems(descriptorParts));
                     }
                 }
-
             }
             //if still nothing found then get the base implemetation
             if (foundItems.Count == 0)
