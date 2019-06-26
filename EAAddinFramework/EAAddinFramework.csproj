@@ -332,7 +332,6 @@
     <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="EAWrappers\README" />
     <None Include="Files\LogoFINAL.ico" />
     <None Include="packages.config">
