@@ -371,7 +371,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedPackage.Packages.Count; i++)
                 {
                     var eaPackage = this.WrappedPackage.Packages.GetAt(i) as global::EA.Package;
-                    if (eaPackage.PackageGUID == ownedElement.guid)
+                    if (eaPackage?.PackageGUID == ownedElement.guid)
                     {
                         this.WrappedPackage.Packages.Delete(i);
                         this.WrappedPackage.Packages.Refresh();
@@ -384,7 +384,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedPackage.Elements.Count; i++)
                 {
                     var eaElement = this.WrappedPackage.Elements.GetAt(i) as global::EA.Element;
-                    if (eaElement.ElementGUID == ownedElement.guid)
+
+                    if (eaElement?.ElementGUID == ownedElement.guid)
                     {
                         this.WrappedPackage.Elements.Delete(i);
                         this.WrappedPackage.Elements.Refresh();
@@ -397,7 +398,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 for (short i = 0; i < this.WrappedPackage.Connectors.Count; i++)
                 {
                     var eaConnector = this.WrappedPackage.Connectors.GetAt(i) as global::EA.Connector;
-                    if (eaConnector.ConnectorGUID == ownedElement.guid)
+                    if (eaConnector?.ConnectorGUID == ownedElement.guid)
                     {
                         this.WrappedPackage.Connectors.Delete(i);
                         this.WrappedPackage.Connectors.Refresh();
