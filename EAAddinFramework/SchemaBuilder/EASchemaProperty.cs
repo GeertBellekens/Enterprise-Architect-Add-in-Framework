@@ -116,8 +116,8 @@ namespace EAAddinFramework.SchemaBuilder
                 this.subSetProperty.multiplicity = this.multiplicity;
                 this.subSetProperty.isID = this.sourceProperty.isID;
                 this.subSetProperty.visibility = this.sourceProperty.visibility;
-                //Set position for new items
-                if (this.isNew && !this.settings.setAttributeOrderZero)
+                //Set position
+                if (this.settings.keepOriginalAttributeOrder)
                 {
                     this.subSetProperty.position = this.sourceProperty.position;
                 }
