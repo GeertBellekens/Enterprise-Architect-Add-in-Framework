@@ -87,7 +87,9 @@ namespace EAAddinFramework.SchemaBuilder
                         foreach (var schemaElement in schemaElements.ToList())
                         {
                             var element = (EASchemaElement) schemaElement;
-                            if (null != element && choices.Contains(element.TypeID))
+                            if (null != element 
+                                && choices.Contains(element.TypeID)
+                                && element.name == this.wrappedProperty.TypeName)
                             {
                                 _choiceElements.Add(element);
                             }
