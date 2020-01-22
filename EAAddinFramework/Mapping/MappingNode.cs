@@ -87,12 +87,13 @@ namespace EAAddinFramework.Mapping
                 }
                 //get the element corresponding to the (now) first guid.
                 var subElement = this._source.model.getItemFromGUID(mappingPath[0]) as UML.Classes.Kernel.NamedElement;
-                //TODO: check if subElement is actually somehow linked to this node?
+                
                 //check if a childNode for the given subElement is already present
                 var childNode = this.allChildNodes.FirstOrDefault(x => x.source.uniqueID == subElement?.uniqueID) as MappingNode;
                 //create new new node if not already present
                 if (childNode == null)
                 {
+                    //TODO: check if subElement is actually somehow linked to this node?
                     childNode = MappingFactory.createMappingNode(subElement, this, this.settings);
                 }
 

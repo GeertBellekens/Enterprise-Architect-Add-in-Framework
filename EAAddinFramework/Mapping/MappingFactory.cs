@@ -152,18 +152,26 @@ namespace EAAddinFramework.Mapping
 
         public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
         {
+            //check if there is a virtual owner
+            UML.Classes.Kernel.NamedElement virtualOwner = null;
+            if (source.owner.uniqueID != parent.source.uniqueID)
+            {
+                virtualOwner = source.owner as UML.Classes.Kernel.NamedElement;
+            }
+
             //AttributeMappingNode
             var attributeSource = source as AttributeWrapper;
             if (attributeSource != null)
             {
-                return new AttributeMappingNode(attributeSource, parent as ElementMappingNode, settings, parent.structure, parent.isTarget);
+                return new AttributeMappingNode(attributeSource, parent as ElementMappingNode, settings, parent.structure, virtualOwner, parent.isTarget);
+
             }
 
             //AssociationMappingNode
             var associationSource = source as Association;
             if (associationSource != null)
             {
-                return new AssociationMappingNode(associationSource, parent as ElementMappingNode, settings, parent.structure, parent.isTarget);
+                return new AssociationMappingNode(associationSource, parent as ElementMappingNode, settings, parent.structure, virtualOwner, parent.isTarget);
             }
 
             //ClassifierMappingNode
