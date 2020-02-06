@@ -195,6 +195,11 @@ namespace EAAddinFramework.Mapping
         public void addMapping(MP.Mapping mapping)
         {
             this._mappings.Add((Mapping)mapping);
+            //also add to mappingSet if this is a sourceNode
+            if(! this.isTarget)
+            {
+                this.mappingSet.addMapping(mapping);
+            }
         }
 
         public void removeMapping(MP.Mapping mapping)
@@ -220,9 +225,10 @@ namespace EAAddinFramework.Mapping
                 }
                 var mappingItem = this.createTaggedValueMappingItem((MappingNode)targetNode);
                 mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
-                mapping.save();
                 //add the mapping tot he mappingset
                 this.mappingSet.addMapping(mapping);
+                //save the mapping
+                mapping.save();
             }
             return mapping;
         }

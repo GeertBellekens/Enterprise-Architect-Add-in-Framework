@@ -87,6 +87,18 @@ namespace EAAddinFramework.Mapping
                 this._isReverseEmpty = value;
             }
         }
+        private MappingSet _mappingSet;
+        public override MP.MappingSet mappingSet
+        {
+            get
+            {
+                return this._mappingSet;
+            }
+            set
+            {
+                this._mappingSet = (MappingSet) value;
+            }
+        }
 
         protected override void saveMe()
         {
@@ -95,6 +107,13 @@ namespace EAAddinFramework.Mapping
             var bodyNode = new XElement("mapping");
             this.xdoc.Add(bodyNode);
             bodyNode.Add(MappingLogic.getMappingLogicElement(this.EAMappingLogics));
+            //add mappingSet node
+            if (this.mappingSet != null)
+            {
+                bodyNode.Add(new XElement(MappingFactory.mappingSetName, 
+                    new XElement(MappingFactory.mappingSetSourceName ,this.mappingSet.source.source.uniqueID),
+                    new XElement(MappingFactory.mappingSetTargetName, this.mappingSet.target.source.uniqueID)));
+            }
             //add isEmpty Node
             bodyNode.Add(new XElement(MappingFactory.isEmptyMappingName, this.isEmpty.ToString()));
             //add isReverseEmptyNode

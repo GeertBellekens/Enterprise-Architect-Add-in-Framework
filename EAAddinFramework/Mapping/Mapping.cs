@@ -123,6 +123,8 @@ namespace EAAddinFramework.Mapping
 
         public bool isReadOnly => this.source.isReadOnly;
 
+        public abstract MP.MappingSet mappingSet { get; set; }
+
         #endregion
     }
 }

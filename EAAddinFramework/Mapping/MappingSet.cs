@@ -14,7 +14,7 @@ namespace EAAddinFramework.Mapping
     /// </summary>
     public class MappingSet : MP.MappingSet
     {
-        internal List<Mapping> _mappings;
+        internal List<Mapping> _mappings = new List<Mapping>();
         protected MappingNode _source;
         protected MappingNode _target;
         public MappingSettings settings { get; set; }
@@ -26,7 +26,7 @@ namespace EAAddinFramework.Mapping
             this.target.mappingSet = this;
             this.settings = settings;
             //get the list of mappings
-            this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();
+            //this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();
             //map source to target
             this.source.mapTo(target);
         }
@@ -74,6 +74,9 @@ namespace EAAddinFramework.Mapping
 
         public void addMapping(MP.Mapping mapping)
         {
+            //set backlink
+            mapping.mappingSet = this;
+            //add to list
             this._mappings.Add((Mapping)mapping);
         }
 

@@ -21,6 +21,9 @@ namespace EAAddinFramework.Mapping
         public const string mappingLogicName = "mappingLogic";
         public const string isEmptyMappingName = "isEmptyMapping";
         public const string isReverseEmptyName = "isReverseEmpty";
+        public const string mappingSetName = "mappingSet";
+        public const string mappingSetSourceName = "source";
+        public const string mappingSetTargetName = "target";
         public static MappingSet createMappingSet(ElementWrapper sourceRoot, ElementWrapper targetRoot, MappingSettings settings)
         {
             //first create the root nodes
@@ -28,6 +31,8 @@ namespace EAAddinFramework.Mapping
             var targetRootNode = createNewRootNode(targetRoot, settings, true);
             //then create the new mappingSet
             var mappingSet = new MappingSet(sourceRootNode, targetRootNode, settings);
+            //get the mappings for the sourceRootNode
+            mappingSet.source.getMappings(mappingSet.target);
             //return
             return mappingSet;
         }

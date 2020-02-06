@@ -57,6 +57,8 @@ namespace EAAddinFramework.Mapping
             }
         }
 
+        public override MP.MappingSet mappingSet { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         #endregion
 
         #region implemented abstract members of Mapping
