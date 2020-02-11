@@ -66,10 +66,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// resets the cached attributes
         /// </summary>
-        internal void resetAttributes()
+        internal virtual void resetAttributes()
         {
             this._attributes = null;
             this._attributeWrappers = null;
+            this._ownedLiterals = null;
         }
         public string linkedDocument
         {
