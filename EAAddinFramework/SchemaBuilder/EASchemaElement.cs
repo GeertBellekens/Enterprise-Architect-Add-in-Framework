@@ -199,8 +199,8 @@ namespace EAAddinFramework.SchemaBuilder
             //abstract
             this.subsetElement.isAbstract = this.sourceElement.isAbstract;
             //alias
-            //only copy alias is the alias in the subset is empty
-            if (string.IsNullOrEmpty(((TSF_EA.ElementWrapper)this.subsetElement).alias))
+            //only copy alias if the alias in the source element is not empty
+            if (!string.IsNullOrEmpty(((TSF_EA.ElementWrapper)this.sourceElement).alias))
             {
                 ((TSF_EA.ElementWrapper)this.subsetElement).alias = ((TSF_EA.ElementWrapper)this.sourceElement).alias;
             }

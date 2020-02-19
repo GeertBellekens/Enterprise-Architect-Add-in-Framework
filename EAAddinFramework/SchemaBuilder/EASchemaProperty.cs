@@ -125,8 +125,8 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     this.subSetProperty.position = 0;
                 }
-                //alias (only if subset alias is empty)
-                if (string.IsNullOrEmpty(((UTF_EA.Attribute)this.subSetProperty).alias))
+                //alias (only if source alias is not empty)
+                if (!string.IsNullOrEmpty(((UTF_EA.Attribute)this.sourceProperty).alias))
                 {
                     ((UTF_EA.Attribute)this.subSetProperty).alias = ((UTF_EA.Attribute)this.sourceProperty).alias;
                 }
