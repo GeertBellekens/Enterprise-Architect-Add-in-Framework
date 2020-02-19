@@ -25,7 +25,7 @@ namespace EAAddinFramework.Mapping
             this.isTarget = isTarget;
         }
         public TSF_EA.Model model => ((TSF_EA.Element)this.source)?.EAModel;
-        public virtual string name => this._source.name;
+        public virtual string name => this._source?.name;
         public virtual string displayName => this.name;
         public string displayMappingCount
         {
@@ -141,15 +141,8 @@ namespace EAAddinFramework.Mapping
 
         public virtual IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
         {
-            var foundMappings = new List<MP.Mapping>();
-            //Mappings are stored in tagged values
-            foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
-                                                                                 || x.name == this.settings.linkedAssociationTagName
-                                                                                 || x.name == this.settings.linkedElementTagName))
-            {
-                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
-                if (mapping != null) foundMappings.Add(mapping);
-            }
+            //get my mappings
+            var foundMappings = this.getMyMappings(targetRootNode).ToList();
             //loop subnodes
             foreach (MappingNode childNode in this.allChildNodes)
             {
@@ -182,6 +175,19 @@ namespace EAAddinFramework.Mapping
             this.buildNodeTree();
             //then get mappings
             return this.getOwnedMappings(targetRootNode);
+        }
+        public IEnumerable<MP.Mapping> getMyMappings(MP.MappingNode targetRootNode)
+        {
+            var foundMappings = new List<MP.Mapping>();
+            //Mappings are stored in tagged values
+            foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
+                                                                                 || x.name == this.settings.linkedAssociationTagName
+                                                                                 || x.name == this.settings.linkedElementTagName))
+            {
+                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
+                if (mapping != null) foundMappings.Add(mapping);
+            }
+            return foundMappings;
         }
         protected abstract List<UML.Profiles.TaggedValue> sourceTaggedValues { get; }
         public NamedElement virtualOwner
@@ -225,8 +231,6 @@ namespace EAAddinFramework.Mapping
                 }
                 var mappingItem = this.createTaggedValueMappingItem((MappingNode)targetNode);
                 mapping = MappingFactory.createMapping(mappingItem, this, (MappingNode)targetNode);
-                //add the mapping tot he mappingset
-                this.mappingSet.addMapping(mapping);
                 //save the mapping
                 mapping.save();
             }

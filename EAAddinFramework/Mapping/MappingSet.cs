@@ -26,9 +26,10 @@ namespace EAAddinFramework.Mapping
             this.target.mappingSet = this;
             this.settings = settings;
             //get the list of mappings
+            this.source.getMyMappings(target);
             //this._mappings = this.source.getMappings(target).Cast<Mapping>().ToList();
             //map source to target
-            this.source.mapTo(target);
+            //this.source.mapTo(target);
         }
         private List<ElementWrapper> _contexts;
         public List<ElementWrapper> EAContexts
