@@ -422,13 +422,35 @@ namespace EAAddinFramework.SchemaBuilder
                     orderedList.InsertRange(0, choiceAssociations);
                 }
                 int i = 1;
+                //keep track of all custom positions to detect conflicts
+                var customPositions = new Dictionary<string, TSF_EA.Element>();
                 //set the order for both associations and Attributes
                 foreach (var element in orderedList)
                 {
                     var customPosition = this.getCustomPosition(element);
-                    var positionValue = customPosition.HasValue
-                                        ? customPosition.Value.ToString()
-                                        : i.ToString();
+                    string positionValue;
+                    if (customPosition.HasValue)
+                    {
+                        //use customposition as position
+                        positionValue = customPosition.Value.ToString();
+                        //add custom position to list
+                        if (!customPositions.ContainsKey(customPosition.Value.ToString()))
+                        {
+                            customPositions.Add(customPosition.Value.ToString(), element);
+                        }
+                    }
+                    else
+                    {
+                        //use i as position
+                        positionValue = i.ToString();
+                    }
+                    //check if position value conflicts with existing custom position
+                    if (customPositions.ContainsKey(positionValue))
+                    {
+                        //conflict in custom positions
+                        EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Conflict with custom position '{positionValue}' on element '{this.subsetElement.name}'"
+                                           , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.error);
+                    }
                     var association = element as TSF_EA.Association;
                     if (association != null)
                     {
