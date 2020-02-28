@@ -438,18 +438,24 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             customPositions.Add(customPosition.Value.ToString(), element);
                         }
+                        else
+                        {
+                            //conflict in custom positions
+                            EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Conflict with custom position '{positionValue}' on element '{this.subsetElement.name}'"
+                                               , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.error);
+                        }
                     }
                     else
                     {
                         //use i as position
                         positionValue = i.ToString();
-                    }
-                    //check if position value conflicts with existing custom position
-                    if (customPositions.ContainsKey(positionValue))
-                    {
-                        //conflict in custom positions
-                        EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Conflict with custom position '{positionValue}' on element '{this.subsetElement.name}'"
-                                           , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.error);
+                        //check if position value conflicts with existing custom position
+                        if (customPositions.ContainsKey(positionValue))
+                        {
+                            //conflict in custom positions
+                            EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Conflict with custom position '{positionValue}' on element '{this.subsetElement.name}'"
+                                               , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.error);
+                        }
                     }
                     var association = element as TSF_EA.Association;
                     if (association != null)
