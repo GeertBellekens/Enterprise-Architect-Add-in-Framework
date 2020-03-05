@@ -80,6 +80,13 @@ namespace EAAddinFramework.Mapping
             //add to list
             this._mappings.Add((Mapping)mapping);
         }
+        /// <summary>
+        /// Load all mappings for this mappingSet
+        /// </summary>
+        public void loadAllMappings()
+        {
+            this.source.getMappings(this.target);
+        }
 
         #endregion
     }

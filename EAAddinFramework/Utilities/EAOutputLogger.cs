@@ -86,7 +86,11 @@ namespace EAAddinFramework.Utilities
 			//log to logfile if needed
 			switch (logType) 
 			{
-				case LogTypeEnum.log:
+                case LogTypeEnum.none:
+                    //log to output
+                    logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
+                    break;
+                case LogTypeEnum.log:
 					Logger.log(message);
                     //log to output
                     logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
