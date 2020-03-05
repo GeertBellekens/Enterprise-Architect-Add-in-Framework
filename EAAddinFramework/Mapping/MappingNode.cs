@@ -178,6 +178,8 @@ namespace EAAddinFramework.Mapping
         }
         public IEnumerable<MP.Mapping> getMyMappings(MP.MappingNode targetRootNode)
         {
+            //clear mappings before starting
+            this._mappings.Clear();
             var foundMappings = new List<MP.Mapping>();
             //Mappings are stored in tagged values
             foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
