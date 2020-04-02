@@ -31,8 +31,6 @@ namespace EAAddinFramework.Mapping
             var targetRootNode = createNewRootNode(targetRoot, settings, true);
             //then create the new mappingSet
             var mappingSet = new MappingSet(sourceRootNode, targetRootNode, settings);
-            //get the mappings for the sourceRootNode
-            //mappingSet.source.getMappings(mappingSet.target);
             //return
             return mappingSet;
         }

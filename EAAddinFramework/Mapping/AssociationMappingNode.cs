@@ -128,6 +128,19 @@ namespace EAAddinFramework.Mapping
                     }
                 }
             }
+            //it could also be that the mappingPath for an association is expressed as Class.RelatedClass, omitting the name of the association.
+            // so if this association node has childnodes with the given then then we return this node
+            if (mappingPathNames.Count == 1)
+            {
+                foreach (var childNode in this.allChildNodes)
+                {
+                    foundNode = childNode.findNode(mappingPathNames);
+                    if (foundNode != null)
+                    {
+                        break;
+                    }
+                }
+            }
             return foundNode;
         }
 
