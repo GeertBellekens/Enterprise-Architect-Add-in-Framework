@@ -140,6 +140,11 @@ namespace EAAddinFramework.Mapping
                         break;
                     }
                 }
+                //if the end class of the association is not loaded as a node, we check the target class name
+                if (this.sourceAssociation.targetElement.name == mappingPathNames[0])
+                {
+                    foundNode = this;
+                }
             }
             return foundNode;
         }
