@@ -26,7 +26,7 @@ namespace EAAddinFramework.Mapping
             this.target.mappingSet = this;
             this.settings = settings;
             //get the mapings of the source object
-            this.source.getMyMappings(target);
+            this.source.getMyMappings();
         }
         private List<ElementWrapper> _contexts;
         public List<ElementWrapper> EAContexts
@@ -82,7 +82,29 @@ namespace EAAddinFramework.Mapping
         /// </summary>
         public void loadAllMappings()
         {
-            this.source.getMappings(this.target);
+            this.source.getMappings();
+        }
+        /// <summary>
+        /// load only the mappings for the given source element
+        /// </summary>
+        /// <param name="sourceElement">the element to start from</param>
+        public void loadMappings(NamedElement sourceElement)
+        {
+            var mappingNode = MappingFactory.getMappingNode(sourceElement, (MappingNode)this.source);
+            mappingNode.getMappings();
+            //if we are showing a partial mapping then we show all elements
+            if (!mappingNode.getOwnedMappings().Any())
+            {
+                this.showAll(this.source);
+            }
+        }
+        private void showAll(MP.MappingNode node)
+        {
+            node.showAll = true;
+            foreach (var subnode in node.childNodes)
+            {
+                this.showAll(subnode);
+            }
         }
 
         #endregion

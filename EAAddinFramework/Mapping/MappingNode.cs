@@ -139,14 +139,14 @@ namespace EAAddinFramework.Mapping
             this._allChildNodes.Add((MappingNode)childNode);
         }
 
-        public virtual IEnumerable<MP.Mapping> getOwnedMappings(MP.MappingNode targetRootNode)
+        public virtual IEnumerable<MP.Mapping> getOwnedMappings()
         {
             //get my mappings
-            var foundMappings = this.getMyMappings(targetRootNode).ToList();
+            var foundMappings = this.getMyMappings().ToList();
             //loop subnodes
             foreach (MappingNode childNode in this.allChildNodes)
             {
-                foundMappings.AddRange(childNode.getOwnedMappings(targetRootNode));
+                foundMappings.AddRange(childNode.getOwnedMappings());
             }
             return foundMappings;
         }
@@ -169,15 +169,16 @@ namespace EAAddinFramework.Mapping
         }
         public abstract void setChildNodes();
 
-        public IEnumerable<MP.Mapping> getMappings(MP.MappingNode targetRootNode)
+        public IEnumerable<MP.Mapping> getMappings()
         {
             //first build tree node
             this.buildNodeTree();
             //then get mappings
-            return this.getOwnedMappings(targetRootNode);
+            return this.getOwnedMappings();
         }
-        public IEnumerable<MP.Mapping> getMyMappings(MP.MappingNode targetRootNode)
+        public IEnumerable<MP.Mapping> getMyMappings( )
         {
+            var targetRootNode = this.mappingSet.target;
             //clear mappings before starting
             this._mappings.Clear();
             var foundMappings = new List<MP.Mapping>();

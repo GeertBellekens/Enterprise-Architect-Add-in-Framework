@@ -151,7 +151,11 @@ namespace EAAddinFramework.Mapping
             throw new ArgumentException("MappingItem should be Connector or TaggedValue");
         }
 
-
+        public static MappingNode getMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode rootNode)
+        {
+           var mappingPath = getMappingPath(source as Element, rootNode);
+           return rootNode.createMappingNode(mappingPath);
+        }
 
         public static MappingNode createMappingNode(UML.Classes.Kernel.NamedElement source, MappingNode parent, MappingSettings settings)
         {

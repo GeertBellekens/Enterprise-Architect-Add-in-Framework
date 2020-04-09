@@ -16,6 +16,20 @@ namespace EAAddinFramework.Mapping
         public TaggedValueMapping(TaggedValue wrappedTaggedValue, MappingNode source, MappingNode target) : base(source, target)
         {
             this.wrappedTaggedValue = wrappedTaggedValue;
+            //make sure the mappingset is defined for all tagged value mappings.
+            if (! this.hasMappingSetDefined
+                && ! this.isReadOnly)
+            {
+                var temp = this.EAMappingLogics; //load mapping logics to make sure they get saved
+                this.saveMe();
+            }
+        }
+        private bool hasMappingSetDefined
+        {
+            get
+            {
+                return this.xdoc.Descendants(MappingFactory.mappingSetName).Any();
+            }
         }
         private XDocument xdoc
         {
