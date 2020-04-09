@@ -154,11 +154,17 @@ namespace EAAddinFramework.Mapping
             {
                 return foundNode;
             }
+            //try the alternative approach
+            return findAlternative(mappingPathNames, false);
+        }
+
+        public MP.MappingNode findAlternative (List<string> mappingPathNames, bool reversed)
+        {
             //if not found then it might be a Class.attribute reference (or Class.Association)
             //So if there are only two names in the mapping path, AND the source node is a package,
             //we check if we can find a class with the given name in the package or sub-packages
-            if (mappingPathNames.Any() 
-                && mappingPathNames.Count <= 2 
+            if (mappingPathNames.Any()
+                && mappingPathNames.Count <= 3
                 && this.source is TSF_EA.Package)
             {
                 var classes = ((TSF_EA.Package)this.sourceElement)
@@ -175,17 +181,24 @@ namespace EAAddinFramework.Mapping
                             return nodePath.Last();
                         }
                         //from this node find the attribute
-                        foundNode = nodePath.Last().findNode(mappingPathNames);
+                        var foundNode = nodePath.Last().findNode(mappingPathNames);
                         if (foundNode != null)
                         {
                             return foundNode;
                         }
                     }
                 }
+                //sometimes we also get class1.class2.attribute2, but there is only a association from class2 to class1
+                // in that case we reverse the class2 and class1 and try again.
+                if (! reversed && mappingPathNames.Count >= 2 )
+                {
+                    return findAlternative(new List<string> { mappingPathNames[1], mappingPathNames[0] }, true);
+                }
             }
             //not found, return null
             return null;
         }
+
         private List<MappingNode> findPath(TSF_EA.Element itemToFind)
         {
             //if itemToFind is null we return an empty list

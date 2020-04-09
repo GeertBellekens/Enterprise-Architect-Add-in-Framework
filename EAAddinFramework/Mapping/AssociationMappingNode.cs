@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TSF.UmlToolingFramework.UML.Extended;
 using MP = MappingFramework;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using UML = TSF.UmlToolingFramework.UML;
@@ -9,11 +8,11 @@ namespace EAAddinFramework.Mapping
 {
     public class AssociationMappingNode : MappingNode
     {
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, MappingSettings settings, MP.ModelStructure structure, bool isTarget)
             : this(sourceAssociation, null, settings, structure, isTarget) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, bool isTarget) 
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, bool isTarget)
             : this(sourceAssociation, parent, settings, structure, null, isTarget) { }
-        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner, bool isTarget) 
+        public AssociationMappingNode(TSF_EA.Association sourceAssociation, ElementMappingNode parent, MappingSettings settings, MP.ModelStructure structure, UML.Classes.Kernel.NamedElement virtualOwner, bool isTarget)
             : base(sourceAssociation, parent, settings, structure, virtualOwner, isTarget) { }
         protected override List<UML.Profiles.TaggedValue> sourceTaggedValues => this.sourceAssociation?.taggedValues.ToList();
 
@@ -69,11 +68,17 @@ namespace EAAddinFramework.Mapping
                 var foundMappings = new List<MP.Mapping>();
                 var parent = this.parent.source as TSF_EA.ElementWrapper;
                 //exit if no parent found
-                if (parent == null) return foundMappings;
+                if (parent == null)
+                {
+                    return foundMappings;
+                }
                 //get the subclasses
                 var allSubClasses = parent.allSubClasses;
                 //exit if there are no subclasses
-                if (!allSubClasses.Any()) return foundMappings;
+                if (!allSubClasses.Any())
+                {
+                    return foundMappings;
+                }
                 //get all other mappings to/from this association
                 var allAssociationMappings = this.isTarget ?
                         this.mappingSet.mappings.Where(x => x.target.source.uniqueID == this.source.uniqueID && x.target != this)
@@ -101,12 +106,12 @@ namespace EAAddinFramework.Mapping
             //if the node is not found then we look further. It might be using the UN/CEFACT naming standard.
             //in those cases the name of a node is targetRole + target ElementName with all "_" removed
             if (this.structure == MP.ModelStructure.Message
-                && foundNode == null 
+                && foundNode == null
                 && mappingPathNames.Any())
             {
                 var nameToFind = mappingPathNames.First();
                 var unCefactName = (this.sourceAssociation.targetEnd.name + this.sourceAssociation.target.name).Replace("_", string.Empty);
-                if (nameToFind.Equals(unCefactName,System.StringComparison.InvariantCultureIgnoreCase))
+                if (nameToFind.Equals(unCefactName, System.StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (mappingPathNames.Count == 1)
                     {
@@ -128,22 +133,41 @@ namespace EAAddinFramework.Mapping
                     }
                 }
             }
-            //it could also be that the mappingPath for an association is expressed as Class.RelatedClass, omitting the name of the association.
-            // so if this association node has childnodes with the given then then we return this node
-            if (mappingPathNames.Count == 1)
+            if (this.structure == MP.ModelStructure.DataModel)
             {
-                foreach (var childNode in this.allChildNodes)
+                //it could also be that the mappingPath for an association is expressed as Class.RelatedClass, omitting the name of the association.
+                // so if this association node has childnodes with the given then then we return this node
+                if (mappingPathNames.Count == 1)
                 {
-                    foundNode = childNode.findNode(mappingPathNames);
-                    if (foundNode != null)
+                    foreach (var childNode in this.allChildNodes)
                     {
-                        break;
+                        foundNode = childNode.findNode(mappingPathNames);
+                        if (foundNode != null)
+                        {
+                            break;
+                        }
+                    }
+                    //if the end class of the association is not loaded as a node, we check the target class name
+                    if (this.sourceAssociation.targetElement.name == mappingPathNames[0])
+                    {
+                        foundNode = this;
+                    }
+                    //if we can't find it as the name of the target element we check the subclasses of the target element
+                    if (((TSF_EA.ElementWrapper)this.sourceAssociation.targetElement).subClasses.Any(x => x.name == mappingPathNames[0]))
+                    {
+                        foundNode = this;
                     }
                 }
-                //if the end class of the association is not loaded as a node, we check the target class name
-                if (this.sourceAssociation.targetElement.name == mappingPathNames[0])
+                else if (mappingPathNames.Count == 2)
                 {
-                    foundNode = this;
+                    //if the end class of the association is not loaded as a node, we check the target class name
+                    if (this.sourceAssociation.targetElement.name == mappingPathNames[0]
+                        && this.sourceAssociation.targetElement.ownedElements
+                                        .OfType<UML.Classes.Kernel.Property>()
+                                        .Any(x => x.name == mappingPathNames[1]))
+                    {
+                        foundNode = this;
+                    }
                 }
             }
             return foundNode;
@@ -158,7 +182,7 @@ namespace EAAddinFramework.Mapping
             {
                 //create mapping node for target element
                 var targetElement = this.sourceAssociation.targetElement as TSF_EA.ElementWrapper;
-                if (!existAsParent(targetElement)
+                if (!this.existAsParent(targetElement)
                     && targetElement != null && !this.allChildNodes.Any(x => x.source?.uniqueID == targetElement.uniqueID))
                 {
                     var childNode = new ElementMappingNode(targetElement, this, this.settings, this.structure, this.isTarget);
