@@ -121,8 +121,19 @@ namespace EAAddinFramework.Mapping
 
         public MP.MappingNode parent { get; set; }
 
-        protected List<Mapping> _mappings = new List<Mapping>();
-        public IEnumerable<MP.Mapping> mappings => this._mappings.Where(x => x.source == this && ! x.isReverseEmpty || x.target == this && !(x.isEmpty && !x.isReverseEmpty) );
+        protected List<Mapping> _mappings;
+        public IEnumerable<MP.Mapping> mappings
+        {
+            get
+            {
+                if (this._mappings == null)
+                {
+                    return new List<Mapping>();
+                }
+                return this._mappings.Where(x => x.source == this && !x.isReverseEmpty || x.target == this && !(x.isEmpty && !x.isReverseEmpty));
+            }
+        }
+            
         public int mappingCount => this.mappings.Count();
         public abstract IEnumerable<MP.Mapping> subClassMappings { get; }
 
@@ -178,19 +189,28 @@ namespace EAAddinFramework.Mapping
         }
         public IEnumerable<MP.Mapping> getMyMappings( )
         {
-            var targetRootNode = this.mappingSet.target;
-            //clear mappings before starting
-            this._mappings.Clear();
-            var foundMappings = new List<MP.Mapping>();
-            //Mappings are stored in tagged values
-            foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
-                                                                                 || x.name == this.settings.linkedAssociationTagName
-                                                                                 || x.name == this.settings.linkedElementTagName))
+            if (this._mappings == null)
             {
-                var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
-                if (mapping != null) foundMappings.Add(mapping);
+                this._mappings = new List<Mapping>();
+
+                var targetRootNode = this.mappingSet.target;
+                //clear mappings before starting
+
+                var foundMappings = new List<MP.Mapping>();
+                //Mappings are stored in tagged values
+                foreach (var mappingTag in this.sourceTaggedValues.Where(x => x.name == this.settings.linkedAttributeTagName
+                                                                                     || x.name == this.settings.linkedAssociationTagName
+                                                                                     || x.name == this.settings.linkedElementTagName))
+                {
+                    var mapping = MappingFactory.getMapping(this, (TSF_EA.TaggedValue)mappingTag, (MappingNode)targetRootNode);
+                    if (mapping != null) foundMappings.Add(mapping);
+                }
+                return foundMappings;
             }
-            return foundMappings;
+            else
+            {
+                return this._mappings;
+            }
         }
         protected abstract List<UML.Profiles.TaggedValue> sourceTaggedValues { get; }
         public NamedElement virtualOwner
@@ -203,6 +223,10 @@ namespace EAAddinFramework.Mapping
 
         public void addMapping(MP.Mapping mapping)
         {
+            if (this._mappings == null)
+            {
+                this._mappings = new List<Mapping>();
+            }
             this._mappings.Add((Mapping)mapping);
             //also add to mappingSet if this is a sourceNode
             if(! this.isTarget)
@@ -213,7 +237,10 @@ namespace EAAddinFramework.Mapping
 
         public void removeMapping(MP.Mapping mapping)
         {
-            this._mappings.Remove((Mapping)mapping);
+            if (this._mappings == null)
+            {
+                this._mappings.Remove((Mapping)mapping);
+            }
         }
         public bool isReadOnly => this.source != null ? this.source.isReadOnly : false;
 
