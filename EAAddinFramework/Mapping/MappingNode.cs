@@ -237,7 +237,7 @@ namespace EAAddinFramework.Mapping
 
         public void removeMapping(MP.Mapping mapping)
         {
-            if (this._mappings == null)
+            if (this._mappings != null)
             {
                 this._mappings.Remove((Mapping)mapping);
             }
