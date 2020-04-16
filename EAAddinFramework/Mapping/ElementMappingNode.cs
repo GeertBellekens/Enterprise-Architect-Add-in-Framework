@@ -81,7 +81,8 @@ namespace EAAddinFramework.Mapping
             //create child nodes for each attribute
             foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes)
             {
-                if (!existAsParent(ownedAttribute)
+                if ((this.structure == MP.ModelStructure.DataModel 
+                    || !existAsParent(ownedAttribute))
                     && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedAttribute.uniqueID))
                 {
                     var childNode = new AttributeMappingNode(ownedAttribute, this, this.settings, this.structure, virtualElement, this.isTarget);
@@ -93,7 +94,7 @@ namespace EAAddinFramework.Mapping
             {
                 foreach (var enumLiteral in sourceEnum.ownedLiterals)
                 {
-                    if (!existAsParent(enumLiteral)
+                    if ((this.structure == MP.ModelStructure.DataModel || !existAsParent(enumLiteral))
                         && !this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
                     {
                         var childNode = new AttributeMappingNode((TSF_EA.AttributeWrapper)enumLiteral, this, this.settings, this.structure, virtualElement, this.isTarget);
@@ -101,13 +102,14 @@ namespace EAAddinFramework.Mapping
                 }
             }
             //create child nodes for each owned element
-            foreach (var ownedClassifier in element.ownedElements.OfType<TSF_EA.ElementWrapper>()
+            foreach (var ownedClassifier in element.ownedElementWrappers
                                     .Where(x => x.EAElementType == "Class"
                                             || x.EAElementType == "Enumeration"
                                             || x.EAElementType == "DataType"
                                             || x.EAElementType == "Package"))
             {
-                if (!existAsParent(ownedClassifier)
+                if ((this.structure == MP.ModelStructure.DataModel
+                    ||!existAsParent(ownedClassifier))
                     && !this.allChildNodes.Any(x => x.source?.uniqueID == ownedClassifier.uniqueID))
                 {
                     var childNode = new ElementMappingNode(ownedClassifier, this, this.settings, this.structure, virtualElement, this.isTarget);
@@ -117,7 +119,8 @@ namespace EAAddinFramework.Mapping
             foreach (var ownedAssociation in element.getRelationships<TSF_EA.Association>(true, false)
                                             .OrderBy(x => this.getSequence(x)).ThenBy(x => x.orderingName))
             {
-                if (! existAsParent(ownedAssociation)
+                if ((this.structure == MP.ModelStructure.DataModel
+                    || ! existAsParent(ownedAssociation))
                     &&! this.allChildNodes.Any(x => x.source?.uniqueID == ownedAssociation.uniqueID))
                 {
                     var childNode = new AssociationMappingNode(ownedAssociation, this, this.settings, this.structure, virtualElement, this.isTarget);

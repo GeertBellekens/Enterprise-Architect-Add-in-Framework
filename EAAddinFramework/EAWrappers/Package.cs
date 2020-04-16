@@ -219,6 +219,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
+        public override List<ElementWrapper> ownedElementWrappers
+        {
+            get
+            {
+                if (this._ownedElementWrappers == null)
+                {
+                    this.wrappedPackage.Elements.Refresh();
+                    this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedPackage.Elements).OfType<ElementWrapper>().ToList();
+                    this.wrappedPackage.Packages.Refresh();
+                    this._ownedElementWrappers.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<ElementWrapper>().ToList());
+                }
+                return this._ownedElementWrappers;
+            }
+        }
+        
         public override HashSet<UML.Diagrams.Diagram> ownedDiagrams
         {
             get

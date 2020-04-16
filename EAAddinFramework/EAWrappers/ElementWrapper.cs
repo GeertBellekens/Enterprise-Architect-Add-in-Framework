@@ -524,8 +524,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._attributes == null)
                 {
-                    //refresh attributes to make sure we have an up-to-date list
-                    this.wrappedElement.Attributes.Refresh();
                     //get the attributes
                     this._attributes = new HashSet<UML.Classes.Kernel.Property>(this.attributeWrappers.OfType<UML.Classes.Kernel.Property>());
                 }
@@ -559,8 +557,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
+                var elements = new List<UML.Classes.Kernel.Element>();
                 //get nested elements
-                List<UML.Classes.Kernel.Element> elements = this.EAModel.factory.createElements(this.wrappedElement.Elements).ToList();
+                elements.AddRange(this.ownedElementWrappers);
                 //add attributes
                 elements.AddRange(this.ownedAttributes.Cast<UML.Classes.Kernel.Element>());
                 //add operations
@@ -569,7 +568,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
-
+        protected List<ElementWrapper> _ownedElementWrappers;
+        virtual public List<ElementWrapper> ownedElementWrappers
+        {
+            get
+            {
+                this.wrappedElement.Elements.Refresh();
+                if (this._ownedElementWrappers == null)
+                {
+                    this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedElement.Elements).OfType<ElementWrapper>().ToList();
+                }
+                return this._ownedElementWrappers;
+            }
+        }
 
         public override UML.Classes.Kernel.Element owner
         {
@@ -655,12 +666,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                   (this.getRelationships<UML.Classes.Kernel.Generalization>());
             set => throw new NotImplementedException();
         }
+
+        private HashSet<UML.Classes.Kernel.Operation> _ownedOperations;
         /// the operations owned by this element
         public HashSet<UML.Classes.Kernel.Operation> ownedOperations
         {
-            get => new HashSet<UML.Classes.Kernel.Operation>
-                  (this.EAModel.factory.createElements(this.wrappedElement.Methods)
-                  .Cast<UML.Classes.Kernel.Operation>());
+            get
+            {
+                if (this._ownedOperations == null)
+                {
+                    this._ownedOperations = new HashSet<UML.Classes.Kernel.Operation>
+                    (this.EAModel.factory.createElements(this.wrappedElement.Methods)
+                    .Cast<UML.Classes.Kernel.Operation>());
+                }
+                return this._ownedOperations;
+            }
             set => throw new NotImplementedException();
         }
 
