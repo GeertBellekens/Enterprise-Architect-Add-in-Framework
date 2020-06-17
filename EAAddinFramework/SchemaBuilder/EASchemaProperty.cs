@@ -14,7 +14,7 @@ namespace EAAddinFramework.SchemaBuilder
     public class EASchemaProperty : EASchemaPropertyWrapper, SBF.SchemaProperty
     {
         private UTF_EA.Attribute _sourceProperty;
-        private SBF.SchemaSettings settings => this.owner.owner.settings;
+        
         /// <summary>
         /// constructor. Nothing specific, just calling base constructor
         /// </summary>
@@ -192,6 +192,9 @@ namespace EAAddinFramework.SchemaBuilder
                         this.subSetProperty.type = element.subsetElement;
                     }
                 }
+                //copy constraints
+                this.copyConstraints();
+                //save
                 ((UTF_EA.Element)this.subSetProperty).save();
                 //copy tagged values
                 ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceProperty, (UTF_EA.Element)this.subSetProperty);
@@ -199,6 +202,9 @@ namespace EAAddinFramework.SchemaBuilder
                 ((UTF_EA.Element)this.subSetProperty).addTaggedValue(this.owner.owner.settings.sourceAttributeTagName, ((UTF_EA.Element)this.sourceProperty).guid);
             }
         }
+
+       
+
         /// <summary>
         /// adds a dependency from the attributes owner to the type of the attributes
         /// </summary>

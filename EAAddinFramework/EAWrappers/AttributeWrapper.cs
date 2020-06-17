@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -92,6 +93,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get => ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.getWrappedStereotypeString()));
             set => this.setProperty(getPropertyNameName(), Stereotype.getStereotypeEx(value), this.getWrappedStereotypeString());
+        }
+        private HashSet<UML.Classes.Kernel.Constraint> _constraints;
+        public override HashSet<UML.Classes.Kernel.Constraint> constraints 
+        { 
+            get
+            {
+                if (this._constraints == null)
+                {
+                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
+                    foreach (var constraint in this.EAModel.factory.createElements(this.wrappedAttribute.Constraints).Cast<AttributeConstraint>())
+                    {
+                        this._constraints.Add(constraint);
+                    }
+                }
+                return this._constraints;
+            }
+            set => throw new NotImplementedException();
         }
         private string getWrappedStereotypeString()
         {
@@ -280,6 +298,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 ownedItems.AddRange(((Element)this.type).findOwnedItems(descriptionParts));
             }
             return ownedItems;
+        }
+        public AttributeConstraint addAttributeConstraint(string name)
+        {
+           return ((Factory)this.EAModel.factory).addElementToEACollection<AttributeConstraint>(this.wrappedAttribute.Constraints, name, "AttributeConstraint");
         }
     }
 }

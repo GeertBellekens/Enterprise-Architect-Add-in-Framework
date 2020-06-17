@@ -25,6 +25,8 @@ namespace EAAddinFramework.SchemaBuilder
         internal abstract UTF_EA.AttributeWrapper sourceAttributeWrapper {get;}
         internal abstract UTF_EA.AttributeWrapper subsetAttributeWrapper {get;}
 
+        protected SBF.SchemaSettings settings => this.owner.owner.settings;
+
         public EASchemaPropertyWrapper(UTF_EA.Model model, EASchemaElement owner, EA.SchemaProperty objectToWrap)
         {
             this._owner = owner;
@@ -179,7 +181,49 @@ namespace EAAddinFramework.SchemaBuilder
             }
             return parsedRestriction;
         }
-
+        /// <summary>
+        /// copy the constraint from the source item to the subset item
+        /// </summary>
+        protected void copyConstraints()
+        {
+            //return if no subset elemnet exists
+            if (this.subsetAttributeWrapper == null || this.sourceAttributeWrapper == null)
+            {
+                return;
+            }
+            //get the subset element constraints
+            var tempSubsetContraints = new List<Constraint>(this.subsetAttributeWrapper.constraints);
+            //copy constraints
+            foreach (var constraint in this.sourceAttributeWrapper?.constraints)
+            {
+                //compare each of the constraints with the source element constraints
+                var subsetConstraint = tempSubsetContraints.FirstOrDefault(x => x.name == constraint.name);
+                if (subsetConstraint != null)
+                {
+                    tempSubsetContraints.Remove(subsetConstraint);
+                }
+                else
+                {
+                    subsetConstraint = this.model.factory.createNewElement<Constraint>(this.subsetAttributeWrapper, constraint.name);
+                }
+                //only update if not in the list of ignored constraint types
+                if (!this.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
+                {
+                    //synch notes
+                    subsetConstraint.specification = constraint.specification;
+                    //save
+                    subsetConstraint.save();
+                }
+            }
+            //remove all remaining subset constraints
+            foreach (var subsetConstraint in tempSubsetContraints)
+            {
+                if (!this.settings.ignoredConstraintTypes.Contains(subsetConstraint.constraintType))
+                {
+                    subsetConstraint.delete();
+                }
+            }
+        }
 
     }
 }

@@ -56,11 +56,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.EAModel = model;
         }
-        internal string convertFromEANotes(string newFormat)
+        internal virtual string convertFromEANotes(string newFormat)
         {
             return this.EAModel.convertFromEANotes(this.notes, newFormat);
         }
-        internal void convertToEANotes(string externalNotes, string externalFormat)
+        internal virtual void convertToEANotes(string externalNotes, string externalFormat)
         {
             this.notes = this.EAModel.convertToEANotes(externalNotes, externalFormat);
         }

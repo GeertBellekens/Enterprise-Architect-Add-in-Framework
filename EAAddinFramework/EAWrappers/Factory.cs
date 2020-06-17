@@ -190,6 +190,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 return this.createConstraint(objectToWrap as global::EA.Constraint);
             }
+            else if (objectToWrap is global::EA.AttributeConstraint)
+            {
+                return this.createAttributeConstraint(objectToWrap as global::EA.AttributeConstraint);
+            }
 
             return null;
         }
@@ -197,6 +201,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public UML.Classes.Kernel.Element createConstraint(global::EA.Constraint constraint)
         {
             return new Constraint(this.model as UTF_EA.Model, constraint);
+        }
+        public UML.Classes.Kernel.Element createAttributeConstraint(global::EA.AttributeConstraint constraint)
+        {
+            return new AttributeConstraint(this.model as UTF_EA.Model, constraint);
         }
 
         private Package createPackage(global::EA.Package package)
@@ -788,6 +796,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             else if (owner is ElementWrapper)
             {
                 returnedValue = ((ElementWrapper)owner).addOwnedElement<T>(name);
+            }
+            else if (owner is AttributeWrapper)
+            {
+                if (typeof(T).Name == "AttributeConstraint"
+                    || typeof(T).Name == "Constraint")
+                {
+                    returnedValue = ((AttributeWrapper)owner).addAttributeConstraint(name) as T;
+                }
             }
             else if (owner is Operation)
             {

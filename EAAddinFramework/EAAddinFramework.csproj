@@ -185,6 +185,7 @@
     <Compile Include="EAWrappers\AssociationClass.cs" />
     <Compile Include="EAWrappers\AssociationEnd.cs" />
     <Compile Include="EAWrappers\Attribute.cs" />
+    <Compile Include="EAWrappers\AttributeConstraint.cs" />
     <Compile Include="EAWrappers\AttributeTag.cs" />
     <Compile Include="EAWrappers\AttributeWrapper.cs" />
     <Compile Include="EAWrappers\BehaviorStateMachines\Event.cs" />
