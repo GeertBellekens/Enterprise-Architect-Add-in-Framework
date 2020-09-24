@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
-
+using EA;
 using EAAddinFramework.EASpecific;
 using EAAddinFramework.Utilities;
 using UML = TSF.UmlToolingFramework.UML;
@@ -19,6 +19,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private IWin32Window _mainEAWindow;
         private RepositoryType? _repositoryType;
         private static string _applicationFullPath;
+
 
         public bool useCache { get; private set; } = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();

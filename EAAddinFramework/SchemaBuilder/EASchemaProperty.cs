@@ -192,10 +192,10 @@ namespace EAAddinFramework.SchemaBuilder
                         this.subSetProperty.type = element.subsetElement;
                     }
                 }
-                //copy constraints
-                this.copyConstraints();
                 //save
                 ((UTF_EA.Element)this.subSetProperty).save();
+                //copy constraints
+                this.copyConstraints();
                 //copy tagged values
                 ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceProperty, (UTF_EA.Element)this.subSetProperty);
                 //add tagged value with reference to source attribute

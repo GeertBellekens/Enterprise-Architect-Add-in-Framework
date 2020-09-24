@@ -125,10 +125,10 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
-            //copy constraints
-            this.copyConstraints();
             //save
             ((UTF_EA.Element)this.subSetLiteral).save();
+            //copy constraints
+            this.copyConstraints();
             //copy tagged values
             ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceLiteral, (UTF_EA.Element)this.subSetLiteral);
             //add tagged value with reference to source literal value
