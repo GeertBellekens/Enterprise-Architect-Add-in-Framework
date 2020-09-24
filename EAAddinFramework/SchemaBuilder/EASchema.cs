@@ -11,6 +11,7 @@ using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace EAAddinFramework.SchemaBuilder
 {
@@ -22,6 +23,7 @@ namespace EAAddinFramework.SchemaBuilder
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
         private HashSet<SBF.SchemaElement> schemaElements = null;
+        private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
         public SBF.SchemaSettings settings { get; set; }
 
@@ -36,6 +38,7 @@ namespace EAAddinFramework.SchemaBuilder
             this.wrappedComposer = composer;
             this.settings = settings;
         }
+        
 
         /// <summary>
         /// the name of the schema
@@ -209,7 +212,6 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="copyDatatype"></param>
         public void createSubsetModel(UML.Classes.Kernel.Package destinationPackage, HashSet<SBF.SchemaElement> elements)
         {
-
             //loop the elements to create the subSetElements
             foreach (EASchemaElement schemaElement in elements)
             {
@@ -296,7 +298,7 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
-            //then loop them the last time to remove those subset elements that don't have any attributes or associations 
+            //then loop them againe to remove those subset elements that don't have any attributes or associations 
             // or generalizations, or are used as type
             if (this.settings.deleteUnusedSchemaElements)
             {
@@ -322,9 +324,85 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
+            //then synchronize the tagged values where needed
+            synchronizeTaggedValues();
             //save the new schema contents to the destination package
             this.saveSchemaContent(destinationPackage);
+            
         }
+        /// <summary>
+        /// creates subset tagged values for each of the tagged values that need to be synchronized.
+        /// TODO: handle case where a single source element has multiple subset elements (e.g in case of inherited attributes)
+        /// </summary>
+        private void synchronizeTaggedValues()
+        {
+            foreach (var tuple in this.taggedValuesToSynchronize)
+            {
+                var sourceItem = tuple.Item1.tagValue;
+                UML.Classes.Kernel.Element targetItem = null;
+                if (sourceItem is TSF_EA.ElementWrapper)
+                {
+                    targetItem = this.schemaElements.FirstOrDefault(x => x.sourceElement.Equals(sourceItem))?.subsetElement;
+                }
+                else if (sourceItem is TSF_EA.AttributeWrapper)
+                {
+                    targetItem = getSubsetAttributeWrapper((TSF_EA.AttributeWrapper)sourceItem);
+                }
+                else if (tuple.Item1.tagValue is TSF_EA.ConnectorWrapper)
+                {
+                    //get corresponding schema element
+                    targetItem = getSubsetConnector((TSF_EA.ConnectorWrapper)sourceItem);
+                }
+                if (targetItem!= null)
+                {
+                    //create the tagged value
+                    tuple.Item2.addTaggedValue(tuple.Item1.name, targetItem.uniqueID, null, true);
+                }   
+            }
+            //clear the taggedValues to be synchronized
+            this.taggedValuesToSynchronize.Clear();
+        }
+        private UML.Classes.Kernel.Relationship getSubsetConnector(TSF_EA.ConnectorWrapper sourceConnector)
+        {
+            foreach (var schemaElement in this.schemaElements)
+            {
+                foreach (var schemaAssociation in schemaElement.schemaAssociations)
+                {
+                    if (schemaAssociation.sourceAssociation.Equals(sourceConnector)
+                        && schemaAssociation.subsetAssociations.Any())
+                    {
+                        return schemaAssociation.subsetAssociations.First();
+                    }
+                }
+            }
+            //not found, return null
+            return null;
+        }
+        private TSF_EA.AttributeWrapper getSubsetAttributeWrapper (TSF_EA.AttributeWrapper sourceAttribute)
+        {
+            foreach (var schemaElement in this.schemaElements)
+            {
+                foreach (var schemaAttribute in schemaElement.schemaProperties)
+                {
+                    if (schemaAttribute.sourceProperty.Equals(sourceAttribute)
+                        && schemaAttribute.subSetProperty != null)
+                    {
+                        return (TSF_EA.AttributeWrapper) schemaAttribute.subSetProperty;
+                    }
+                }
+                foreach (var schemaLiteral in schemaElement.schemaLiterals)
+                {
+                    if (schemaLiteral.sourceLiteral.Equals(sourceAttribute)
+                        && schemaLiteral.subSetLiteral != null)
+                    {
+                        return (TSF_EA.AttributeWrapper)schemaLiteral.subSetLiteral;
+                    }
+                }
+            }
+            //nothing found, return null
+            return null;
+        }
+        
 
         /// <summary>
         /// updates the subset model linked to given messageElement
@@ -718,6 +796,12 @@ namespace EAAddinFramework.SchemaBuilder
             //copy tagged values
             foreach (TSF_EA.TaggedValue sourceTaggedValue in source.taggedValues)
             {
+                //if it's a tagged value to be synchronized then add it to the list and skip the rest
+                if (this.settings.synchronizedTaggedValues.Contains(sourceTaggedValue.name))
+                {
+                    this.taggedValuesToSynchronize.Add(new Tuple<TSF_EA.TaggedValue, TSF_EA.Element>( sourceTaggedValue, target ));
+                    continue;
+                }
                 bool updateTaggedValue = true;
                 var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);
                 if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name)
@@ -749,6 +833,12 @@ namespace EAAddinFramework.SchemaBuilder
                         target.addTaggedValue(sourceTaggedValue.name,sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
                     }
                 }
+            }
+            //remove the tagged values to be synchronized from the target element
+            var taggedValuesToDelete = target.taggedValues.Where(x => this.settings.synchronizedTaggedValues.Contains(x.name)).ToList();
+            foreach (var targetTag in taggedValuesToDelete)
+            {
+                targetTag.delete();
             }
         }
         private TSF_EA.TaggedValue popTargetTaggedValue(List<TSF_EA.TaggedValue> targetTaggedValues, TSF_EA.TaggedValue sourceTaggedValue)

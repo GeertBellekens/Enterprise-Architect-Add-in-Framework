@@ -180,7 +180,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID => this._uniqueID;
+        public override string uniqueID
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this._uniqueID))
+                {
+                    this._uniqueID = this.guid;
+                }
+                return this._uniqueID;
+            }
+        }
+        
 
 
 
