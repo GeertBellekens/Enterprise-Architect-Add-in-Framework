@@ -90,8 +90,9 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             var element = (EASchemaElement) schemaElement;
                             if (null != element 
-                                && choices.Contains(element.TypeID)
-                                && element.name == this.wrappedProperty.TypeName)
+                                && choices.Contains(element.TypeID))
+                                //&& element.name == this.wrappedProperty.TypeName) //this caused a restricted association to a subtype to not be generated. 
+                                //Not sure why the check was originally added, so this might break something again.
                             {
                                 _choiceElements.Add(element);
                             }
