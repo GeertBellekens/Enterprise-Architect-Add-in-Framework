@@ -18,6 +18,7 @@ using Microsoft.Win32;
 using MSScriptControl;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.Utilities;
+using System.Text.RegularExpressions;
 
 namespace EAAddinFramework.EASpecific
 {
@@ -137,6 +138,8 @@ namespace EAAddinFramework.EASpecific
 			{
 				//first add the included code
 				string includedCode = this.IncludeScripts(this._code);
+				//remove "as xxx" statements
+				includedCode = removeAsTypeStatements(includedCode);
 
 				//then add the included code to the scriptcontroller
 				this.scriptController.AddCode(includedCode);
@@ -151,7 +154,9 @@ namespace EAAddinFramework.EASpecific
 				//the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
 				MSScriptControl.IScriptControl iscriptControl = this.scriptController as MSScriptControl.IScriptControl;
 				this.errorMessage = e.Message + " ERROR : " + iscriptControl.Error.Description + " | Line of error: " + iscriptControl.Error.Line + " | Code error: " + iscriptControl.Error.Text;
-				EAAddinFramework.Utilities.Logger.logError("Error in loading code for script " + this.name +": "+ this.errorMessage);
+				var errorMessageToLog = $"Error in loading code for script {this.name}: {this.errorMessage}";
+				Logger.logError(errorMessageToLog);
+				EAOutputLogger.log(this.model, "EA-Matic", errorMessageToLog, 0, LogTypeEnum.error);
 			}
 		}
 		/// <summary>
@@ -345,6 +350,16 @@ namespace EAAddinFramework.EASpecific
 				Script script = new Script(groupName + "." + scriptName,scriptName,groupName,scriptCode, language,true);
 				staticEAMaticScripts.Add(script);
 			}
+		}
+		/// <summary>
+		/// remove any "as XXX" from the scriptcode as in "dim element as EA.Element" as this won't compile
+		/// </summary>
+		/// <param name="scriptCode">the code of the script</param>
+		/// <returns>the fixed code</returns>
+		private static string removeAsTypeStatements(string scriptCode)
+		{
+			var typeRegex = new Regex(@"(?<=dim|var)( .+)( as EA\..+)");
+			return typeRegex.Replace(scriptCode, "$1");
 		}
 		/// <summary>
 		/// replaces the !INC  statements with the actual code of the local script.
