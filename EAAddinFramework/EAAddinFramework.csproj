@@ -291,6 +291,7 @@
     <Compile Include="Utilities\AbortableBackgroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utilities\AddinConfig.cs" />
     <Compile Include="Utilities\AddinSettings.cs" />
     <Compile Include="Utilities\EAOutputLogger.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />

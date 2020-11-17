@@ -10,6 +10,7 @@ using System;
 using System.Configuration;
 using System.Linq;
 using System.Collections.Generic;
+using EAAddinFramework.EASpecific;
 
 namespace EAAddinFramework.Utilities
 {
@@ -18,10 +19,31 @@ namespace EAAddinFramework.Utilities
     /// </summary>
     public abstract class AddinSettings
     {
+
+
+
         protected abstract string configSubPath { get; }
-        protected abstract string defaultConfigFilePath { get; }
-        protected Configuration defaultConfig { get; set; }
-        protected Configuration currentConfig { get; set; }
+        protected abstract string defaultConfigAssemblyFilePath { get; }
+        private string defaultConfigFilePath => this.defaultConfigAssemblyFilePath + ".config";
+        private AddinConfig _defaultConfig;
+        protected AddinConfig defaultConfig
+        {
+            get
+            {
+                if (this._defaultConfig == null)
+                {
+                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath);
+                }
+                return this._defaultConfig;
+            }
+        }
+        private AddinConfig _currentConfig;
+        protected AddinConfig currentConfig
+        {
+            get => this._currentConfig ?? this.userConfig;
+            set => this._currentConfig = value;
+        }
+        protected AddinConfig userConfig { get; set; }
         protected AddinSettings()
         {
             Configuration roamingConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
@@ -31,54 +53,20 @@ namespace EAAddinFramework.Utilities
             // C:\Users\<user>\AppData\Roaming\<configSubPath>\user.config
             string configFileName = System.IO.Path.GetFileName(roamingConfig.FilePath);
             string configDirectory = System.IO.Directory.GetParent(roamingConfig.FilePath).Parent.Parent.Parent.FullName;
-
             string newConfigFilePath = configDirectory + configSubPath + configFileName;
-            // Map the roaming configuration file. This
-            // enables the application to access 
-            // the configuration file using the
-            // System.Configuration.Configuration class
-            ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap();
-            configFileMap.ExeConfigFilename = newConfigFilePath;
+
             // Get the mapped configuration file.
-            currentConfig = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
-            //merge the default settings
-            this.mergeDefaultSettings();
+            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath);
         }
 
-        /// <summary>
-        /// gets the default settings config.
-        /// </summary>
-        protected void getDefaultSettings()
-        {
-            defaultConfig = ConfigurationManager.OpenExeConfiguration(defaultConfigFilePath);
-        }
-        /// <summary>
-        /// merge the default settings with the current config.
-        /// </summary>
-        protected void mergeDefaultSettings()
-        {
-            if (this.defaultConfig == null)
-            {
-                this.getDefaultSettings();
-            }
-            //defaultConfig.AppSettings.Settings["menuOwnerEnabled"].Value
-            foreach (KeyValueConfigurationElement configEntry in defaultConfig.AppSettings.Settings)
-            {
-                if (!currentConfig.AppSettings.Settings.AllKeys.Contains(configEntry.Key))
-                {
-                    currentConfig.AppSettings.Settings.Add(configEntry.Key, configEntry.Value);
-                }
-            }
-            // save the configuration
-            currentConfig.Save();
-        }
+
         protected string getValue(string key)
         {
-            return this.currentConfig.AppSettings.Settings[key].Value;
+            return this.currentConfig.getValue(key);
         }
         protected void setValue(string key, string value)
         {
-            this.currentConfig.AppSettings.Settings[key].Value = value;
+            this.currentConfig.setValue(key, value);
         }
         protected bool getBooleanValue(string key)
         {
@@ -139,10 +127,7 @@ namespace EAAddinFramework.Utilities
         {
             //clear the cached elements
             clearCache();
-            ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap();
-            configFileMap.ExeConfigFilename = currentConfig.FilePath;
-            // Get the mapped configuration file.
-            currentConfig = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+            this.currentConfig.refresh();
         }
         /// <summary>
         /// clears the cached settings
