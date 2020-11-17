@@ -293,6 +293,15 @@
     </Compile>
     <Compile Include="Utilities\AddinConfig.cs" />
     <Compile Include="Utilities\AddinSettings.cs" />
+    <Compile Include="Utilities\AddinSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utilities\AddinSettingsForm.Designer.cs">
+      <DependentUpon>AddinSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\AddinSettingsFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Utilities\EAOutputLogger.cs" />
     <Compile Include="Utilities\EASearchOutput.cs" />
     <Compile Include="Utilities\EventPropertiesHelper.cs" />
@@ -315,6 +324,9 @@
     <Compile Include="WorkTracking\WorkItem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Utilities\AddinSettingsForm.resx">
+      <DependentUpon>AddinSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx" />
   </ItemGroup>
   <ItemGroup>

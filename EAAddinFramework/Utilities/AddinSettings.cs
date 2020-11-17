@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Linq;
 using System.Collections.Generic;
 using EAAddinFramework.EASpecific;
+using System.Collections;
 
 namespace EAAddinFramework.Utilities
 {
@@ -21,9 +22,18 @@ namespace EAAddinFramework.Utilities
     {
 
 
-
         protected abstract string configSubPath { get; }
         protected abstract string defaultConfigAssemblyFilePath { get; }
+
+        internal List<AddinConfig> getAllConfigs()
+        {
+            var allConfigs = new List<AddinConfig>();
+            allConfigs.Add(userConfig);
+            allConfigs.Add(defaultConfig);
+            //TODO get all package configs
+            return allConfigs;
+        }
+
         private string defaultConfigFilePath => this.defaultConfigAssemblyFilePath + ".config";
         private AddinConfig _defaultConfig;
         protected AddinConfig defaultConfig
@@ -32,13 +42,13 @@ namespace EAAddinFramework.Utilities
             {
                 if (this._defaultConfig == null)
                 {
-                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath);
+                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath, "Default Config");
                 }
                 return this._defaultConfig;
             }
         }
         private AddinConfig _currentConfig;
-        protected AddinConfig currentConfig
+        internal AddinConfig currentConfig
         {
             get => this._currentConfig ?? this.userConfig;
             set => this._currentConfig = value;
@@ -56,7 +66,7 @@ namespace EAAddinFramework.Utilities
             string newConfigFilePath = configDirectory + configSubPath + configFileName;
 
             // Get the mapped configuration file.
-            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath);
+            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath, "User Config");
         }
 
 

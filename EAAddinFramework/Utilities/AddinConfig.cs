@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EA;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,13 +11,23 @@ namespace EAAddinFramework.Utilities
 {
     public class AddinConfig
     {
-        private Configuration configuration;
+        private Configuration configuration { get; set; }
+        private UML.Classes.Kernel.Package package { get; set; }
+        public string name { get; }
+        public string path
+        {
+            get => this.package != null ?
+                   this.package.fqn :
+                   this.configuration.FilePath;
+        }
+
         internal AddinConfig(UML.Classes.Kernel.Package package)
         {
-            //TODO
+            this.package = package;
         }
-        internal AddinConfig(string configFileName, string defaultConfigFilePath)
+        internal AddinConfig(string configFileName, string defaultConfigFilePath, string name)
         {
+            this.name = name;
             this.configuration = getConfiguration(configFileName);
             this.mergeDefaultSettings(defaultConfigFilePath);
         }
