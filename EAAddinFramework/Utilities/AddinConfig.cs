@@ -6,14 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UML = TSF.UmlToolingFramework.UML;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace EAAddinFramework.Utilities
 {
     public class AddinConfig
     {
         private Configuration configuration { get; set; }
-        private UML.Classes.Kernel.Package package { get; set; }
-        public string name { get; }
+        private TSF_EA.Package package { get; set; }
+        public string name { get; set; }
+        private string addinName { get; set; }
+        private string tagName => addinName + "_config";
         public string path
         {
             get => this.package != null ?
@@ -21,11 +24,27 @@ namespace EAAddinFramework.Utilities
                    this.configuration.FilePath;
         }
 
-        internal AddinConfig(UML.Classes.Kernel.Package package)
+        internal AddinConfig(TSF_EA.Package package, string configurationsDirectoryPath, string defaultConfigFilePath, string addinName)
         {
             this.package = package;
+            this.addinName = addinName;
+            var configFileName = configurationsDirectoryPath + package.guid + ".config";
+            //check if package has tagged value for config
+            var configTag = this.package.getTaggedValue(tagName);
+            if (configTag != null)
+            {
+                //store contents of tagged value in file (or create new file based on default config
+                System.IO.StreamWriter configFile = new System.IO.StreamWriter(configFileName);
+                configFile.Write(configTag.comment);
+                configFile.Close();
+            }
+            loadconfig(configFileName, defaultConfigFilePath, package.name);
         }
         internal AddinConfig(string configFileName, string defaultConfigFilePath, string name)
+        {
+            loadconfig(configFileName, defaultConfigFilePath, name);
+        }
+        private void loadconfig(string configFileName, string defaultConfigFilePath, string name)
         {
             this.name = name;
             this.configuration = getConfiguration(configFileName);
@@ -67,7 +86,14 @@ namespace EAAddinFramework.Utilities
         public void Save()
         {
             this.configuration.Save();
-            //TODO save tagged value
+            
+            if (this.package != null)
+            {
+                if (this.package.isReadOnly)this.package.makeWritable(true);
+                //get xml content
+                var xmlContent = System.IO.File.ReadAllText(this.configuration.FilePath);
+                this.package.addTaggedValue(this.tagName, "<memo>", xmlContent);
+            }
         }
 
     }

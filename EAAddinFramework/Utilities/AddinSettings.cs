@@ -12,6 +12,8 @@ using System.Linq;
 using System.Collections.Generic;
 using EAAddinFramework.EASpecific;
 using System.Collections;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using EA;
 
 namespace EAAddinFramework.Utilities
 {
@@ -21,17 +23,46 @@ namespace EAAddinFramework.Utilities
     public abstract class AddinSettings
     {
 
-
+        protected abstract string addinName { get;}
         protected abstract string configSubPath { get; }
         protected abstract string defaultConfigAssemblyFilePath { get; }
+        public TSF_EA.Model model { get; set; }
+        public AddinConfig addConfig()
+        {
+            //can't add any new configs if the model doesn't exist
+            if (this.model == null) return null;
+            //let the user select a package
+            var configPackage = model.getUserSelectedPackage() as TSF_EA.Package;
+            //return if no package was selected
+            if (configPackage == null) return null;
+            //create the new config
+            return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+        }
+        private string configurationsDirectoryPath { get; set; }
 
         internal List<AddinConfig> getAllConfigs()
         {
             var allConfigs = new List<AddinConfig>();
             allConfigs.Add(userConfig);
             allConfigs.Add(defaultConfig);
-            //TODO get all package configs
+            allConfigs.AddRange(this.getAllPackageConfigs());
             return allConfigs;
+        }
+        private List<AddinConfig> getAllPackageConfigs()
+        {
+            var packageConfigs = new List<AddinConfig>();
+            if (this.model == null) return packageConfigs;
+            //get all configuration tags
+            var sqlGetPackageObjects = @"select o.Object_ID from t_objectproperties tv 
+                                        inner join t_object o on o.Object_ID = tv.Object_ID "
+                                        + $" where tv.Property = '{this.addinName}_config'";
+            var configPackages = this.model.getElementWrappersByQuery(sqlGetPackageObjects);
+            foreach (var configPackage in configPackages.OfType<TSF_EA.Package>())
+            {
+                var packageConfig = new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+                packageConfigs.Add(packageConfig);
+            }
+            return packageConfigs;
         }
 
         private string defaultConfigFilePath => this.defaultConfigAssemblyFilePath + ".config";
@@ -63,7 +94,8 @@ namespace EAAddinFramework.Utilities
             // C:\Users\<user>\AppData\Roaming\<configSubPath>\user.config
             string configFileName = System.IO.Path.GetFileName(roamingConfig.FilePath);
             string configDirectory = System.IO.Directory.GetParent(roamingConfig.FilePath).Parent.Parent.Parent.FullName;
-            string newConfigFilePath = configDirectory + configSubPath + configFileName;
+            this.configurationsDirectoryPath = configDirectory + this.configSubPath;
+            string newConfigFilePath = configurationsDirectoryPath + configFileName;
 
             // Get the mapped configuration file.
             this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath, "User Config");

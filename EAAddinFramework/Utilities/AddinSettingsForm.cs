@@ -18,6 +18,7 @@ namespace EAAddinFramework.Utilities
         {
             InitializeComponent();
             this.settingsForm = settingsForm;
+            this.settingsForm.FormClosing += new FormClosingEventHandler(this.settingFormClosing);
             this.configListView.Objects = this.settings.getAllConfigs();
             //show prototype as test
             this.Text = this.settingsForm.Text;
@@ -49,12 +50,24 @@ namespace EAAddinFramework.Utilities
             //select first row
             this.configListView.SelectedIndex = 0;
         }
+
+        private void settingFormClosing(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
         private AddinConfig selectedConfig { get => this.configListView.SelectedObject as AddinConfig; }
 
         private void configListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.settings.currentConfig = this.selectedConfig;
             this.settingsForm.refreshContents();
+        }
+
+        private void addConfigButton_Click(object sender, EventArgs e)
+        {
+            var newConfig = this.settings.addConfig();
+            this.configListView.AddObject(newConfig);
         }
     }
 }

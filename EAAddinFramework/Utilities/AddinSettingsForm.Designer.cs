@@ -33,6 +33,7 @@
             this.configListView = new BrightIdeasSoftware.ObjectListView();
             this.nameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pathColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.addConfigButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.SuspendLayout();
@@ -49,9 +50,10 @@
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.addConfigButton);
             this.splitContainer.Panel1.Controls.Add(this.configListView);
             this.splitContainer.Size = new System.Drawing.Size(584, 450);
-            this.splitContainer.SplitterDistance = 212;
+            this.splitContainer.SplitterDistance = 205;
             this.splitContainer.TabIndex = 0;
             // 
             // configListView
@@ -73,7 +75,7 @@
             this.configListView.MultiSelect = false;
             this.configListView.Name = "configListView";
             this.configListView.ShowGroups = false;
-            this.configListView.Size = new System.Drawing.Size(560, 151);
+            this.configListView.Size = new System.Drawing.Size(560, 159);
             this.configListView.TabIndex = 0;
             this.configListView.UseCompatibleStateImageBehavior = false;
             this.configListView.View = System.Windows.Forms.View.Details;
@@ -90,6 +92,17 @@
             this.pathColumn.AspectName = "path";
             this.pathColumn.Text = "Path";
             this.pathColumn.Width = 400;
+            // 
+            // addConfigButton
+            // 
+            this.addConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addConfigButton.Location = new System.Drawing.Point(495, 175);
+            this.addConfigButton.Name = "addConfigButton";
+            this.addConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.addConfigButton.TabIndex = 1;
+            this.addConfigButton.Text = "Add";
+            this.addConfigButton.UseVisualStyleBackColor = true;
+            this.addConfigButton.Click += new System.EventHandler(this.addConfigButton_Click);
             // 
             // AddinSettingsForm
             // 
@@ -115,5 +128,6 @@
         private BrightIdeasSoftware.ObjectListView configListView;
         private BrightIdeasSoftware.OLVColumn nameColumn;
         private BrightIdeasSoftware.OLVColumn pathColumn;
+        private System.Windows.Forms.Button addConfigButton;
     }
 }
