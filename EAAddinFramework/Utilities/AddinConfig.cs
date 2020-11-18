@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UML = TSF.UmlToolingFramework.UML;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
+using EAAddinFramework.WorkTracking.TFS;
 
 namespace EAAddinFramework.Utilities
 {
@@ -14,7 +15,24 @@ namespace EAAddinFramework.Utilities
     {
         private Configuration configuration { get; set; }
         private TSF_EA.Package package { get; set; }
-        public string name { get; set; }
+        public AddinConfigType type { get; private set; }
+        public string name
+        {
+            get
+            {
+                switch (this.type)
+                {
+                    case AddinConfigType.Default:
+                        return "Default Config";
+                    case AddinConfigType.User:
+                        return "User Config";
+                    case AddinConfigType.Package:
+                        return this.package?.name ?? "<unnamed package>";
+                    default:
+                        return "Unknown AddinConfig type in AddinConfig.name";
+                }
+            }
+        }
         private string addinName { get; set; }
         private string tagName => addinName + "_config";
         public string path
@@ -26,6 +44,7 @@ namespace EAAddinFramework.Utilities
 
         internal AddinConfig(TSF_EA.Package package, string configurationsDirectoryPath, string defaultConfigFilePath, string addinName)
         {
+            this.type = AddinConfigType.Package;
             this.package = package;
             this.addinName = addinName;
             var configFileName = configurationsDirectoryPath + package.guid + ".config";
@@ -38,15 +57,23 @@ namespace EAAddinFramework.Utilities
                 configFile.Write(configTag.comment);
                 configFile.Close();
             }
-            loadconfig(configFileName, defaultConfigFilePath, package.name);
+            else
+            {
+                //if the file already exists then delete it
+                if (System.IO.File.Exists(configFileName))
+                {
+                    System.IO.File.Delete(configFileName);
+                }
+            }
+            loadconfig(configFileName, defaultConfigFilePath);
         }
-        internal AddinConfig(string configFileName, string defaultConfigFilePath, string name)
+        internal AddinConfig(string configFileName, string defaultConfigFilePath, AddinConfigType type)
         {
-            loadconfig(configFileName, defaultConfigFilePath, name);
+            this.type = type;
+            loadconfig(configFileName, defaultConfigFilePath);
         }
-        private void loadconfig(string configFileName, string defaultConfigFilePath, string name)
+        private void loadconfig(string configFileName, string defaultConfigFilePath)
         {
-            this.name = name;
             this.configuration = getConfiguration(configFileName);
             this.mergeDefaultSettings(defaultConfigFilePath);
         }
@@ -70,6 +97,22 @@ namespace EAAddinFramework.Utilities
             // save the configuration
             this.Save();
         }
+
+        internal void delete()
+        {
+            if (this.type == AddinConfigType.Default || this.type == AddinConfigType.User)
+            {
+                throw new InvalidOperationException("Configurations of type Default or User cannot be deleted");
+            }
+            //delete the tagged value
+            if (this.package != null)
+            {
+                if (this.package.isReadOnly) this.package.makeWritable(true);
+                var configTag = this.package.getTaggedValue(this.tagName);
+                configTag?.delete();
+            }
+        }
+
         internal string getValue(string key)
         {
             return this.configuration.AppSettings.Settings[key].Value;
@@ -86,15 +129,21 @@ namespace EAAddinFramework.Utilities
         public void Save()
         {
             this.configuration.Save();
-            
+
             if (this.package != null)
             {
-                if (this.package.isReadOnly)this.package.makeWritable(true);
+                if (this.package.isReadOnly) this.package.makeWritable(true);
                 //get xml content
                 var xmlContent = System.IO.File.ReadAllText(this.configuration.FilePath);
                 this.package.addTaggedValue(this.tagName, "<memo>", xmlContent);
             }
         }
 
+    }
+    public enum AddinConfigType
+    {
+        Default,
+        User,
+        Package
     }
 }

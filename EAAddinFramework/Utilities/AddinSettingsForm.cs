@@ -50,6 +50,10 @@ namespace EAAddinFramework.Utilities
             //select first row
             this.configListView.SelectedIndex = 0;
         }
+        private void enableDisable()
+        {
+            this.deleteButton.Enabled = this.selectedConfig?.type == AddinConfigType.Package;
+        }
 
         private void settingFormClosing(object sender, EventArgs e)
         {
@@ -62,12 +66,20 @@ namespace EAAddinFramework.Utilities
         {
             this.settings.currentConfig = this.selectedConfig;
             this.settingsForm.refreshContents();
+            enableDisable();
         }
 
         private void addConfigButton_Click(object sender, EventArgs e)
         {
             var newConfig = this.settings.addConfig();
             this.configListView.AddObject(newConfig);
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            this.settings.deleteCurrentConfig();
+            this.configListView.RemoveObject(this.configListView.SelectedObject);
+            this.enableDisable();
         }
     }
 }

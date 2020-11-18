@@ -73,11 +73,18 @@ namespace EAAddinFramework.Utilities
             {
                 if (this._defaultConfig == null)
                 {
-                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath, "Default Config");
+                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath, AddinConfigType.Default);
                 }
                 return this._defaultConfig;
             }
         }
+
+        internal void deleteCurrentConfig()
+        {
+            this.currentConfig.delete();
+            this.currentConfig = null;
+        }
+
         private AddinConfig _currentConfig;
         internal AddinConfig currentConfig
         {
@@ -98,7 +105,7 @@ namespace EAAddinFramework.Utilities
             string newConfigFilePath = configurationsDirectoryPath + configFileName;
 
             // Get the mapped configuration file.
-            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath, "User Config");
+            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath,AddinConfigType.User);
         }
 
 
