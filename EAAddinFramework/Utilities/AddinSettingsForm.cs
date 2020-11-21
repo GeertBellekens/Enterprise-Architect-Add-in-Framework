@@ -57,6 +57,8 @@ namespace EAAddinFramework.Utilities
 
         private void settingFormClosing(object sender, EventArgs e)
         {
+            //reset current config to default user config
+            this.settings.currentConfig = null;
             this.Close();
         }
 

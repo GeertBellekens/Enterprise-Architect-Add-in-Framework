@@ -14,6 +14,9 @@ using EAAddinFramework.EASpecific;
 using System.Collections;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EA;
+using TSF.UmlToolingFramework.UML.Extended;
+using UML = TSF.UmlToolingFramework.UML;
+using EAAddinFramework.WorkTracking.TFS;
 
 namespace EAAddinFramework.Utilities
 {
@@ -39,6 +42,43 @@ namespace EAAddinFramework.Utilities
             return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
         }
         private string configurationsDirectoryPath { get; set; }
+        public void setContextConfig(UML.Classes.Kernel.Element contextElement)
+        {
+            var contextPackage = this.getOwningPackage(contextElement);
+            this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
+        }
+        private UML.Classes.Kernel.Package getOwningPackage(UML.Classes.Kernel.Element element)
+        {
+            if (element is UML.Classes.Kernel.Package)
+            {
+                return element as UML.Classes.Kernel.Package;
+            }
+            var owner = element.owner;
+            if (owner == null )
+            {
+                return null;
+            }
+            return this.getOwningPackage(owner);
+        }
+        private AddinConfig getContextConfig(TSF_EA.Package contextPackage )
+        {
+            //check if tag exists at this package
+            var configTag = contextPackage.getTaggedValue(this.currentConfig.tagName);
+            if (configTag != null)
+            {
+                //found the tag, return new config
+                return new AddinConfig(contextPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+            }
+            //check parent
+            var parentPackage = contextPackage.owningPackage as TSF_EA.Package;
+            if (parentPackage is TSF_EA.RootPackage)
+            {
+                //root packages can't have tagged values, no need to check further
+                return null;
+            }
+            //go up a level
+            return getContextConfig(parentPackage);
+        }
 
         internal List<AddinConfig> getAllConfigs()
         {
@@ -73,7 +113,7 @@ namespace EAAddinFramework.Utilities
             {
                 if (this._defaultConfig == null)
                 {
-                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath, AddinConfigType.Default);
+                    this._defaultConfig = new AddinConfig(this.defaultConfigFilePath, this.defaultConfigFilePath, this.addinName, AddinConfigType.Default);
                 }
                 return this._defaultConfig;
             }
@@ -105,7 +145,7 @@ namespace EAAddinFramework.Utilities
             string newConfigFilePath = configurationsDirectoryPath + configFileName;
 
             // Get the mapped configuration file.
-            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath,AddinConfigType.User);
+            this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath, this.addinName, AddinConfigType.User);
         }
 
 

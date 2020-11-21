@@ -34,7 +34,7 @@ namespace EAAddinFramework.Utilities
             }
         }
         private string addinName { get; set; }
-        private string tagName => addinName + "_config";
+        internal string tagName => addinName + "_config";
         public string path
         {
             get => this.package != null ?
@@ -67,9 +67,10 @@ namespace EAAddinFramework.Utilities
             }
             loadconfig(configFileName, defaultConfigFilePath);
         }
-        internal AddinConfig(string configFileName, string defaultConfigFilePath, AddinConfigType type)
+        internal AddinConfig(string configFileName, string defaultConfigFilePath, string addinName, AddinConfigType type)
         {
             this.type = type;
+            this.addinName = addinName;
             loadconfig(configFileName, defaultConfigFilePath);
         }
         private void loadconfig(string configFileName, string defaultConfigFilePath)
