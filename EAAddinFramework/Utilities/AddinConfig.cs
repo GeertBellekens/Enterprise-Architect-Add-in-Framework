@@ -96,7 +96,20 @@ namespace EAAddinFramework.Utilities
                 }
             }
             // save the configuration
-            this.Save();
+            try
+            {
+                this.Save();
+            }
+            catch (System.Runtime.InteropServices.COMException e)
+            {
+                //swallow exception if it says Element locked
+                if (!e.Message.Contains("Element locked"))
+                {
+                    throw (e);
+                }
+            }
+
+
         }
 
         internal void delete()
