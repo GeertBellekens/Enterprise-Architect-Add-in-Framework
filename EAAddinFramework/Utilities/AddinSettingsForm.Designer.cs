@@ -82,6 +82,7 @@
             this.configListView.UseCompatibleStateImageBehavior = false;
             this.configListView.View = System.Windows.Forms.View.Details;
             this.configListView.SelectedIndexChanged += new System.EventHandler(this.configListView_SelectedIndexChanged);
+            this.configListView.DoubleClick += new System.EventHandler(this.configListView_DoubleClick);
             // 
             // nameColumn
             // 
@@ -92,6 +93,7 @@
             // pathColumn
             // 
             this.pathColumn.AspectName = "path";
+            this.pathColumn.FillsFreeSpace = true;
             this.pathColumn.Text = "Path";
             this.pathColumn.Width = 400;
             // 
@@ -125,6 +127,8 @@
             this.ClientSize = new System.Drawing.Size(584, 450);
             this.Controls.Add(this.splitContainer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AddinSettingsForm";
             this.Text = "AddinSettingsForm";
             this.splitContainer.Panel1.ResumeLayout(false);

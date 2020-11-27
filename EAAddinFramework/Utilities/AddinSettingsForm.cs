@@ -83,5 +83,10 @@ namespace EAAddinFramework.Utilities
             this.configListView.RemoveObject(this.configListView.SelectedObject);
             this.enableDisable();
         }
+
+        private void configListView_DoubleClick(object sender, EventArgs e)
+        {
+            this.selectedConfig.openContext();
+        }
     }
 }

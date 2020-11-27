@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using UML = TSF.UmlToolingFramework.UML;
 using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 using EAAddinFramework.WorkTracking.TFS;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace EAAddinFramework.Utilities
 {
@@ -16,6 +20,7 @@ namespace EAAddinFramework.Utilities
         private Configuration configuration { get; set; }
         private TSF_EA.Package package { get; set; }
         public AddinConfigType type { get; private set; }
+        public bool isDirty { get; set; } = false;
         public string name
         {
             get
@@ -87,29 +92,45 @@ namespace EAAddinFramework.Utilities
         protected void mergeDefaultSettings(string defaultConfigFilePath)
         {
             var defaultConfig = getConfiguration(defaultConfigFilePath);
+            bool keysAdded = false;
             //defaultConfig.AppSettings.Settings["menuOwnerEnabled"].Value
             foreach (KeyValueConfigurationElement configEntry in defaultConfig.AppSettings.Settings)
             {
                 if (!this.configuration.AppSettings.Settings.AllKeys.Contains(configEntry.Key))
                 {
                     this.configuration.AppSettings.Settings.Add(configEntry.Key, configEntry.Value);
+                    keysAdded = true;
                 }
             }
-            // save the configuration
-            try
+            if (keysAdded)
             {
-                this.Save();
-            }
-            catch (System.Runtime.InteropServices.COMException e)
-            {
-                //swallow exception if it says Element locked
-                if (!e.Message.Contains("Element locked"))
+                // save the configuration if needed
+                try
                 {
-                    throw (e);
+                    this.Save();
+                }
+                catch (System.Runtime.InteropServices.COMException e)
+                {
+                    //swallow exception if it says Element locked
+                    if (!e.Message.Contains("Element locked"))
+                    {
+                        throw (e);
+                    }
                 }
             }
+        }
 
-
+        internal void openContext()
+        {
+            if (this.type == AddinConfigType.Package)
+            {
+                this.package?.select();
+            }
+            else
+            {
+                //open the folder in the explorer
+                Process.Start(System.IO.Path.GetDirectoryName(this.configuration.FilePath));
+            }
         }
 
         internal void delete()
@@ -133,7 +154,11 @@ namespace EAAddinFramework.Utilities
         }
         internal void setValue(string key, string value)
         {
-            this.configuration.AppSettings.Settings[key].Value = value;
+            if (this.configuration.AppSettings.Settings[key].Value != value)
+            {
+                this.configuration.AppSettings.Settings[key].Value = value;
+                this.isDirty = true;
+            }
         }
         internal void refresh()
         {
@@ -142,17 +167,66 @@ namespace EAAddinFramework.Utilities
         }
         public void Save()
         {
-            this.configuration.Save();
-
-            if (this.package != null)
+            if (this.isDirty)
             {
-                if (this.package.isReadOnly) this.package.makeWritable(true);
+                //save config file
+                this.configuration.Save();
                 //get xml content
                 var xmlContent = System.IO.File.ReadAllText(this.configuration.FilePath);
-                this.package.addTaggedValue(this.tagName, "<memo>", xmlContent);
+                //save the tagged value with max 3 retries
+                try
+                {
+                    saveTag(xmlContent, 0);
+                    //unset isDirty
+                    this.isDirty = false;
+                }
+                catch (COMException e)
+                {
+                    if (e.Message.Contains("Element locked"))
+                    {
+                        MessageBox.Show(this.package.EAModel.mainEAWindow
+                                        , $"Package {package.name} is read-only.{Environment.NewLine}Please apply user lock and try again"
+                                        , "Package read-only"
+                                        , MessageBoxButtons.OK
+                                        , MessageBoxIcon.Error);
+                        package.select();
+                    }
+                }
+
+
             }
         }
-
+        private void saveTag(string xmlContent, int retryCount)
+        {
+            try
+            {
+                //save config tagged value
+                if (this.package != null)
+                {
+                    Logger.log($"Before makewritable retryCount: {retryCount}");
+                    if (this.package.isReadOnly) this.package.makeWritable(true);
+                    Logger.log($"After makewritable retryCount: {retryCount}");
+                    this.package.addTaggedValue(this.tagName, "<memo>", xmlContent);
+                    Logger.log($"After addTaggedValue retryCount: {retryCount}");
+                }
+            }
+            catch (COMException e)
+            {
+                if (retryCount > 0)
+                {
+                    if (e.Message.Contains("Element locked"))
+                    {
+                        //wait a bit
+                        Thread.Sleep(1000);
+                        this.saveTag(xmlContent, retryCount - 1);
+                    }
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+        }
     }
     public enum AddinConfigType
     {

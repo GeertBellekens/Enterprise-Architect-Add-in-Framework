@@ -48,7 +48,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override void save()
         {
-            this.wrappedTaggedValue.Update(); ;
+            this.wrappedTaggedValue.Update();
         }
         internal override bool equalsTagObject(object eaTag)
         {
