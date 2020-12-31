@@ -2,15 +2,19 @@
 using System.Threading;
 using System.Windows.Forms;
 using EAAddinFramework.Utilities;
+using TSF_EA = TSF.UmlToolingFramework.Wrappers.EA;
 
 namespace EAAddinFramework
 {
+	
 	/// <summary>
 	/// This abstract class can be used as a base class for creating add-ins for Enterprise Architec
 	/// It contains all supported operations for EA v 11.1.1112
 	/// </summary>
 	public abstract class EAAddinBase
 	{
+		protected bool fullyLoaded { get; set; } = false;
+		protected TSF_EA.Model model { get; set; }
 		public EAAddinBase()
 		{
 			AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -256,7 +260,11 @@ namespace EAAddinFramework
         /// </summary>
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-        public virtual void EA_FileOpen(EA.Repository Repository){}
+        public virtual void EA_FileOpen(EA.Repository Repository)
+		{
+			this.model = new TSF_EA.Model(Repository);
+			this.fullyLoaded = true;
+		}
         
         /// <summary>
         /// The EA_FileClose event enables the Add-In to respond to a File Close event. When Enterprise Architect closes an opened Model file, this event is raised and passed to all Add-Ins implementing this method.
@@ -265,7 +273,11 @@ namespace EAAddinFramework
         /// </summary>
         /// <param name="Repository">An EA.Repository object representing the currently open Enterprise Architect model.
         /// Poll its members to retrieve model data and user interface status information.</param>
-        public virtual void EA_FileClose(EA.Repository Repository){}
+        public virtual void EA_FileClose(EA.Repository Repository)
+		{
+			this.model = null;
+			this.fullyLoaded = false;
+		}
 
         /// <summary>
         /// The EA_FileNew event enables the Add-In to respond to a File New event. When Enterprise Architect creates a new model file, this event is raised and passed to all Add-Ins implementing this method.
