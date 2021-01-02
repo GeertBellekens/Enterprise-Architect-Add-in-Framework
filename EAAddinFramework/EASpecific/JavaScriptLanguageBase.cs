@@ -12,19 +12,22 @@ using System.IO;
 
 namespace EAAddinFramework.EASpecific
 {
-	/// <summary>
-	/// Description of JavaScriptLanguageBase.
-	/// </summary>
-	public abstract class JavaScriptLanguageBase : ScriptLanguage
-	{
-		protected override string functionStart {get {return "function ";}}
-		protected override string parameterListStart {get {return "(";}}
-		protected override string parameterSeparator {get {return ", ";}}
-		protected override string parameterListEnd {get {return ")";}}
-		protected override string bodyStart {get {return "{";}}
-		protected override string bodyEnd {get {return "}";}}
-		protected override string functionEnd {get {return string.Empty;}}
-		protected override string commentLine {get {return "//";}}
-		
-	}
+    /// <summary>
+    /// Description of JavaScriptLanguageBase.
+    /// </summary>
+    public abstract class JavaScriptLanguageBase : ScriptLanguage
+    {
+        protected override string functionStart => "function ";
+        protected override string parameterListStart => "(";
+        protected override string parameterSeparator => ", ";
+        protected override string parameterListEnd => ")"; 
+        protected override string bodyStart => "{"; 
+        protected override string bodyEnd => "}";
+        protected override string functionEnd => string.Empty;
+        public override string commentLine => @"//";
+        public override string extension => ".js";
+
+
+
+    }
 }

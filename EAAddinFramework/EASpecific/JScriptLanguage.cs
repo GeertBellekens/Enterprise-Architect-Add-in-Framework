@@ -19,12 +19,6 @@ namespace EAAddinFramework.EASpecific
 		public JScriptLanguage()
 		{
 		}
-		public override string name 
-		{
-			get 
-			{
-				return "JScript";
-			}
-		}		
+		public override string name => "JScript";
 	}
 }

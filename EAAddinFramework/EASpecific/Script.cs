@@ -32,6 +32,7 @@ namespace EAAddinFramework.EASpecific
         static string scriptLanguageIndicator = "Language=\"";
         static string scriptNameIndicator = "Script Name=\"";
         private static int scriptHash;
+        private static int savedScriptHash;
         private static List<Script> allEAMaticScripts;
         private static List<Script> allModelScripts;
         private static Dictionary<string, string> _includableScripts;
@@ -41,7 +42,20 @@ namespace EAAddinFramework.EASpecific
         private static bool reloadModelIncludableScripts;
         private EAWrappers.Model model;
         private string scriptID;
-        private string _code;
+        private string code { get; set; }
+        private string _saveCode;
+        private string saveCode 
+        { 
+            get
+            {
+                if (String.IsNullOrEmpty(this._saveCode))
+                {
+                    this._saveCode = this.code;
+                }
+                return this._saveCode;
+            }
+            set => this._saveCode = value;
+        }
         public string errorMessage { get; set; }
         private ScriptControl scriptController;
         public List<ScriptFunction> functions { get; set; }
@@ -121,7 +135,7 @@ namespace EAAddinFramework.EASpecific
             this.name = scriptName;
             this.groupName = groupName;
             this.functions = new List<ScriptFunction>();
-            this._code = code;
+            this.code = code;
             this.setLanguage(language);
             this.isStatic = isStatic;
         }
@@ -140,7 +154,7 @@ namespace EAAddinFramework.EASpecific
             try
             {
                 //first add the included code
-                string includedCode = this.IncludeScripts(this._code);
+                string includedCode = this.IncludeScripts(this.code);
                 //remove "as xxx" statements
                 includedCode = removeAsTypeStatements(includedCode);
 
@@ -391,7 +405,7 @@ namespace EAAddinFramework.EASpecific
                 else
                 {
                     //remove the included string because the script was already included
-                    includedCode = includedCode.Replace(includeString, Environment.NewLine);
+                    includedCode = includedCode.Replace(includeString + Environment.NewLine, Environment.NewLine);
                 }
             }
 
@@ -449,6 +463,67 @@ namespace EAAddinFramework.EASpecific
                     break;
             }
         }
+        public static void saveAllModelScripts(string scriptPath)
+        {
+            //don't do anything if none of the scripts has changed
+            if (savedScriptHash == scriptHash) return;
+            foreach(var script in allModelScripts)
+            {
+                script.save(scriptPath);
+            }
+            //save the new scriptHas as savedScriptHash
+            savedScriptHash = scriptHash;
+        }
+
+        private void save(string scriptPath)
+        {
+            //add groupName to savecode
+            addGroupNameToSaveCode();
+            var path = getPath();
+            var fullPath = scriptPath + path + this.name + this.language.extension;
+            //check if the script has changed 
+            if (File.Exists(fullPath))
+            {
+                var existingCode = File.ReadAllText(fullPath);
+                if (! existingCode.Equals(this.saveCode))
+                {
+                    //write to file
+                    File.WriteAllText(fullPath, this.saveCode);
+                }
+            }
+            else
+            {
+                //make sure the directory exists
+                Directory.CreateDirectory(scriptPath + path);
+                //write to file
+                File.WriteAllText(fullPath, this.saveCode);
+            }
+        }
+        private string getPath()
+        {
+            var regex = new Regex(@"(\[path=)(.+)\]", RegexOptions.IgnoreCase);
+            var match = regex.Match(this.saveCode);
+            if (match.Success)
+            {
+                return @"\" + match.Groups[2].Value + @"\"; ;
+            }
+            else
+            {
+                //return the groupname as path
+                return @"\" + this.groupName + @"\";
+            }
+        }
+        private void addGroupNameToSaveCode()
+        {
+            var regex = new Regex(@"(\[group=)(.+)\]", RegexOptions.IgnoreCase);
+            var match = regex.Match(this.saveCode);
+            if (!match.Success)
+            {
+                //add the group indicator to the saveCode
+                this._saveCode = $"{this.language.commentLine}[group={this.groupName}]{Environment.NewLine}{this.saveCode}";
+            }
+        }
+
         public static List<Script> getAllModelScripts(Model model, bool onlyEAMatic)
         {
             if (model != null)
@@ -516,7 +591,7 @@ namespace EAAddinFramework.EASpecific
                                 //also add the script to the include dictionary
                                 string scriptKey = "!INC " + script.groupName + "." + script.name;
                                 if (!modelIncludableScripts.ContainsKey(scriptKey))
-                                    modelIncludableScripts.Add(scriptKey, script._code);
+                                    modelIncludableScripts.Add(scriptKey, script.code);
                             }
                         }
                     }
@@ -537,12 +612,12 @@ namespace EAAddinFramework.EASpecific
             }
             if (allEAMaticScripts == null)
             {
-                allEAMaticScripts = new List<Script>();
                 getAllModelScripts(model, onlyEAMatic);
+                allEAMaticScripts = new List<Script>();
                 //load all EA-Matic scripts from allModelScripts
                 foreach (var script in allModelScripts)
                 {
-                    if (script._code.Contains("EA-Matic"))
+                    if (script.code.Contains("EA-Matic"))
                     {
                         allEAMaticScripts.Add(script);
                     }
@@ -628,8 +703,8 @@ namespace EAAddinFramework.EASpecific
         /// <param name="functionCode">the code to be added</param>
         public void addCode(string functionCode)
         {
-            this._code += functionCode;
-            string SQLUpdate = "update t_script set script = '" + this.model.escapeSQLString(this._code) + "' where ScriptID = " + this.scriptID;
+            this.code += functionCode;
+            string SQLUpdate = "update t_script set script = '" + this.model.escapeSQLString(this.code) + "' where ScriptID = " + this.scriptID;
             this.model.executeSQL(SQLUpdate);
         }
     }

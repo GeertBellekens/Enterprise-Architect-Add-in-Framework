@@ -35,7 +35,8 @@ namespace EAAddinFramework.EASpecific
 		protected abstract string bodyStart {get;}
 		protected abstract string bodyEnd {get;}
 		protected abstract string functionEnd {get;}
-		protected abstract string commentLine {get;}
+		public abstract string commentLine {get;}
+		public abstract string extension { get; }
 
 		public string translate(MethodInfo operation)
 		{
