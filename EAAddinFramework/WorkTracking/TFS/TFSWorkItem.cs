@@ -1,15 +1,11 @@
 ﻿
 using System;
-using System.Windows.Forms;
 using EAAddinFramework.Utilities;
-using WT=WorkTrackingFramework;
-using System.Collections.Generic;
+using WT = WorkTrackingFramework;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using TSF.UmlToolingFramework.Wrappers.EA;
 
