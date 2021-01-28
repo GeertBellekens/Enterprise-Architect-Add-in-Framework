@@ -366,6 +366,8 @@ namespace EAAddinFramework.SchemaBuilder
 			}
             //stereotype
             subSetAssociation.stereotypes = this.sourceAssociation.stereotypes;
+            //derived
+            subSetAssociation.isDerived = this.sourceAssociation.isDerived;
             //save all changes
             //subSetAssociation.save();
             //copy the association end properties

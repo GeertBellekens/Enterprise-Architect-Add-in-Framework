@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Http;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship
     {
         internal global::EA.Connector wrappedConnector { get; set; }
-        private UML.Classes.Kernel.Element _owner;
         private UML.Classes.Kernel.Element _source;
         private UML.Classes.Kernel.Element _target;
         private AssociationEnd _sourceEnd;
@@ -117,10 +117,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
             }
         }
-        public override HashSet<UML.Classes.Kernel.Element> ownedElements {
-      get => new HashSet<UML.Classes.Kernel.Element>();
-      set => throw new NotImplementedException();
-    }
+        public override HashSet<UML.Classes.Kernel.Element> ownedElements
+        {
+            get => new HashSet<UML.Classes.Kernel.Element>();
+            set => throw new NotImplementedException();
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -146,16 +147,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// not fully correct, but we will return the element at the source of the relation
         /// TODO: fix this so it uses the actual ownership as prescribed by UML
         /// </summary>
-        public override UML.Classes.Kernel.Element owner {
-      get => this.source;
-      set => throw new NotImplementedException();
-    }
+        public override UML.Classes.Kernel.Element owner
+        {
+            get => this.source;
+            set => throw new NotImplementedException();
+        }
         /// the stereotypes defined on this Relationship
-        public override HashSet<UML.Profiles.Stereotype> stereotypes {
-      get => ((Factory)this.EAModel.factory).createStereotypes
-          (this, this.wrappedConnector.StereotypeEx);
-      set => this.WrappedConnector.StereotypeEx = Stereotype.getStereotypeEx(value);
-    }
+        public override HashSet<UML.Profiles.Stereotype> stereotypes
+        {
+            get => ((Factory)this.EAModel.factory).createStereotypes
+                (this, this.wrappedConnector.StereotypeEx);
+            set => this.WrappedConnector.StereotypeEx = Stereotype.getStereotypeEx(value);
+        }
         /// returns the related elements.
         /// In EA the Connectoris a binary relationship. So only two Elements will 
         /// ever be returned.
@@ -377,20 +380,44 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public bool isDerived {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public bool isDerived
+        {
+            get
+            {
+                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
+                {
+                    if (property.Name == "isDerived")
+                    {
+                        return property.Value != "0" 
+                            && ! property.Value.Equals("false",StringComparison.InvariantCultureIgnoreCase) ;
+                    }
+                }
+                //return false by default
+                return false;
+            }
+            set
+            {
+                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
+                {
+                    if (property.Name == "isDerived")
+                    {
+                        property.Value = value ? "-1" : "0";
+                    }
+                }
+            }
+        }
 
-        public List<UML.Classes.Kernel.Property> navigableOwnedEnds {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public List<UML.Classes.Kernel.Property> navigableOwnedEnds
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public List<UML.Classes.Kernel.Property> ownedEnds {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public List<UML.Classes.Kernel.Property> ownedEnds
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
         public List<UML.Classes.Kernel.Type> endTypes
         {
@@ -442,89 +469,106 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._targetEnd;
             }
         }
-        public bool isAbstract {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public bool isAbstract
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public HashSet<UML.Classes.Kernel.Generalization> generalizations {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
-        public HashSet<UML.Classes.Kernel.Property> attributes {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public HashSet<UML.Classes.Kernel.Generalization> generalizations
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+        public HashSet<UML.Classes.Kernel.Property> attributes
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public HashSet<UML.Classes.Kernel.Feature> features {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public HashSet<UML.Classes.Kernel.Feature> features
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public bool isLeaf {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public bool isLeaf
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public HashSet<UML.Classes.Kernel.RedefinableElement> redefinedElements {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public HashSet<UML.Classes.Kernel.RedefinableElement> redefinedElements
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public HashSet<UML.Classes.Kernel.Classifier> redefinitionContexts {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public HashSet<UML.Classes.Kernel.Classifier> redefinitionContexts
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public override string name {
-      get => this.wrappedConnector.Name;
-      set => this.wrappedConnector.Name = value;
-    }
+        public override string name
+        {
+            get => this.wrappedConnector.Name;
+            set => this.wrappedConnector.Name = value;
+        }
 
-        public UML.Classes.Kernel.VisibilityKind visibility {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public UML.Classes.Kernel.VisibilityKind visibility
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public String qualifiedName {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public String qualifiedName
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public UML.Classes.Kernel.Namespace owningNamespace {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public UML.Classes.Kernel.Namespace owningNamespace
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public UML.Classes.Kernel.NamedElement client {
-      get => this.source as UML.Classes.Kernel.NamedElement;
-      set => this.source = value as Element;
-    }
+        public UML.Classes.Kernel.NamedElement client
+        {
+            get => this.source as UML.Classes.Kernel.NamedElement;
+            set => this.source = value as Element;
+        }
 
-        public UML.Classes.Kernel.NamedElement supplier {
-      get => this.target as UML.Classes.Kernel.NamedElement;
-      set => this.target = value as Element;
-    }
+        public UML.Classes.Kernel.NamedElement supplier
+        {
+            get => this.target as UML.Classes.Kernel.NamedElement;
+            set => this.target = value as Element;
+        }
 
-        public UML.Classes.Kernel.OpaqueExpression mapping {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public UML.Classes.Kernel.OpaqueExpression mapping
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public HashSet<UML.Classes.Dependencies.Substitution> substitutions {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public HashSet<UML.Classes.Dependencies.Substitution> substitutions
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public List<UML.Classes.Dependencies.Dependency> clientDependencies {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public List<UML.Classes.Dependencies.Dependency> clientDependencies
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        public List<UML.Classes.Dependencies.Dependency> supplierDependencies {
-      get => throw new NotImplementedException();
-      set => throw new NotImplementedException();
-    }
+        public List<UML.Classes.Dependencies.Dependency> supplierDependencies
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
         /// <summary>
         /// convenience method to return the information flows that realize this Relationship
         /// </summary>
@@ -613,10 +657,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.wrappedConnector.Update();
         }
 
-        public override string notes {
-      get => this.wrappedConnector.Notes;
-      set => this.wrappedConnector.Notes = value;
-    }
+        public override string notes
+        {
+            get => this.wrappedConnector.Notes;
+            set => this.wrappedConnector.Notes = value;
+        }
 
 
         public override TSF.UmlToolingFramework.UML.Extended.UMLItem getItemFromRelativePath(List<string> relativePath)
