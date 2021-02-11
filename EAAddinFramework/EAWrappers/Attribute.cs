@@ -114,11 +114,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 this.wrappedAttribute.Precision = (string)this.getProperty("precision");
             }
-
             if (this.getProperty("scale") != null)
             {
                 this.wrappedAttribute.Scale = (string)this.getProperty("scale");
             }
+            if (this.getProperty("isDerived") != null)
+            {
+                this.wrappedAttribute.IsDerived = (bool)this.getProperty("isDerived");
+            }
+
             //multiplicity is a bit of an exception. We only save the info if it actually has changed
             var multiplicityProperty = this.getPropertyInfo("EAMultiplicity");
             if (multiplicityProperty != null && multiplicityProperty.isDirty)
@@ -184,8 +188,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public bool isDerived
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => (bool)this.getProperty(getPropertyNameName(), this.wrappedAttribute.IsDerived);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.IsDerived);
         }
 
         public bool isDerivedUnion
