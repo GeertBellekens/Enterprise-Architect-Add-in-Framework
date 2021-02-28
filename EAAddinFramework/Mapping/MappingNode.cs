@@ -102,7 +102,8 @@ namespace EAAddinFramework.Mapping
             else
             {
                 //the first GUID indicates that it does not below in this node
-                return null;
+                this.mappingPath.Clear();
+                return this;
             }
         }
 

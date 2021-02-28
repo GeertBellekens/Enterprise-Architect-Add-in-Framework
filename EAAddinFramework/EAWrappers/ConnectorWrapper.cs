@@ -108,6 +108,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 diagrams[0].open();
                 diagrams[0].selectItem(this);
+                diagrams[0].selectItem(this); // do this a second time to make sure it works, see https://www.sparxsystems.com/forums/smf/index.php/topic,45515.0.html
             }
             else
             {
