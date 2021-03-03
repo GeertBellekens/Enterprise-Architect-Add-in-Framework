@@ -89,8 +89,9 @@ namespace EAAddinFramework.SchemaBuilder
                         foreach (var schemaElement in schemaElements.ToList())
                         {
                             var element = (EASchemaElement) schemaElement;
-                            if (null != element 
-                                && choices.Contains(element.TypeID))
+                            if (choices.Contains(element.TypeID) 
+                                || choices.Contains(element.name))//has this changed from guid to name based?
+                                
                                 //&& element.name == this.wrappedProperty.TypeName) //this caused a restricted association to a subtype to not be generated. 
                                 //Not sure why the check was originally added, so this might break something again.
                             {
