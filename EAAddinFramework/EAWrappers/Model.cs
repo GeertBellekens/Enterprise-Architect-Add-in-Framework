@@ -895,7 +895,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             likeString = likeString.Replace('*', '%');
                             likeString = likeString.Replace('?', '_');
                             likeString = likeString.Replace('#', '_');
-                            likeString = likeString.Replace('^', '!');
+                            likeString = likeString.Replace('!', '^');
                         }
                         string next = string.Empty;
                         if (endString < sqlQuery.Length)
