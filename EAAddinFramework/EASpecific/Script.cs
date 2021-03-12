@@ -142,7 +142,7 @@ namespace EAAddinFramework.EASpecific
         /// <summary>
         /// reload the code into the controller to refresh the functions
         /// </summary>
-        private void reloadCode()
+        public void reloadCode()
         {
             //remove all functions
             this.functions.Clear();
