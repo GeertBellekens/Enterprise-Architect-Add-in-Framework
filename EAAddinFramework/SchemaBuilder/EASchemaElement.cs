@@ -747,8 +747,18 @@ namespace EAAddinFramework.SchemaBuilder
 
                         if (attribute.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
                         {
-                            //no match, delete the attribute
-                            attribute.delete();
+                            //check if the subset element is used in a schema or subset downstream
+                            if (EASchema.isItemUsedInASchema(attribute, this.model))
+                            {
+                                //report error
+                                EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Subset attribute '{subsetElement.name}.{attribute.name}' cannot be deleted as it is still used in one or more schemas"
+                                       , attribute.id, LogTypeEnum.warning);
+                            }
+                            else
+                            {
+                                //no match, delete the attribute
+                                attribute.delete();
+                            }
                         }
                     }
                 }
@@ -778,8 +788,18 @@ namespace EAAddinFramework.SchemaBuilder
                             //only delete if stereotype not in list of ignored stereotypes
                             if (literal.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
                             {
-                                //no match, delete the literal
-                                literal.delete();
+                                //check if the subset element is used in a schema or subset downstream
+                                if (EASchema.isItemUsedInASchema(literal, this.model))
+                                {
+                                    //report error
+                                    EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Subset literal '{subsetElement.name}.{literal.name}' cannot be deleted as it is still used in one or more schemas"
+                                           , literal.id, LogTypeEnum.warning);
+                                }
+                                else
+                                {
+                                    //no match, delete the literal
+                                    literal.delete();
+                                }
                             }
                         }
                     }
@@ -902,8 +922,18 @@ namespace EAAddinFramework.SchemaBuilder
                             if (association.target.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0
                                 && association.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
                             {
-                                //no match, delete the association
-                                association.delete();
+                                //check if the subset element is used in a schema or subset downstream
+                                if (EASchema.isItemUsedInASchema(association, this.model))
+                                {
+                                    //report error
+                                    EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Subset association '{subsetElement.name}.{association.name}.{association.targetName}' cannot be deleted as it is still used in one or more schemas"
+                                           , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.warning);
+                                }
+                                else
+                                {
+                                    //no match, delete the association
+                                    association.delete();
+                                }
                             }
                         }
                     }

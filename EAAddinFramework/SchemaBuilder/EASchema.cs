@@ -38,7 +38,7 @@ namespace EAAddinFramework.SchemaBuilder
             this.wrappedComposer = composer;
             this.settings = settings;
         }
-        
+
 
         /// <summary>
         /// the name of the schema
@@ -276,7 +276,7 @@ namespace EAAddinFramework.SchemaBuilder
                         //order the attributes
                         if (!this.settings.keepOriginalAttributeOrder
                             && !this.settings.setAttributeOrderZero
-                            && ! (this.settings.orderAssociationsAlphabetically && this.settings.orderAssociationsAmongstAttributes))
+                            && !(this.settings.orderAssociationsAlphabetically && this.settings.orderAssociationsAmongstAttributes))
                         {
                             schemaElement.orderAttributes();
                         }
@@ -316,10 +316,20 @@ namespace EAAddinFramework.SchemaBuilder
                            && !reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
                            && (reloadedElement is TSF_EA.ElementWrapper && !((TSF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
                         {
-                            //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Deleting subset element for: '" + schemaElement.name + "'"
+                            //check if the subset element is used in a schema or subset downstream
+                            if (isItemUsedInASchema(reloadedElement, this.model))
+                            {
+                                //report error
+                                EAOutputLogger.log(this.model, this.settings.outputName, $"Subset element '{reloadedElement.name}' cannot be deleted as it is still used in one or more schemas"
+                                       , ((TSF_EA.ElementWrapper)reloadedElement).id, LogTypeEnum.warning);
+                            }
+                            else
+                            {
+                                //tell the user what we are doing 
+                                EAOutputLogger.log(this.model, this.settings.outputName, "Deleting subset element for: '" + schemaElement.name + "'"
                                                , 0, LogTypeEnum.log);
-                            schemaElement.subsetElement.delete();
+                                schemaElement.subsetElement.delete();
+                            }
                         }
                     }
                 }
@@ -328,7 +338,7 @@ namespace EAAddinFramework.SchemaBuilder
             synchronizeTaggedValues();
             //save the new schema contents to the destination package
             this.saveSchemaContent(destinationPackage);
-            
+
         }
         /// <summary>
         /// creates subset tagged values for each of the tagged values that need to be synchronized.
@@ -353,11 +363,11 @@ namespace EAAddinFramework.SchemaBuilder
                     //get corresponding schema element
                     targetItem = getSubsetConnector((TSF_EA.ConnectorWrapper)sourceItem);
                 }
-                if (targetItem!= null)
+                if (targetItem != null)
                 {
                     //create the tagged value
                     tuple.Item2.addTaggedValue(tuple.Item1.name, targetItem.uniqueID, null, true);
-                }   
+                }
             }
             //clear the taggedValues to be synchronized
             this.taggedValuesToSynchronize.Clear();
@@ -378,7 +388,7 @@ namespace EAAddinFramework.SchemaBuilder
             //not found, return null
             return null;
         }
-        private TSF_EA.AttributeWrapper getSubsetAttributeWrapper (TSF_EA.AttributeWrapper sourceAttribute)
+        private TSF_EA.AttributeWrapper getSubsetAttributeWrapper(TSF_EA.AttributeWrapper sourceAttribute)
         {
             foreach (var schemaElement in this.schemaElements)
             {
@@ -387,7 +397,7 @@ namespace EAAddinFramework.SchemaBuilder
                     if (schemaAttribute.sourceProperty.Equals(sourceAttribute)
                         && schemaAttribute.subSetProperty != null)
                     {
-                        return (TSF_EA.AttributeWrapper) schemaAttribute.subSetProperty;
+                        return (TSF_EA.AttributeWrapper)schemaAttribute.subSetProperty;
                     }
                 }
                 foreach (var schemaLiteral in schemaElement.schemaLiterals)
@@ -402,7 +412,7 @@ namespace EAAddinFramework.SchemaBuilder
             //nothing found, return null
             return null;
         }
-        
+
 
         /// <summary>
         /// updates the subset model linked to given messageElement
@@ -688,10 +698,30 @@ namespace EAAddinFramework.SchemaBuilder
                     if (destinationPackage.getNestedPackageTree(true).Any(x => x.Equals(subsetElement.owningPackage))
                         && !this.settings.ignoredStereotypes.Intersect(((TSF_EA.Element)subsetElement).stereotypeNames).Any())
                     {
-                        subsetElement.delete();
+                        //check if the subset element is used in a schema or subset downstream
+                        if (isItemUsedInASchema(subsetElement, this.model))
+                        {
+                            //report error
+                            EAOutputLogger.log(this.model, this.settings.outputName, $"Subset element '{subsetElement.name}' cannot be deleted as it is still used in one or more schemas"
+                                   , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.warning);
+                        }
+                        else
+                        {
+                            subsetElement.delete();
+                        }
                     }
                 }
             }
+        }
+        public static bool isItemUsedInASchema(UML.Classes.Kernel.Element element, TSF_EA.Model model)
+        {
+            var sqlGetCountSchemas = @"select count(*) as countresult from t_document d 
+                                        inner join t_object o on o.ea_guid = d.ElementID
+                                        where d.DocType = 'SC_MessageProfile' "
+                                        + $"and d.StrContent like '%{element.uniqueID}%'";
+            var resultXml = model.SQLQuery(sqlGetCountSchemas);
+            var countNode = resultXml.SelectSingleNode(model.formatXPath("//countresult"));
+            return countNode.InnerText != "0";
         }
 
         private bool shouldElementExistAsDatatype(Classifier subsetElement)
@@ -799,7 +829,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //if it's a tagged value to be synchronized then add it to the list and skip the rest
                 if (this.settings.synchronizedTaggedValues.Contains(sourceTaggedValue.name))
                 {
-                    this.taggedValuesToSynchronize.Add(new Tuple<TSF_EA.TaggedValue, TSF_EA.Element>( sourceTaggedValue, target ));
+                    this.taggedValuesToSynchronize.Add(new Tuple<TSF_EA.TaggedValue, TSF_EA.Element>(sourceTaggedValue, target));
                     continue;
                 }
                 bool updateTaggedValue = true;
@@ -830,7 +860,7 @@ namespace EAAddinFramework.SchemaBuilder
                     else
                     {
                         //create new tagged value
-                        target.addTaggedValue(sourceTaggedValue.name,sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
+                        target.addTaggedValue(sourceTaggedValue.name, sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
                     }
                 }
             }
@@ -859,11 +889,11 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 //multiple found, check if any of them as the same value
                 var valueMatches = nameMatches.Where(x => x.eaStringValue == sourceTaggedValue.eaStringValue);
-                if (! valueMatches.Any())
+                if (!valueMatches.Any())
                 {
                     targetTaggedValue = nameMatches.First();
                 }
-                else 
+                else
                 {
                     if (valueMatches.Count() == 1)
                     {
