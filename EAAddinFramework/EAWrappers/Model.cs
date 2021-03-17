@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -1055,11 +1056,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     guidString = this.wrappedModel.GetProjectInterface().XMLtoGUID(guidString);
                 }
                 UML.Extended.UMLItem foundItem = null;
-                foundItem = this.getElementByGUID(guidString);
-                if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
-                if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
-                if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
-                if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
+                if (Guid.TryParse(guidString, out var result))
+                {
+                    foundItem = this.getElementByGUID(guidString);
+                    if (foundItem == null) foundItem = this.getDiagramByGUID(guidString);
+                    if (foundItem == null) foundItem = this.getAttributeWrapperByGUID(guidString);
+                    if (foundItem == null) foundItem = this.getOperationByGUID(guidString);
+                    if (foundItem == null) foundItem = this.getRelationByGUID(guidString);
+                }
+                else if (long.TryParse(guidString, out var longresult))
+                {
+                    //try to find a diagramObject based on the instanceID (diagramObjects don't have an ea_guid)
+                    //find diagram
+                    var sqlGetData = $"select do.Diagram_ID from t_diagramobjects do where do.Instance_ID = {guidString}";
+                    var diagram = this.getDiagramsByQuery(sqlGetData).FirstOrDefault();
+                    if (diagram != null)
+                    {
+                        //get element
+                        sqlGetData = $"select do.Object_ID from t_diagramobjects do where do.Instance_ID = {guidString}";
+                        var element = this.getElementWrappersByQuery(sqlGetData).FirstOrDefault();
+                        if (element != null)
+                        {
+                            //get the diagramObject for this element on this diagram
+                            foundItem = diagram.getDiagramElement(element);
+                        }
+                    }
+                }
                 return foundItem;
             }
             catch (System.Runtime.InteropServices.COMException e)
