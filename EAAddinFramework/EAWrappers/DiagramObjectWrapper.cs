@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public class DiagramObjectWrapper : UML.Diagrams.DiagramElement
+    public class DiagramObjectWrapper : UML.Diagrams.DiagramElement, UML.Extended.UMLItem
     {
         public global::EA.DiagramObject wrappedDiagramObject { get; set; }
         public Model model { get; set; }
@@ -102,27 +103,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public void select()
         {
-            throw new NotImplementedException();
+            this.open();
+            this.element.select();
+            
         }
 
         public void open()
         {
-            throw new NotImplementedException();
+            this.diagram.selectItem(this.element);
+            this.diagram.open();
         }
 
         public void openProperties()
         {
-            throw new NotImplementedException();
+            this.element.openProperties();
         }
 
-        public void addToCurrentDiagram()
-        {
-            throw new NotImplementedException();
-        }
+        public void addToCurrentDiagram() { }//do nothing
+
 
         public void selectInCurrentDiagram()
         {
-            throw new NotImplementedException();
+            this.model.currentDiagram.selectItem(this.element);
         }
 
         public void delete()
@@ -130,44 +132,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             throw new NotImplementedException();
         }
 
-        public string name
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string name { get => this.element.name; }
 
         public UML.Classes.Kernel.Element owner
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => this.diagram.owner;
+            set => this.diagram.owner = value;
         }
 
-        public string fqn
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string fqn { get => this.diagram.fqn + "." + this.element.name; }
+
 
         public HashSet<UML.Profiles.Stereotype> stereotypes
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => new HashSet<UML.Profiles.Stereotype>();
+            set { }  //do nothing;
         }
 
         public bool makeWritable(bool overrideLocks)
@@ -175,13 +154,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return this.diagram.makeWritable(overrideLocks);
         }
 
-        public bool isReadOnly
-        {
-            get
-            {
-                return this.diagram.isReadOnly;
-            }
-        }
+        public bool isReadOnly { get => this.diagram.isReadOnly; }
+
         public void setOrientation(bool vertical)
         {
             string currentStyle = this.wrappedDiagramObject.Style.ToString();
@@ -193,7 +167,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public List<UML.Classes.Kernel.Element> getAllOwners()
         {
-            throw new NotImplementedException();
+            return this.diagram.getAllOwners();
         }
     }
 }
