@@ -341,8 +341,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.model.openProperties(this);
         }
 
+        public void clearSelection()
+        {
+            //clear selected objects
+            short i;
+            for (i = Convert.ToInt16(this.wrappedDiagram.SelectedObjects.Count -1); i >= 0; i--)
+            {
+                this.wrappedDiagram.SelectedObjects.DeleteAt(i, false);
+            }
+            //clear selected connector
+            this.wrappedDiagram.SelectedConnector = null;
+        }
         public void selectItem(UML.Extended.UMLItem itemToSelect)
         {
+            //clear selection
+            this.clearSelection();
+            //then select the item to select
             if (itemToSelect is Operation)
             {
                 bool found = false;
