@@ -131,6 +131,18 @@ namespace EAAddinFramework.Mapping
             }
             //first create the targetMappingNode
             var targetMappingNode = targetRootNode.createMappingNode(targetMappingPath);
+            // if the targetmappingNode was not created there is probably something wrong with the targetMappingMath
+            // we try again with a fresh mapping path
+            if (targetMappingNode == null)
+            {
+                targetMappingPath = getMappingPath(mappingTarget, targetRootNode);
+                targetMappingNode = targetRootNode.createMappingNode(targetMappingPath);
+            }
+            // if still not targetMappingNode then we return null
+            if (targetMappingNode == null)
+            {
+                return null;
+            }
             //return the actual mapping
             return createMapping(mappingItem, startNode, targetMappingNode);
         }
