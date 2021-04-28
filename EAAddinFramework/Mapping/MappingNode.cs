@@ -191,6 +191,7 @@ namespace EAAddinFramework.Mapping
         }
         public IEnumerable<MP.Mapping> getMyMappings( )
         {
+            EAOutputLogger.log($"Getting mappings for '{this.name}'");
             if (this._mappings == null)
             {
                 this._mappings = new List<Mapping>();
