@@ -348,29 +348,90 @@ namespace EAAddinFramework.SchemaBuilder
         {
             foreach (var tuple in this.taggedValuesToSynchronize)
             {
-                var sourceItem = tuple.Item1.tagValue;
-                UML.Classes.Kernel.Element targetItem = null;
-                if (sourceItem is TSF_EA.ElementWrapper)
+                var sourceItem = tuple.Item1.tagValue as UML.Classes.Kernel.Element;
+                if (sourceItem != null)
                 {
-                    targetItem = this.schemaElements.FirstOrDefault(x => x.sourceElement.Equals(sourceItem))?.subsetElement;
+                    var targetItem = this.getTargetItem(sourceItem);
+                    if (targetItem != null)
+                    {
+                        //create the tagged value
+                        tuple.Item2.addTaggedValue(tuple.Item1.name, targetItem.uniqueID, null, true);
+                    }
                 }
-                else if (sourceItem is TSF_EA.AttributeWrapper)
+                else
                 {
-                    targetItem = getSubsetAttributeWrapper((TSF_EA.AttributeWrapper)sourceItem);
-                }
-                else if (tuple.Item1.tagValue is TSF_EA.ConnectorWrapper)
-                {
-                    //get corresponding schema element
-                    targetItem = getSubsetConnector((TSF_EA.ConnectorWrapper)sourceItem);
-                }
-                if (targetItem != null)
-                {
-                    //create the tagged value
-                    tuple.Item2.addTaggedValue(tuple.Item1.name, targetItem.uniqueID, null, true);
+                    //check if the tagvalue contains a list of guid's
+                    var tagValueString = tuple.Item1.eaStringValue;
+                    //handle <memo> cases => guidList in the comment
+                    if (tagValueString.Equals("<memo>", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var targetTagComment = getTargetGUIDs(tuple.Item1.comment);
+                        if (! string.IsNullOrEmpty(targetTagComment))
+                        {
+                            tuple.Item2.addTaggedValue(tuple.Item1.name, tagValueString,targetTagComment, true);
+                        }
+                        
+                    }
+                    //guidList in the tag value
+                    var targetTagString = getTargetGUIDs(tagValueString);
+                    {
+                        if (!string.IsNullOrEmpty(targetTagString))
+                        {
+                            tuple.Item2.addTaggedValue(tuple.Item1.name, targetTagString, null, true);
+                        }
+                    }
                 }
             }
             //clear the taggedValues to be synchronized
             this.taggedValuesToSynchronize.Clear();
+        }
+        private string getTargetGUIDs(string guidsStringValue)
+        {
+            var sourceGUIDs = this.getGUIDsFromString(guidsStringValue);
+            var targetGUIDs = new List<string>();
+            foreach (var sourceGUID in sourceGUIDs)
+            {
+                var sourceItem = this.model.getElementByGUID(sourceGUID);
+                if (sourceItem != null)
+                {
+                    var targetItem = this.getTargetItem(sourceItem);
+                    if (targetItem != null)
+                    {
+                        targetGUIDs.Add(targetItem.uniqueID);
+                    }
+                }
+            }
+            return string.Join(",",  targetGUIDs);
+        }
+        private List<string> getGUIDsFromString(string guidListString)
+        {          
+            return guidListString.Split(',') // split by comma ","
+                .Select(x => x.Trim()) //remove spaces
+                .Where(x => this.isGUID(x)) //check for GUID values only
+                .ToList(); //return list
+        }
+        private bool isGUID(string guidString)
+        {
+            Guid dummy;
+            return Guid.TryParse(guidString, out dummy);
+        }
+        private UML.Classes.Kernel.Element getTargetItem(UML.Classes.Kernel.Element sourceItem)
+        {
+            UML.Classes.Kernel.Element targetItem = null;
+            if (sourceItem is TSF_EA.ElementWrapper)
+            {
+                targetItem = this.schemaElements.FirstOrDefault(x => x.sourceElement.Equals(sourceItem))?.subsetElement;
+            }
+            else if (sourceItem is TSF_EA.AttributeWrapper)
+            {
+                targetItem = getSubsetAttributeWrapper((TSF_EA.AttributeWrapper)sourceItem);
+            }
+            else if (sourceItem is TSF_EA.ConnectorWrapper)
+            {
+                //get corresponding schema element
+                targetItem = getSubsetConnector((TSF_EA.ConnectorWrapper)sourceItem);
+            }
+            return targetItem;
         }
         private UML.Classes.Kernel.Relationship getSubsetConnector(TSF_EA.ConnectorWrapper sourceConnector)
         {
