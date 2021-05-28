@@ -459,6 +459,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 newTaggedValue = this.taggedValues.FirstOrDefault(x => x.name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
                                                             && ((TaggedValue)x).eaStringValue.Equals(tagValue, StringComparison.InvariantCultureIgnoreCase)
                                                             && ((TaggedValue)x).comment.Equals(comment, StringComparison.InvariantCultureIgnoreCase)) as TaggedValue;
+                if (newTaggedValue == null)
+                {
+                    //if an Empty tagged value exists, we use that one
+                    newTaggedValue = this.taggedValues.FirstOrDefault(x => x.name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
+                                                                && string.IsNullOrEmpty(((TaggedValue)x).eaStringValue)) as TaggedValue;
+                }
             }
             if (newTaggedValue == null)
             {

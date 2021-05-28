@@ -314,7 +314,8 @@ namespace EAAddinFramework.SchemaBuilder
                            && !reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
                            && !reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
                            && !reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
-                           && (reloadedElement is TSF_EA.ElementWrapper && !((TSF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any()))
+                           //&& (reloadedElement is TSF_EA.ElementWrapper && !((TSF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any())
+                           )
                         {
                             //check if the subset element is used in a schema or subset downstream
                             if (isItemUsedInASchema(reloadedElement, this.model))
@@ -368,7 +369,7 @@ namespace EAAddinFramework.SchemaBuilder
                         var targetTagComment = getTargetGUIDs(tuple.Item1.comment);
                         if (! string.IsNullOrEmpty(targetTagComment))
                         {
-                            tuple.Item2.addTaggedValue(tuple.Item1.name, tagValueString,targetTagComment, true);
+                            tuple.Item2.addTaggedValue(tuple.Item1.name, tagValueString,targetTagComment, false);
                         }
                         
                     }
@@ -377,11 +378,13 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         if (!string.IsNullOrEmpty(targetTagString))
                         {
-                            tuple.Item2.addTaggedValue(tuple.Item1.name, targetTagString, null, true);
+                            tuple.Item2.addTaggedValue(tuple.Item1.name, targetTagString, null, false);
                         }
                     }
                 }
             }
+            //delete any duplicate empty tagged values. It could happen that there are 3 separate BusinessKeyAttribute tags
+            //TODO
             //clear the taggedValues to be synchronized
             this.taggedValuesToSynchronize.Clear();
         }
@@ -925,11 +928,13 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
-            //remove the tagged values to be synchronized from the target element
-            var taggedValuesToDelete = target.taggedValues.Where(x => this.settings.synchronizedTaggedValues.Contains(x.name)).ToList();
-            foreach (var targetTag in taggedValuesToDelete)
+            //clear the tagged values to be synchronized from the target element
+            var taggedValuesClear = target.taggedValues.Where(x => this.settings.synchronizedTaggedValues.Contains(x.name)).ToList();
+            foreach (var targetTag in taggedValuesClear)
             {
-                targetTag.delete();
+                targetTag.tagValue = string.Empty;
+                targetTag.comment = string.Empty;
+                targetTag.save();
             }
         }
         private TSF_EA.TaggedValue popTargetTaggedValue(List<TSF_EA.TaggedValue> targetTaggedValues, TSF_EA.TaggedValue sourceTaggedValue)
