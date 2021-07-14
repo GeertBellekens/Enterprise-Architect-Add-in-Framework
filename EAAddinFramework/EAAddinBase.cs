@@ -13,6 +13,9 @@ namespace EAAddinFramework
 	/// </summary>
 	public abstract class EAAddinBase
 	{
+		public const string locationTreeview = "TreeView";
+		public const string locationMainMenu= "MainMenu";
+		public const string locationDiagram = "Diagram";
 		protected bool fullyLoaded { get; set; } = false;
 		protected TSF_EA.Model model { get; set; }
 		public EAAddinBase()
