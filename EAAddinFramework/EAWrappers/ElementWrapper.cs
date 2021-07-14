@@ -174,6 +174,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
             }
         }
+                
         public override String notes
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Notes);
