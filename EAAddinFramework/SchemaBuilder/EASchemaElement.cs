@@ -234,6 +234,9 @@ namespace EAAddinFramework.SchemaBuilder
                 }
 
             }
+            //copy default color
+            ((TSF_EA.ElementWrapper)this.subsetElement).defaulBackColor = ((TSF_EA.ElementWrapper)this.sourceElement).defaulBackColor;
+            //copy constraints
             this.copyConstraints();
             //save the new subset element
             ((TSF_EA.Element)this.subsetElement).save();

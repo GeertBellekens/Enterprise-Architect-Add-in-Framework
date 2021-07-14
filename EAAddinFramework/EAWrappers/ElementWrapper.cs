@@ -153,6 +153,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Phase);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Phase);
         }
+        public int defaulBackColor
+        {
+            get
+            {
+                var sqlGetData = $"select o.Backcolor from t_object o where o.ea_guid = '{this.uniqueID}'";
+                var backColorXml = this.EAModel.SQLQuery(sqlGetData);
+                var colorString = backColorXml.SelectSingleNode(this.EAModel.formatXPath("//Backcolor")).InnerText;
+                int backColor;
+                return int.TryParse(colorString, out backColor)
+                    ? backColor
+                    : 0;
+            }
+            set
+            {
+                if (value != this.defaulBackColor)
+                {
+                    this.wrappedElement.SetAppearance(1, 0, value);
+                    this.isDirty = true;
+                }
+            }
+        }
         public override String notes
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Notes);
