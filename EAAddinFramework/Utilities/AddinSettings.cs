@@ -42,25 +42,10 @@ namespace EAAddinFramework.Utilities
             return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
         }
         private string configurationsDirectoryPath { get; set; }
-        /// <summary>
-        /// sets the currentConfig to the config for the contextElement
-        /// </summary>
-        /// <param name="contextElement"></param>
-        /// <returns>True if the config was changed, false if not.</returns>
-        public bool setContextConfig(UML.Classes.Kernel.Element contextElement)
+        public void setContextConfig(UML.Classes.Kernel.Element contextElement)
         {
-            var tempConfig = this.currentConfig;
-            if (contextElement == null)
-            {
-                this.currentConfig = this.userConfig;
-            }
-            else
-            {
-                var contextPackage = this.getOwningPackage(contextElement);
-                this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
-            }
-            //return the true if the config was changed
-            return !this.currentConfig.isSame(tempConfig);
+            var contextPackage = this.getOwningPackage(contextElement);
+            this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
         }
         private UML.Classes.Kernel.Package getOwningPackage(UML.Classes.Kernel.Element element)
         {
