@@ -26,7 +26,7 @@ namespace EAAddinFramework.Utilities
     public abstract class AddinSettings
     {
 
-        protected abstract string addinName { get;}
+        protected abstract string addinName { get; }
         protected abstract string configSubPath { get; }
         protected abstract string defaultConfigAssemblyFilePath { get; }
         public TSF_EA.Model model { get; set; }
@@ -42,10 +42,25 @@ namespace EAAddinFramework.Utilities
             return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
         }
         private string configurationsDirectoryPath { get; set; }
-        public void setContextConfig(UML.Classes.Kernel.Element contextElement)
+        /// <summary>
+        /// sets the currentConfig to the config for the contextElement
+        /// </summary>
+        /// <param name="contextElement"></param>
+        /// <returns>True if the config was changed, false if not.</returns>
+        public bool setContextConfig(UML.Classes.Kernel.Element contextElement)
         {
-            var contextPackage = this.getOwningPackage(contextElement);
-            this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
+            var tempConfig = this.currentConfig;
+            if (contextElement == null)
+            {
+                this.currentConfig = this.userConfig;
+            }
+            else
+            {
+                var contextPackage = this.getOwningPackage(contextElement);
+                this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
+            }
+            //return the true if the config was changed
+            return !this.currentConfig.isSame(tempConfig);
         }
         private UML.Classes.Kernel.Package getOwningPackage(UML.Classes.Kernel.Element element)
         {
@@ -54,13 +69,13 @@ namespace EAAddinFramework.Utilities
                 return element as UML.Classes.Kernel.Package;
             }
             var owner = element.owner;
-            if (owner == null )
+            if (owner == null)
             {
                 return null;
             }
             return this.getOwningPackage(owner);
         }
-        private AddinConfig getContextConfig(TSF_EA.Package contextPackage )
+        private AddinConfig getContextConfig(TSF_EA.Package contextPackage)
         {
             //check if tag exists at this package
             var configTag = contextPackage.getTaggedValue(this.currentConfig.tagName);

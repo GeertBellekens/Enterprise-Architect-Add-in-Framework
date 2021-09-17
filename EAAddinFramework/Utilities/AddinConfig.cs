@@ -46,7 +46,22 @@ namespace EAAddinFramework.Utilities
                    this.package.fqn :
                    this.configuration.FilePath;
         }
-
+        public bool isSame(AddinConfig otherConfig)
+        {
+            foreach (KeyValueConfigurationElement configEntry in this.configuration.AppSettings.Settings)
+            {
+                if (!otherConfig.configuration.AppSettings.Settings.AllKeys.Contains(configEntry.Key))
+                {
+                    return false;
+                }
+                if (otherConfig.configuration.AppSettings.Settings[configEntry.Key].Value != configEntry.Value)
+                {
+                    return false;
+                }
+            }
+            //all the same, return true
+            return true;
+        }
         internal AddinConfig(TSF_EA.Package package, string configurationsDirectoryPath, string defaultConfigFilePath, string addinName)
         {
             this.type = AddinConfigType.Package;

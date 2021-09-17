@@ -205,6 +205,17 @@ namespace EAAddinFramework.SchemaBuilder
             }
             return result;
         }
+        internal EASchemaElement getSchemaElementForSchemaType(EA.SchemaType schemaType)
+        {
+            foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
+            {
+                if (schemaElement.wrappedSchemaType.GUID == schemaType?.GUID)
+                {
+                    return schemaElement;
+                }
+            }
+            return null; //not found
+        }
         /// <summary>
         /// creates a subset of the source model with only the properties and associations used in this schema
         /// </summary>
