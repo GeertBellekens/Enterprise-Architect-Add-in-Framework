@@ -233,6 +233,8 @@ namespace EAAddinFramework.SchemaBuilder
             }
             //genlinks
             ((TSF_EA.ElementWrapper)this.subsetElement).genLinks = ((TSF_EA.ElementWrapper)this.sourceElement).genLinks;
+            //keywords
+            ((TSF_EA.ElementWrapper)this.subsetElement).keywords = ((TSF_EA.ElementWrapper)this.sourceElement).keywords;
             //notes only update them if they are empty
             if (this.subsetElement.ownedComments.Count == 0 || !this.subsetElement.ownedComments.Any(x => x.body.Length > 0)
                 || this.owner.settings.keepNotesInSync)
