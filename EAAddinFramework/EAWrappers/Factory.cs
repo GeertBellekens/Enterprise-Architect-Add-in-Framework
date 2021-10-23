@@ -412,8 +412,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         throw new Exception("WrappedElement " + elementToWrap.Name + " is not a package");
                     }
                 case "DataType":
-                case "PrimitiveType": //TODO: fix primitive type so it can handle this
                     newElementWrapper = new DataType(this.model as Model, elementToWrap);
+                    break;
+                case "PrimitiveType": 
+                    newElementWrapper = new PrimitiveType(this.model as Model, elementToWrap);
                     break;
                 case "InformationItem":
                     newElementWrapper = new InformationItem(this.model as Model, elementToWrap);

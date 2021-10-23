@@ -167,7 +167,7 @@ namespace EAAddinFramework.SchemaBuilder
             set => throw new NotImplementedException();
         }
 
-        public UML.Classes.Kernel.Classifier createSubsetElement(UML.Classes.Kernel.Package destinationPackage)
+        public Classifier createSubsetElement(Package destinationPackage)
         {
             if (this.sourceElement == null)
             {
@@ -176,21 +176,25 @@ namespace EAAddinFramework.SchemaBuilder
             //first create the element in the destination Package
             if (this.subsetElement == null)
             {
-                if (this.sourceElement is UML.Classes.Kernel.Enumeration)
+                if (this.sourceElement is Enumeration)
                 {
-                    this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Enumeration>(destinationPackage, this.wrappedSchemaType.TypeName);
+                    this.subsetElement = this.model.factory.createNewElement<Enumeration>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
                 else if (this.sourceElement is UML.Classes.AssociationClasses.AssociationClass)
                 {
                     this.subsetElement = this.model.factory.createNewElement<UML.Classes.AssociationClasses.AssociationClass>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
-                else if (this.sourceElement is UML.Classes.Kernel.Class)
+                else if (this.sourceElement is Class)
                 {
-                    this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.Class>(destinationPackage, this.wrappedSchemaType.TypeName);
+                    this.subsetElement = this.model.factory.createNewElement<Class>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
-                else if (this.sourceElement is UML.Classes.Kernel.DataType)
+                else if (this.sourceElement is PrimitiveType)
                 {
-                    this.subsetElement = this.model.factory.createNewElement<UML.Classes.Kernel.DataType>(destinationPackage, this.wrappedSchemaType.TypeName);
+                    this.subsetElement = this.model.factory.createNewElement<PrimitiveType>(destinationPackage, this.wrappedSchemaType.TypeName);
+                }
+                else if (this.sourceElement is DataType)
+                {
+                    this.subsetElement = this.model.factory.createNewElement<DataType>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
             }
             else

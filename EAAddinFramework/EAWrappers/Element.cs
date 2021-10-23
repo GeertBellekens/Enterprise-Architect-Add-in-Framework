@@ -334,10 +334,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._taggedValues == null)
                 {
-                    //make sure we have the latest set of tagged values
-                    this.eaTaggedValuesCollection.Refresh();
-                    //create the tagged values from the EA collection
-                    this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
+                    if (this.wrappedElement == null)
+                    {
+                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
+                    }
+                    else
+                    {
+                        //make sure we have the latest set of tagged values
+                        this.eaTaggedValuesCollection?.Refresh();
+                        //create the tagged values from the EA collection
+                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
+                    }
+                    
                 }
                 return this._taggedValues;
             }
@@ -375,6 +383,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <returns>empty set</returns>
         public virtual HashSet<UML.Profiles.TaggedValue> getReferencingTaggedValues()
         {
+            if (string.IsNullOrEmpty(this.uniqueID)) return new HashSet<UML.Profiles.TaggedValue>(); // in case we don't have a GUID
             return this.EAModel.getTaggedValuesWithValue(this.uniqueID, true);
         }
 

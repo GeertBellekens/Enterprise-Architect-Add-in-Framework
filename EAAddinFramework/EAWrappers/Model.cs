@@ -1216,18 +1216,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public HashSet<ElementTag> getElementTagsWithValue(string searchValue)
         {
             HashSet<ElementTag> elementTags = new HashSet<ElementTag>();
-            string sqlFindGUIDS = @"select ea_guid from t_objectproperties ot
-								where ot.[Value] like '" + searchValue + "'" +
-                                    "or ot.[Notes]  like '" + searchValue + "'";
-            // get the nodes with the name "ea_guid"
-            XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
-            XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
-            foreach (XmlNode guidNode in tagGUIDNodes)
+            if (!string.IsNullOrWhiteSpace(searchValue))
             {
-                ElementTag elementTag = this.getElementTagByGUID(guidNode.InnerText);
-                if (elementTag != null)
+                string sqlFindGUIDS = @"select ea_guid from t_objectproperties ot
+								where ot.[Value] like '" + searchValue + "'" +
+                                        "or ot.[Notes]  like '" + searchValue + "'";
+                // get the nodes with the name "ea_guid"
+                XmlDocument xmlElementTagGUIDs = this.SQLQuery(sqlFindGUIDS);
+                XmlNodeList tagGUIDNodes = xmlElementTagGUIDs.SelectNodes(formatXPath("//ea_guid"));
+                foreach (XmlNode guidNode in tagGUIDNodes)
                 {
-                    elementTags.Add(elementTag);
+                    ElementTag elementTag = this.getElementTagByGUID(guidNode.InnerText);
+                    if (elementTag != null)
+                    {
+                        elementTags.Add(elementTag);
+                    }
                 }
             }
             return elementTags;
