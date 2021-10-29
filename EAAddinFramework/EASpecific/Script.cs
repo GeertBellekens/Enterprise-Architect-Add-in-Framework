@@ -56,6 +56,7 @@ namespace EAAddinFramework.EASpecific
             }
             set => this._saveCode = value;
         }
+        public string scriptkey { get => $"!INC {this.groupName}.{this.name}"; }
         public string errorMessage { get; set; }
         private ScriptControl scriptController;
         public List<ScriptFunction> functions { get; set; }
@@ -604,14 +605,14 @@ namespace EAAddinFramework.EASpecific
                                 }
                                 //and create the script if both code and language are found
                                 Script script = new Script(ScriptID, scriptName, groupName, scriptCode, language, model);
-                                string scriptKey = "!INC " + script.groupName + "." + script.name;
-                                if (!allModelScripts.ContainsKey(scriptKey))
+                                
+                                if (!allModelScripts.ContainsKey(script.scriptkey))
                                 {
-                                    allModelScripts.Add(scriptKey, script);
+                                    allModelScripts.Add(script.scriptkey, script);
                                     //also add the script to the include dictionary
-                                    if (!modelIncludableScripts.ContainsKey(scriptKey))
+                                    if (!modelIncludableScripts.ContainsKey(script.scriptkey))
                                     {
-                                        modelIncludableScripts.Add(scriptKey, script.code);
+                                        modelIncludableScripts.Add(script.scriptkey, script.code);
                                     }
                                 }
                             }

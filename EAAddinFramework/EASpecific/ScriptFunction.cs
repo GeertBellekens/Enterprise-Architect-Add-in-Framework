@@ -17,7 +17,7 @@ namespace EAAddinFramework.EASpecific
     /// </summary>
     public class ScriptFunction
     {
-        private Script owner { get; set; }
+        public Script owner { get; private set; }
         public string name
         {
             get

@@ -28,20 +28,20 @@ namespace EAAddinFramework.EASpecific
             this.name = name;
         }
         public string name { get; private set; }
-        private List<Script> _scripts = new List<Script>();
-        public IEnumerable<Script> scripts { get => this._scripts; }
+        private Dictionary<string, Script> _scripts = new Dictionary<string, Script>();
+        public IEnumerable<Script> scripts { get => this._scripts.Values; }
         public void addScript(Script script)
         {
-            if (! this._scripts.Contains(script))
+            if (! this._scripts.ContainsKey(script.scriptkey))
             {
-                this._scripts.Add(script);
+                this._scripts.Add(script.scriptkey, script);
             }
         }
         public void removeScript(Script script)
         {
-            if (this._scripts.Contains(script))
+            if (this._scripts.ContainsKey(script.scriptkey))
             {
-                this._scripts.Remove(script);
+                this._scripts.Remove(script.scriptkey);
             }
         }
     }
