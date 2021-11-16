@@ -34,7 +34,7 @@ namespace EAAddinFramework.EASpecific
         private static int scriptHash;
         private static int savedScriptHash;
         private static List<Script> allEAMaticScripts;
-        private static List<Script> allModelScripts;
+        private static Dictionary<string, Script> allModelScripts;
         private static Dictionary<string, string> _includableScripts;
         private static Dictionary<string, string> staticIncludableScripts;
         private static List<Script> staticEAMaticScripts = new List<Script>();
@@ -44,8 +44,8 @@ namespace EAAddinFramework.EASpecific
         private string scriptID;
         private string code { get; set; }
         private string _saveCode;
-        private string saveCode 
-        { 
+        private string saveCode
+        {
             get
             {
                 if (String.IsNullOrEmpty(this._saveCode))
@@ -56,12 +56,24 @@ namespace EAAddinFramework.EASpecific
             }
             set => this._saveCode = value;
         }
+        public string scriptkey { get => $"!INC {this.groupName}.{this.name}"; }
         public string errorMessage { get; set; }
         private ScriptControl scriptController;
         public List<ScriptFunction> functions { get; set; }
+        public List<ScriptFunction> addinFunctions => this.functions.Where(x => x.isAddinFunction).ToList();
         private ScriptLanguage language;
         public string name { get; set; }
-        public string groupName { get; set; }
+        public string groupName { get => this.group.name; }
+        private ScriptGroup _group;
+        public ScriptGroup group 
+        { 
+            get => this._group;
+            set
+            {
+                this._group = value;
+                this._group.addScript(this);
+            }
+        }
         public string displayName
         {
             get
@@ -116,24 +128,12 @@ namespace EAAddinFramework.EASpecific
         /// <param name="code">the code</param>
         /// <param name="language">the language the code is written in</param>
         /// <param name="model">the model this script resides in</param>
-        public Script(string scriptID, string scriptName, string groupName, string code, string language, EAWrappers.Model model) : this(scriptID, scriptName, groupName, code, language, false)
+        public Script(string scriptID, string scriptName, string groupName, string code, string language, Model model, bool isStatic = false)
         {
             this.model = model;
-        }
-        /// <summary>
-        /// creaates a new script
-        /// </summary>
-        /// <param name="scriptID">the id of the script</param>
-        /// <param name="scriptName">the name of the script</param>
-        /// <param name="groupName">the name of the scriptgroup</param>
-        /// <param name="code">the code</param>
-        /// <param name="language">the language the code is written in</param>
-        /// <param name="model">the model this script resides in</param>
-        public Script(string scriptID, string scriptName, string groupName, string code, string language, bool isStatic)
-        {
             this.scriptID = scriptID;
             this.name = scriptName;
-            this.groupName = groupName;
+            this.group = ScriptGroup.getScriptGroup(groupName, this.model);
             this.functions = new List<ScriptFunction>();
             this.code = code;
             this.setLanguage(language);
@@ -364,7 +364,7 @@ namespace EAAddinFramework.EASpecific
         {
             if (scriptCode.Contains("EA-Matic"))
             {
-                Script script = new Script(groupName + "." + scriptName, scriptName, groupName, scriptCode, language, true);
+                Script script = new Script(groupName + "." + scriptName, scriptName, groupName, scriptCode, language, null, true);
                 staticEAMaticScripts.Add(script);
             }
         }
@@ -377,6 +377,27 @@ namespace EAAddinFramework.EASpecific
         {
             var typeRegex = new Regex(@"(?<=dim|var)( .+)( as EA\..+)", RegexOptions.IgnoreCase);
             return typeRegex.Replace(scriptCode, "$1");
+        }
+        public List<Script> _includedModelScripts;
+        
+
+        public List<Script> includedModelScripts
+        {
+            get
+            {
+                if (this._includedModelScripts == null)
+                {
+                    this._includedModelScripts = new List<Script>();
+                    foreach (var includeString in this.getIncludes(this.code))
+                    {
+                        if (allModelScripts.ContainsKey(includeString))
+                        {
+                            this._includedModelScripts.Add(allModelScripts[includeString]);
+                        }
+                    }
+                }
+                return this._includedModelScripts;
+            }
         }
         /// <summary>
         /// replaces the !INC  statements with the actual code of the local script.
@@ -467,7 +488,7 @@ namespace EAAddinFramework.EASpecific
         {
             //don't do anything if none of the scripts has changed
             if (savedScriptHash == scriptHash) return;
-            foreach(var script in allModelScripts)
+            foreach (var script in allModelScripts.Values)
             {
                 script.save(scriptPath);
             }
@@ -485,7 +506,7 @@ namespace EAAddinFramework.EASpecific
             if (File.Exists(fullPath))
             {
                 var existingCode = File.ReadAllText(fullPath);
-                if (! existingCode.Equals(this.saveCode))
+                if (!existingCode.Equals(this.saveCode))
                 {
                     //write to file
                     File.WriteAllText(fullPath, this.saveCode);
@@ -524,7 +545,7 @@ namespace EAAddinFramework.EASpecific
             }
         }
 
-        public static List<Script> getAllModelScripts(Model model, bool onlyEAMatic)
+        public static Dictionary<string, Script> getAllModelScripts(Model model, bool onlyEAMatic)
         {
             if (model != null)
             {
@@ -537,10 +558,7 @@ namespace EAAddinFramework.EASpecific
                     //limit scripts to EA-Matic scripts
                     sqlGetScripts += Environment.NewLine + " and s.Script like '%EA-Matic%'";
                 }
-                XmlDocument xmlScripts = model.SQLQuery(@"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES 
-                                                        from t_script s
-                                                        inner join t_script ps on s.ScriptAuthor = ps.ScriptName
-                                                        where s.ScriptAuthor <> 'ScriptDebugging'");
+                XmlDocument xmlScripts = model.SQLQuery(sqlGetScripts);
                 //check the hash before continuing
                 int newHash = xmlScripts.InnerXml.GetHashCode();
                 //only create the scripts of the hash is different
@@ -550,7 +568,7 @@ namespace EAAddinFramework.EASpecific
                     //set the new hashcode
                     scriptHash = newHash;
                     //reset scripts
-                    allModelScripts = new List<Script>();
+                    allModelScripts = new Dictionary<string, Script>();
                     allEAMaticScripts = null;
 
                     //set flag to reload scripts in includableScripts
@@ -587,11 +605,16 @@ namespace EAAddinFramework.EASpecific
                                 }
                                 //and create the script if both code and language are found
                                 Script script = new Script(ScriptID, scriptName, groupName, scriptCode, language, model);
-                                allModelScripts.Add(script);
-                                //also add the script to the include dictionary
-                                string scriptKey = "!INC " + script.groupName + "." + script.name;
-                                if (!modelIncludableScripts.ContainsKey(scriptKey))
-                                    modelIncludableScripts.Add(scriptKey, script.code);
+                                
+                                if (!allModelScripts.ContainsKey(script.scriptkey))
+                                {
+                                    allModelScripts.Add(script.scriptkey, script);
+                                    //also add the script to the include dictionary
+                                    if (!modelIncludableScripts.ContainsKey(script.scriptkey))
+                                    {
+                                        modelIncludableScripts.Add(script.scriptkey, script.code);
+                                    }
+                                }
                             }
                         }
                     }
@@ -615,7 +638,7 @@ namespace EAAddinFramework.EASpecific
                 getAllModelScripts(model, onlyEAMatic);
                 allEAMaticScripts = new List<Script>();
                 //load all EA-Matic scripts from allModelScripts
-                foreach (var script in allModelScripts)
+                foreach (var script in allModelScripts.Values)
                 {
                     if (script.code.Contains("EA-Matic"))
                     {

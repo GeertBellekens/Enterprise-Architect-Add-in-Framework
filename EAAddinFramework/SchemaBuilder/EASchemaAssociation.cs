@@ -137,8 +137,8 @@ namespace EAAddinFramework.SchemaBuilder
 
         private void setEnds()
         {
-            UTF_EA.AssociationEnd sourceEnd = ((UTF_EA.Association)this.sourceAssociation).sourceEnd;
-            UTF_EA.AssociationEnd targetEnd = ((UTF_EA.Association)this.sourceAssociation).targetEnd;
+            UTF_EA.AssociationEnd sourceEnd = ((UTF_EA.Association)this.sourceAssociation)?.sourceEnd;
+            UTF_EA.AssociationEnd targetEnd = ((UTF_EA.Association)this.sourceAssociation)?.targetEnd;
             //check the source end
             var endType = sourceEnd.type as UTF_EA.ElementWrapper;
             //check if the source end is linked to the element with the parent ID of the wrappedProperty
