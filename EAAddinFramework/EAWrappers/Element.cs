@@ -334,7 +334,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._taggedValues == null)
                 {
-                    if (this.wrappedElement == null)
+                    if (this.eaTaggedValuesCollection == null)
                     {
                         this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
                     }
