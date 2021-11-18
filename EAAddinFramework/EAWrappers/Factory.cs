@@ -242,6 +242,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return new Abstraction(this.model as Model, connector);
                 case "Generalization":
                     return new Generalization(this.model as Model, connector);
+                case "Aggregation":
                 case "Association":
                     return new Association(this.model as Model, connector);
                 case "Dependency":
