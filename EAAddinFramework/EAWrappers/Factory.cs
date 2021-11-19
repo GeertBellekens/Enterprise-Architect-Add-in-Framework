@@ -828,20 +828,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                                 string name, string EAType)
           where T : class, UML.Classes.Kernel.Element
         {
+            Element newElement;
             //creating an enumeration is a bit special because EA thinks its just an attribute
             if (typeof(T).Name == "EnumerationLiteral")
             {
-                return new EnumerationLiteral((Model)this.model, (global::EA.Attribute)collection.AddNew(name, this.translateTypeName(EAType))) as T;
+                newElement = new EnumerationLiteral((Model)this.model, (global::EA.Attribute)collection.AddNew(name, this.translateTypeName(EAType)));
             }
             //Creating Associationclasses is a bit special too. It only becomes an associationclass according to EA once it is linked to an association
             else if (typeof(T).Name == "AssociationClass")
             {
-                return new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType))) as T;
+                newElement = new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType)));
             }
             else
             {
-                return this.model.factory.createElement(collection.AddNew(name, this.translateTypeName(EAType))) as T;
+                newElement = this.model.factory.createElement(collection.AddNew(name, this.translateTypeName(EAType))) as Element ;
             }
+            newElement.isNew = true;
+            return newElement as T;
         }
 
         internal T addElementToEACollection<T>(global::EA.Collection collection,
