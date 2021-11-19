@@ -343,12 +343,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             break;
                         }
                     }
-                case "Component":
-                    newElementWrapper = new Component(this.model as Model, elementToWrap);
-                    break;
-                case "Object":
-                    newElementWrapper = new InstanceSpecification(this.model as Model, elementToWrap);
-                    break;
                 case "Enumeration":
                     // since version 10 there are also "real" enumerations Both are still supported
                     newElementWrapper = new Enumeration(this.model as Model, elementToWrap);
@@ -847,15 +841,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else
             {
-                var eaElement = collection.AddNew(name, this.translateTypeName(EAType));
-                //we need to save a package element because otherwise the EA.element does not exist in the model yet.
-                //that means we get a nullpointerexception when saving the new package.
-                var eaPackage = eaElement as global::EA.Package;
-                if (eaPackage != null)
-                {
-                    eaPackage.Update();
-                }
-                newElement = this.model.factory.createElement(eaElement) as Element ;
+                newElement = this.model.factory.createElement(collection.AddNew(name, this.translateTypeName(EAType))) as Element ;
             }
             newElement.isNew = true;
             return newElement as T;
@@ -880,8 +866,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return "Class";
                 case "NoteComment":
                     return "Note";
-                case "InstanceSpecification":
-                    return "Object";
 
                 default:
                     return typeName;
@@ -908,13 +892,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return type.Name == "Parameter";
         }
-
-        internal bool isEAEmbeddedElement(System.Type type)
-        {
-            //issue in how to make the different between a property element an
-            return type.Name == "Port";
-        }
-
 
         internal bool isEAConnector(System.Type type)
         {
