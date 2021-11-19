@@ -1686,12 +1686,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                   + string.Join(",", allowedStereotypes)
                                 + ";";
             }
+            //default to the currently selected package is the default is not given
             if (string.IsNullOrEmpty(defaultSelectionGUID))
             {
                 defaultSelectionGUID = this.wrappedModel.GetTreeSelectedPackage()?.PackageGUID;
             }
-            //get the currently selected package
-            var treeSelectedPackage = this.wrappedModel.GetTreeSelectedPackage();
             if (!string.IsNullOrEmpty(defaultSelectionGUID))
             {
                 includeString += "Selection="
