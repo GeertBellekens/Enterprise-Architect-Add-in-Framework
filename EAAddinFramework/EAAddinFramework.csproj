@@ -230,6 +230,7 @@
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\Constraint.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
+    <Compile Include="EAWrappers\Object.cs" />
     <Compile Include="EAWrappers\EnumerationLiteral.cs" />
     <Compile Include="EAWrappers\InformationFlow.cs" />
     <Compile Include="EAWrappers\InformationItem.cs" />
