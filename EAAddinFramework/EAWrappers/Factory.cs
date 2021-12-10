@@ -343,6 +343,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             break;
                         }
                     }
+                case "Object":
+                    newElementWrapper = new InstanceSpecification(this.model as Model, elementToWrap);
+                    break;
                 case "Enumeration":
                     // since version 10 there are also "real" enumerations Both are still supported
                     newElementWrapper = new Enumeration(this.model as Model, elementToWrap);
@@ -866,6 +869,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return "Class";
                 case "NoteComment":
                     return "Note";
+                case "InstanceSpecification":
+                    return "Object";
 
                 default:
                     return typeName;

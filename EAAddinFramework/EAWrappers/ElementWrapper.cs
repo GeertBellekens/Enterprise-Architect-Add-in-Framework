@@ -138,7 +138,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.Status);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.Status);
         }
-        public string header1
+        public string runState
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement.RunState);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedElement.RunState);
@@ -384,9 +384,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.addTaggedValue("initialValue", (string)this.getProperty("initialValue"));
             }
 
-            if (this.getProperty("header1") != null)
+            if (this.getProperty("runState") != null)
             {
-                this.wrappedElement.Header1 = (string)this.getProperty("header1");
+                this.wrappedElement.RunState = (string)this.getProperty("runState");
             }
 
             this.wrappedElement.Update();

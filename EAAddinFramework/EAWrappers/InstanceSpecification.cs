@@ -16,6 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
       : base(model, elementToWrap)
         { }
 
+        //TODO: implement this to represent the runstate
         public HashSet<UML.Classes.Kernel.Slot> slots { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<UML.Classes.Kernel.InstanceValue> instanceValues { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
