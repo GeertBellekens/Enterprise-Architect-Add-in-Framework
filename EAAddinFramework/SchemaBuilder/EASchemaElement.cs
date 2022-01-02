@@ -58,13 +58,18 @@ namespace EAAddinFramework.SchemaBuilder
         public string name
         {
             get => this.wrappedSchemaType.TypeName;
-            set => throw new NotImplementedException();
+        }
+        /// <summary>
+        /// There is no direct way to know if an element is redefined, so we assume that it is when the typename differs from the source elements name
+        /// </summary>
+        public bool isRedefined
+        {
+            get => this.sourceElement?.name == this.wrappedSchemaType.TypeName;
         }
 
         public string TypeID
         {
             get => this.wrappedSchemaType.GUID;
-            set => throw new NotImplementedException();
         }
         public UML.Classes.Kernel.Classifier sourceElement
         {
@@ -92,7 +97,7 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._parentSchemaElement == null)
                 {
-                    this._parentSchemaElement = ((EASchema)this.owner).getSchemaElementForSchemaType(this.wrappedSchemaType.Parent);                
+                    this._parentSchemaElement = ((EASchema)this.owner).getSchemaElementForSchemaType(this.wrappedSchemaType.Parent);
                 }
                 return this._parentSchemaElement;
             }
@@ -200,7 +205,8 @@ namespace EAAddinFramework.SchemaBuilder
             else
             {
                 //report change of name of the element
-                if (this.sourceElement.name != this.subsetElement.name)
+                if (this.sourceElement.name != this.subsetElement.name
+                    && !this.isRedefined)
                 {
                     EAOutputLogger.log(this.model, this.owner.settings.outputName
                                               , string.Format("Element '{0}' has changed name from '{1}' since the last schema generation"
@@ -215,21 +221,31 @@ namespace EAAddinFramework.SchemaBuilder
             //abstract
             this.subsetElement.isAbstract = this.sourceElement.isAbstract;
             //alias
-            //only copy alias if the alias in the source element is not empty
-            if (!string.IsNullOrEmpty(((TSF_EA.ElementWrapper)this.sourceElement).alias))
+            if (this.isRedefined && this.owner.settings.useAliasForRedefinedElements)
             {
-                ((TSF_EA.ElementWrapper)this.subsetElement).alias = ((TSF_EA.ElementWrapper)this.sourceElement).alias;
+                //if redefined, and we use the useAliasForRedefinedElements setting, the name is kept like the source element, but the typename is used in the alias
+                this.subsetElement.name = this.sourceElement.name;
+                ((TSF_EA.ElementWrapper)this.subsetElement).alias = this.wrappedSchemaType.TypeName;
             }
-            //Check if the subset alias is different from the source alias and issue warning if that is the case
-            if (!string.Equals(((TSF_EA.ElementWrapper)this.subsetElement).alias, ((TSF_EA.ElementWrapper)this.sourceElement).alias))
+            else
             {
-                EAOutputLogger.log(this.model, this.owner.settings.outputName
-                                          , string.Format("Property '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
-                                                  , this.sourceElement.name
-                                                  , ((TSF_EA.ElementWrapper)this.subsetElement).alias
-                                                  , ((TSF_EA.ElementWrapper)this.sourceElement).alias)
-                                          , ((TSF_EA.ElementWrapper)this.sourceElement).id
-                                          , LogTypeEnum.warning);
+                //only copy alias if the alias in the source element is not empty
+                if (!string.IsNullOrEmpty(((TSF_EA.ElementWrapper)this.sourceElement).alias))
+                {
+                    ((TSF_EA.ElementWrapper)this.subsetElement).alias = ((TSF_EA.ElementWrapper)this.sourceElement).alias;
+                }
+
+                //Check if the subset alias is different from the source alias and issue warning if that is the case
+                if (!string.Equals(((TSF_EA.ElementWrapper)this.subsetElement).alias, ((TSF_EA.ElementWrapper)this.sourceElement).alias))
+                {
+                    EAOutputLogger.log(this.model, this.owner.settings.outputName
+                                              , string.Format("Property '{0}' has alias '{1}' in the model and a different alias '{2}' in the subset"
+                                                      , this.sourceElement.name
+                                                      , ((TSF_EA.ElementWrapper)this.subsetElement).alias
+                                                      , ((TSF_EA.ElementWrapper)this.sourceElement).alias)
+                                              , ((TSF_EA.ElementWrapper)this.sourceElement).id
+                                              , LogTypeEnum.warning);
+                }
             }
             //genlinks
             ((TSF_EA.ElementWrapper)this.subsetElement).genLinks = ((TSF_EA.ElementWrapper)this.sourceElement).genLinks;
