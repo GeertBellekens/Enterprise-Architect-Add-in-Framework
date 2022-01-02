@@ -26,6 +26,7 @@ namespace EAAddinFramework.Utilities
             
             this.settingsForm.FormBorderStyle = FormBorderStyle.None;
             this.splitContainer.Panel2.Controls.Add(this.settingsForm);
+            
             //resize if needed
             if (this.settingsForm.Height > this.splitContainer.Panel2.Height)
             {
@@ -45,7 +46,14 @@ namespace EAAddinFramework.Utilities
                 //add to width of form
                 this.Width += difference;
             }
-            this.settingsForm.Dock = DockStyle.Fill;
+            this.settingsForm.Dock = DockStyle.Top;
+            //make sure the window is not larger than the screen it it displaying on
+            var screen = Screen.FromControl(this);
+            if (this.Height > screen.WorkingArea.Height)
+            {
+                this.Height = screen.WorkingArea.Height;
+            }
+            //show screen
             this.settingsForm.Show();
             //select first row
             this.configListView.SelectedIndex = 0;

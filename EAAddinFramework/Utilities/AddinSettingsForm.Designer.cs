@@ -30,11 +30,11 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddinSettingsForm));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.deleteButton = new System.Windows.Forms.Button();
+            this.addConfigButton = new System.Windows.Forms.Button();
             this.configListView = new BrightIdeasSoftware.ObjectListView();
             this.nameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pathColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.addConfigButton = new System.Windows.Forms.Button();
-            this.deleteButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.SuspendLayout();
@@ -54,9 +54,35 @@
             this.splitContainer.Panel1.Controls.Add(this.deleteButton);
             this.splitContainer.Panel1.Controls.Add(this.addConfigButton);
             this.splitContainer.Panel1.Controls.Add(this.configListView);
+            // 
+            // splitContainer.Panel2
+            // 
+            this.splitContainer.Panel2.AutoScroll = true;
             this.splitContainer.Size = new System.Drawing.Size(584, 450);
-            this.splitContainer.SplitterDistance = 205;
+            this.splitContainer.SplitterDistance = 204;
             this.splitContainer.TabIndex = 0;
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteButton.Location = new System.Drawing.Point(495, 174);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(75, 23);
+            this.deleteButton.TabIndex = 2;
+            this.deleteButton.Text = "Delete";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
+            // addConfigButton
+            // 
+            this.addConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addConfigButton.Location = new System.Drawing.Point(414, 174);
+            this.addConfigButton.Name = "addConfigButton";
+            this.addConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.addConfigButton.TabIndex = 1;
+            this.addConfigButton.Text = "Add";
+            this.addConfigButton.UseVisualStyleBackColor = true;
+            this.addConfigButton.Click += new System.EventHandler(this.addConfigButton_Click);
             // 
             // configListView
             // 
@@ -77,7 +103,7 @@
             this.configListView.MultiSelect = false;
             this.configListView.Name = "configListView";
             this.configListView.ShowGroups = false;
-            this.configListView.Size = new System.Drawing.Size(560, 159);
+            this.configListView.Size = new System.Drawing.Size(560, 158);
             this.configListView.TabIndex = 0;
             this.configListView.UseCompatibleStateImageBehavior = false;
             this.configListView.View = System.Windows.Forms.View.Details;
@@ -97,32 +123,11 @@
             this.pathColumn.Text = "Path";
             this.pathColumn.Width = 400;
             // 
-            // addConfigButton
-            // 
-            this.addConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addConfigButton.Location = new System.Drawing.Point(414, 175);
-            this.addConfigButton.Name = "addConfigButton";
-            this.addConfigButton.Size = new System.Drawing.Size(75, 23);
-            this.addConfigButton.TabIndex = 1;
-            this.addConfigButton.Text = "Add";
-            this.addConfigButton.UseVisualStyleBackColor = true;
-            this.addConfigButton.Click += new System.EventHandler(this.addConfigButton_Click);
-            // 
-            // deleteButton
-            // 
-            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteButton.Location = new System.Drawing.Point(495, 175);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(75, 23);
-            this.deleteButton.TabIndex = 2;
-            this.deleteButton.Text = "Delete";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-            // 
             // AddinSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(584, 450);
             this.Controls.Add(this.splitContainer);
@@ -130,6 +135,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AddinSettingsForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AddinSettingsForm";
             this.splitContainer.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
