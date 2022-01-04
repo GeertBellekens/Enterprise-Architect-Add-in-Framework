@@ -64,7 +64,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         public bool isRedefined
         {
-            get => this.sourceElement?.name == this.wrappedSchemaType.TypeName;
+            get => this.sourceElement?.name != this.wrappedSchemaType.TypeName;
         }
 
         public string TypeID

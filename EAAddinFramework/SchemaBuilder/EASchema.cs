@@ -166,41 +166,64 @@ namespace EAAddinFramework.SchemaBuilder
             EASchemaElement result = null;
             if (subsetElement != null)
             {
-                foreach (EASchemaElement schemaElement in this.elements)
+                //first find the source element from which this subset element is derived
+                //check on if there is a tagged value that references the source element
+                Classifier sourceElement = null;
+                if (this.settings.tvInsteadOfTrace)
                 {
-                    if (schemaElement.name == subsetElement.name
-                        && schemaElement.sourceElement != null)
-                    {
-                        //check on if there is a tagged value that references the source element
-                        if (this.settings.tvInsteadOfTrace)
-                        {
-                            var traceTag = subsetElement.taggedValues.FirstOrDefault(x => x.name == this.settings.elementTagName);
-                            if (traceTag != null
-                                && traceTag.tagValue != null
-                                && traceTag.tagValue.Equals(schemaElement.sourceElement))
-                            {
-                                result = schemaElement;
-                            }
-                        }
-                        else
-                        {
-                            //check if the subset element has a dependency to the source element of the schema
-                            string sqlCheckTrace = @"select c.Connector_ID from t_connector c
+                    sourceElement = subsetElement.taggedValues.FirstOrDefault(x => x.name == this.settings.elementTagName)?.tagValue as Classifier;
+                }
+                else
+                {
+                    //check if the subset element has a dependency to the source element of the schema
+                    string sqlCheckTrace = @"select c.End_Object_ID from t_connector c
 													where 
 													c.Connector_Type = 'Abstraction'
 													and c.Stereotype = 'trace'
-													and c.Start_Object_ID = " + ((TSF_EA.ElementWrapper)subsetElement).id +
-                                                    " and c.End_Object_ID = " + ((TSF_EA.ElementWrapper)schemaElement.sourceElement).id;
-                            var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
-                            var connectorIDNode = checkTraceXML.SelectSingleNode(this.model.formatXPath("//Connector_ID"));
-                            int connectorID;
-                            if (connectorIDNode != null && int.TryParse(connectorIDNode.InnerText, out connectorID))
-                            {
-                                result = schemaElement;
-                                break;
-                            }
+													and c.Start_Object_ID = " + ((TSF_EA.ElementWrapper)subsetElement).id;
+                    var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
+                    var endObjectIDNodes = checkTraceXML.SelectNodes(this.model.formatXPath("//End_Object_ID"));
+                    foreach (System.Xml.XmlNode connectorIDNode in endObjectIDNodes)
+                    {
+                        int elementID;
+                        if (int.TryParse(connectorIDNode.InnerText, out elementID))
+                        {
+                            //check if there is an schemaElement with this 
+                            sourceElement = this.elements
+                                .FirstOrDefault(x => ((TSF_EA.ElementWrapper)x.sourceElement)?.id == elementID)
+                                ?.sourceElement;
+                            break;
                         }
                     }
+                }
+                //if we haven't found a source element, then this subset element can't have a schema element
+                if (sourceElement == null) return null;
+                //first check if the subset element can be matched to a redefined schemaElement
+                if (this.settings.useAliasForRedefinedElements)
+                {
+                    //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
+                    result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
+                                                                          && x.name == ((TSF_EA.ElementWrapper)subsetElement).alias
+                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && (x.subsetElement == null 
+                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID ));
+                    //if not found with redefined elemnet then find as regular element
+                    if (result == null)
+                    {
+                        result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
+                                                                          && x.name == subsetElement.name
+                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && (x.subsetElement == null
+                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID));
+                    }
+                }
+                else
+                {
+                    //find based on name, regardless of redefined or not
+                    result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
+                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && (x.subsetElement == null
+                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 }
             }
             return result;
