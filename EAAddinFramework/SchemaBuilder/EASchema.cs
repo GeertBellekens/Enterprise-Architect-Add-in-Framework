@@ -952,13 +952,29 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             targetTaggedValue.eaStringValue = sourceTaggedValue.eaStringValue;
                             targetTaggedValue.comment = sourceTaggedValue.comment;
-                            targetTaggedValue.save();
+                            try
+                            {
+                                targetTaggedValue.save();
+                            }
+                            catch (Exception) //saving a tagged value sometimes fails. It happened when saving an attribute's tagged value that was problably just created by EA itself because of the attribute stereotype.
+                            {
+                                EAOutputLogger.log($"Error saving tagged value {targetTaggedValue.name} on item {target.name} with GUID {target.uniqueID}. Try to update the target element first, making sure it has the correct stereotype and all associated tagged values.", 0, LogTypeEnum.error);
+                            }
+                            
                         }
                     }
                     else
                     {
-                        //create new tagged value
-                        target.addTaggedValue(sourceTaggedValue.name, sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
+                        try
+                        {
+                            //create new tagged value
+                            target.addTaggedValue(sourceTaggedValue.name, sourceTaggedValue.eaStringValue, sourceTaggedValue.comment, true);
+                        }
+                        catch (Exception) //saving a tagged value sometimes fails. It happened when saving an attribute's tagged value that was problably just created by EA itself because of the attribute stereotype.
+                        {
+                            EAOutputLogger.log($"Error creating new tagged value {sourceTaggedValue.name} on item {target.name} with GUID {target.uniqueID}. Try to update the target element first, making sure it has the correct stereotype and all associated tagged values.", 0, LogTypeEnum.error);
+                        }
+                        
                     }
                 }
             }

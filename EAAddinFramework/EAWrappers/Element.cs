@@ -65,6 +65,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.notes = this.EAModel.convertToEANotes(externalNotes, externalFormat);
         }
         internal abstract global::EA.Collection eaTaggedValuesCollection { get; }
+        internal void refreshTaggedValues()
+        {
+            this.eaTaggedValuesCollection.Refresh();
+        }
         public abstract String notes { get; set; }
         public abstract HashSet<UML.Classes.Kernel.Element> ownedElements
         { get; set; }
