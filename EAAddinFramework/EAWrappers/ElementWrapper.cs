@@ -105,7 +105,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public ElementWrapper classifier
         {
-            get => this.EAModel.getElementWrapperByPackageID((int)this.getProperty(getPropertyNameName(), this.wrappedElement.ClassifierID));
+            get => this.EAModel.getElementWrapperByID((int)this.getProperty(getPropertyNameName(), this.wrappedElement.ClassifierID));
             set => this.setProperty(getPropertyNameName(), value.id, this.wrappedElement.ClassifierID);
         }
         public override string name
