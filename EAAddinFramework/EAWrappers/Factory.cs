@@ -844,7 +844,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else
             {
-                newElement = this.model.factory.createElement(collection.AddNew(name, this.translateTypeName(EAType))) as Element ;
+                var eaElement = collection.AddNew(name, this.translateTypeName(EAType));
+                //we need to save a package element because otherwise the EA.element does not exist in the model yet.
+                //that means we get a nullpointerexception when saving the new package.
+                var eaPackage = eaElement as global::EA.Package;
+                if (eaPackage != null)
+                {
+                    eaPackage.Update();
+                }
+                newElement = this.model.factory.createElement(eaElement) as Element ;
             }
             newElement.isNew = true;
             return newElement as T;
