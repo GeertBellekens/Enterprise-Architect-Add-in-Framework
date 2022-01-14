@@ -596,12 +596,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                this.wrappedElement.Elements.Refresh();
                 if (this._ownedElementWrappers == null)
                 {
+                    this.wrappedElement.Elements.Refresh();
                     this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedElement.Elements).OfType<ElementWrapper>().ToList();
+                    this._ownedElementWrappers.AddRange(this.embeddedElementWrappers);
                 }
                 return this._ownedElementWrappers;
+            }
+        }
+
+        protected List<ElementWrapper> _embeddedElementWrappers;
+        virtual public List<ElementWrapper> embeddedElementWrappers
+        {
+            get
+            {
+                if (this._embeddedElementWrappers == null)
+                {
+                    this.wrappedElement.EmbeddedElements.Refresh();
+                    this._embeddedElementWrappers = this.EAModel.factory.createElements(this.wrappedElement.EmbeddedElements).OfType<ElementWrapper>().ToList();
+                }
+                return this._embeddedElementWrappers;
             }
         }
 
@@ -911,9 +926,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //if we add a connector to the element wrapper we have to make sure to reset the connectors
                 this.resetRelationships();
             }
-            else if (((Factory)this.EAModel.factory).isEAParameter(type))
+            else if (((Factory)this.EAModel.factory).isEAEmbeddedElement(type))
             {
-                newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>(this.wrappedElement.Connectors, name, EAType);
+                newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>(this.wrappedElement.EmbeddedElements, name, EAType);
             }
             else if (type.Name == "Constraint")
             {

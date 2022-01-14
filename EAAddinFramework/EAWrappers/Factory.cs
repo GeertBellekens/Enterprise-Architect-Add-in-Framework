@@ -906,6 +906,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return type.Name == "Parameter";
         }
 
+        internal bool isEAEmbeddedElement(System.Type type)
+        {
+            //issue in how to make the different between a property element an
+            return type.Name == "Port";
+        }
+
+
         internal bool isEAConnector(System.Type type)
         {
             return type.Name == "Dependency"
