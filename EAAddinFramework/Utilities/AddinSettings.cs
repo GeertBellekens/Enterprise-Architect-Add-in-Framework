@@ -149,15 +149,17 @@ namespace EAAddinFramework.Utilities
         protected AddinConfig userConfig { get; set; }
         protected AddinSettings()
         {
-            Configuration roamingConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
+            //Configuration roamingConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
 
             //the roamingConfig now get a path such as C:\Users\<user>\AppData\Roaming\Sparx_Systems_Pty_Ltd\DefaultDomain_Path_2epjiwj3etsq5yyljkyqqi2yc4elkrkf\9,_2,_0,_921\user.config
             // which I don't like. So we move up three directories and then add a directory for the Adding so that we get
             // C:\Users\<user>\AppData\Roaming\<configSubPath>\user.config
-            string configFileName = System.IO.Path.GetFileName(roamingConfig.FilePath);
-            string configDirectory = System.IO.Directory.GetParent(roamingConfig.FilePath).Parent.Parent.Parent.FullName;
-            this.configurationsDirectoryPath = configDirectory + this.configSubPath;
-            string newConfigFilePath = configurationsDirectoryPath + configFileName;
+            //string configFileName = System.IO.Path.GetFileName(roamingConfig.FilePath);
+
+            //string configDirectory = System.IO.Directory.GetParent(roamingConfig.FilePath).Parent.Parent.Parent.FullName;
+
+            this.configurationsDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + this.configSubPath;
+            string newConfigFilePath = configurationsDirectoryPath + "user.config";
 
             // Get the mapped configuration file.
             this.userConfig = new AddinConfig(newConfigFilePath, this.defaultConfigFilePath, this.addinName, AddinConfigType.User);
