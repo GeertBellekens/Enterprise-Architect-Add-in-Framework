@@ -75,7 +75,8 @@ namespace EAAddinFramework.Utilities
             }
             //check if package has tagged value for config
             var configTag = this.package.getTaggedValue(tagName);
-            if (configTag != null)
+            if (configTag != null
+                && configTag.comment?.Length > 0 )
             {
                 //store contents of tagged value in file (or create new file based on default config
 
@@ -92,6 +93,7 @@ namespace EAAddinFramework.Utilities
                 }
             }
             loadconfig(configFileName, defaultConfigFilePath);
+            
         }
         internal AddinConfig(string configFileName, string defaultConfigFilePath, string addinName, AddinConfigType type)
         {

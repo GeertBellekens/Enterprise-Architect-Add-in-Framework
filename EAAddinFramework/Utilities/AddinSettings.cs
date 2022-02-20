@@ -39,7 +39,17 @@ namespace EAAddinFramework.Utilities
             //return if no package was selected
             if (configPackage == null) return null;
             //create the new config
-            return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+            try
+            {
+                return new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+            }
+            catch (ConfigurationErrorsException e)
+            {
+                Logger.logError($"Error loading settings for package '{configPackage.name}' with guid {configPackage.guid} {Environment.NewLine} {e.Message}");
+                return null;
+            }
+
+            
         }
         private string configurationsDirectoryPath { get; set; }
         /// <summary>
@@ -79,10 +89,19 @@ namespace EAAddinFramework.Utilities
         {
             //check if tag exists at this package
             var configTag = contextPackage.getTaggedValue(this.currentConfig.tagName);
-            if (configTag != null)
+            if (configTag != null
+                && configTag.comment?.Length > 0)
             {
                 //found the tag, return new config
-                return new AddinConfig(contextPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+                try
+                {
+                    return new AddinConfig(contextPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+                }
+                catch (ConfigurationErrorsException e)
+                {
+                    Logger.logError($"Error loading settings for package '{contextPackage.name}' with guid {contextPackage.guid} {Environment.NewLine} {e.Message}");
+                }
+                
             }
             //check parent
             var parentPackage = contextPackage.owningPackage as TSF_EA.Package;
@@ -110,12 +129,20 @@ namespace EAAddinFramework.Utilities
             //get all configuration tags
             var sqlGetPackageObjects = @"select o.Object_ID from t_objectproperties tv 
                                         inner join t_object o on o.Object_ID = tv.Object_ID "
-                                        + $" where tv.Property = '{this.addinName}_config'";
+                                        + $" where tv.Property = '{this.addinName}_config'"
+                                        + " and len(tv.Notes) > 0 ";
             var configPackages = this.model.getElementWrappersByQuery(sqlGetPackageObjects);
             foreach (var configPackage in configPackages.OfType<TSF_EA.Package>())
             {
-                var packageConfig = new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
-                packageConfigs.Add(packageConfig);
+                try
+                {
+                    var packageConfig = new AddinConfig(configPackage, this.configurationsDirectoryPath, this.defaultConfigFilePath, this.addinName);
+                    packageConfigs.Add(packageConfig);
+                }
+                catch (ConfigurationErrorsException e)
+                {
+                    Logger.logError($"Error loading settings for package '{configPackage.name}' with guid {configPackage.guid} {Environment.NewLine} {e.Message}");
+                }
             }
             return packageConfigs;
         }
