@@ -295,6 +295,13 @@ namespace EAAddinFramework.SchemaBuilder
                         //tell the user what we are doing 
                         EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset literals for: '" + schemaElement.name + "'"
                                            , 0, LogTypeEnum.log);
+                        if(this.settings.copyAllOperations)
+                        {
+                            schemaElement.createSubsetOperations();
+                            //tell the user what we are doing 
+                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset operations for: '" + schemaElement.name + "'"
+                                               , 0, LogTypeEnum.log);
+                        }
                         //Logger.log("after EASchema::createSubsetAttributes ");
                         schemaElement.createSubsetLiterals();
                         //clean up attribute type dependencies we don't need anymore

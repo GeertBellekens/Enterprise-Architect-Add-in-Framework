@@ -341,6 +341,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
 
+
         /// <summary>
         /// If all attributes are coming from the same source element, and the order of the existing attributes corresponds exactly to that of the
         /// source element, then we use the same order as the order of the source element. That means that attributes will be inserted in the sequence.
@@ -614,6 +615,14 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
 
+        internal void createSubsetOperations()
+        {
+            foreach(var operation in this.sourceElement.ownedElements.OfType<TSF_EA.Operation>())
+            {
+                //TODO check if operations exists
+                operation.clone(this.subsetElement as TSF_EA.ElementWrapper);
+            }
+        }
         /// <summary>
         /// adds a dependency from the attributes owner to the type of the attributes
         /// </summary>
