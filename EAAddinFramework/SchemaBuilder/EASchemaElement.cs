@@ -83,7 +83,9 @@ namespace EAAddinFramework.SchemaBuilder
             }
             set => throw new NotImplementedException();
         }
+        internal TSF_EA.ElementWrapper eaSourceElement => this.sourceElement as TSF_EA.ElementWrapper;
         public UML.Classes.Kernel.Classifier subsetElement { get; set; }
+        internal TSF_EA.ElementWrapper eaSubsetElement => this.subsetElement as TSF_EA.ElementWrapper;
 
         public SchemaBuilderFramework.Schema owner
         {
@@ -614,13 +616,87 @@ namespace EAAddinFramework.SchemaBuilder
                 schemaLiteral.createSubsetLiteral();
             }
         }
+        private void deleteInvalidSubsetOperations()
+        {
+            var sqlGetData = $@"select op.OperationID from t_operation op
+                            left join t_operationtag tv on tv.ElementID = op.OperationID
 
+                                                           and tv.Property = '{this.owner.settings.sourceOperationTagName}'
+                            left join t_operation oop on oop.ea_guid = tv.VALUE
+
+                                                    and oop.Object_ID = {this.eaSourceElement.id}
+                            where 1 = 1
+                            and oop.OperationID is null
+                            and op.Object_ID = {this.eaSubsetElement.id}";
+            var operationsToDelete = this.model.getOperationsByQuery(sqlGetData);
+            foreach (var operation in operationsToDelete)
+            {
+                operation.delete();
+            }
+        }
         internal void createSubsetOperations()
         {
-            foreach(var operation in this.sourceElement.ownedElements.OfType<TSF_EA.Operation>())
+            //first delete the operations in the subset element that are not supposed to be there
+            deleteInvalidSubsetOperations();
+            //then create or update the operations
+            foreach (var operation in this.eaSourceElement.ownedOperations.OfType<TSF_EA.Operation>())
             {
-                //TODO check if operations exists
-                operation.clone(this.subsetElement as TSF_EA.ElementWrapper);
+                //check if an operation referencing the original operation already exists
+                var subsetOperation = this.eaSubsetElement.ownedOperations
+                                    .OfType<TSF_EA.Operation>()
+                                    .FirstOrDefault(x => x.taggedValues
+                                                    .OfType<TSF_EA.OperationTag>()
+                                                    .Any(y => y.name == this.owner.settings.sourceOperationTagName
+                                                           && y.eaStringValue == operation.uniqueID));
+                //clone the existing operation is that is not the case
+                if (subsetOperation == null)
+                {
+                    subsetOperation = operation.clone(this.subsetElement as TSF_EA.ElementWrapper);
+                    subsetOperation.addTaggedValue(this.owner.settings.sourceOperationTagName, operation);
+                }
+                else
+                {
+                    //update properties
+                    var updated = false;
+                    if (subsetOperation.name != operation.name)
+                    {
+                        subsetOperation.name = operation.name;
+                        updated = true;
+                    }
+                    if (subsetOperation.notes != operation.notes) ;
+                    {
+                        subsetOperation.notes = operation.notes;
+                        updated = true;
+                    }
+                    if (subsetOperation.visibility != operation.visibility)
+                    {
+                        subsetOperation.visibility = operation.visibility;
+                        updated = true;
+                    }
+                    if (updated)
+                    {
+                        subsetOperation.save();
+                    }
+                    //check if signature of the operation is still the same
+                    if (subsetOperation.signature != operation.signature)
+                    {
+                        //first remove all parameters
+                        subsetOperation.ownedParameters = new HashSet<Parameter>();
+                        //then copy all parameters
+                        foreach (var parameter in operation.ownedParameters.OfType<TSF_EA.ParameterWrapper>())
+                        {
+
+                            var newParam = subsetOperation.addOwnedParameter(parameter.name);
+                            newParam.direction = parameter.direction;
+                            newParam.type = parameter.type;
+                            newParam.notes = parameter.notes;
+                            newParam.save();
+                        }
+                        //set the return type
+                        subsetOperation.type = operation.type;
+                        subsetOperation.save();
+                    }
+                }
             }
         }
         /// <summary>

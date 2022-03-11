@@ -11,12 +11,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// as an Operation from Interfaces
     public class Operation : Element, UML.Classes.Kernel.Operation
     {
-        internal global::EA.Method wrappedOperation { get; set; }
+        public global::EA.Method wrappedOperation { get; private set; }
         public int id
         {
             get { return this.wrappedOperation.MethodID; }
         }
 
+        public string signature
+        {
+            get
+            {
+                var signatureString = this.name + "(";
+                //add parameters
+                foreach(var parameter in this.ownedParameters.OrderBy(x => x.name))
+                {
+                    signatureString += parameter.name + ":" + parameter.direction + ":" + parameter.type;
+                }
+                signatureString += "):" + this.type?.name;
+                return signatureString;
+            }
+        }
         public Operation(Model model, global::EA.Method wrappedOperation)
           : base(model)
         {
@@ -39,13 +53,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 ((ElementWrapper)this.owner).owningPackage = value;
             }
         }
-        public global::EA.Method WrappedOperation
-        {
-            get
-            {
-                return wrappedOperation;
-            }
-        }
+        
         public void setStereotype(string stereotype)
         {
             this.wrappedOperation.StereotypeEx = stereotype;
@@ -151,7 +159,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                   ((Factory)this.EAModel.factory).createEAParameterReturnType(this);
                 return returnParameter != null ? returnParameter.type : null;
             }
-            set { throw new NotImplementedException(); }
+            set 
+            {
+                if (value is ElementWrapper)
+                {
+                    this.wrappedOperation.ClassifierID = ((ElementWrapper)value).id.ToString();
+                }
+                this.wrappedOperation.ReturnType = value.name;
+            }
         }
 
         public HashSet<UML.Classes.Kernel.Operation> redefinedOperations
@@ -188,15 +203,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
+                //refresh to make sure we have the correct parameters
+                this.wrappedOperation.Parameters.Refresh();
                 // get the regular parameters
-                HashSet<UML.Classes.Kernel.Parameter> parameters =
-                  new HashSet<UML.Classes.Kernel.Parameter>
-                  (this.EAModel.factory.createElements
-                    (this.wrappedOperation.Parameters)
-                    .Cast<UML.Classes.Kernel.Parameter>());
+                var parameters = new HashSet<UML.Classes.Kernel.Parameter>
+                            (this.EAModel.factory.createElements(this.wrappedOperation.Parameters)
+                            .Cast<UML.Classes.Kernel.Parameter>());
                 // get the returntype
-                ParameterReturnType returntype =
-                  ((Factory)this.EAModel.factory).createEAParameterReturnType(this);
+                var returntype = ((Factory)this.EAModel.factory).createEAParameterReturnType(this);
                 if (returntype != null)
                 {
                     parameters.Add(returntype);
@@ -472,7 +486,7 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
         {
             get
             {
-                return this.WrappedOperation.TaggedValues;
+                return this.wrappedOperation.TaggedValues;
             }
         }
 
@@ -480,7 +494,7 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
         {
             get
             {
-                return this.WrappedOperation.MethodGUID;
+                return this.wrappedOperation.MethodGUID;
             }
         }
 
@@ -488,7 +502,20 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
 
         public override void deleteOwnedElement(Element ownedElement)
         {
-            throw new NotImplementedException();
+            if (ownedElement is Parameter)
+            {
+                this.wrappedOperation.Parameters.Refresh();
+                for (short i = 0; i < this.wrappedOperation?.Parameters.Count; i++)
+                {
+                    var eaParameter = this.wrappedOperation?.Parameters.GetAt(i) as global::EA.Parameter;
+                    if (eaParameter?.ParameterGUID == ownedElement.uniqueID)
+                    {
+                        this.wrappedOperation?.Parameters.Delete(i);
+                        this.wrappedOperation?.Parameters.Refresh();
+                        break;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -529,10 +556,22 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
         {
             //create new operation
             var newOperation = this.EAModel.factory.cloneElement(owner, this, new Dictionary<UML.Classes.Kernel.Element, UML.Classes.Kernel.Element>(), true) as Operation;
-            newOperation.save();
+            
+            //check for the return type parameter. We need to remove that and replace it with the return type
+            if (!string.IsNullOrEmpty(this.wrappedOperation.ReturnType))
+            {
+                
+                var returnParameter = newOperation.ownedParameters
+                                    .FirstOrDefault(x => x.direction == UML.Classes.Kernel.ParameterDirectionKind._return
+                                                         && x.name.Equals($"returntype of {this.name}"));
+                returnParameter?.delete();
+                newOperation.wrappedOperation.ReturnType = this.wrappedOperation.ReturnType;
+                newOperation.wrappedOperation.ClassifierID = this.wrappedOperation.ClassifierID;
+                newOperation.visibility = this.visibility;
+                newOperation.save();
+            }
             //copy properties
             //copy tagged values
-            //copy parameters
             return newOperation;
         }
     }
