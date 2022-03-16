@@ -200,7 +200,8 @@ namespace EAAddinFramework.SchemaBuilder
                 //copy tagged values
                 ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceProperty, (UTF_EA.Element)this.subSetProperty);
                 //set the value of the use tagged value to optional or required depending on the multiplicity
-                if (this.settings.useMultiplicityForUseTagOnXsdAttributes)
+                if (this.settings.useMultiplicityForUseTagOnXsdAttributes
+                    && this.sourceAttributeWrapper.stereotypeNames.Contains("XSDattribute"))
                 {
                     var tagValue = this.multiplicity.lower == 0
                                    ? "optional"
