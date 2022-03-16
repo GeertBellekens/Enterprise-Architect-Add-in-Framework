@@ -199,6 +199,14 @@ namespace EAAddinFramework.SchemaBuilder
                 this.copyConstraints();
                 //copy tagged values
                 ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceProperty, (UTF_EA.Element)this.subSetProperty);
+                //set the value of the use tagged value to optional or required depending on the multiplicity
+                if (this.settings.useMultiplicityForUseTagOnXsdAttributes)
+                {
+                    var tagValue = this.multiplicity.lower == 0
+                                   ? "optional"
+                                   : "required";
+                    this.subsetAttributeWrapper.addTaggedValue("use", tagValue);
+                }
                 //add tagged value with reference to source attribute
                 ((UTF_EA.Element)this.subSetProperty).addTaggedValue(this.owner.owner.settings.sourceAttributeTagName, ((UTF_EA.Element)this.sourceProperty).guid);
             }
