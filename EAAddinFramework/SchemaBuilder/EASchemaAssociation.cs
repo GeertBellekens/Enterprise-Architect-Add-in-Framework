@@ -76,6 +76,8 @@ namespace EAAddinFramework.SchemaBuilder
                 throw new NotImplementedException();
             }
         }
+        public UTF_EA.Association eaSourceAssociation => this.sourceAssociation as UTF_EA.Association;
+        
 
         public List<UML.Classes.Kernel.Association> subsetAssociations { get; set; }
 
@@ -261,8 +263,8 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="associationTarget">the target for the association</param>
         private void addSubsetAssociation(UML.Classes.Kernel.Classifier associationTarget)
         {
-        	Association existingAssociation = this.subsetAssociations.FirstOrDefault(x => ((UTF_EA.Association)x).target.Equals(associationTarget));
-        	Association subsetAssociation = CreateSubSetAssociation(associationTarget,existingAssociation);
+            UTF_EA.Association existingAssociation = this.subsetAssociations.OfType<UTF_EA.Association>().FirstOrDefault(x => x.target.Equals(associationTarget));
+        	var subsetAssociation = CreateSubSetAssociation(associationTarget,existingAssociation);
 	        if (existingAssociation == null
         	    && subsetAssociation != null)
         	{
@@ -292,12 +294,12 @@ namespace EAAddinFramework.SchemaBuilder
         		}
         	}
         }
-        private Association CreateSubSetAssociation(UML.Classes.Kernel.Classifier associationTarget, Association existingAssociation)
+        private Association CreateSubSetAssociation(UML.Classes.Kernel.Classifier associationTarget,UTF_EA.Association existingAssociation)
         {
-        	Association subSetAssociation;
+            UTF_EA.Association subSetAssociation;
         	if (existingAssociation == null)
         	{
-           		subSetAssociation = this.model.factory.createNewElement<UML.Classes.Kernel.Association>
+           		subSetAssociation = (UTF_EA.Association) this.model.factory.createNewElement<UML.Classes.Kernel.Association>
            		 					(this.owner.subsetElement,this.sourceAssociation.name);
            		subSetAssociation.addRelatedElement(associationTarget);
         	}
@@ -307,45 +309,33 @@ namespace EAAddinFramework.SchemaBuilder
         		subSetAssociation = existingAssociation;
         		//report differences
         		//different multiplicity
-        		if (((UTF_EA.Association)subSetAssociation).targetEnd.EAMultiplicity != this.multiplicity)
+        		if (subSetAssociation.targetEnd.EAMultiplicity != this.multiplicity)
         		{
         			EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-						                                              ,string.Format("Multiplicity of association between '{0}' and '{1}' has changed from '{2}' to '{3}'"
-						                                  					,((UTF_EA.Association)subSetAssociation).source.name
-						                                  					,((UTF_EA.Association)subSetAssociation).target.name
-						                                  					,((UTF_EA.Association)subSetAssociation).targetEnd.EAMultiplicity
-						                                  					,this.multiplicity)
-						                                              ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
+						                                              ,$"Multiplicity of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.EAMultiplicity}' to '{this.multiplicity}'"
+						                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
 						                                              , LogTypeEnum.warning);
         		}
         		//different target rolname
-        		if (((UTF_EA.Association)subSetAssociation).targetEnd.name != this.otherEnd.name)
+        		if (subSetAssociation.targetEnd.name != this.otherEnd.name)
         		{
         			EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-						                                              ,string.Format("Target rolename of association between '{0}' and '{1}' has changed from '{2}' to '{3}'"
-						                                  					,((UTF_EA.Association)subSetAssociation).source.name
-						                                  					,((UTF_EA.Association)subSetAssociation).target.name
-						                                  					,((UTF_EA.Association)subSetAssociation).targetEnd.name
-						                                  					,this.otherEnd.name)
-						                                              ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
+						                                              ,$"Target rolename of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.name}' to '{this.otherEnd.name}'"
+						                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
 						                                              , LogTypeEnum.warning);
         		}
         	}
            	//update name
             subSetAssociation.name = this.sourceAssociation.name;
             //alias only if alias in the subset is emtpy
-            if (string.IsNullOrEmpty(((UTF_EA.Association)subSetAssociation).alias))
+            if (string.IsNullOrEmpty(subSetAssociation.alias))
             	((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
             //Check if the subset alias is different from the source alias and issue warning if that is the case
-			if (!string.Equals(((UTF_EA.Association)subSetAssociation).alias,((UTF_EA.Association)sourceAssociation).alias))
+			if (!string.Equals(subSetAssociation.alias,((UTF_EA.Association)sourceAssociation).alias))
 			{
 					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-                                              ,string.Format("Association between '{0}' and '{1}' has alias {2} in the model and a different alias '{3}' in the subset"
-                                  					,((UTF_EA.Association)subSetAssociation).source.name
-                                  					,((UTF_EA.Association)subSetAssociation).target.name
-                                  					,((UTF_EA.Association)subSetAssociation).alias
-                                  					,((UTF_EA.Association)sourceAssociation).alias)
-                                              ,((UTF_EA.ElementWrapper)((UTF_EA.Association)subSetAssociation).source).id
+                                              ,$"Association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has alias {subSetAssociation.alias} in the model and a different alias '{((UTF_EA.Association)sourceAssociation).alias}' in the subset"
+                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
                                               , LogTypeEnum.warning);				
 			}
             //notes only update them if they are empty or if settings
@@ -368,27 +358,24 @@ namespace EAAddinFramework.SchemaBuilder
             subSetAssociation.stereotypes = this.sourceAssociation.stereotypes;
             //derived
             subSetAssociation.isDerived = this.sourceAssociation.isDerived;
-            //save all changes
-            //subSetAssociation.save();
+            //subset
+            subSetAssociation.subtype = this.eaSourceAssociation.subtype;
             //copy the association end properties
             //copy source end properties
-            this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.thisEnd,
-                ((UTF_EA.Association)subSetAssociation).sourceEnd);
+            this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.thisEnd, subSetAssociation.sourceEnd);
             //copy target end properties
-            this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.otherEnd,
-                ((UTF_EA.Association)subSetAssociation).targetEnd);
+            this.copyAssociationEndProperties((UTF_EA.AssociationEnd)this.otherEnd, subSetAssociation.targetEnd);
             //set the target multiplicity to a possible redefined multiplicity from the schema
-            ((UTF_EA.Association)subSetAssociation).targetEnd.EAMultiplicity = this.multiplicity;
+            subSetAssociation.targetEnd.EAMultiplicity = this.multiplicity;
+            //set the direction
+            //subSetAssociation.direction = this.eaSourceAssociation.direction;
             //save all changes
             subSetAssociation.save();
             //copy tagged values
-            ((EASchema) this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceAssociation,(UTF_EA.Element)subSetAssociation);
-            //((UTF_EA.Association)this.subsetAssociation).copyTaggedValues((UTF_EA.Association)this.sourceAssociation);
+            ((EASchema) this.owner.owner).copyTaggedValues(this.eaSourceAssociation, subSetAssociation);
             //add tagged value with reference to source association
-            ((UTF_EA.Association)subSetAssociation).addTaggedValue(
-                this.owner.owner.settings.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
-
-            //subSetAssociation.save();
+            subSetAssociation.addTaggedValue(this.owner.owner.settings.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
+            //return
             return subSetAssociation;
         }
 

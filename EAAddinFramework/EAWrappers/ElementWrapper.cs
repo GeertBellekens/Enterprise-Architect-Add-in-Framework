@@ -769,6 +769,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 //these are the supported types. Add translation if needed
                 case "Association":
+                    eaRelationType = "Association','Aggregation";
+                    break;
                 case "Dependency":
                 case "Generalization":
                 case "Abstraction":
@@ -785,7 +787,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                 " inner join t_object o on (o.Object_ID = c.Start_Object_ID " +
                                 $" 					and o.ea_guid = '{this.uniqueID}')      " +
                                 " where                                                     " +
-                                $" c.Connector_Type = '{eaRelationType}'                    ";
+                                $" c.Connector_Type in ('{eaRelationType}')                 ";
 
                 foundRelations.AddRange(this.EAModel.getRelationsByQuery(outgoingQuery).OfType<T>().ToList());
             }
@@ -796,7 +798,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                 " inner join t_object o on (o.Object_ID = c.End_Object_ID   " +
                                 $" 					and o.ea_guid = '{this.uniqueID}')      " +
                                 " where                                                     " +
-                                $" c.Connector_Type = '{eaRelationType}'                    ";
+                                $" c.Connector_Type in ('{eaRelationType}')                  ";
 
                 foundRelations.AddRange(this.EAModel.getRelationsByQuery(incomingquery).OfType<T>().ToList());
             }

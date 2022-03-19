@@ -28,7 +28,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 									set [PDATA2] = '" + value + @"'
 									where connector_id = " + this.id);
         }
-
+        /// <summary>
+        /// used to distinguish the subtype of the connector.
+        /// For associations this could be both Aggregation or Association
+        /// </summary>
+        public string subtype
+        {
+            get => this.wrappedConnector.Type;
+            set => this.wrappedConnector.Type = value;
+        }
+        /// <summary>
+        /// The direction of the connector. Can be:
+        /// "Destination -> Source"
+        /// "Bi-Directional"
+        /// "Unspecified"
+        /// "Source -> Destination"
+        /// TODO: convert to enum
+        /// </summary>
+        public string direction
+        {
+            get => this.wrappedConnector.Direction;
+            set => this.wrappedConnector.Direction = value;
+        }
 
         internal Element sourceElement
         {
