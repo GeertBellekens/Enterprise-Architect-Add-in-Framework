@@ -545,7 +545,10 @@ namespace EAAddinFramework.SchemaBuilder
                 if (elementsToCreate.Any() || elementsToUpdate.Any() || subsetElementsToDelete.Any())
                 {
                     //Inform user and request feedback
-                    var response = MessageBox.Show(this.model.mainEAWindow,
+                    DialogResult response;
+                    try
+                    {
+                        response = MessageBox.Show(this.model.mainEAWindow,
                                                     $"Elements to update: {elementsToUpdate.Count}\n" +
                                                     $"Elements to create: {elementsToCreate.Count}\n" +
                                                     $"Elements to delete: {subsetElementsToDelete.Count}\n" +
@@ -554,6 +557,20 @@ namespace EAAddinFramework.SchemaBuilder
                                                     , "Generate only changes?"
                                                     , MessageBoxButtons.YesNoCancel
                                                     , MessageBoxIcon.Question);
+                    } 
+                    catch (Exception) //sometimes the this.model.mainEAWindow handle is invalid
+                    {
+                        response = MessageBox.Show(
+                                                    $"Elements to update: {elementsToUpdate.Count}\n" +
+                                                    $"Elements to create: {elementsToCreate.Count}\n" +
+                                                    $"Elements to delete: {subsetElementsToDelete.Count}\n" +
+                                                    "YES to generate only changes\n" +
+                                                    "NO to generate the whole schema"
+                                                    , "Generate only changes?"
+                                                    , MessageBoxButtons.YesNoCancel
+                                                    , MessageBoxIcon.Question);
+                    }
+                     
                     switch (response)
                     {
                         case DialogResult.Yes:
@@ -569,12 +586,26 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 else
                 {
-                    var response = MessageBox.Show(this.model.mainEAWindow
+                    DialogResult response;
+                    try
+                    {
+                        response = MessageBox.Show(this.model.mainEAWindow
                                                    , "Found no differences from the generated schema \n" +
                                                    "Would you like to re-generate anyway?"
                                                    , "Re-Generate?"
                                                    , MessageBoxButtons.YesNo
                                                    , MessageBoxIcon.Question);
+
+                    }
+                    catch (Exception) //sometimes the this.model.mainEAWindow handle is invalid
+                    {
+                        response = MessageBox.Show("Found no differences from the generated schema \n" +
+                                                   "Would you like to re-generate anyway?"
+                                                   , "Re-Generate?"
+                                                   , MessageBoxButtons.YesNo
+                                                   , MessageBoxIcon.Question);
+                    }
+
 
                     if (response == DialogResult.Yes)
                         generateChangesOnly = false;
