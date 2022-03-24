@@ -83,6 +83,7 @@ namespace EAAddinFramework.Utilities
         {
             var newConfig = this.settings.addConfig();
             this.configListView.AddObject(newConfig);
+            this.configListView.SelectedObject = newConfig;
         }
 
         private void deleteButton_Click(object sender, EventArgs e)

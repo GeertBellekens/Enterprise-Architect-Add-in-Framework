@@ -281,8 +281,7 @@ namespace EAAddinFramework.SchemaBuilder
         	{
         		//find subset association class
         		EASchemaElement associationClassSchemaElement = ((EASchema) this.owner.owner).getSchemaElementForUMLElement(sourceAssociationClass);
-        		if (associationClassSchemaElement != null 
-        			&& associationClassSchemaElement.subsetElement != null)
+        		if (associationClassSchemaElement?.subsetElement is UTF_EA.AssociationClass)
         		{
         			//link the corresponding subset associationclass to the subset associations
 		        	foreach (var subsetAssociation in this.subsetAssociations) 
