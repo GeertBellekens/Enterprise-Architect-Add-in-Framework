@@ -661,6 +661,10 @@ namespace EAAddinFramework.EASpecific
             }
             return allEAMaticScripts;
         }
+        public static void exportScripts(Model model, string filename)
+        {
+            model.wrappedModel.GetProjectInterface().ExportReferenceData(filename, "Automation Scripts");
+        }
         /// <summary>
         /// gets the value from the content of the notes.
         /// The value can be found after "name="
