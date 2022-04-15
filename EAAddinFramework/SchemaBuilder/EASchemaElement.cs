@@ -673,6 +673,11 @@ namespace EAAddinFramework.SchemaBuilder
                         subsetOperation.visibility = operation.visibility;
                         updated = true;
                     }
+                    if (!subsetOperation.stereotypeNames.SequenceEqual(operation.stereotypeNames))
+                    {
+                        subsetOperation.stereotypes = operation.stereotypes;
+                        updated = true;
+                    }
                     if (updated)
                     {
                         subsetOperation.save();

@@ -113,12 +113,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override HashSet<UML.Profiles.Stereotype> stereotypes
         {
-            get
-            {
-                return ((Factory)this.EAModel.factory).createStereotypes
-                  (this, this.wrappedOperation.StereotypeEx);
-            }
-            set { throw new NotImplementedException(); }
+            get => ((Factory)this.EAModel.factory).createStereotypes(this, this.wrappedOperation.StereotypeEx);
+            set => this.wrappedOperation.StereotypeEx = Stereotype.getStereotypeEx(value);
         }
 
         public bool isQuery
