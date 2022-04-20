@@ -42,6 +42,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.setProperty(getPropertyNameName(), VisibilityKind.getEAVisibility(value), this.wrappedAttribute.Visibility);
         }
 
+        public override void reload()
+        {
+            base.reload();
+            this._type = null;
+        }
         public Multiplicity EAMultiplicity
         {
             get => (Multiplicity)this.getProperty(getPropertyNameName(), this.getInitialMultiplicity());
@@ -76,6 +81,40 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return returnedScale;
             }
             set => this.setProperty(getPropertyNameName(), value.ToString(), this.wrappedAttribute.Scale);
+        }
+        private UML.Classes.Kernel.Type _type;
+        public override UML.Classes.Kernel.Type type
+        {
+            get
+            {
+                if (this._type == null)
+                {
+                    this._type = this.EAModel.getElementWrapperByID((int)this.getProperty("ClassifierID", this.wrappedAttribute.ClassifierID)) as UML.Classes.Kernel.Type;
+                    // check if the type is defined as an element in the model.
+                    if (this._type == null)
+                    {
+                        // no element, create primitive type based on the name of the type
+                        this._type = this.EAModel.factory.createPrimitiveType(this.getProperty("Type", this.wrappedAttribute.Type));
+                    }
+                }
+                return this._type;
+            }
+            set
+            {
+                this._type = value;
+                if (value != null)
+                {
+                    //set classifier if needed
+                    ElementWrapper elementWrapper = value as ElementWrapper;
+                    if (elementWrapper != null)
+                    {
+                        this.setProperty("ClassifierID", ((ElementWrapper)value).id, this.wrappedAttribute.ClassifierID);
+                    }
+                    //always set type field
+                    this.setProperty("Type", value.name, this.wrappedAttribute.Type);
+                }
+
+            }
         }
 
         internal override void saveElement()

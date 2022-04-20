@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using System.Xml;
-using UML=TSF.UmlToolingFramework.UML;
+using UML =TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA 
 {
@@ -128,6 +128,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			set {
 				throw new NotImplementedException();
 			}
+		}
+
+		public override UML.Classes.Kernel.Type type 
+		{ 
+			get => null;
+			set { } //do nothing
 		}
 	}
 }

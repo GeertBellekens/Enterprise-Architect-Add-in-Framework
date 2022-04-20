@@ -38,6 +38,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return this.wrappedModel.GetFormatFromField(newFormat, EANotes);
         }
+
+
+
         public string convertToEANotes(string externalNotes, string externalFormat)
         {
             return this.wrappedModel.GetFieldFromFormat(externalFormat, externalNotes);
@@ -57,6 +60,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return this.wrappedModel.IsTabOpen(tabName) > 0;
         }
+  
         /// <summary>
         /// returns the full path of the running ea.exe
         /// </summary>

@@ -7,9 +7,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// <summary>
     /// Description of AttributeWrapper.
     /// </summary>
-    public class AttributeWrapper : Element
+    public abstract class AttributeWrapper : Element
     {
-        private UML.Classes.Kernel.Type _type;
+        
         private string _uniqueID = null;
 
         public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute)
@@ -20,11 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this._uniqueID = wrappedAttribute.AttributeGUID;
             this.isDirty = false;
         }
-        public override void reload()
-        {
-            base.reload();
-            this._type = null;
-        }
+
         internal global::EA.Attribute wrappedAttribute { get; set; }
         public int id => this.wrappedAttribute.AttributeID;
         public override UML.Classes.Kernel.Package owningPackage
@@ -56,39 +52,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.Pos);
         }
 
-        public UML.Classes.Kernel.Type type
-        {
-            get
-            {
-                if (this._type == null)
-                {
-                    this._type = this.EAModel.getElementWrapperByID((int)this.getProperty("ClassifierID", this.wrappedAttribute.ClassifierID)) as UML.Classes.Kernel.Type;
-                    // check if the type is defined as an element in the model.
-                    if (this._type == null)
-                    {
-                        // no element, create primitive type based on the name of the type
-                        this._type = this.EAModel.factory.createPrimitiveType(this.getProperty("Type", this.wrappedAttribute.Type));
-                    }
-                }
-                return this._type;
-            }
-            set
-            {
-                this._type = value;
-                if (value != null)
-                {
-                    //set classifier if needed
-                    ElementWrapper elementWrapper = value as ElementWrapper;
-                    if (elementWrapper != null)
-                    {
-                        this.setProperty("ClassifierID", ((ElementWrapper)value).id, this.wrappedAttribute.ClassifierID);
-                    }
-                    //always set type field
-                    this.setProperty("Type", value.name, this.wrappedAttribute.Type);
-                }
-
-            }
-        }
+        public abstract UML.Classes.Kernel.Type type { get; set; }
+ 
         public override HashSet<UML.Profiles.Stereotype> stereotypes
         {
             get => ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.getWrappedStereotypeString()));
