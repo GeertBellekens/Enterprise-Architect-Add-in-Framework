@@ -665,6 +665,19 @@ namespace EAAddinFramework.EASpecific
         {
             model.wrappedModel.GetProjectInterface().ExportReferenceData(filename, "Automation Scripts");
         }
+
+        public static bool importScripts(string refdataFile, string connectionString)
+        {
+            var success = false;
+            var targetModel = new global::EA.Repository();
+            if (targetModel.OpenFile(connectionString))
+            {
+                success =  targetModel.GetProjectInterface().ImportReferenceData(refdataFile,"Automation Scripts");
+                targetModel.CloseFile();
+                targetModel.Exit();
+            }
+            return success;
+        }
         /// <summary>
         /// gets the value from the content of the notes.
         /// The value can be found after "name="
