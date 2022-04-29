@@ -22,7 +22,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private static string _applicationFullPath;
 
 
-        public bool useCache { get; private set; } = false;
+        public bool useCache 
+        { 
+            get;  
+            set; 
+        } = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
         private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
 
