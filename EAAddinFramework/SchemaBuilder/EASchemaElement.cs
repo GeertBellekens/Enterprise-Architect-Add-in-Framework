@@ -41,11 +41,17 @@ namespace EAAddinFramework.SchemaBuilder
                         return true;
                     }
                     //if not on element level we check on package level
-                    return this.isSharedElement(this.sourceElement.owningPackage);
+                    if (this.isSharedElement(this.sourceElement.owningPackage))
+                    {
+                        return true;
+                    }
+                    //if not on package level, we check on local shared property (package GUID in a tagged value with name "sharedPackage" on the schema container element
+                    return this.ownerSchema.isSharedLocalPackage(this.sourceElement.owningPackage);
                 }
                 return false;
             }
         }
+
         private bool isSharedElement(Element element)
         {
             return element.taggedValues.Any(x => x.name.Equals("shared", StringComparison.InvariantCultureIgnoreCase)
@@ -906,7 +912,7 @@ namespace EAAddinFramework.SchemaBuilder
                     foreach (TSF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals)
                     {
                         //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching subset literal: '" + literal.name + "' to a schema property"
+                        EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Matching subset literal: '{literal.name}' to a schema property"
                                        , subsetElementWrapper.id, LogTypeEnum.log);
                         EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
                         if (matchingLiteral != null)
@@ -949,17 +955,7 @@ namespace EAAddinFramework.SchemaBuilder
             if (sourceAttributeTag != null)
             {
                 string tagReference = sourceAttributeTag.eaStringValue;
-
-                foreach (EASchemaLiteral schemaLiteral in this.schemaLiterals)
-                {
-                    //we have the same attribute if the given attribute has a tagged value 
-                    //called sourceAttribute that refences the source attribute of the schema Property
-                    if (((TSF_EA.EnumerationLiteral)schemaLiteral.sourceLiteral)?.guid == tagReference)
-                    {
-                        result = schemaLiteral;
-                        break;
-                    }
-                }
+                result = this.schemaLiterals.OfType<EASchemaLiteral>().FirstOrDefault(x => x.sourceLiteral?.uniqueID == tagReference);
             }
             return result;
         }
