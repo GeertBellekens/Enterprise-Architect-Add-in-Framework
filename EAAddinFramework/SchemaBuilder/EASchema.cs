@@ -63,6 +63,33 @@ namespace EAAddinFramework.SchemaBuilder
             return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
         }
 
+        private List<Package>_localSharedPackages = null;
+        private List<Package> localSharedPackages
+        {
+            get
+            {
+                if (this._localSharedPackages == null)
+                {
+                    this._localSharedPackages = new List<Package>();
+                    if (this.containerElement != null)
+                    {
+                        var sqlQuery = $@"select po.Object_ID from t_objectproperties tv
+                                inner join t_object po on po.ea_guid = tv.Value
+                                inner join t_object o on o.Object_ID = tv.Object_ID
+                                where tv.Property = 'sharedPackage'
+                                and o.ea_guid = '{this.containerElement.uniqueID}'";
+                        this._localSharedPackages = this.model.getElementWrappersByQuery(sqlQuery).OfType<Package>().ToList();
+                    }
+                }
+                return this._localSharedPackages;
+            }
+        }
+        public bool isSharedLocalPackage(Package package)
+        {
+            return this.localSharedPackages.Any(x => x.uniqueID == package.uniqueID);
+        }
+
+
         /// <summary>
         /// the SchemaElements owned by this Schema
         /// </summary>
@@ -376,8 +403,12 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
+            //tell the user what we are doing 
+            EAOutputLogger.log(this.model, this.settings.outputName, "Synchronizing tagged values", 0, LogTypeEnum.log);
             //then synchronize the tagged values where needed
             synchronizeTaggedValues();
+            //tell the user what we are doing 
+            EAOutputLogger.log(this.model, this.settings.outputName, "Saving Schema content", 0, LogTypeEnum.log);
             //save the new schema contents to the destination package
             this.saveSchemaContent(destinationPackage);
 
