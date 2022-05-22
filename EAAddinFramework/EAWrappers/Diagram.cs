@@ -451,8 +451,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (element != null)
             {
                 //first check whether this element is not already added to this diagram
-                diagramElement = this.getDiagramElement(element);
-                if (diagramElement == null)
+                if (!this.contains(element))
                 {
                     if (element is EA.ElementWrapper)
                     {
