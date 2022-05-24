@@ -766,7 +766,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
             return results;
         }
-
+        /// <summary>
+        /// returns true if the query returns the trueValue in the given field
+        /// </summary>
+        /// <param name="sqlQuery">the query to be executed</param>
+        /// <param name="field">the field (column) to check</param>
+        /// <param name="trueValue">the value to check for</param>
+        /// <returns>returns true if the query returns the trueValue in the given field</returns>
+        public bool getBoolFromQuery(string sqlQuery, string field, string trueValue)
+        {
+            return getFirstValueFromQuery(sqlQuery, field) == trueValue;
+        }
+        public string getFirstValueFromQuery(string sqlQuery, string field)
+        {
+            var results = this.SQLQuery(sqlQuery);
+            var valueNode = results.SelectSingleNode(this.formatXPath($"//{field}"));
+            return valueNode?.InnerText;
+        }
         /// <summary>
         /// sets the correct wildcards depending on the database type.
         /// changes '%' into '*' if on ms access

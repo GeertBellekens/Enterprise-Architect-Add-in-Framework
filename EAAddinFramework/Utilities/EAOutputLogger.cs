@@ -12,11 +12,12 @@ namespace EAAddinFramework.Utilities
 	{
 		Model model;
 		string name;
-        List<string> errors = new List<string>();
-        List<string> warnings = new List<string>();
+		List<string> errors = new List<string>();
+		List<string> warnings = new List<string>();
 
-        static Dictionary<string, EAOutputLogger> outputLogs = new Dictionary<string, EAOutputLogger>();
+		static Dictionary<string, EAOutputLogger> outputLogs = new Dictionary<string, EAOutputLogger>();
 		static EAOutputLogger defaultLogger;
+		public static bool isDebugMode {get;set;} = false;
 		static EAOutputLogger getOutputLogger(Model model, string outputName)
 		{
 			var logKey = model.projectGUID+outputName;
@@ -91,7 +92,10 @@ namespace EAAddinFramework.Utilities
                     logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
                     break;
                 case LogTypeEnum.log:
-					Logger.log(message);
+					if (isDebugMode)
+					{
+						Logger.log(message);
+					}
                     //log to output
                     logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
                     break;

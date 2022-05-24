@@ -190,24 +190,29 @@ namespace EAAddinFramework.SchemaBuilder
         /// <returns>the corresponding SchemaElement</returns>
         internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement)
         {
+            var elementWrapperSubsetElement = (TSF_EA.ElementWrapper)subsetElement;
             EASchemaElement result = null;
             if (subsetElement != null)
             {
                 //first find the source element from which this subset element is derived
                 //check on if there is a tagged value that references the source element
-                Classifier sourceElement = null;
+                string sourceElementUniqueID = null;
                 if (this.settings.tvInsteadOfTrace)
                 {
-                    sourceElement = subsetElement.taggedValues.FirstOrDefault(x => x.name == this.settings.elementTagName)?.tagValue as Classifier;
+                    //use query to get source element unique ID
+                    var sqlGetSourceUniqueID = $@"select tv.Value as uniqueID from t_objectproperties tv
+                                            where tv.Object_ID = {elementWrapperSubsetElement.id}
+                                            and tv.Property = '{this.settings.elementTagName}'";
+                    sourceElementUniqueID = this.model.getFirstValueFromQuery(sqlGetSourceUniqueID, "uniqueID");
                 }
                 else
                 {
                     //check if the subset element has a dependency to the source element of the schema
-                    string sqlCheckTrace = @"select c.End_Object_ID from t_connector c
+                    string sqlCheckTrace = $@"select c.End_Object_ID from t_connector c
 													where 
 													c.Connector_Type = 'Abstraction'
 													and c.Stereotype = 'trace'
-													and c.Start_Object_ID = " + ((TSF_EA.ElementWrapper)subsetElement).id;
+													and c.Start_Object_ID = {elementWrapperSubsetElement.id}";
                     var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
                     var endObjectIDNodes = checkTraceXML.SelectNodes(this.model.formatXPath("//End_Object_ID"));
                     foreach (System.Xml.XmlNode connectorIDNode in endObjectIDNodes)
@@ -216,22 +221,25 @@ namespace EAAddinFramework.SchemaBuilder
                         if (int.TryParse(connectorIDNode.InnerText, out elementID))
                         {
                             //check if there is an schemaElement with this 
-                            sourceElement = this.elements
-                                .FirstOrDefault(x => ((TSF_EA.ElementWrapper)x.sourceElement)?.id == elementID)
-                                ?.sourceElement;
+                            sourceElementUniqueID = this.elements
+                                .FirstOrDefault(x => elementWrapperSubsetElement?.id == elementID)
+                                ?.sourceElement.uniqueID;
                             break;
                         }
                     }
                 }
                 //if we haven't found a source element, then this subset element can't have a schema element
-                if (sourceElement == null) return null;
+                if (string.IsNullOrEmpty(sourceElementUniqueID))
+                {
+                    return null;
+                }
                 //first check if the subset element can be matched to a redefined schemaElement
                 if (this.settings.useAliasForRedefinedElements)
                 {
                     //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
                     result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
-                                                                          && x.name == ((TSF_EA.ElementWrapper)subsetElement).alias
-                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && x.name == elementWrapperSubsetElement.alias
+                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
                                                                           && (x.subsetElement == null 
                                                                               || x.subsetElement.uniqueID == subsetElement.uniqueID ));
                     //if not found with redefined elemnet then find as regular element
@@ -239,7 +247,7 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
                                                                           && x.name == subsetElement.name
-                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
                                                                           && (x.subsetElement == null
                                                                               || x.subsetElement.uniqueID == subsetElement.uniqueID));
                     }
@@ -248,7 +256,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     //find based on name, regardless of redefined or not
                     result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
-                                                                          && x.sourceElement.uniqueID == sourceElement.uniqueID
+                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
                                                                           && (x.subsetElement == null
                                                                               || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 }
@@ -372,32 +380,26 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 foreach (EASchemaElement schemaElement in elements)
                 {
-                    if (schemaElement.subsetElement != null)
+                    var subsetElement = schemaElement.subsetElement as TSF_EA.ElementWrapper;
+                    if (subsetElement != null)
                     {
                         //remove those subset elements that don't have any attributes or associations
-                        //reload the element because otherwise the API does not return any attributes or associations
-                        var reloadedElement = model.getElementByGUID(schemaElement.subsetElement.uniqueID) as Classifier;
-                        if (reloadedElement != null
-                             && !reloadedElement.attributes.Any()
-                           && !reloadedElement.getRelationships<UML.Classes.Kernel.Association>().Any()
-                           && !reloadedElement.getRelationships<UML.Classes.Kernel.Generalization>().Any()
-                           && !reloadedElement.getDependentTypedElements<UML.Classes.Kernel.TypedElement>().Any()
-                           //&& (reloadedElement is TSF_EA.ElementWrapper && !((TSF_EA.ElementWrapper)reloadedElement).primitiveParentNames.Any())
-                           )
+                        if (isSubsetElementNotUsed(subsetElement as TSF_EA.ElementWrapper))
                         {
                             //check if the subset element is used in a schema or subset downstream
-                            if (isItemUsedInASchema(reloadedElement, this.model))
+                            if (isItemUsedInASchema(subsetElement, this.model))
                             {
                                 //report error
-                                EAOutputLogger.log(this.model, this.settings.outputName, $"Subset element '{reloadedElement.name}' cannot be deleted as it is still used in one or more schemas"
-                                       , ((TSF_EA.ElementWrapper)reloadedElement).id, LogTypeEnum.warning);
+                                EAOutputLogger.log(this.model, this.settings.outputName, $"Subset element '{subsetElement.name}' cannot be deleted as it is still used in one or more schemas"
+                                       , subsetElement.id, LogTypeEnum.warning);
                             }
                             else
                             {
                                 //tell the user what we are doing 
                                 EAOutputLogger.log(this.model, this.settings.outputName, "Deleting subset element for: '" + schemaElement.name + "'"
                                                , 0, LogTypeEnum.log);
-                                schemaElement.subsetElement.delete();
+                                //actually delete the subset element
+                                subsetElement.delete();
                             }
                         }
                     }
@@ -412,6 +414,13 @@ namespace EAAddinFramework.SchemaBuilder
             //save the new schema contents to the destination package
             this.saveSchemaContent(destinationPackage);
 
+        }
+        private bool isSubsetElementNotUsed(TSF_EA.ElementWrapper subsetElement)
+        {
+            return !subsetElement.hasAttributes()
+                && !subsetElement.hasAssociations()
+                && !subsetElement.hasGeneralizations()
+                && !subsetElement.hasDependentTypedAttributes();
         }
         /// <summary>
         /// creates subset tagged values for each of the tagged values that need to be synchronized.

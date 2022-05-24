@@ -595,6 +595,49 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
+
+        internal bool hasDependentTypedAttributes()
+        {
+            string sqlGetdata = $@"select 'true' as HasTypedAttributes
+                                from t_object o
+                                where exists(select a.ID from t_attribute a
+                                            where a.Classifier = o.Object_ID)
+                                and o.ea_guid = '{this.uniqueID}'";
+            return this.EAModel.getBoolFromQuery(sqlGetdata, "HasTypedAttributes", "true");
+        }
+
+        internal bool hasGeneralizations()
+        {
+            string sqlGetdata = $@"select 'true' as HasGeneralizations
+                            from t_object o
+                            where exists(select c.Connector_ID from t_connector c
+                                        where c.Connector_Type = 'Generalization'
+                                        and o.Object_ID in (c.Start_Object_ID, c.End_Object_ID))
+                            and o.ea_guid = '{this.uniqueID}'";
+            return this.EAModel.getBoolFromQuery(sqlGetdata, "HasGeneralizations", "true");
+        }
+
+        internal bool hasAssociations()
+        {
+            string sqlGetdata = $@"select 'true' as HasAssociations 
+                                from t_object o
+                                where exists(select c.Connector_ID from t_connector c
+			                                where c.Connector_Type in ('Association','Aggregation')
+			                                and o.Object_ID in (c.Start_Object_ID, c.End_Object_ID))
+                                and o.ea_guid = '{this.uniqueID}'";
+            return this.EAModel.getBoolFromQuery(sqlGetdata, "HasAssociations", "true");
+        }
+
+        internal bool hasAttributes()
+        {
+            string sqlGetdata = $@"select 'true' as HasAttributes 
+                                from t_object o
+                                where exists(select a.ID from t_attribute a 
+			                                where a.Object_ID = o.Object_ID)
+                                and o.ea_guid = '{this.uniqueID}'";
+            return this.EAModel.getBoolFromQuery(sqlGetdata, "HasAttributes", "true");
+        }
+
         protected List<ElementWrapper> _ownedElementWrappers;
         virtual public List<ElementWrapper> ownedElementWrappers
         {
