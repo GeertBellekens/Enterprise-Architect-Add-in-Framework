@@ -421,12 +421,15 @@ namespace EAAddinFramework.EASpecific
                 {
                     includedScripts.Add(includeString);
                     //then replace with the contents of the included script
-                    includedCode = includedCode.Replace(includeString + Environment.NewLine, this.IncludeScripts(this.getIncludedcode(includeString), includedScripts) + Environment.NewLine);
+                    var codeToBeIncluded = this.IncludeScripts(this.getIncludedcode(includeString), includedScripts) + Environment.NewLine;
+                    includedCode = includedCode.Replace(includeString + Environment.NewLine, codeToBeIncluded);
+                    includedCode = includedCode.Replace(includeString + "\n", codeToBeIncluded); //for some reason, since v16, the code seems to be using \n instead of \r\r as newlines. So try a second time to make sure.
                 }
                 else
                 {
                     //remove the included string because the script was already included
                     includedCode = includedCode.Replace(includeString + Environment.NewLine, Environment.NewLine);
+                    includedCode = includedCode.Replace(includeString + "\n", Environment.NewLine);
                 }
             }
 
