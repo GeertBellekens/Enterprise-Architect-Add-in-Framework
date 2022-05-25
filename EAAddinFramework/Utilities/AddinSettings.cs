@@ -186,6 +186,11 @@ namespace EAAddinFramework.Utilities
             //string configDirectory = System.IO.Directory.GetParent(roamingConfig.FilePath).Parent.Parent.Parent.FullName;
 
             this.configurationsDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + this.configSubPath;
+            //check if folder exists, if not create it
+            if (!System.IO.Directory.Exists(this.configurationsDirectoryPath))
+            {
+                System.IO.Directory.CreateDirectory(this.configurationsDirectoryPath);
+            }
             string newConfigFilePath = configurationsDirectoryPath + "user.config";
 
             // Get the mapped configuration file.

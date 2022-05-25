@@ -68,11 +68,6 @@ namespace EAAddinFramework.Utilities
             this.package = package;
             this.addinName = addinName;
             var configFileName = configurationsDirectoryPath + package.guid + ".config";
-            //check if folder exists, if not create it
-            if (!System.IO.Directory.Exists(configurationsDirectoryPath))
-            {
-                System.IO.Directory.CreateDirectory(configurationsDirectoryPath);
-            }
             //check if package has tagged value for config
             var configTag = this.package.getTaggedValue(tagName);
             if (configTag != null
@@ -124,6 +119,10 @@ namespace EAAddinFramework.Utilities
                     this.configuration.AppSettings.Settings.Add(configEntry.Key, configEntry.Value);
                     keysAdded = true;
                 }
+            }
+            if (!this.configuration.HasFile)
+            {
+                this.configuration.Save();
             }
             if (keysAdded)
             {
