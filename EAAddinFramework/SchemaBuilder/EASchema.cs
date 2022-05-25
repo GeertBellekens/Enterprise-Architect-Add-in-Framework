@@ -22,7 +22,7 @@ namespace EAAddinFramework.SchemaBuilder
     {
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
-        private HashSet<SBF.SchemaElement> schemaElements = null;
+        
         private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
         public SBF.SchemaSettings settings { get; set; }
@@ -89,7 +89,7 @@ namespace EAAddinFramework.SchemaBuilder
             return this.localSharedPackages.Any(x => x.uniqueID == package.uniqueID);
         }
 
-
+        private HashSet<SBF.SchemaElement> _elements = null;
         /// <summary>
         /// the SchemaElements owned by this Schema
         /// </summary>
@@ -97,15 +97,15 @@ namespace EAAddinFramework.SchemaBuilder
         {
             get
             {
-                if (schemaElements == null)
+                if (this._elements == null)
                 {
-                    schemaElements = new HashSet<SBF.SchemaElement>();
+                    this._elements = new HashSet<SBF.SchemaElement>();
                     foreach (EA.SchemaType schemaType in getSchemaTypes())
                     {
-                        schemaElements.Add(EASchemaBuilderFactory.getInstance(this.model).createSchemaElement(this, schemaType));
+                        this._elements.Add(EASchemaBuilderFactory.getInstance(this.model).createSchemaElement(this, schemaType));
                     }
                 }
-                return schemaElements;
+                return this._elements;
             }
             set
             {
@@ -188,31 +188,43 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="subsetElement">the element to search a match for</param>
         /// <returns>the corresponding SchemaElement</returns>
-        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement)
+        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary)
         {
-            var elementWrapperSubsetElement = (TSF_EA.ElementWrapper)subsetElement;
+            var elementWrapperSubsetElement = subsetElement as TSF_EA.ElementWrapper;
             EASchemaElement result = null;
-            if (subsetElement != null)
+            if (elementWrapperSubsetElement == null)
             {
-                //first find the source element from which this subset element is derived
-                //check on if there is a tagged value that references the source element
-                string sourceElementUniqueID = null;
+                return null;
+            }
+            //first find the source element from which this subset element is derived
+            //check on if there is a tagged value that references the source element
+            string sourceElementUniqueID = null;
+            //first try to find it using the subset dictionary
+            if (subsetDictionary != null)
+            {
+                if (subsetDictionary.ContainsKey(elementWrapperSubsetElement.uniqueID))
+                {
+                    sourceElementUniqueID = subsetDictionary[elementWrapperSubsetElement.uniqueID];
+                }
+            }
+            if (string.IsNullOrEmpty(sourceElementUniqueID))
+            {
                 if (this.settings.tvInsteadOfTrace)
                 {
                     //use query to get source element unique ID
                     var sqlGetSourceUniqueID = $@"select tv.Value as uniqueID from t_objectproperties tv
-                                            where tv.Object_ID = {elementWrapperSubsetElement.id}
-                                            and tv.Property = '{this.settings.elementTagName}'";
+                                        where tv.Object_ID = {elementWrapperSubsetElement.id}
+                                        and tv.Property = '{this.settings.elementTagName}'";
                     sourceElementUniqueID = this.model.getFirstValueFromQuery(sqlGetSourceUniqueID, "uniqueID");
                 }
                 else
                 {
                     //check if the subset element has a dependency to the source element of the schema
                     string sqlCheckTrace = $@"select c.End_Object_ID from t_connector c
-													where 
-													c.Connector_Type = 'Abstraction'
-													and c.Stereotype = 'trace'
-													and c.Start_Object_ID = {elementWrapperSubsetElement.id}";
+												where 
+												c.Connector_Type = 'Abstraction'
+												and c.Stereotype = 'trace'
+												and c.Start_Object_ID = {elementWrapperSubsetElement.id}";
                     var checkTraceXML = this.model.SQLQuery(sqlCheckTrace);
                     var endObjectIDNodes = checkTraceXML.SelectNodes(this.model.formatXPath("//End_Object_ID"));
                     foreach (System.Xml.XmlNode connectorIDNode in endObjectIDNodes)
@@ -228,39 +240,40 @@ namespace EAAddinFramework.SchemaBuilder
                         }
                     }
                 }
-                //if we haven't found a source element, then this subset element can't have a schema element
-                if (string.IsNullOrEmpty(sourceElementUniqueID))
+            }
+            //if we haven't found a source element, then this subset element can't have a schema element
+            if (string.IsNullOrEmpty(sourceElementUniqueID))
+            {
+                return null;
+            }
+            //first check if the subset element can be matched to a redefined schemaElement
+            if (this.settings.useAliasForRedefinedElements)
+            {
+                //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
+                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
+                                                                        && x.name == elementWrapperSubsetElement.alias
+                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && (x.subsetElement == null 
+                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID ));
+                //if not found with redefined elemnet then find as regular element
+                if (result == null)
                 {
-                    return null;
-                }
-                //first check if the subset element can be matched to a redefined schemaElement
-                if (this.settings.useAliasForRedefinedElements)
-                {
-                    //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
-                    result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
-                                                                          && x.name == elementWrapperSubsetElement.alias
-                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
-                                                                          && (x.subsetElement == null 
-                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID ));
-                    //if not found with redefined elemnet then find as regular element
-                    if (result == null)
-                    {
-                        result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
-                                                                          && x.name == subsetElement.name
-                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
-                                                                          && (x.subsetElement == null
-                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID));
-                    }
-                }
-                else
-                {
-                    //find based on name, regardless of redefined or not
-                    result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
-                                                                          && x.sourceElement.uniqueID == sourceElementUniqueID
-                                                                          && (x.subsetElement == null
-                                                                              || x.subsetElement.uniqueID == subsetElement.uniqueID));
+                    result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
+                                                                        && x.name == subsetElement.name
+                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && (x.subsetElement == null
+                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 }
             }
+            else
+            {
+                //find based on name, regardless of redefined or not
+                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
+                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && (x.subsetElement == null
+                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID));
+            }
+            
             return result;
         }
         internal EASchemaElement getSchemaElementForSchemaType(EA.SchemaType schemaType)
@@ -504,7 +517,7 @@ namespace EAAddinFramework.SchemaBuilder
             UML.Classes.Kernel.Element targetItem = null;
             if (sourceItem is TSF_EA.ElementWrapper)
             {
-                targetItem = this.schemaElements.FirstOrDefault(x => x.sourceElement.Equals(sourceItem))?.subsetElement;
+                targetItem = this.elements.FirstOrDefault(x => x.sourceElement.Equals(sourceItem))?.subsetElement;
             }
             else if (sourceItem is TSF_EA.AttributeWrapper)
             {
@@ -519,7 +532,7 @@ namespace EAAddinFramework.SchemaBuilder
         }
         private UML.Classes.Kernel.Relationship getSubsetConnector(TSF_EA.ConnectorWrapper sourceConnector)
         {
-            foreach (var schemaElement in this.schemaElements)
+            foreach (var schemaElement in this.elements)
             {
                 foreach (var schemaAssociation in schemaElement.schemaAssociations)
                 {
@@ -535,7 +548,7 @@ namespace EAAddinFramework.SchemaBuilder
         }
         private TSF_EA.AttributeWrapper getSubsetAttributeWrapper(TSF_EA.AttributeWrapper sourceAttribute)
         {
-            foreach (var schemaElement in this.schemaElements)
+            foreach (var schemaElement in this.elements)
             {
                 foreach (var schemaAttribute in schemaElement.schemaProperties)
                 {
@@ -844,22 +857,58 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="messageElement">the message element to start from</param>
         void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement)
         {
+            EAOutputLogger.log(this.model, this.settings.outputName
+                               , $"Getting subset elements starting from root element '{messageElement.name}'" , 0, LogTypeEnum.log);
             HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
             //match each subset element to a schema element
             matchSubsetElements(messageElement.owningPackage, subsetElements);
         }
 
+        private Dictionary<string, string> getSubsetElementDictionary(HashSet<Classifier> subsetElements)
+        {
+            //get a list comma separated objectID's of the subsetElements
+            var subsetElementIDs = String.Join(",", subsetElements.OfType<TSF_EA.ElementWrapper>().Select(x => x.id).ToArray());
+            var schemaSourceElementGuids = String.Join(",", this.elements.Select(x => "'" + x.sourceElement?.uniqueID + "'").ToArray());
+            string sqlGetData;
+            //build a query
+            if (this.settings.tvInsteadOfTrace)
+            {
+                sqlGetData = $@"select o.ea_guid as subsetID, tv.Value as sourceID 
+                                from t_objectproperties tv
+                                inner join t_object o on o.Object_ID = tv.Object_ID
+                                where tv.Object_ID in ({subsetElementIDs})
+                                and tv.Property = '{this.settings.elementTagName}'
+                                and tv.Value in ({schemaSourceElementGuids})";
+            }
+            else
+            {
+                sqlGetData = $@"select o.ea_guid as subsetID, oo.ea_guid as sourceID
+                                from t_connector c
+                                inner join t_object o on o.Object_ID = c.Start_Object_ID
+                                inner join t_object oo on oo.Object_ID = c.End_Object_ID
+                                where 
+                                c.Connector_Type in ('Abstraction', 'Dependency')
+                                and c.Stereotype = 'trace'
+                                and c.Start_Object_ID in ({subsetElementIDs})
+                                and oo.ea_guid in ({schemaSourceElementGuids})";
+            }
+            //return dictionary based on query
+            return this.model.getDictionaryFromQuery(sqlGetData);
+        }
+
         void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
         {
-
+            EAOutputLogger.log(this.model, this.settings.outputName, $"Getting subset element dictionary'", 0, LogTypeEnum.log);
+            //get a dictionary of subset element guid's with their source GUID
+            var subsetDictionary = this.getSubsetElementDictionary(subsetElements);
             //loop subset elements ordered by name
             foreach (Classifier subsetElement in subsetElements.OrderBy(x => name))
             {
                 //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element: '" + subsetElement.name + "' to a schema element"
+                EAOutputLogger.log(this.model, this.settings.outputName, $"Matching subset element: '{subsetElement.name}' to a schema element"
                                    , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
                 //get the corrsponding schema element
-                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement);
+                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary);
 
                 //found a corresponding schema element
                 if (schemaElement != null && shouldElementExistAsDatatype(subsetElement))
@@ -934,23 +983,26 @@ namespace EAAddinFramework.SchemaBuilder
         /// <returns>all subset elements in the subset model for this message element</returns>
         private HashSet<UML.Classes.Kernel.Classifier> getSubsetElementsfromMessage(Classifier messageElement)
         {
+            //TODO: make a layered SQL approach in order to get all subset elements (similar to packageTreeID's)
             var subsetElements = new HashSet<UML.Classes.Kernel.Classifier>();
             this.addRelatedSubsetElements(messageElement, subsetElements);
             //we also add all classes in the package of the subset element
-            foreach (var element in getSubsetElementsfromPackage(messageElement.owningPackage))
-            {
-                this.addToSubsetElements(element, subsetElements);
-            }
+            addSubsetElementsfromPackage((TSF_EA.Package) messageElement.owningPackage, subsetElements);
+   
             return subsetElements;
         }
-        private HashSet<Classifier> getSubsetElementsfromPackage(Package destinationPackage)
+        private void addSubsetElementsfromPackage(TSF_EA.Package destinationPackage, HashSet<Classifier>subsetElements)
         {
-            var subsetElements = new HashSet<Classifier>();
-            foreach (var element in destinationPackage.getAllOwnedElements().OfType<Classifier>())
+            var subsetElementIDString = String.Join(",", subsetElements.OfType<TSF_EA.ElementWrapper>().Select(x => x.id).ToArray());
+            var sqlGetData = $@"select o.Object_ID from t_object o
+                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                            and o.Package_ID in ({destinationPackage.packageTreeIDString})
+                            and o.Object_ID not in ({subsetElementIDString} ) ";
+            var elements = this.model.getElementWrappersByQuery(sqlGetData);
+            foreach (var element in elements.OfType<Classifier>())
             {
                 this.addToSubsetElements(element, subsetElements);
             }
-            return subsetElements;
         }
         /// <summary>
         /// adds all the related subset elements to the list recursively
@@ -959,17 +1011,51 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="subsetElements">the HashSet of subset element to add to</param>
         private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
         {
-            //follow the associations
-            foreach (TSF_EA.Association association in element.getRelationships<UML.Classes.Kernel.Association>())
+            var allElementIDs = new List<string>();
+            var parentElementIDs = new List<string>();
+            //start at the message root
+            parentElementIDs.Add(((TSF_EA.ElementWrapper)element).id.ToString());
+            //get all related elementID's
+            addAllRelatedElementIDs(allElementIDs, parentElementIDs);
+            //get all elements
+            foreach (var elementID in allElementIDs)
             {
-                addToSubsetElements(association.target as UML.Classes.Kernel.Classifier, subsetElements);
+                var subsetElement = model.getElementWrapperByID(int.Parse(elementID)) as Classifier;
+                if (subsetElement != null
+                  && !subsetElements.Contains(subsetElement))
+                {
+                    subsetElements.Add(subsetElement);
+                }
             }
-            //follow the attribute types
-            foreach (TSF_EA.Attribute attribute in element.attributes)
+        }
+        private void addAllRelatedElementIDs(List<string> allElementIDs, List<string>parentElementIDs)
+        {
+            if (! parentElementIDs.Any())
             {
-                addToSubsetElements(attribute.type as UML.Classes.Kernel.Classifier, subsetElements);
+                //no point in searching related elements for nothing
+                return;
             }
-
+            //add the parent elements to all elements
+            allElementIDs.AddRange(parentElementIDs);
+            var parentIDString = String.Join(",", parentElementIDs);
+            var allElementIDString = String.Join(",", allElementIDs);
+            var sqlGetData = $@"select o.Object_ID from t_object o
+                    inner join t_connector c on o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
+                    inner join t_object oo on oo.Object_ID in  (c.Start_Object_ID, c.End_Object_ID)
+                                            and o.Object_ID<> o.Object_ID
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    and oo.Object_ID in ({parentIDString})
+                    and o.Object_ID not in ({allElementIDString})
+                    union
+                    select o.Object_ID from t_object o
+                    inner join t_attribute a on a.Classifier = o.Object_ID
+                    inner join t_object oo on o.Object_ID = a.Object_ID
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    and oo.Object_ID in ({parentIDString})
+                    and o.Object_ID not in ({allElementIDString})";
+            var relatedElementIDs = this.model.getListFromQuery(sqlGetData);
+            //go one level deeper
+            addAllRelatedElementIDs(allElementIDs, relatedElementIDs);
         }
         /// <summary>
         /// adds the given class to the list of subset elements and then adds all related

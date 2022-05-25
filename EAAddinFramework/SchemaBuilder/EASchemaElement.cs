@@ -773,7 +773,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //remove generalizations that shouldn't be there
                 foreach (var subsetGeneralization in subsetGeneralizations)
                 {
-                    var schemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier);
+                    var schemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier, null);
                     if (schemaParent == null) //the generalization does not target an element in the schema
                     {
                         schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(subsetGeneralization.target);

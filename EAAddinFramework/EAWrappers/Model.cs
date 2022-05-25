@@ -783,6 +783,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var valueNode = results.SelectSingleNode(this.formatXPath($"//{field}"));
             return valueNode?.InnerText;
         }
+        public Dictionary<string, string> getDictionaryFromQuery(string sqlQuery)
+        {
+            var dictionary = new Dictionary<string, string>();
+            var results = this.SQLQuery(sqlQuery);
+            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            foreach(XmlNode rowNode in rows)
+            {
+                if (rowNode.ChildNodes.Count >= 2)
+                {
+                    var keyValue = rowNode.ChildNodes[0].InnerText;
+                    var valueValue = rowNode.ChildNodes[1].InnerText;
+                    if (!dictionary.ContainsKey(keyValue))
+                    {
+                        dictionary.Add(keyValue, valueValue);
+                    }
+                }
+            }
+            return dictionary;
+        }
+        public List<String> getListFromQuery(string sqlQuery)
+        {
+            var list = new List<string>();
+            var results = this.SQLQuery(sqlQuery);
+            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            foreach (XmlNode rowNode in rows)
+            {
+                if (rowNode.ChildNodes.Count > 0)
+                {
+                    list.Add(rowNode.ChildNodes[0].InnerText);
+                }
+            }
+            return list;
+        }
         /// <summary>
         /// sets the correct wildcards depending on the database type.
         /// changes '%' into '*' if on ms access
