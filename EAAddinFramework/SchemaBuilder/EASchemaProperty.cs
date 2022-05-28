@@ -117,6 +117,8 @@ namespace EAAddinFramework.SchemaBuilder
                 this.subSetProperty.isID = this.sourceProperty.isID;
                 this.subSetProperty.visibility = this.sourceProperty.visibility;
                 this.subSetProperty.isDerived = this.sourceProperty.isDerived;
+                this.subSetProperty.isUnique = this.sourceProperty.isUnique;
+                this.subSetProperty.isStatic = this.sourceProperty.isStatic;
                 //Set position
                 if (this.settings.keepOriginalAttributeOrder)
                 {
