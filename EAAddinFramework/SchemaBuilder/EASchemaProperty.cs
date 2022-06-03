@@ -119,6 +119,12 @@ namespace EAAddinFramework.SchemaBuilder
                 this.subSetProperty.isDerived = this.sourceProperty.isDerived;
                 this.subSetProperty.isUnique = this.sourceProperty.isUnique;
                 this.subSetProperty.isStatic = this.sourceProperty.isStatic;
+                //properties used by database columns in EA
+                ((UTF_EA.Attribute)this.subSetProperty).allowDuplicates = ((UTF_EA.Attribute)this.sourceProperty).allowDuplicates;
+                ((UTF_EA.Attribute)this.subSetProperty).isOrdered = ((UTF_EA.Attribute)this.sourceProperty).isOrdered;
+                ((UTF_EA.Attribute)this.subSetProperty).length = ((UTF_EA.Attribute)this.sourceProperty).length;
+                ((UTF_EA.Attribute)this.subSetProperty).precision = ((UTF_EA.Attribute)this.sourceProperty).precision;
+                ((UTF_EA.Attribute)this.subSetProperty).scale = ((UTF_EA.Attribute)this.sourceProperty).scale;
                 //Set position
                 if (this.settings.keepOriginalAttributeOrder)
                 {
