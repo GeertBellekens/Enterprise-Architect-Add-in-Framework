@@ -23,6 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 		POSTGRES,
 		ASA,
 		ACCESS2007,
-		FIREBIRD
+		FIREBIRD,
+		SQLITE
 	}
 }

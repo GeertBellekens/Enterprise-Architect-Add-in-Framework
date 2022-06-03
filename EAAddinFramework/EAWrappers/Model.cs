@@ -857,6 +857,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 formattedSQL = formattedSQL.Replace(" like ", " ilike ");
             }
+            //len => length
+            if (this.repositoryType == RepositoryType.ASA ||
+                    this.repositoryType == RepositoryType.ORACLE ||
+                    this.repositoryType == RepositoryType.FIREBIRD ||
+                    this.repositoryType == RepositoryType.POSTGRES ||
+                    this.repositoryType == RepositoryType.SQLITE)
+            {
+                formattedSQL = formattedSQL.Replace("len(", "length(");
+            }
+            else if (this.repositoryType == RepositoryType.FIREBIRD)
+            {
+                formattedSQL = formattedSQL.Replace("len(", "CHAR_LENGTH(");
+            }
             return formattedSQL;
         }
 
@@ -992,6 +1005,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return RepositoryType.ORACLE;
                 case "POSTGRES":
                     return RepositoryType.POSTGRES;
+                case "SL3":
+                    return RepositoryType.SQLITE;
                 default:
                     return RepositoryType.ADOJET;
             }
