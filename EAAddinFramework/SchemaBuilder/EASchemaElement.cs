@@ -225,7 +225,14 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
             //stereotypes
-            this.subsetElement.stereotypes = this.sourceElement.stereotypes;
+            if (this.sourceElement.stereotypes.Count == 1 )
+            {
+                ((TSF_EA.ElementWrapper)this.subsetElement).fqStereotype = ((TSF_EA.ElementWrapper)this.sourceElement).fqStereotype;
+            }
+            else
+            {
+                this.subsetElement.stereotypes = this.sourceElement.stereotypes;
+            }            
             //abstract
             this.subsetElement.isAbstract = this.sourceElement.isAbstract;
             //alias

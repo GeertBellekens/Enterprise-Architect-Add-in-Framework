@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
     public class ElementWrapper : Element, UML.Classes.Kernel.PackageableElement
     {
-        internal global::EA.Element wrappedElement { get; set; }
+        
         private HashSet<UML.Classes.Kernel.Property> _attributes;
         private List<UML.Classes.Kernel.Relationship> _allRelationships;
         private HashSet<AttributeWrapper> _attributeWrappers;
@@ -202,14 +202,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public void setStereotype(string stereotype)
         {
-            this.setProperty("stereotypes", stereotype, this.wrappedElement?.StereotypeEx);
+
+            this.setProperty("stereotypes", stereotype, this.wrappedElement?.FQStereotype);
         }
+
+        
+        public string fqStereotype
+        {
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.FQStereotype);
+            set => this.setProperty("stereotypes", value, this.wrappedElement?.FQStereotype);
+        }
+        
         public override HashSet<UML.Profiles.Stereotype> stereotypes
         {
             get => ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.StereotypeEx));
             set => this.setProperty(getPropertyNameName(), Stereotype.getStereotypeEx(value), this.wrappedElement?.StereotypeEx);
         }
-
+        
         public string author
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Author);
