@@ -868,7 +868,15 @@ namespace EAAddinFramework.SchemaBuilder
         {
             //get a list comma separated objectID's of the subsetElements
             var subsetElementIDs = String.Join(",", subsetElements.OfType<TSF_EA.ElementWrapper>().Select(x => x.id).ToArray());
+            if (subsetElementIDs == String.Empty)
+            {
+                subsetElementIDs = "0";
+            }
             var schemaSourceElementGuids = String.Join(",", this.elements.Select(x => "'" + x.sourceElement?.uniqueID + "'").ToArray());
+            if (schemaSourceElementGuids == String.Empty)
+            {
+                schemaSourceElementGuids = "0";
+            }
             string sqlGetData;
             //build a query
             if (this.settings.tvInsteadOfTrace)

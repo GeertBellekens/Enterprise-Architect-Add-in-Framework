@@ -14,7 +14,6 @@ namespace EAAddinFramework.SchemaBuilder
     public class EASchemaLiteral : EASchemaPropertyWrapper, SBF.SchemaLiteral
     {
         private UTF_EA.EnumerationLiteral _sourceLiteral;
-        private SBF.SchemaSettings settings => this.owner.owner.settings;
         /// <summary>
         /// constructor. Nothing specific, just calling base constructor
         /// </summary>
