@@ -25,7 +25,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
 	, UML.CommonBehaviors.Communications.Event
 	{
 
-		string name;
 		
 		public Event(UTF_EA.Model model, global::EA.Element wrappedElement)
 		: base(model,wrappedElement)

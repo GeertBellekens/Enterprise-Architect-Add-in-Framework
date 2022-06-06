@@ -66,7 +66,7 @@ namespace EAAddinFramework.Databases
 					_wrappedClass = this._factory._modelFactory.createNewElement<Class>(ownerPackage, this.name);
 					//TODO: provide wrapper function for gentype?
 					_wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
-					_wrappedClass.setStereotype("EAUML::view");
+					_wrappedClass.fqStereotype = "EAUML::view";
 					_wrappedClass.save();
 					this.viewOwner = this.viewOwner;
 					this.definition = definition;
@@ -123,7 +123,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public DB.DatabaseItem derivedFromItem {
+		public override DB.DatabaseItem derivedFromItem {
 			get {
 				throw new NotImplementedException();
 			}
@@ -132,19 +132,19 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public string renamedName 
+		public override string renamedName 
 		{
 			get { throw new NotImplementedException();}
 			set { throw new NotImplementedException();}
 		}
 
-		public bool isNotRealized 
+		public override bool isNotRealized 
 		{
 			get { throw new NotImplementedException();}
 			set { throw new NotImplementedException();}
 		}
 
-		public bool isEqualDirty 
+		public override bool isEqualDirty 
 		{
 			get { throw new NotImplementedException();}
 			set { throw new NotImplementedException();}

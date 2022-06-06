@@ -240,7 +240,7 @@ namespace EAAddinFramework.Databases
                     _wrappedClass = this._factory._modelFactory.createNewElement<Class>(ownerPackage, this.name);
                     //TODO: provide wrapper function for gentype?
                     _wrappedClass.wrappedElement.Gentype = this.factory.databaseName;
-                    _wrappedClass.setStereotype("EAUML::table");
+                    _wrappedClass.fqStereotype = "EAUML::table";
                     _wrappedClass.save();
                     //set override and rename and tableSpace
                     this.isOverridden = this.isOverridden;

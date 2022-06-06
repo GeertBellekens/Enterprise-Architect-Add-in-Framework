@@ -358,14 +358,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool isOrdered
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => (bool)this.getProperty(getPropertyNameName(), this.wrappedAttribute.IsOrdered);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.IsOrdered);
         }
 
         public bool isUnique
         {
-            get => !this.wrappedAttribute.AllowDuplicates;
-            set => this.wrappedAttribute.AllowDuplicates = !value;
+            get => !this.allowDuplicates;
+            set => this.allowDuplicates = !value;
         }
         public UML.Classes.Kernel.ValueSpecification upperValue
         {

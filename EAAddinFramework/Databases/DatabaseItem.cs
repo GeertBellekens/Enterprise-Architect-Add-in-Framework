@@ -26,8 +26,8 @@ namespace EAAddinFramework.Databases
 		internal bool? _isOverridden;
 		internal bool? _isRenamed;
 		string _renamedName = string.Empty;
-		public bool isEqualDirty {get;set;}
-		public bool isNew{get;protected set;}
+		public virtual bool isEqualDirty {get;set;}
+		public virtual bool isNew{get;protected set;}
 		
 		public string _logicalName;
 		public string logicalName 
@@ -44,7 +44,7 @@ namespace EAAddinFramework.Databases
 			}
 		}
 
-		public string renamedName 
+		public virtual string renamedName 
 		{
 			get 
 			{
@@ -75,7 +75,7 @@ namespace EAAddinFramework.Databases
 				_mergedEquivalents = value;
 			}
 		}
-		public bool isRenamed 
+		public virtual bool isRenamed 
 		{
 			get 
 			{
@@ -166,7 +166,7 @@ namespace EAAddinFramework.Databases
 				//default implementation: do nothing
 			}
 		}
-		public DB.DatabaseItem derivedFromItem {get;set;}
+		public virtual DB.DatabaseItem derivedFromItem {get;set;}
 		public DB.DatabaseItem createAsNewItem(DB.DatabaseItem owner, bool save = true)
 		{
 			//create as new
@@ -204,7 +204,7 @@ namespace EAAddinFramework.Databases
 		/// Thas means that this item will not be realized as a physical item in the database
 		/// </summary>
 		bool _isNotRealized;
-		public bool isNotRealized
+		public virtual bool isNotRealized
 		{
 			get
 			{

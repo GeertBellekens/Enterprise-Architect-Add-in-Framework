@@ -321,7 +321,7 @@ namespace EAAddinFramework.Databases
 		#endregion
 
 		//Database can't be overriden
-		public bool isOverridden 
+		public override bool isOverridden 
 		{
 			get 
 			{
