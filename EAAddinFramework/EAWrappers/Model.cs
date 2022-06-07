@@ -862,6 +862,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this.repositoryType == RepositoryType.ORACLE ||
                     this.repositoryType == RepositoryType.FIREBIRD ||
                     this.repositoryType == RepositoryType.POSTGRES ||
+                    this.repositoryType == RepositoryType.MYSQL ||
                     this.repositoryType == RepositoryType.SQLITE)
             {
                 formattedSQL = formattedSQL.Replace("len(", "length(");
