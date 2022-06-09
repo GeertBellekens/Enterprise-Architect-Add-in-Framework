@@ -40,6 +40,10 @@ namespace EAAddinFramework.EASpecific
         private static List<Script> staticEAMaticScripts = new List<Script>();
         private static Dictionary<string, string> modelIncludableScripts = new Dictionary<string, string>();
         private static bool reloadModelIncludableScripts;
+        public static void resetScripts()
+        {
+            allEAMaticScripts = null;
+        }
         private EAWrappers.Model model;
         private string scriptID;
         private string code { get; set; }
@@ -58,7 +62,7 @@ namespace EAAddinFramework.EASpecific
         }
         public string scriptkey { get => $"!INC {this.groupName}.{this.name}"; }
         public string errorMessage { get; set; }
-        private ScriptControl scriptController;
+        private ScriptCtrl scriptController;
         public List<ScriptFunction> functions { get; set; }
         public List<ScriptFunction> addinFunctions => this.functions.Where(x => x.isAddinFunction).ToList();
         private ScriptLanguage language;
@@ -147,7 +151,15 @@ namespace EAAddinFramework.EASpecific
             //remove all functions
             this.functions.Clear();
             //create new scriptcontroller
-            this.scriptController = new ScriptControl();
+            if (Environment.Is64BitProcess)
+            {
+                this.scriptController = new ScriptCtrl64();
+            }
+            else
+            {
+                this.scriptController = new ScriptCtrl32();
+            }
+
             this.scriptController.Language = this.language.name;
             this.scriptController.AddObject("Repository", model.wrappedModel);
             //Add the actual code. This must be done in a try/catch because a syntax error in the script will result in an exception from AddCode
@@ -161,20 +173,16 @@ namespace EAAddinFramework.EASpecific
                 //then add the included code to the scriptcontroller
                 this.scriptController.AddCode(includedCode);
                 //set the functions
-                foreach (MSScriptControl.Procedure procedure in this.scriptController.Procedures)
-                {
-                    functions.Add(new ScriptFunction(this, procedure));
-                }
+                this.functions = this.scriptController.GetScriptFunctions(this);
             }
             catch (Exception e)
             {
                 //the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
-                MSScriptControl.IScriptControl iscriptControl = this.scriptController as MSScriptControl.IScriptControl;
-                this.errorMessage = e.Message + " ERROR : " + iscriptControl.Error.Description + " | Line of error: " + iscriptControl.Error.Line + " | Code error: " + iscriptControl.Error.Text;
+                this.errorMessage = e.Message + " ERROR : " + this.scriptController.Error.Description + " | Line of error: " + this.scriptController.Error.Line + " | Code error: " + this.scriptController.Error.Text;
                 var errorMessageToLog = $"Error in loading code for script {this.name}: {this.errorMessage}";
                 Logger.logError(errorMessageToLog);
                 EAOutputLogger.log(this.model, "EA-Matic", errorMessageToLog, 0, LogTypeEnum.error);
-            }
+            }           
         }
         /// <summary>
         /// loads all static includable scripts. These scripts are stored outside the model and can not be changed by the user

@@ -212,6 +212,9 @@
     <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
+    <Compile Include="EASpecific\ScriptCtrl.cs" />
+    <Compile Include="EASpecific\ScriptCtrl32.cs" />
+    <Compile Include="EASpecific\ScriptCtrl64.cs" />
     <Compile Include="EASpecific\ScriptGroup.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
     <Compile Include="EASpecific\JavaScriptLanguage.cs" />
@@ -422,7 +425,11 @@
       <Isolated>False</Isolated>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Files\tsc64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Import Project="..\..\Enterprise-Architect-Toolpack\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\Enterprise-Architect-Toolpack\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -432,6 +439,7 @@
     <Error Condition="!Exists('..\..\Enterprise-Architect-Toolpack\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Enterprise-Architect-Toolpack\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>"%25windir%25\Microsoft.NET\Framework\v4.0.30319\regasm.exe" "$(TargetPath)" /codebase /tlb</PostBuildEvent>
+    <PostBuildEvent>"%25windir%25\Microsoft.NET\Framework\v4.0.30319\regasm.exe" "$(TargetPath)" /codebase /tlb
+regsvr32 "$(TargetDir)Files\tsc64.dll" /s</PostBuildEvent>
   </PropertyGroup>
 </Project>

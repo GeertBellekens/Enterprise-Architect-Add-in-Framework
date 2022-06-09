@@ -18,34 +18,33 @@ namespace EAAddinFramework.EASpecific
     public class ScriptFunction
     {
         public Script owner { get; private set; }
-        public string name
-        {
-            get
-            {
-                return this.procedure.Name;
-            }
-        }
+        public string name { get; set; }
+
         public bool isAddinFunction => (this.name.StartsWith("EA_") || this.name.StartsWith("MDG_")) && !this.name.ToLower().Contains("addin");
-        public string fullName
-        {
-            get
+        public string fullName => this.owner.name + "." + this.name;
+
+        public int? numberOfParameters => this.procedure?.NumArgs;
+
+        private Procedure _procedure;
+        private Procedure procedure 
+        { 
+            get => this._procedure;
+            set
             {
-                return this.owner.name + "." + this.procedure.Name;
+                this._procedure = value;
+                this.name = value.Name;
             }
         }
-        public int numberOfParameters
-        {
-            get
-            {
-                return this.procedure.NumArgs;
-            }
-        }
-        private Procedure procedure { get; set; }
 
         public ScriptFunction(Script owner, Procedure procedure)
         {
             this.owner = owner;
             this.procedure = procedure;
+        }
+        public ScriptFunction (Script owner, String name)
+        {
+            this.owner = owner;
+            this.name = name;
         }
         /// <summary>
         /// execute this function
@@ -55,21 +54,21 @@ namespace EAAddinFramework.EASpecific
         public object execute(object[] parameters)
         {
             if (parameters != null
-                && this.procedure.NumArgs == parameters.Length)
+                && (this.numberOfParameters == parameters.Length || this.numberOfParameters == null))
             {
                 return this.owner.executeFunction(this.name, parameters);
             }
-            else if (this.procedure.NumArgs == 0)
+            else if (this.numberOfParameters == 0 || this.numberOfParameters == null )
             {
                 return this.owner.executeFunction(this.name);
             }
             else if (parameters != null)
             {
-                throw new ArgumentException("wrong number of arguments. Script has " + this.procedure.NumArgs + " argument where the call has " + parameters.Length + " parameters");
+                throw new ArgumentException("wrong number of arguments. Script has " + this.numberOfParameters + " argument where the call has " + parameters.Length + " parameters");
             }
             else
             {
-                throw new ArgumentException("wrong number of arguments. Script has " + this.procedure.NumArgs + " argument where the call has 0 parameters");
+                throw new ArgumentException("wrong number of arguments. Script has " + this.numberOfParameters + " argument where the call has 0 parameters");
             }
         }
     }

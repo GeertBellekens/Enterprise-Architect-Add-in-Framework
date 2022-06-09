@@ -32,10 +32,9 @@ namespace EAAddinFramework.EASpecific
         public IEnumerable<Script> scripts { get => this._scripts.Values; }
         public void addScript(Script script)
         {
-            if (! this._scripts.ContainsKey(script.scriptkey))
-            {
-                this._scripts.Add(script.scriptkey, script);
-            }
+            //remove before adding to make it's the new script we store
+            this.removeScript(script);
+            this._scripts.Add(script.scriptkey, script);
         }
         public void removeScript(Script script)
         {
