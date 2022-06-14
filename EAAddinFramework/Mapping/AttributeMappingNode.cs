@@ -79,15 +79,18 @@ namespace EAAddinFramework.Mapping
                     //remove the first name
                     var reducedPathNames = mappingPathNames.Where((v, i) => i != 0).ToList();
                     //loop child nodes skipping one level for the type of the attribute
-                    foreach (var childNode in this.allChildNodes.FirstOrDefault()?.allChildNodes)
+                    var firstChildNode = this.allChildNodes.FirstOrDefault();
+                    if (firstChildNode != null)
                     {
-                        foundNode = childNode.findNode(reducedPathNames);
-                        if (foundNode != null)
+                        foreach (var childNode in firstChildNode.allChildNodes)
                         {
-                            break;
+                            foundNode = childNode.findNode(reducedPathNames);
+                            if (foundNode != null)
+                            {
+                                break;
+                            }
                         }
                     }
-
                 }
             }
             return foundNode;

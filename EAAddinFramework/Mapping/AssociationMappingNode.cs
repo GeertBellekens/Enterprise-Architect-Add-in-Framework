@@ -148,12 +148,12 @@ namespace EAAddinFramework.Mapping
                         }
                     }
                     //if the end class of the association is not loaded as a node, we check the target class name
-                    if (this.sourceAssociation.targetElement.name == mappingPathNames[0])
+                    if (this.sourceAssociation.targetElement.name.Equals(mappingPathNames[0],System.StringComparison.InvariantCultureIgnoreCase))
                     {
                         foundNode = this;
                     }
                     //if we can't find it as the name of the target element we check the subclasses of the target element
-                    if (((TSF_EA.ElementWrapper)this.sourceAssociation.targetElement).subClasses.Any(x => x.name == mappingPathNames[0]))
+                    if (((TSF_EA.ElementWrapper)this.sourceAssociation.targetElement).subClasses.Any(x => x.name.Equals(mappingPathNames[0],System.StringComparison.InvariantCultureIgnoreCase)))
                     {
                         foundNode = this;
                     }
@@ -161,10 +161,10 @@ namespace EAAddinFramework.Mapping
                 else if (mappingPathNames.Count == 2)
                 {
                     //if the end class of the association is not loaded as a node, we check the target class name
-                    if (this.sourceAssociation.targetElement.name == mappingPathNames[0]
+                    if (this.sourceAssociation.targetElement.name.Equals(mappingPathNames[0], System.StringComparison.InvariantCultureIgnoreCase)
                         && this.sourceAssociation.targetElement.ownedElements
                                         .OfType<UML.Classes.Kernel.Property>()
-                                        .Any(x => x.name == mappingPathNames[1]))
+                                        .Any(x => x.name.Equals(mappingPathNames[1], System.StringComparison.InvariantCultureIgnoreCase)))
                     {
                         foundNode = this;
                     }
