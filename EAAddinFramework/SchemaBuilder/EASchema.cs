@@ -22,7 +22,7 @@ namespace EAAddinFramework.SchemaBuilder
     {
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
-        
+
         private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
         public SBF.SchemaSettings settings { get; set; }
@@ -63,7 +63,7 @@ namespace EAAddinFramework.SchemaBuilder
             return this.wrappedComposer.SchemaName;//only available from version 13.0.1308
         }
 
-        private List<Package>_localSharedPackages = null;
+        private List<Package> _localSharedPackages = null;
         private List<Package> localSharedPackages
         {
             get
@@ -253,8 +253,8 @@ namespace EAAddinFramework.SchemaBuilder
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
                                                                         && x.name == elementWrapperSubsetElement.alias
                                                                         && x.sourceElement.uniqueID == sourceElementUniqueID
-                                                                        && (x.subsetElement == null 
-                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID ));
+                                                                        && (x.subsetElement == null
+                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 //if not found with redefined elemnet then find as regular element
                 if (result == null)
                 {
@@ -273,7 +273,7 @@ namespace EAAddinFramework.SchemaBuilder
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
-            
+
             return result;
         }
         internal EASchemaElement getSchemaElementForSchemaType(EA.SchemaType schemaType)
@@ -343,7 +343,7 @@ namespace EAAddinFramework.SchemaBuilder
                         //tell the user what we are doing 
                         EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset literals for: '" + schemaElement.name + "'"
                                            , 0, LogTypeEnum.log);
-                        if(this.settings.copyAllOperations)
+                        if (this.settings.copyAllOperations)
                         {
                             schemaElement.createSubsetOperations();
                             //tell the user what we are doing 
@@ -461,11 +461,11 @@ namespace EAAddinFramework.SchemaBuilder
                     if (tagValueString.Equals("<memo>", StringComparison.InvariantCultureIgnoreCase))
                     {
                         var targetTagComment = getTargetGUIDs(tuple.Item1.comment);
-                        if (! string.IsNullOrEmpty(targetTagComment))
+                        if (!string.IsNullOrEmpty(targetTagComment))
                         {
-                            tuple.Item2.addTaggedValue(tuple.Item1.name, tagValueString,targetTagComment, false);
+                            tuple.Item2.addTaggedValue(tuple.Item1.name, tagValueString, targetTagComment, false);
                         }
-                        
+
                     }
                     //guidList in the tag value
                     var targetTagString = getTargetGUIDs(tagValueString);
@@ -498,10 +498,10 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
-            return string.Join(",",  targetGUIDs);
+            return string.Join(",", targetGUIDs);
         }
         private List<string> getGUIDsFromString(string guidListString)
-        {          
+        {
             return guidListString.Split(',') // split by comma ","
                 .Select(x => x.Trim()) //remove spaces
                 .Where(x => this.isGUID(x)) //check for GUID values only
@@ -610,7 +610,7 @@ namespace EAAddinFramework.SchemaBuilder
                                                     , "Generate only changes?"
                                                     , MessageBoxButtons.YesNoCancel
                                                     , MessageBoxIcon.Question);
-                    } 
+                    }
                     catch (Exception) //sometimes the this.model.mainEAWindow handle is invalid
                     {
                         response = MessageBox.Show(
@@ -623,7 +623,7 @@ namespace EAAddinFramework.SchemaBuilder
                                                     , MessageBoxButtons.YesNoCancel
                                                     , MessageBoxIcon.Question);
                     }
-                     
+
                     switch (response)
                     {
                         case DialogResult.Yes:
@@ -858,7 +858,7 @@ namespace EAAddinFramework.SchemaBuilder
         void matchSubsetElements(UML.Classes.Kernel.Classifier messageElement)
         {
             EAOutputLogger.log(this.model, this.settings.outputName
-                               , $"Getting subset elements starting from root element '{messageElement.name}'" , 0, LogTypeEnum.log);
+                               , $"Getting subset elements starting from root element in package '{messageElement.owningPackage.name}'", 0, LogTypeEnum.log);
             HashSet<UML.Classes.Kernel.Classifier> subsetElements = this.getSubsetElementsfromMessage(messageElement);
             //match each subset element to a schema element
             matchSubsetElements(messageElement.owningPackage, subsetElements);
@@ -991,41 +991,35 @@ namespace EAAddinFramework.SchemaBuilder
         /// <returns>all subset elements in the subset model for this message element</returns>
         private HashSet<UML.Classes.Kernel.Classifier> getSubsetElementsfromMessage(Classifier messageElement)
         {
-            //TODO: make a layered SQL approach in order to get all subset elements (similar to packageTreeID's)
+            //a layered SQL approach in order to get all subset elements (similar to packageTreeID's)
             var subsetElements = new HashSet<UML.Classes.Kernel.Classifier>();
-            this.addRelatedSubsetElements(messageElement, subsetElements);
-            //we also add all classes in the package of the subset element
-            addSubsetElementsfromPackage((TSF_EA.Package) messageElement.owningPackage, subsetElements);
-   
+            this.addRelatedSubsetElements(messageElement, subsetElements) ;
             return subsetElements;
         }
-        private void addSubsetElementsfromPackage(TSF_EA.Package destinationPackage, HashSet<Classifier>subsetElements)
-        {
-            var subsetElementIDString = String.Join(",", subsetElements.OfType<TSF_EA.ElementWrapper>().Select(x => x.id).ToArray());
-            var sqlGetData = $@"select o.Object_ID from t_object o
-                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
-                            and o.Package_ID in ({destinationPackage.packageTreeIDString})
-                            and o.Object_ID not in ({subsetElementIDString} ) ";
-            var elements = this.model.getElementWrappersByQuery(sqlGetData);
-            foreach (var element in elements.OfType<Classifier>())
-            {
-                this.addToSubsetElements(element, subsetElements);
-            }
-        }
+
         /// <summary>
-        /// adds all the related subset elements to the list recursively
+        /// adds all the related subset elements to the list recursively, including all elements in the package of the element, and it's subpackages
         /// </summary>
         /// <param name="element">the element to start from </param>
         /// <param name="subsetElements">the HashSet of subset element to add to</param>
-        private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
+        private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements )
         {
+            
+            EAOutputLogger.log(this.model, this.settings.outputName
+                               , $"Getting subsetElement IDs level 0", 0, LogTypeEnum.log);
             var allElementIDs = new List<string>();
             var parentElementIDs = new List<string>();
+
+            var sqlGetData = $@"select o.Object_ID from t_object o
+                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                            and o.Package_ID in ({((TSF_EA.Package)element.owningPackage).packageTreeIDString})";
             //start at the message root
-            parentElementIDs.Add(((TSF_EA.ElementWrapper)element).id.ToString());
+            parentElementIDs.AddRange(this.model.getListFromQuery(sqlGetData));
             //get all related elementID's
-            addAllRelatedElementIDs(allElementIDs, parentElementIDs);
-            //get all elements
+            addAllRelatedElementIDs(allElementIDs, parentElementIDs, 0);
+            EAOutputLogger.log(this.model, this.settings.outputName
+                               , $"Getting {allElementIDs.Count} possible subsetElement objects", 0, LogTypeEnum.log);
+            //get all elements from the IDs
             foreach (var elementID in allElementIDs)
             {
                 var subsetElement = model.getElementWrapperByID(int.Parse(elementID)) as Classifier;
@@ -1036,9 +1030,12 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
         }
-        private void addAllRelatedElementIDs(List<string> allElementIDs, List<string>parentElementIDs)
+        private void addAllRelatedElementIDs(List<string> allElementIDs, List<string> parentElementIDs, int level)
         {
-            if (! parentElementIDs.Any())
+            level ++;
+            EAOutputLogger.log(this.model, this.settings.outputName
+                               , $"Getting subsetElement IDs level {level}", 0, LogTypeEnum.log);
+            if (!parentElementIDs.Any())
             {
                 //no point in searching related elements for nothing
                 return;
@@ -1047,41 +1044,26 @@ namespace EAAddinFramework.SchemaBuilder
             allElementIDs.AddRange(parentElementIDs);
             var parentIDString = String.Join(",", parentElementIDs);
             var allElementIDString = String.Join(",", allElementIDs);
-            var sqlGetData = $@"select o.Object_ID from t_object o
-                    inner join t_connector c on o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
-                    inner join t_object oo on oo.Object_ID in  (c.Start_Object_ID, c.End_Object_ID)
-                                            and o.Object_ID<> o.Object_ID
+            var sqlGetData = $@"select o.Object_ID from ((t_object o
+                    inner join t_connector c on (o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
+                                                and c.Connector_Type in ('Aggregation', 'Association', 'Generalization')))
+                    inner join t_object oo on (oo.Object_ID in  (c.Start_Object_ID, c.End_Object_ID)
+                                            and oo.Object_ID <> o.Object_ID))
                     where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     union
-                    select o.Object_ID from t_object o
-                    inner join t_attribute a on a.Classifier = o.Object_ID
-                    inner join t_object oo on o.Object_ID = a.Object_ID
+                    select o.Object_ID from ((t_object o
+                    inner join t_attribute a on a.Classifier = o.Object_ID)
+                    inner join t_object oo on oo.Object_ID = a.Object_ID)
                     where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})";
             var relatedElementIDs = this.model.getListFromQuery(sqlGetData);
             //go one level deeper
-            addAllRelatedElementIDs(allElementIDs, relatedElementIDs);
+            addAllRelatedElementIDs(allElementIDs, relatedElementIDs, level);
         }
-        /// <summary>
-        /// adds the given class to the list of subset elements and then adds all related
-        /// </summary>
-        /// <param name="element">the Class to add</param>
-        /// <param name="subsetElements">the list of subset elements</param>
-        private void addToSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
-        {
-            //add element is not already in the list
-            if (element != null
-                && (element is Class || element is Enumeration || (element is DataType && !(element is PrimitiveType)))
-                && !subsetElements.Contains(element))
-            {
-                subsetElements.Add(element);
-                //add related elements for this element
-                this.addRelatedSubsetElements(element, subsetElements);
-            }
-        }
+
         /// <summary>
         /// copies only the tagged values necesarry
         /// </summary>
@@ -1132,7 +1114,7 @@ namespace EAAddinFramework.SchemaBuilder
                             {
                                 EAOutputLogger.log($"Error saving tagged value {targetTaggedValue.name} on item {target.name} with GUID {target.uniqueID}. Try to update the target element first, making sure it has the correct stereotype and all associated tagged values.", 0, LogTypeEnum.error);
                             }
-                            
+
                         }
                     }
                     else
@@ -1146,7 +1128,7 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             EAOutputLogger.log($"Error creating new tagged value {sourceTaggedValue.name} on item {target.name} with GUID {target.uniqueID}. Try to update the target element first, making sure it has the correct stereotype and all associated tagged values.", 0, LogTypeEnum.error);
                         }
-                        
+
                     }
                 }
             }
