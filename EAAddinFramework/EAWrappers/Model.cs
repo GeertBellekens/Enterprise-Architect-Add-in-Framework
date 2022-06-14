@@ -22,11 +22,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private static string _applicationFullPath;
 
 
-        public bool useCache 
-        { 
-            get;  
-            set; 
-        } = false;
+        public bool useCache {get;set;} = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
         private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
 
@@ -64,7 +60,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return this.wrappedModel.IsTabOpen(tabName) > 0;
         }
-  
+
         /// <summary>
         /// returns the full path of the running ea.exe
         /// </summary>
@@ -297,7 +293,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //check if element exists in cache and return it if found
             ElementWrapper elementWrapper = this.getElementFromCache(id);
             if (elementWrapper != null) return elementWrapper; //found it
-            
+
             //not found in cache (or cache not used) get the regular way
             global::EA.Element eaElement;
             try
@@ -788,7 +784,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var dictionary = new Dictionary<string, string>();
             var results = this.SQLQuery(sqlQuery);
             var rows = results.SelectNodes(this.formatXPath("//Row"));
-            foreach(XmlNode rowNode in rows)
+            foreach (XmlNode rowNode in rows)
             {
                 if (rowNode.ChildNodes.Count >= 2)
                 {
@@ -921,6 +917,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             formattedQuery = formattedQuery.Insert(beginWhere + whereString.Length, rowcountCondition);
                             break;
                         case RepositoryType.MYSQL:
+                        case RepositoryType.SQLITE:
                         case RepositoryType.POSTGRES:
                             // remove "top N" clause
                             formattedQuery = formattedQuery.Replace(selectTopN, "select ");
@@ -988,7 +985,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public RepositoryType getRepositoryType()
         {
             var eaType = this.wrappedModel.RepositoryType();
-            switch(eaType)
+            switch (eaType)
             {
                 case "JET":
                     return RepositoryType.ADOJET;
