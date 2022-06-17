@@ -226,6 +226,7 @@
     <Compile Include="EAWrappers\Class.cs" />
     <Compile Include="EAWrappers\ClassDiagram.cs" />
     <Compile Include="EAWrappers\CommunicationDiagram.cs" />
+    <Compile Include="EAWrappers\Component.cs" />
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\Constraint.cs" />

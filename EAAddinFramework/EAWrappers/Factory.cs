@@ -343,6 +343,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             break;
                         }
                     }
+                case "Component":
+                    newElementWrapper = new Component(this.model as Model, elementToWrap);
+                    break;
                 case "Object":
                     newElementWrapper = new InstanceSpecification(this.model as Model, elementToWrap);
                     break;
