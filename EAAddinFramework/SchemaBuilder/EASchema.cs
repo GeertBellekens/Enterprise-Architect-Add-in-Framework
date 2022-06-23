@@ -1045,9 +1045,9 @@ namespace EAAddinFramework.SchemaBuilder
             var parentIDString = String.Join(",", parentElementIDs);
             var allElementIDString = String.Join(",", allElementIDs);
             var sqlGetData = $@"select o.Object_ID from ((t_object o
-                    inner join t_connector c on (o.Object_ID in (c.Start_Object_ID, c.End_Object_ID)
-                                                and c.Connector_Type in ('Aggregation', 'Association', 'Generalization')))
-                    inner join t_object oo on (oo.Object_ID in  (c.Start_Object_ID, c.End_Object_ID)
+                    inner join t_connector c on (o.Object_ID = c.End_Object_ID
+                                                and c.Connector_Type in ('Aggregation', 'Association')))
+                    inner join t_object oo on (oo.Object_ID = c.Start_Object_ID
                                             and oo.Object_ID <> o.Object_ID))
                     where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
                     and oo.Object_ID in ({parentIDString})
