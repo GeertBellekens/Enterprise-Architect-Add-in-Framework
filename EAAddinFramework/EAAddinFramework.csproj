@@ -102,7 +102,7 @@
       <HintPath>..\..\Enterprise-Architect-Toolpack\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
     </Reference>
     <Reference Include="Interop.EA">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Sparx Systems\EA\Interop.EA.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Sparx Systems\EA\Interop.EA.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -252,10 +252,12 @@
     <Compile Include="EAWrappers\Class.cs" />
     <Compile Include="EAWrappers\ClassDiagram.cs" />
     <Compile Include="EAWrappers\CommunicationDiagram.cs" />
+    <Compile Include="EAWrappers\Component.cs" />
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
     <Compile Include="EAWrappers\Constraint.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
+    <Compile Include="EAWrappers\InstanceSpecification.cs" />
     <Compile Include="EAWrappers\EnumerationLiteral.cs" />
     <Compile Include="EAWrappers\InformationFlow.cs" />
     <Compile Include="EAWrappers\InformationItem.cs" />
