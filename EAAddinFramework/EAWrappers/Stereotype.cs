@@ -55,8 +55,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public string qualifiedName
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get => string.IsNullOrEmpty(this.profileName) ?
+                   this.name :
+                   string.Join("::", new string[] { this.profileName, this.name });
+            set => this.name = value;
         }
 
         /// if the owning element is a namespace then this is returned.
