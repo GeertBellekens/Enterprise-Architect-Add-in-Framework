@@ -359,6 +359,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             break;
                         }
                     }
+                case "Object":
+                    newElementWrapper = new InstanceSpecification(this.model as Model, elementToWrap);
+                    break;
                 case "Enumeration":
                     // since version 10 there are also "real" enumerations Both are still supported
                     newElementWrapper = new Enumeration(this.model as Model, elementToWrap);
@@ -444,6 +447,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     break;
                 case "InteractionFragment":
                     newElementWrapper = new InteractionFragment(this.model as Model, elementToWrap);
+                    break;
+                case "Component":
+                    newElementWrapper = new Component(this.model as Model, elementToWrap);
                     break;
                 default:
                     newElementWrapper = new ElementWrapper(this.model as Model, elementToWrap);
@@ -857,9 +863,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 newElement = new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType)));
             }
-            else
             {
-                newElement = (Element)this.model.factory.createElement(collection.AddNew(name, this.translateTypeName(EAType)));
+                var eaElement = collection.AddNew(name, this.translateTypeName(EAType));
+                //we need to save a package element because otherwise the EA.element does not exist in the model yet.
+                //that means we get a nullpointerexception when saving the new package.
+                var eaPackage = eaElement as global::EA.Package;
+                if (eaPackage != null)
+                {
+                    eaPackage.Update();
+                }
+                newElement = this.model.factory.createElement(eaElement) as Element;
             }
             //indicate it's new
             newElement.isNew = true;
@@ -885,7 +898,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return "Class";
                 case "NoteComment":
                     return "Note";
-
+                case "InstanceSpecification":
+                    return "Object";
                 default:
                     return typeName;
             }
@@ -911,7 +925,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return type.Name == "Parameter";
         }
-
+        internal bool isEAEmbeddedElement(System.Type type)
+        {
+            //issue in how to make the different between a property element an
+            return type.Name == "Port";
+        }
         internal bool isEAConnector(System.Type type)
         {
             return type.Name == "Dependency"
