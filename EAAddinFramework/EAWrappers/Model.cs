@@ -839,12 +839,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private string formatSQLFunctions(string sqlQuery)
         {
             string formattedSQL = sqlQuery;
-            //lcase -> lower in T-SQL (SQLSVR and ASA and Oracle and FireBird)
+            //lcase -> lower 
             if (this.repositoryType == RepositoryType.SQLSVR ||
                 this.repositoryType == RepositoryType.ASA ||
                    this.repositoryType == RepositoryType.ORACLE ||
                    this.repositoryType == RepositoryType.FIREBIRD ||
-                   this.repositoryType == RepositoryType.POSTGRES)
+                   this.repositoryType == RepositoryType.POSTGRES ||
+                   this.repositoryType == RepositoryType.SQLITE)
             {
                 formattedSQL = formattedSQL.Replace("lcase(", "lower(");
             }
