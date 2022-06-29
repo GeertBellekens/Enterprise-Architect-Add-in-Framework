@@ -863,6 +863,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 newElement = new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType)));
             }
+            else
             {
                 var eaElement = collection.AddNew(name, this.translateTypeName(EAType));
                 //we need to save a package element because otherwise the EA.element does not exist in the model yet.
