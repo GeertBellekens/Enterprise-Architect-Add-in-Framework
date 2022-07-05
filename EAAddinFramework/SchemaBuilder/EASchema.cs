@@ -99,6 +99,9 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._elements == null)
                 {
+                    //reset elementGUIDString
+                    this._elementGUIDstring = null;
+                    //get elements
                     this._elements = new HashSet<SBF.SchemaElement>();
                     foreach (EA.SchemaType schemaType in getSchemaTypes())
                     {
@@ -110,6 +113,20 @@ namespace EAAddinFramework.SchemaBuilder
             set
             {
                 throw new NotImplementedException();
+            }
+        }
+        private string _elementGUIDstring = null;
+        private string elementGUIDstring
+        {
+            get
+            {
+                if (this._elementGUIDstring == null)
+                {
+                    this._elementGUIDstring = "'" 
+                                            + string.Join("','", this.elements.Where(x => x.sourceElement != null).Select(x => x.sourceElement.uniqueID).ToArray<string>()) 
+                                            + "'" ;
+                }
+                return _elementGUIDstring;
             }
         }
         private TSF_EA.ElementWrapper _containerElement;
@@ -1044,7 +1061,8 @@ namespace EAAddinFramework.SchemaBuilder
             allElementIDs.AddRange(parentElementIDs);
             var parentIDString = String.Join(",", parentElementIDs);
             var allElementIDString = String.Join(",", allElementIDs);
-            var sqlGetData = $@"select o.Object_ID from ((t_object o
+            var sqlGetData = $@"select o.Object_ID from  (
+                    select o.Object_ID from ((t_object o
                     inner join t_connector c on (o.Object_ID = c.End_Object_ID
                                                 and c.Connector_Type in ('Aggregation', 'Association')))
                     inner join t_object oo on (oo.Object_ID = c.Start_Object_ID
@@ -1058,7 +1076,29 @@ namespace EAAddinFramework.SchemaBuilder
                     inner join t_object oo on oo.Object_ID = a.Object_ID)
                     where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
                     and oo.Object_ID in ({parentIDString})
-                    and o.Object_ID not in ({allElementIDString})";
+                    and o.Object_ID not in ({allElementIDString})
+                    )o
+                    where exists";
+            if (this.settings.tvInsteadOfTrace)
+            {
+                sqlGetData += Environment.NewLine +
+                    $@"(select tv.ea_guid
+					from t_objectproperties tv 
+					where tv.Object_ID = o.Object_ID
+							and tv.Property = '{this.settings.elementTagName}'
+							and tv.Value in ({this.elementGUIDstring})
+					)";
+            }
+            else
+            {
+                sqlGetData += Environment.NewLine +
+                    $@"(select * from t_connector tr
+					inner join t_object oso on oso.Object_ID = tr.End_Object_ID
+									and oso.ea_guid in ({this.elementGUIDstring})
+					where tr.Stereotype = 'trace'
+					and tr.Start_Object_ID = o.Object_ID
+					)";
+            }
             var relatedElementIDs = this.model.getListFromQuery(sqlGetData);
             //go one level deeper
             addAllRelatedElementIDs(allElementIDs, relatedElementIDs, level);
