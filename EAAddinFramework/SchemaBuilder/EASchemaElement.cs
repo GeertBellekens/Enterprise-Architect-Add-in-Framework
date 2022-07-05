@@ -225,14 +225,14 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
             //stereotypes
-            if (this.sourceElement.stereotypes.Count == 1 )
+            if (this.sourceElement.stereotypes.Count == 1)
             {
                 ((TSF_EA.ElementWrapper)this.subsetElement).fqStereotype = ((TSF_EA.ElementWrapper)this.sourceElement).fqStereotype;
             }
             else
             {
                 this.subsetElement.stereotypes = this.sourceElement.stereotypes;
-            }            
+            }
             //abstract
             this.subsetElement.isAbstract = this.sourceElement.isAbstract;
             //alias
@@ -1035,42 +1035,41 @@ namespace EAAddinFramework.SchemaBuilder
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching relations of subset element: '" + this.subsetElement.name + "' to the schema"
                                    , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
-                foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>())
+                //get outgoing associations of the subset element
+                foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>(true, false))
                 {
-                    //we are only interested in the outgoing associations
-                    if (this.subsetElement.Equals(association.source))
-                    {
-                        EASchemaAssociation matchingAssociation = this.getMatchingSchemaAssociation(association);
-                        if (matchingAssociation != null)
-                        {
-                            if (matchingAssociation.subsetAssociations == null)
-                            {
-                                matchingAssociation.subsetAssociations = new List<Association>();
 
-                            }
-                            matchingAssociation.subsetAssociations.Add(association);
-                        }
-                        else
+                    EASchemaAssociation matchingAssociation = this.getMatchingSchemaAssociation(association);
+                    if (matchingAssociation != null)
+                    {
+                        if (matchingAssociation.subsetAssociations == null)
                         {
-                            //only delete if the target does not have a stereotype in the list of ignored stereotypes or if this association does not have an ignored stereotype
-                            if (association.target.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0
-                                && association.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
+                            matchingAssociation.subsetAssociations = new List<Association>();
+
+                        }
+                        matchingAssociation.subsetAssociations.Add(association);
+                    }
+                    else
+                    {
+                        //only delete if the target does not have a stereotype in the list of ignored stereotypes or if this association does not have an ignored stereotype
+                        if (association.target.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0
+                            && association.stereotypes.Count(x => this.owner.settings.ignoredStereotypes.Contains(x.name)) <= 0)
+                        {
+                            //check if the subset element is used in a schema or subset downstream
+                            if (EASchema.isItemUsedInASchema(association, this.model))
                             {
-                                //check if the subset element is used in a schema or subset downstream
-                                if (EASchema.isItemUsedInASchema(association, this.model))
-                                {
-                                    //report error
-                                    EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Subset association '{subsetElement.name}.{association.name}.{association.targetName}' cannot be deleted as it is still used in one or more schemas"
-                                           , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.warning);
-                                }
-                                else
-                                {
-                                    //no match, delete the association
-                                    association.delete();
-                                }
+                                //report error
+                                EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Subset association '{subsetElement.name}.{association.name}.{association.targetName}' cannot be deleted as it is still used in one or more schemas"
+                                       , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.warning);
+                            }
+                            else
+                            {
+                                //no match, delete the association
+                                association.delete();
                             }
                         }
                     }
+
                 }
             }
         }
@@ -1088,22 +1087,23 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 string tagReference = sourceAssociationTag.eaStringValue;
 
-                foreach (EASchemaAssociation schemaAssociation in this.schemaAssociations)
+                foreach (var schemaAssociation in this.schemaAssociations
+                                    .OfType<EASchemaAssociation>()
+                                    .Where(x => tagReference.Equals(x.sourceAssociation?.uniqueID, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     //we have the same attribute if the given attribute has a tagged value 
                     //called sourceAssociation that refences the source association of the schema Association
-                    if (((TSF_EA.Association)schemaAssociation.sourceAssociation).guid == tagReference)
+                    //if the schema association has choiceElements then the target of the association should match one of the choice elements
+                    //if it has a redefinedElement, then the target of the association should be the subset element of the redefinedElement
+                    if ( schemaAssociation.choiceElements?.Exists(x => association.target?.Equals(x.subsetElement) == true) == true
+                       || association.target?.Equals(schemaAssociation.redefinedElement?.subsetElement) == true
+                        || schemaAssociation.choiceElements?.Any() != true && schemaAssociation.redefinedElement == null
+                           && association.target?.Equals(schemaAssociation.otherElement.subsetElement) == true)
                     {
-                        //if the schema association has choiceElements then the target of the association should match one of the choice elements
-                        if ((schemaAssociation.choiceElements != null
-                             && (schemaAssociation.choiceElements.Count == 0
-                                 || schemaAssociation.choiceElements.Exists(x => association.target.Equals(x.subsetElement))))
-                            || schemaAssociation.choiceElements == null)
-                        {
-                            result = schemaAssociation;
-                            break;
-                        }
+                        result = schemaAssociation;
+                        break;
                     }
+
                 }
             }
             return result;
