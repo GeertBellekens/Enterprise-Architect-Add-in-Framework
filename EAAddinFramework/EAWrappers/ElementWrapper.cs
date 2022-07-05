@@ -587,8 +587,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //refresh attributes to make sure we have an up-to-date list
                     this.wrappedElement?.Attributes.Refresh();
                     //get the attribute wrappers
-                    this._attributeWrappers = new HashSet<AttributeWrapper>(Factory.getInstance(this.EAModel)
-                                     .createElements(this.wrappedElement?.Attributes, this).Cast<AttributeWrapper>());
+                    this._attributeWrappers = new HashSet<AttributeWrapper>(
+                        this.EAModel.factory.createElements(this.wrappedElement?.Attributes).OfType<AttributeWrapper>());
                 }
                 return this._attributeWrappers;
             }
