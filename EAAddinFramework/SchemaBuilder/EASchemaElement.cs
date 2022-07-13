@@ -972,29 +972,49 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="destinationPackage"></param>
         public void matchSubsetElement(Package destinationPackage)
         {
-            string sqlGetClassifiers;
+            string sqlGetClassifiersBase;
             if (this.ownerSchema.settings.tvInsteadOfTrace)
             {
                 //get the classifier in the subset that represents this element
-                sqlGetClassifiers = "select distinct o.Object_ID from t_object o "
-                                   + "  inner join t_objectproperties p on p.Object_ID = o.Object_ID"
-                                   + $" where p.Property = '{this.ownerSchema.settings.elementTagName}'"
-                                   + $"  and p.Value = '{this.sourceElement?.uniqueID}'"
-                                   + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
+                sqlGetClassifiersBase = $@"select top(1) o.Object_ID from t_object o 
+                                     inner join t_objectproperties p on p.Object_ID = o.Object_ID
+                                     where p.Property = '{this.ownerSchema.settings.elementTagName}'
+                                     and p.Value = '{this.sourceElement?.uniqueID}'
+                                     and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
             }
             else
             {
                 //get the classifier in the subset that represents this element
-                sqlGetClassifiers = "select distinct o.Object_ID from ((t_object o"
-                                       + " inner join t_connector c on(c.Start_Object_ID = o.Object_ID"
-                                       + "                and c.Connector_Type = 'Abstraction'"
-                                       + "               and c.Stereotype = 'trace'))"
-                                       + "   inner join t_object ot on ot.Object_ID = c.End_Object_ID)"
-                                       + $"    where ot.ea_guid = '{this.sourceElement?.uniqueID}'"
-                                       + $"  and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
+                sqlGetClassifiersBase = $@"select top(1) o.Object_ID from ((t_object o
+                                         inner join t_connector c on(c.Start_Object_ID = o.Object_ID
+                                                       and c.Connector_Type = 'Abstraction'
+                                                      and c.Stereotype = 'trace'))
+                                         inner join t_object ot on ot.Object_ID = c.End_Object_ID)
+                                         where ot.ea_guid = '{this.sourceElement?.uniqueID}'
+                                         and o.Package_ID in ({((TSF_EA.Package)destinationPackage).packageTreeIDString})";
+            }
+            string sqlGetClassifiers;
+            //if the schemaElement is redefined, we need to find the subset element with the correct name (or alias)
+            if (this.isRedefined && this.owner.settings.useAliasForRedefinedElements)
+            {
+                sqlGetClassifiers = $@"{sqlGetClassifiersBase}{Environment.NewLine} and o.Alias = '{this.name}'";
+            }
+            else
+            {
+                sqlGetClassifiers = $@"{sqlGetClassifiersBase}{Environment.NewLine} and o.Name = '{this.name}'";
+            }
+            var subsetCandidates = this.model.getElementWrappersByQuery(sqlGetClassifiers);
+            //if we haven't found any candidates, and this schema element has not been redefined in this schema, then we look without checking the name or alias
+            if (!subsetCandidates.Any() 
+                && ! this.isRedefined 
+                && ! this.ownerSchema.elements.OfType<EASchemaElement>().Any(x => x.sourceElement != null
+                                                                       && x.sourceElement.uniqueID == this.sourceElement?.uniqueID
+                                                                       && x.isRedefined))
+            {
+                subsetCandidates = this.model.getElementWrappersByQuery(sqlGetClassifiersBase);
             }
             //match with this classifier
-            this.matchSubsetElement(this.model.getElementWrappersByQuery(sqlGetClassifiers).OfType<Classifier>().FirstOrDefault());
+            this.matchSubsetElement(subsetCandidates.OfType<Classifier>().FirstOrDefault());
         }
 
         /// <summary>
@@ -1095,7 +1115,7 @@ namespace EAAddinFramework.SchemaBuilder
                     //called sourceAssociation that refences the source association of the schema Association
                     //if the schema association has choiceElements then the target of the association should match one of the choice elements
                     //if it has a redefinedElement, then the target of the association should be the subset element of the redefinedElement
-                    if ( schemaAssociation.choiceElements?.Exists(x => association.target?.Equals(x.subsetElement) == true) == true
+                    if (schemaAssociation.choiceElements?.Exists(x => association.target?.Equals(x.subsetElement) == true) == true
                        || association.target?.Equals(schemaAssociation.redefinedElement?.subsetElement) == true
                         || schemaAssociation.choiceElements?.Any() != true && schemaAssociation.redefinedElement == null
                            && association.target?.Equals(schemaAssociation.otherElement.subsetElement) == true)
