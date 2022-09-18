@@ -917,12 +917,8 @@ namespace EAAddinFramework.SchemaBuilder
                                 and c.Start_Object_ID in ({subsetElementIDs})
                                 and oo.ea_guid in ({schemaSourceElementGuids})";
             }
-            //get the dictionary based on the query
-            var subsetDictionary = this.model.getDictionaryFromQuery(sqlGetData);
-            //for all shared subsetElements, we add an entry with the same GUID as these are both subset element as sourceElement
-
             //return dictionary based on query
-            return subsetDictionary;
+            return this.model.getDictionaryFromQuery(sqlGetData);
         }
 
         void matchSubsetElements(Package destinationPackage, HashSet<Classifier> subsetElements)
@@ -1065,8 +1061,8 @@ namespace EAAddinFramework.SchemaBuilder
             allElementIDs.AddRange(parentElementIDs);
             var parentIDString = String.Join(",", parentElementIDs);
             var allElementIDString = String.Join(",", allElementIDs);
-            var sqlGetData = $@"select o.Object_ID from (
-                    select o.Object_ID, o.Package_ID  from ((t_object o
+            var sqlGetData = $@"select o.Object_ID from  (
+                    select o.Object_ID from ((t_object o
                     inner join t_connector c on (o.Object_ID = c.End_Object_ID
                                                 and c.Connector_Type in ('Aggregation', 'Association')))
                     inner join t_object oo on (oo.Object_ID = c.Start_Object_ID
@@ -1075,7 +1071,7 @@ namespace EAAddinFramework.SchemaBuilder
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     union
-                    select o.Object_ID, o.Package_ID from ((t_object o
+                    select o.Object_ID from ((t_object o
                     inner join t_attribute a on a.Classifier = o.Object_ID)
                     inner join t_object oo on oo.Object_ID = a.Object_ID)
                     where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
@@ -1091,44 +1087,16 @@ namespace EAAddinFramework.SchemaBuilder
 					where tv.Object_ID = o.Object_ID
 							and tv.Property = '{this.settings.elementTagName}'
 							and tv.Value in ({this.elementGUIDstring})
-					union
-					select tv.ea_guid  
-					from (( t_objectproperties tv 
-					inner join t_object po on po.Object_ID = tv.Object_ID)
-					inner join t_package p on p.ea_guid = po.ea_guid
-											and o.Package_ID = p.Package_ID)
-					where tv.Property = 'shared'
-					and tv.Value = 'true'
-					union
-					select tv.ea_guid  
-					from t_objectproperties tv 
-					where tv.Object_ID = o.Object_ID
-					and tv.Property = 'shared'
-					and tv.Value = 'true'
 					)";
             }
             else
             {
                 sqlGetData += Environment.NewLine +
-                    $@"(select tr.ea_guid from t_connector tr
+                    $@"(select * from t_connector tr
 					inner join t_object oso on oso.Object_ID = tr.End_Object_ID
 									and oso.ea_guid in ({this.elementGUIDstring})
 					where tr.Stereotype = 'trace'
 					and tr.Start_Object_ID = o.Object_ID
-					union
-					select tv.ea_guid  
-					from (( t_objectproperties tv 
-					inner join t_object po on po.Object_ID = tv.Object_ID)
-					inner join t_package p on p.ea_guid = po.ea_guid
-											and o.Package_ID = p.Package_ID)
-					where tv.Property = 'shared'
-					and tv.Value = 'true'
-					union
-					select tv.ea_guid  
-					from t_objectproperties tv 
-					where tv.Object_ID = o.Object_ID
-					and tv.Property = 'shared'
-					and tv.Value = 'true'
 					)";
             }
             var relatedElementIDs = this.model.getListFromQuery(sqlGetData);
