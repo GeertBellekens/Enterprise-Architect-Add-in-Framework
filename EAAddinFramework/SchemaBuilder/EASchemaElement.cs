@@ -868,11 +868,11 @@ namespace EAAddinFramework.SchemaBuilder
 
         /// <summary>
         /// checks all attributes of the subset element and tries to match it with a SchemaProperty.
-        /// It it can't be matches te subset attribute is deleted.
+        /// If it can't be matched to a subset attribute it is deleted.
         /// </summary>
         public void matchSubsetAttributes()
         {
-            if (this.subsetElement != null)
+            if (!this.isShared && this.subsetElement != null)
             {
                 foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes)
                 {
@@ -1050,7 +1050,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         public void matchSubsetAssociations()
         {
-            if (this.subsetElement != null)
+            if (!this.isShared && this.subsetElement != null)
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching relations of subset element: '" + this.subsetElement.name + "' to the schema"
@@ -1089,7 +1089,6 @@ namespace EAAddinFramework.SchemaBuilder
                             }
                         }
                     }
-
                 }
             }
         }

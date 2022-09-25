@@ -962,6 +962,11 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
+            //now we loop all schemaElements that haven't been matched yet to figure out if they should be matched with a shared class
+            foreach (var schemaElement in this.elements.Where( x=> x.subsetElement == null && x.isShared))
+            {
+                schemaElement.subsetElement = schemaElement.sourceElement;
+            }
         }
         public static bool isItemUsedInASchema(UML.Classes.Kernel.Element element, TSF_EA.Model model)
         {
