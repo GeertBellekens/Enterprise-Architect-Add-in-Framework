@@ -133,6 +133,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Alias);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedElement?.Alias);
         }
+        public string genType
+        {
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Gentype);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement?.Gentype);
+        }
+        public string pdata2
+        {
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.MiscData[1]);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedElement?.MiscData[1]);
+        }
         public string status
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Status);
@@ -280,7 +290,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 this.wrappedElement.Genlinks = (string)this.getProperty("genLinks");
             }
-
+            if (this.getProperty("genType") != null)
+            {
+                this.wrappedElement.Gentype = (string)this.getProperty("genType");
+            }
             if (this.getProperty("subType") != null)
             {
                 this.wrappedElement.Subtype = (int)this.getProperty("subType");
@@ -413,6 +426,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
 
             this.wrappedElement?.Update();
+            //save pdata after saving the other properties
+            if (this.getProperty("pdata2") != null)
+            {
+                var updatePdataSQL = $"update t_object set pdata2 = '{(string)this.getProperty("pdata2")}' where ea_guid = '{this.uniqueID}'";
+                this.EAModel.executeSQL(updatePdataSQL);
+            }
         }
         public List<string> primitiveParentNames
         {

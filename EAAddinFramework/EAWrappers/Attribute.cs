@@ -161,6 +161,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 this.wrappedAttribute.IsDerived = (bool)this.getProperty("isDerived");
             }
+            if (this.getProperty("isOrdered") != null)
+            {
+                this.wrappedAttribute.IsOrdered = (bool)this.getProperty("isOrdered");
+            }
+            if (this.getProperty("isCollection") != null)
+            {
+                this.wrappedAttribute.IsCollection = (bool)this.getProperty("isCollection");
+            }
 
             //multiplicity is a bit of an exception. We only save the info if it actually has changed
             var multiplicityProperty = this.getPropertyInfo("EAMultiplicity");
@@ -354,12 +362,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => throw new NotImplementedException();
         }
 
-
-
         public bool isOrdered
         {
             get => (bool)this.getProperty(getPropertyNameName(), this.wrappedAttribute.IsOrdered);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.IsOrdered);
+        }
+
+        public bool isCollection
+        {
+            get => (bool)this.getProperty(getPropertyNameName(), this.wrappedAttribute.IsCollection);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.IsCollection);
         }
 
         public bool isUnique

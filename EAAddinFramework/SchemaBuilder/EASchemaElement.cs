@@ -264,6 +264,10 @@ namespace EAAddinFramework.SchemaBuilder
             }
             //genlinks
             ((TSF_EA.ElementWrapper)this.subsetElement).genLinks = ((TSF_EA.ElementWrapper)this.sourceElement).genLinks;
+            //gentype, used to store the datatype type in Tables
+            ((TSF_EA.ElementWrapper)this.subsetElement).genType = ((TSF_EA.ElementWrapper)this.sourceElement).genType;
+            //pdata2 stored the database name
+            ((TSF_EA.ElementWrapper)this.subsetElement).pdata2 = ((TSF_EA.ElementWrapper)this.sourceElement).pdata2;
             //keywords
             ((TSF_EA.ElementWrapper)this.subsetElement).keywords = ((TSF_EA.ElementWrapper)this.sourceElement).keywords;
             //notes only update them if they are empty
@@ -911,7 +915,7 @@ namespace EAAddinFramework.SchemaBuilder
 
         public void matchSubsetLiterals()
         {
-            if (this.subsetElement != null)
+            if (!this.isShared && this.subsetElement != null)
             {
                 var subsetElementWrapper = this.subsetElement as TSF_EA.ElementWrapper;
                 if (subsetElementWrapper != null)
