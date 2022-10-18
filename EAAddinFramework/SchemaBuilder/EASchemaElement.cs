@@ -1121,7 +1121,7 @@ namespace EAAddinFramework.SchemaBuilder
                     if (schemaAssociation.choiceElements?.Exists(x => association.target?.Equals(x.subsetElement) == true) == true
                        || association.target?.Equals(schemaAssociation.redefinedElement?.subsetElement) == true
                         || schemaAssociation.choiceElements?.Any() != true && schemaAssociation.redefinedElement == null
-                           && association.target?.Equals(schemaAssociation.otherElement.subsetElement) == true)
+                           && association.target?.Equals(schemaAssociation.otherElement?.subsetElement) == true)
                     {
                         result = schemaAssociation;
                         break;
