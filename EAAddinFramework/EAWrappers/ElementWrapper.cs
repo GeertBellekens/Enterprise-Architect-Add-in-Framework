@@ -426,10 +426,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
 
             this.wrappedElement?.Update();
+            var pdata2 = (string)this.getProperty("pdata2");
             //save pdata after saving the other properties
-            if (this.getProperty("pdata2") != null)
+            if (!string.IsNullOrEmpty(pdata2))
             {
-                var updatePdataSQL = $"update t_object set pdata2 = '{(string)this.getProperty("pdata2")}' where ea_guid = '{this.uniqueID}'";
+                var updatePdataSQL = $"update t_object set pdata2 = '{pdata2}' where ea_guid = '{this.uniqueID}'";
                 this.EAModel.executeSQL(updatePdataSQL);
             }
         }

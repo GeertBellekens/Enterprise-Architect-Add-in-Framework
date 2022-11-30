@@ -73,9 +73,9 @@ namespace EAAddinFramework.SchemaBuilder
                     this._localSharedPackages = new List<Package>();
                     if (this.containerElement != null)
                     {
-                        var sqlQuery = $@"select po.Object_ID from t_objectproperties tv
-                                inner join t_object po on po.ea_guid = tv.Value
-                                inner join t_object o on o.Object_ID = tv.Object_ID
+                        var sqlQuery = $@"select po.Object_ID from (( t_objectproperties tv
+                                inner join t_object po on po.ea_guid = tv.Value)
+                                inner join t_object o on o.Object_ID = tv.Object_ID)
                                 where tv.Property = 'sharedPackage'
                                 and o.ea_guid = '{this.containerElement.uniqueID}'";
                         this._localSharedPackages = this.model.getElementWrappersByQuery(sqlQuery).OfType<Package>().ToList();
@@ -899,8 +899,8 @@ namespace EAAddinFramework.SchemaBuilder
             if (this.settings.tvInsteadOfTrace)
             {
                 sqlGetData = $@"select o.ea_guid as subsetID, tv.Value as sourceID 
-                                from t_objectproperties tv
-                                inner join t_object o on o.Object_ID = tv.Object_ID
+                                from ( t_objectproperties tv
+                                inner join t_object o on o.Object_ID = tv.Object_ID)
                                 where tv.Object_ID in ({subsetElementIDs})
                                 and tv.Property = '{this.settings.elementTagName}'
                                 and tv.Value in ({schemaSourceElementGuids})";
@@ -908,9 +908,9 @@ namespace EAAddinFramework.SchemaBuilder
             else
             {
                 sqlGetData = $@"select o.ea_guid as subsetID, oo.ea_guid as sourceID
-                                from t_connector c
-                                inner join t_object o on o.Object_ID = c.Start_Object_ID
-                                inner join t_object oo on oo.Object_ID = c.End_Object_ID
+                                from ((t_connector c
+                                inner join t_object o on o.Object_ID = c.Start_Object_ID)
+                                inner join t_object oo on oo.Object_ID = c.End_Object_ID)
                                 where 
                                 c.Connector_Type in ('Abstraction', 'Dependency')
                                 and c.Stereotype = 'trace'
@@ -1097,9 +1097,9 @@ namespace EAAddinFramework.SchemaBuilder
             else
             {
                 sqlGetData += Environment.NewLine +
-                    $@"(select * from t_connector tr
-					inner join t_object oso on oso.Object_ID = tr.End_Object_ID
-									and oso.ea_guid in ({this.elementGUIDstring})
+                    $@"(select tr.Connector_ID from (t_connector tr
+					inner join t_object oso on (oso.Object_ID = tr.End_Object_ID
+									and oso.ea_guid in ({this.elementGUIDstring})))
 					where tr.Stereotype = 'trace'
 					and tr.Start_Object_ID = o.Object_ID
 					)";
