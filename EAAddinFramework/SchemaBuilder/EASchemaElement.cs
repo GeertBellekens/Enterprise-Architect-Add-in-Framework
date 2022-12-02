@@ -878,7 +878,7 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes)
+                foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes.ToList())
                 {
                     //tell the user what we are doing 
                     EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching subset attribute: '" + attribute.name + "' to a schema property"
@@ -905,6 +905,7 @@ namespace EAAddinFramework.SchemaBuilder
                             else
                             {
                                 //no match, delete the attribute
+                                this.subsetElement.attributes.Remove(attribute);
                                 attribute.delete();
                             }
                         }
