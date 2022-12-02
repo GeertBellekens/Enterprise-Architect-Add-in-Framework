@@ -904,8 +904,9 @@ namespace EAAddinFramework.SchemaBuilder
                             }
                             else
                             {
-                                //no match, delete the attribute
+                                //
                                 this.subsetElement.attributes.Remove(attribute);
+                                //no match, delete the attribute
                                 attribute.delete();
                             }
                         }

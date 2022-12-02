@@ -720,7 +720,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     {
                         this._owner = this.EAModel.getElementWrapperByID(this.wrappedElement.ParentID);
                     }
-                    else
+                    //if we haven't found the owner, we try to get the package
+                    if (this._owner == null)
                     {
                         this._owner = this.EAModel.getElementWrapperByPackageID(this.wrappedElement.PackageID);
                     }

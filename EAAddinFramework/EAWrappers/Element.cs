@@ -460,6 +460,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public virtual TaggedValue addTaggedValue(string name, string tagValue, string comment = null, bool addDuplicate = false)
         {
+            var needsUpdate = false;
             TaggedValue newTaggedValue = null;
             if (!addDuplicate)
             {
@@ -481,6 +482,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             if (newTaggedValue == null)
             {
+                needsUpdate = true;
                 //no existing tagged value found, or we need to create duplicates
                 newTaggedValue = (TaggedValue)this.EAModel.factory.createNewTaggedValue(this, name);
                 //add it to the local list of tagged values
@@ -489,13 +491,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this._taggedValues.Add(newTaggedValue);
                 }
             }
-            newTaggedValue.tagValue = tagValue;
+            if (!string.Equals(newTaggedValue.eaStringValue, tagValue, StringComparison.InvariantCulture))
+            {
+                newTaggedValue.tagValue = tagValue;
+                needsUpdate = true;
+            }
+   
             if (comment != null)
             {
-                newTaggedValue.comment = comment;
+                if (!string.Equals(newTaggedValue.comment, comment, StringComparison.InvariantCulture))
+                {
+                    newTaggedValue.comment = comment;
+                    needsUpdate = true;
+                }
             }
 
-            newTaggedValue.save();
+            if (needsUpdate) //only save if needed
+            {
+                newTaggedValue.save();
+            } 
             return newTaggedValue;
         }
         /// <summary>
@@ -548,7 +562,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //if the owner is a package then return the owner
                 if (ownerPackage == null)
                 {
-                    ownerPackage = ((Element)this.owner).owningPackage;
+                    ownerPackage = ((Element)this.owner)?.owningPackage;
                 }
 
                 return (UML.Classes.Kernel.Package)this.getProperty(getPropertyNameName(), ownerPackage);
