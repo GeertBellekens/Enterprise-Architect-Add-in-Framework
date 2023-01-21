@@ -290,6 +290,13 @@ namespace EAAddinFramework.SchemaBuilder
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
+            //if the subset element is renamed, then we won't find it based on the name, so we use the unique ID only
+            if (result == null)
+            {
+                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && (x.subsetElement == null
+                                                                            || x.subsetElement.uniqueID == subsetElement.uniqueID));
+            }
 
             return result;
         }

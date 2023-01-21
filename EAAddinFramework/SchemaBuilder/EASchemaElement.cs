@@ -240,10 +240,12 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 //if redefined, and we use the useAliasForRedefinedElements setting, the name is kept like the source element, but the typename is used in the alias
                 this.subsetElement.name = this.sourceElement.name;
-                ((TSF_EA.ElementWrapper)this.subsetElement).alias = this.wrappedSchemaType.TypeName;
+                ((TSF_EA.ElementWrapper)this.subsetElement).alias = this.name;
             }
             else
             {
+                //set the name
+                this.subsetElement.name = this.name;
                 //only copy alias if the alias in the source element is not empty
                 if (!string.IsNullOrEmpty(((TSF_EA.ElementWrapper)this.sourceElement).alias))
                 {
