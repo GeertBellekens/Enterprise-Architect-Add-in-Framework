@@ -207,11 +207,21 @@ namespace EAAddinFramework.SchemaBuilder
         /// <returns>the corresponding SchemaElement</returns>
         internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary)
         {
+            
+            
             var elementWrapperSubsetElement = subsetElement as TSF_EA.ElementWrapper;
             EASchemaElement result = null;
             if (elementWrapperSubsetElement == null)
             {
                 return null;
+            }
+            //first check if we already have this subset element registered on one of the elements
+            result = this.elements
+                    .OfType<EASchemaElement>()
+                    .FirstOrDefault(x => x.sourceElement.uniqueID == subsetElement.uniqueID);
+            if (result != null)
+            {
+                return result;
             }
             //first find the source element from which this subset element is derived
             //check on if there is a tagged value that references the source element
@@ -251,7 +261,8 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             //check if there is an schemaElement with this 
                             sourceElementUniqueID = this.elements
-                                .FirstOrDefault(x => elementWrapperSubsetElement?.id == elementID)
+                                .OfType<EASchemaElement>()
+                                .FirstOrDefault(x => x.eaSourceElement?.id == elementID)
                                 ?.sourceElement.uniqueID;
                             break;
                         }

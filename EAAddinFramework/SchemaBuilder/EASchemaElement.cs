@@ -771,6 +771,7 @@ namespace EAAddinFramework.SchemaBuilder
             //set the subset element
             this.subsetElement = subsetElement;
         }
+
         /// <summary>
         /// Adds generalizations if the parent of the generalization is in the subset elements as well
         /// or if the settings allow us to copy generalizations
@@ -790,17 +791,17 @@ namespace EAAddinFramework.SchemaBuilder
                     if (schemaParent == null) //the generalization does not target an element in the schema
                     {
                         schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(subsetGeneralization.target);
-                        if (schemaParent != null
-                            && schemaParent.subsetElement != null)
+                        if (schemaParent != null)
                         {
                             //if the settings redirectGeneralizationsToSubset is set and
                             //the generalization exists on the source, but there is a subset element for the target
                             //we move the generalization to the element in the subset.
-                            if (this.owner.settings.redirectGeneralizationsToSubset
+                            if (schemaParent.subsetElement != null
+                                && this.owner.settings.redirectGeneralizationsToSubset
                                 && !subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement))
-                                   && schemaParent.subsetElement != null
-                                   // the inheritance checkbox should be checked, or the setting "Ignore inheritance checkbox" should be used to allow the generalization to exist.
-                                   && (this.parentSchemaElement == schemaParent || this.owner.settings.copyAllGeneralizations))
+                                && schemaParent.subsetElement != null
+                                // the inheritance checkbox should be checked, or the setting "Ignore inheritance checkbox" should be used to allow the generalization to exist.
+                                && (this.parentSchemaElement == schemaParent || this.owner.settings.copyAllGeneralizationsForElement(this)))
                             {
                                 //if the generalization doesn't exist yet we move it tot he subset element
                                 subsetGeneralization.target = schemaParent.subsetElement;
@@ -818,6 +819,20 @@ namespace EAAddinFramework.SchemaBuilder
                                     //The generalization should not be there
                                     subsetGeneralization.delete();
                                 }
+
+                            }
+                        }
+                        else
+                        {
+                            //Enumerations should always keep their external Generalizations
+                            //Datatypes should only keep their external Generalizatons if the settings is on
+                            //classes can keep their external generalizations if the setting allows it
+                            if (!(this.sourceElement is UML.Classes.Kernel.Enumeration)
+                                && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
+                                && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations))
+                            {
+                                //The generalization should not be there
+                                subsetGeneralization.delete();
                             }
                         }
                     }
@@ -827,7 +842,7 @@ namespace EAAddinFramework.SchemaBuilder
                         // and the source element has an equivalent generalization.
                         if (!this.owner.settings.redirectGeneralizationsToSubset
                             || !sourceGeneralizations.Any(x => x.target.Equals(schemaParent.sourceElement))
-                            || (this.parentSchemaElement != schemaParent && !this.owner.settings.copyAllGeneralizations))
+                            || (this.parentSchemaElement != schemaParent && !this.owner.settings.copyAllGeneralizationsForElement(this)))
                         {
                             //the source doesn't have a generalization like this
                             subsetGeneralization.delete();
@@ -841,7 +856,7 @@ namespace EAAddinFramework.SchemaBuilder
                     if (this.owner.settings.redirectGeneralizationsToSubset
                         && schemaParent != null
                         && schemaParent.subsetElement != null
-                        && (this.parentSchemaElement == schemaParent || this.owner.settings.copyAllGeneralizations))
+                        && (this.parentSchemaElement == schemaParent || this.owner.settings.copyAllGeneralizationsForElement(this)))
                     {
                         if (schemaParent.subsetElement != null
                         && !subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
@@ -857,10 +872,12 @@ namespace EAAddinFramework.SchemaBuilder
                         //the target is not in the schema.
                         //Enumerations should always get their external Generalizations
                         //Datatypes should only get their external Generalizatons if the settings is on
-                        if ((this.sourceElement is UML.Classes.Kernel.Enumeration
+                        if (schemaParent == null
+                            &&(this.sourceElement is UML.Classes.Kernel.Enumeration
                             || (this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-                           || this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations)
-                        && !subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target)))
+                            || this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations)
+                             && !subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target))
+                            )
                         {
                             //generalization doesn't exist yet. Add it
                             var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement, string.Empty);
@@ -1013,9 +1030,9 @@ namespace EAAddinFramework.SchemaBuilder
             }
             var subsetCandidates = this.model.getElementWrappersByQuery(sqlGetClassifiers);
             //if we haven't found any candidates, and this schema element has not been redefined in this schema, then we look without checking the name or alias
-            if (!subsetCandidates.Any() 
-                && ! this.isRedefined 
-                && ! this.ownerSchema.elements.OfType<EASchemaElement>().Any(x => x.sourceElement != null
+            if (!subsetCandidates.Any()
+                && !this.isRedefined
+                && !this.ownerSchema.elements.OfType<EASchemaElement>().Any(x => x.sourceElement != null
                                                                        && x.sourceElement.uniqueID == this.sourceElement?.uniqueID
                                                                        && x.isRedefined))
             {

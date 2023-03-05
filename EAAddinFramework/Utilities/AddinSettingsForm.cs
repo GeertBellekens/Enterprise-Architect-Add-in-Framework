@@ -34,7 +34,7 @@ namespace EAAddinFramework.Utilities
                 var difference = this.settingsForm.Height - this.splitContainer.Panel2.Height;
                 //add to height of form
                 var splitterdistance = this.splitContainer.SplitterDistance; 
-                this.Height += difference;
+                this.Height += difference + 5; //add a bit to avoid scrollbars
                 //set the splitter back
                 this.splitContainer.SplitterDistance = splitterdistance;
             }
