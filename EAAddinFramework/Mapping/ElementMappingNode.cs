@@ -39,9 +39,9 @@ namespace EAAddinFramework.Mapping
             {
                 var foundMappings = new List<MP.Mapping>();
                 //get subclasses
-                var subClasses = this.sourceElement.allSubClasses;
+                var subClasses = this.sourceElement?.allSubClasses;
                 //exit now if there are no subclasses
-                if (! subClasses.Any())
+                if (subClasses == null ||  ! subClasses.Any())
                 {
                     return foundMappings;
                 }

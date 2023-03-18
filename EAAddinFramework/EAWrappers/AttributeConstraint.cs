@@ -25,6 +25,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.save();
         }
+        public override bool isLocked => ((Element)this.owner).isLocked;
         public override void deleteOwnedElement(Element ownedElement)
         {
             throw new NotImplementedException();

@@ -18,6 +18,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.wrappedConstraint = wrappedConstraint;
             this.isDirty = true;
         }
+        public override bool isLocked => ((Element)this.owner).isLocked;
 
         #region implemented abstract members of Element
         internal override void saveElement()

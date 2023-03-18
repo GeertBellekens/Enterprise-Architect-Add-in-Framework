@@ -17,6 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get { return this.wrappedOperation.MethodID; }
         }
 
+        public override bool isLocked => ((Element)this.owner).isLocked;
         public string signature
         {
             get

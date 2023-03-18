@@ -21,7 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this._owner = operation;
             this.isDirty = true;
         }
-
+        public override bool isLocked => ((Element)this.owner).isLocked;
         public override UML.Classes.Kernel.ParameterDirectionKind direction
         {
             get { return UML.Classes.Kernel.ParameterDirectionKind._return; }

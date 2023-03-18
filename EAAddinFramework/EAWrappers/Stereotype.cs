@@ -23,6 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this._ownerDiagram = ownerDiagram;
         }
         private string _name;
+        public override bool isLocked => false;
         public override string name
         {
             get => this._name;

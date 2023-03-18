@@ -409,7 +409,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set { /* do nothing */ }
         }
 
-
-
+        public override bool isLocked => ((Element)this.owner).isLocked;
     }
 }

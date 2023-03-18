@@ -578,19 +578,33 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public bool isReadOnly
         {
             get
-            {
-                //first check if locking is enabled
-                if (!this.EAModel.isSecurityEnabled)
+            {                
+                if (this.EAModel.isSecurityEnabled && this.EAModel.requireUserLockToEdit)
                 {
-                    return false;
+                    if (this.isLocked)
+                    {
+                        return this.getLockedUserID() != this.EAModel.currentUserID;
+                    }
+                    //not locked in requireUserLockToEdit mode, so must be read-only
+                    return true;
                 }
-
+                
+                //not in requireUserLockToEdit mode, so the readonly depends on the locking state
                 if (this.isLocked)
                 {
-                    return this.getLockedUserID() != this.EAModel.currentUserID;
+                    //make sure it's not locked by trying to save it, and catching the exception
+                    try
+                    {
+                        this.wrappedElement?.Update();
+                        return false;
+                    }
+                    catch(Exception)
+                    {
+                        return true;
+                    }
                 }
-                //not locked so readonly (only works when "require user lock to edit is on")
-                return true;
+                //not locked so not read-only
+                return false;
             }
         }
         /// <summary>
@@ -604,7 +618,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// returns true if currently locked
         /// </summary>
         /// <returns>true if currently locked</returns>
-        public bool isLocked => (this.getLockedUser() != string.Empty);
+        public abstract bool isLocked { get; }
 
         public virtual HashSet<UML.Classes.Kernel.Constraint> constraints
         {

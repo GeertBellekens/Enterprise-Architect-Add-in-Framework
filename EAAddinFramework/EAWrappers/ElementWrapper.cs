@@ -1385,7 +1385,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                     where s.entityID = '" + this.guid + "'";
             XmlDocument result = this.EAModel.SQLQuery(SQLQuery);
             XmlNode userIDNode = result.SelectSingleNode("//UserID");
-            return userIDNode.InnerText;
+            return userIDNode?.InnerText;
         }
         /// <summary>
         /// Makes the element writeable
@@ -1435,6 +1435,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
+
+        public override bool isLocked => this.wrappedElement?.Locked == true || this.getLockedUser() != string.Empty;
 
         List<Attribute> getOwnedAttributes(string attributeName)
         {

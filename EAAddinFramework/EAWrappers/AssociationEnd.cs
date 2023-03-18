@@ -33,7 +33,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return !this.isTarget;
             }
         }
-
+        public override bool isLocked => ((Element)this.owner).isLocked;
 
         public override HashSet<UML.Classes.Kernel.Element> ownedElements
         {

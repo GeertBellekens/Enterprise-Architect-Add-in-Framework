@@ -1633,24 +1633,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         public bool isSecurityEnabled
         {
+            get => this.wrappedModel.IsSecurityEnabled;
+        }
+        public bool requireUserLockToEdit
+        {
             get
             {
-                try
-                {
-                    this.wrappedModel.GetCurrentLoginUser();
-                    return true;
-                }
-                catch (System.Runtime.InteropServices.COMException e)
-                {
-                    if (e.Message == "Security not enabled")
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        throw e;
-                    }
-                }
+                var sqlGetData = "select sp.Value from t_secpolicies sp where sp.Property = 'RequireLock'";
+                return this.getBoolFromQuery(sqlGetData, "Value", "1");
             }
         }
         /// <summary>

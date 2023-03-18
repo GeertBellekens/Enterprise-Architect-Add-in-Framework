@@ -28,6 +28,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 									set [PDATA2] = '" + value + @"'
 									where connector_id = " + this.id);
         }
+        public override bool isLocked => ((Element)this.owner).isLocked;
         /// <summary>
         /// used to distinguish the subtype of the connector.
         /// For associations this could be both Aggregation or Association
