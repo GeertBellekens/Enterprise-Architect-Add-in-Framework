@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using EAAddinFramework.Utilities;
+using TSF.UmlToolingFramework.UML.StateMachines.BehaviorStateMachines;
 using UML = TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
@@ -427,6 +428,17 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
                 }
 
             }
+            //State machine diagrams containing a transition that has this operation as it's effect
+            foreach (var transition in this.getDependentTransitions())
+            {
+                foreach (var diagram in transition.getUsingDiagrams<T>())
+                {
+                    if (!diagrams.Contains(diagram))
+                    {
+                        diagrams.Add(diagram);
+                    }
+                }
+            }
             return diagrams;
         }
 
@@ -571,5 +583,7 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
             //copy tagged values
             return newOperation;
         }
+
+
     }
 }

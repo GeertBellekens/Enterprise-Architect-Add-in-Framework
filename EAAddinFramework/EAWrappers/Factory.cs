@@ -332,7 +332,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 var elementWrapper = this.EAModel.getElementFromCache(elementToWrap.ElementID);
                 if (elementWrapper != null) return elementWrapper;
             }
-            ElementWrapper newElementWrapper;
+            var newElementWrapper = getCorrectElementWrapperType(elementToWrap);
+
+            //add the element to the cache if needed
+            if (this.EAModel.useCache) this.EAModel.addElementToCache(newElementWrapper);
+            return newElementWrapper;
+        }
+        /// <summary>
+        /// get the correct elementWrapper based on the EA.Element
+        /// </summary>
+        /// <param name="elementToWrap">the element to be wrapped</param>
+        /// <returns>the correct ElementWrapper</returns>
+        /// <exception cref="Exception"></exception>
+        private ElementWrapper getCorrectElementWrapperType(global::EA.Element elementToWrap)
+        {
+
             switch (elementToWrap.Type)
             {
                 case "Class":
@@ -340,8 +354,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     // Enumerations are stored as type Class but with the stereotype enumeration
                     if (elementToWrap.StereotypeEx.Contains("enumeration"))
                     {
-                        newElementWrapper = new Enumeration(this.model as Model, elementToWrap);
-                        break;
+                        return new Enumeration(this.model as Model, elementToWrap);
                     }
                     else
                     {
@@ -349,29 +362,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         //elementToWrap.IsAssocationClass() returns an exception when used in a background thread so we use our own method to figure out if its an associationClass.
                         if (this.isAssociationClass(elementToWrap))
                         {
-                            newElementWrapper = new AssociationClass(this.model as Model, elementToWrap);
-                            break;
+                            return new AssociationClass(this.model as Model, elementToWrap);
                         }
                         else
                         {
                             //just a regular class
-                            newElementWrapper = new Class(this.model as Model, elementToWrap);
-                            break;
+                            return new Class(this.model as Model, elementToWrap);
                         }
                     }
                 case "Object":
-                    newElementWrapper = new InstanceSpecification(this.model as Model, elementToWrap);
-                    break;
+                    return new InstanceSpecification(this.model as Model, elementToWrap);
                 case "Enumeration":
                     // since version 10 there are also "real" enumerations Both are still supported
-                    newElementWrapper = new Enumeration(this.model as Model, elementToWrap);
-                    break;
+                    return new Enumeration(this.model as Model, elementToWrap);
                 case "Interface":
-                    newElementWrapper = new Interface(this.model as Model, elementToWrap);
-                    break;
+                    return new Interface(this.model as Model, elementToWrap);
                 case "Note":
-                    newElementWrapper = new NoteComment(this.model as Model, elementToWrap);
-                    break;
+                    return new NoteComment(this.model as Model, elementToWrap);
+
                 case "Action":
                     // figure out wether this Action is a standard action or a
                     // specialized action
@@ -384,80 +392,77 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     {
                         if (descriptionNode.InnerText.Contains("CallOperation"))
                         {
-                            newElementWrapper = new CallOperationAction(this.model as Model, elementToWrap);
-                            break;
+                            return new CallOperationAction(this.model as Model, elementToWrap);
+
                         }
                     }
 
                     // simple Action
-                    newElementWrapper = new Action(this.model as Model, elementToWrap);
-                    break;
+                    return new Action(this.model as Model, elementToWrap);
+
                 case "Interaction":
-                    newElementWrapper = new Interaction(this.model as Model, elementToWrap);
-                    break;
+                    return new Interaction(this.model as Model, elementToWrap);
+
                 case "Activity":
-                    newElementWrapper = new Activity(this.model as Model, elementToWrap);
-                    break;
+                    return new Activity(this.model as Model, elementToWrap);
+
                 case "StateMachine":
-                    newElementWrapper = new BehaviorStateMachines.StateMachine(this.model as Model, elementToWrap);
-                    break;
+                    return new BehaviorStateMachines.StateMachine(this.model as Model, elementToWrap);
+
                 case "State":
-                    newElementWrapper = new BehaviorStateMachines.State(this.model as Model, elementToWrap, null);
-                    break;
+                    return new BehaviorStateMachines.State(this.model as Model, elementToWrap, null);
+
                 case "StateNode":
                     string metaType = elementToWrap.MetaType;
                     if (metaType == "Pseudostate" ||
                        metaType == "Synchronisation")
                     {
-                        newElementWrapper = new BehaviorStateMachines.PseudoState(this.model as Model, elementToWrap, null);
-                        break;
+                        return new BehaviorStateMachines.PseudoState(this.model as Model, elementToWrap, null);
+
                     }
                     else if (metaType == "FinalState")
                     {
-                        newElementWrapper = new BehaviorStateMachines.FinalState(this.model as Model, elementToWrap, null);
-                        break;
+                        return new BehaviorStateMachines.FinalState(this.model as Model, elementToWrap, null);
+
                     }
-                    newElementWrapper = new ElementWrapper(this.model as Model, elementToWrap);
-                    break;
+                    return new ElementWrapper(this.model as Model, elementToWrap);
+
                 case "Package":
                     int packageID;
                     if (int.TryParse(elementToWrap.MiscData[0], out packageID))
                     {
-                        newElementWrapper = ((Model)this.model).getElementWrapperByPackageID(packageID);
-                        break;
+                        return ((Model)this.model).getElementWrapperByPackageID(packageID);
+
                     }
                     else
                     {
                         throw new Exception("WrappedElement " + elementToWrap.Name + " is not a package");
                     }
                 case "DataType":
-                    newElementWrapper = new DataType(this.model as Model, elementToWrap);
-                    break;
+                    return new DataType(this.model as Model, elementToWrap);
+
                 case "PrimitiveType":
-                    newElementWrapper = new PrimitiveType(this.model as Model, elementToWrap);
-                    break;
+                    return new PrimitiveType(this.model as Model, elementToWrap);
+
                 case "InformationItem":
-                    newElementWrapper = new InformationItem(this.model as Model, elementToWrap);
-                    break;
+                    return new InformationItem(this.model as Model, elementToWrap);
+
                 case "ProxyConnector":
-                    newElementWrapper = new ProxyConnector(this.model as Model, elementToWrap);
-                    break;
+                    return new ProxyConnector(this.model as Model, elementToWrap);
+
                 case "Part":
-                    newElementWrapper = new Property(this.model as Model, elementToWrap);
-                    break;
+                    return new Property(this.model as Model, elementToWrap);
+
                 case "InteractionFragment":
-                    newElementWrapper = new InteractionFragment(this.model as Model, elementToWrap);
-                    break;
+                    return new InteractionFragment(this.model as Model, elementToWrap);
+
                 case "Component":
-                    newElementWrapper = new Component(this.model as Model, elementToWrap);
-                    break;
+                    return new Component(this.model as Model, elementToWrap);
+
                 default:
-                    newElementWrapper = new ElementWrapper(this.model as Model, elementToWrap);
-                    break;
+                    return new ElementWrapper(this.model as Model, elementToWrap);
+
             }
-            //add the element to the cache if needed
-            if (this.EAModel.useCache) this.EAModel.addElementToCache(newElementWrapper);
-            return newElementWrapper;
         }
 
         /// creates a new primitive type based on the given typename

@@ -683,5 +683,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
             }
         }
+        public HashSet<UML.StateMachines.BehaviorStateMachines.Transition> getDependentTransitions()
+        {
+            var sqlGetData = $@"select c.Connector_ID from (t_connector c
+                            inner join t_xref x on (x.Client = c.ea_guid
+				                            and x.Name = 'MOFProps'
+				                            and x.Behavior = 'effect'))
+                            where x.Description = '{this.uniqueID}'";
+            return new HashSet<UML.StateMachines.BehaviorStateMachines.Transition>
+                    (this.EAModel.getRelationsByQuery(sqlGetData)
+                    .OfType<UML.StateMachines.BehaviorStateMachines.Transition>());
+        }
     }
 }
