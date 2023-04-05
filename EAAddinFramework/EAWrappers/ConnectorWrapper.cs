@@ -116,6 +116,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return null;
             }
         }
+
         public override string orderingName => this.targetName;
         public string targetName => string.IsNullOrEmpty(this.targetEnd.name) ? this.target.name : this.targetEnd.name;
         public string sourceName => string.IsNullOrEmpty(this.sourceEnd.name) ? this.source.name : this.sourceEnd.name;
@@ -160,10 +161,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <returns></returns>
         public override List<UML.Diagrams.Diagram> getDependentDiagrams()
         {
-            var dependentDiagrams = new List<UML.Diagrams.Diagram>();
-            string sqlQuery = "select dl.DiagramID as Diagram_ID from t_diagramlinks dl where dl.ConnectorID = " + this.id;
-            dependentDiagrams.AddRange(this.EAModel.getDiagramsByQuery(sqlQuery));
-            return dependentDiagrams;
+            string sqlGetData = $"select dl.DiagramID as Diagram_ID from t_diagramlinks dl where dl.ConnectorID = {this.id}";
+            return this.EAModel.getDiagramsByQuery(sqlGetData).OfType<UML.Diagrams.Diagram>().ToList();
+        }
+        public override HashSet<T> getUsingDiagrams<T>()
+        {
+            return new HashSet<T>(this.getDependentDiagrams().OfType<T>());
         }
 
         /// <summary>
