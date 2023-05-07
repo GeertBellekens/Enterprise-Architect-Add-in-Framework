@@ -814,7 +814,7 @@ namespace EAAddinFramework.SchemaBuilder
                                 //classes can keep their external generalizations if the setting allows it
                                 if (!(this.sourceElement is UML.Classes.Kernel.Enumeration)
                                     && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-                                    && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations))
+                                    && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyAllGeneralizationsForElement(this)))
                                 {
                                     //The generalization should not be there
                                     subsetGeneralization.delete();
@@ -829,7 +829,7 @@ namespace EAAddinFramework.SchemaBuilder
                             //classes can keep their external generalizations if the setting allows it
                             if (!(this.sourceElement is UML.Classes.Kernel.Enumeration)
                                 && !(this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-                                && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations))
+                                && !(this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyAllGeneralizationsForElement(this)))
                             {
                                 //The generalization should not be there
                                 subsetGeneralization.delete();
@@ -875,7 +875,7 @@ namespace EAAddinFramework.SchemaBuilder
                         if (schemaParent == null
                             &&(this.sourceElement is UML.Classes.Kernel.Enumeration
                             || (this.sourceElement is UML.Classes.Kernel.DataType && this.owner.settings.copyDataTypeGeneralizations)
-                            || this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyExternalGeneralizations)
+                            || this.sourceElement is UML.Classes.Kernel.Class && this.owner.settings.copyAllGeneralizationsForElement(this))
                              && !subsetGeneralizations.Any(x => x.target != null && x.target.Equals(sourceGeneralization.target))
                             )
                         {
