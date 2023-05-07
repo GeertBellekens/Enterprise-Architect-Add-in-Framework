@@ -49,7 +49,20 @@ namespace EAAddinFramework.EASpecific
             {
                 return this.scriptControl.Run(procedureName);
             }
-            return this.scriptControl.Run(procedureName, parameters);
+            switch(parameters.Length)
+            {
+                case 1:
+                    return this.scriptControl.Run(procedureName, parameters[0]);
+                case 2:
+                    return this.scriptControl.Run(procedureName, parameters[0], parameters[1]);
+                case 3:
+                    return this.scriptControl.Run(procedureName, parameters[0], parameters[1], parameters[2]);
+                case 4:
+                    return this.scriptControl.Run(procedureName, parameters[0], parameters[1], parameters[2], parameters[3]);
+                case 5:
+                    return this.scriptControl.Run(procedureName, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+            }
+            return null;//more then 5 parameters are not used in EA
         }
     }
 }
