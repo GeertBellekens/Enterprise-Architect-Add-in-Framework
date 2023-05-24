@@ -456,6 +456,10 @@ namespace EAAddinFramework.EASpecific
             {
                 includedCode = includableScripts[includeString];
             }
+            else
+            {
+                throw new ArgumentException($"Could not find script to include for ${includeString}");
+            }
             return includedCode + Environment.NewLine;
         }
         /// <summary>
