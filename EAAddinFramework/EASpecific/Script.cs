@@ -564,16 +564,18 @@ namespace EAAddinFramework.EASpecific
         {
             if (model != null)
             {
-                var sqlGetScripts = @"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES 
+                var baseSqlGetScripts = @"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES 
                                                         from t_script s
                                                         inner join t_script ps on s.ScriptAuthor = ps.ScriptName
                                                         where s.ScriptAuthor <> 'ScriptDebugging'";
+                var sqlGetScripts = baseSqlGetScripts;
                 if (onlyEAMatic)
                 {
                     //limit scripts to EA-Matic scripts
                     sqlGetScripts += Environment.NewLine + " and s.Script like '%EA-Matic%'";
                 }
                 XmlDocument xmlScripts = model.SQLQuery(sqlGetScripts);
+                XmlNodeList scriptNodes;
                 //check the hash before continuing
                 int newHash = xmlScripts.InnerXml.GetHashCode();
                 //only create the scripts of the hash is different
@@ -590,53 +592,117 @@ namespace EAAddinFramework.EASpecific
                     reloadModelIncludableScripts = true;
                     modelIncludableScripts = new Dictionary<string, string>();
 
-                    XmlNodeList scriptNodes = xmlScripts.SelectNodes("//Row");
+                    scriptNodes = xmlScripts.SelectNodes("//Row");
                     foreach (XmlNode scriptNode in scriptNodes)
                     {
                         //get the <notes> node. If it countaints "Group Type=" then it is a group. Else we need to find "Language=" 
                         XmlNode notesNode = scriptNode.SelectSingleNode(model.formatXPath("Notes"));
                         if (notesNode.InnerText.Contains(scriptLanguageIndicator))
                         {
-                            //we have an actual script.
-                            //the name of the script
-                            string scriptName = getValueByName(notesNode.InnerText, scriptNameIndicator);
-                            //now figure out the language
-                            string language = getValueByName(notesNode.InnerText, scriptLanguageIndicator);
-                            //get the ID
-                            XmlNode IDNode = scriptNode.SelectSingleNode(model.formatXPath("ScriptID"));
-                            string ScriptID = IDNode.InnerText;
-                            //get the group
-                            XmlNode groupNode = scriptNode.SelectSingleNode(model.formatXPath("SCRIPTGROUP"));
-                            string groupName = groupNode.InnerText;
-                            //then get teh code
-                            XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));
-                            if (codeNode != null && language != string.Empty)
+                            createScriptFromNotes(model, scriptNode, notesNode);
+                        }
+                    }
+                }
+
+                // Create Scripts for all the included file references
+                HashSet<String> requiredScriptsAsIncludeLine = new HashSet<String>();
+                collateIncludesForAllScripts(requiredScriptsAsIncludeLine, allModelScripts.Values);
+                while (requiredScriptsAsIncludeLine.Count != 0)
+                {
+                    sqlGetScripts = baseSqlGetScripts;
+                    sqlGetScripts += Environment.NewLine + "and (";
+                    List<string> whereGroupAndNameMatches = new List<string>();
+                    foreach (var requireScriptAsIncludeLine in requiredScriptsAsIncludeLine)
+                    {
+                        // throw away leading !INC leaving just the <group>.<script>
+                        string groupAndScriptAsString = requireScriptAsIncludeLine.Substring("!INC ".Length);
+                        string[] groupAndScript = groupAndScriptAsString.Split('.');
+                        // Group = ps.Script
+                        // Name = s.Notes like '%name="<SCRIPT>"%'
+                        whereGroupAndNameMatches.Add($"(ps.Script = '{groupAndScript[0]}' and s.Notes like '%name=\"{groupAndScript[1]}\"%')");
+                    }
+                    sqlGetScripts += Environment.NewLine + "      " + String.Join(Environment.NewLine + "   or ", whereGroupAndNameMatches);
+                    sqlGetScripts += Environment.NewLine + ")";
+
+                    EAOutputLogger.log(model, "EA-Matic", sqlGetScripts, 0, LogTypeEnum.log);
+                    xmlScripts = model.SQLQuery(sqlGetScripts);
+                    scriptNodes = xmlScripts.SelectNodes("//Row");
+                    List<Script> newScripts = new List<Script>();
+                    foreach (XmlNode scriptNode in scriptNodes)
+                    {
+                        //get the <notes> node. If it countains "Language=" then its a script node
+                        XmlNode notesNode = scriptNode.SelectSingleNode(model.formatXPath("Notes"));
+                        if (notesNode.InnerText.Contains(scriptLanguageIndicator))
+                        {
+                            Script script = createScriptFromNotes(model, scriptNode, notesNode);
+                            if (script != null && !includableScripts.ContainsKey(script.scriptkey))
                             {
-                                //if the script is still empty EA returns NULL
-                                string scriptCode = codeNode.InnerText;
-                                if (scriptCode.Equals("NULL", StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    scriptCode = string.Empty;
-                                }
-                                //and create the script if both code and language are found
-                                Script script = new Script(ScriptID, scriptName, groupName, scriptCode, language, model);
-                                
-                                if (!allModelScripts.ContainsKey(script.scriptkey))
-                                {
-                                    allModelScripts.Add(script.scriptkey, script);
-                                    //also add the script to the include dictionary
-                                    if (!modelIncludableScripts.ContainsKey(script.scriptkey))
-                                    {
-                                        modelIncludableScripts.Add(script.scriptkey, script.code);
-                                    }
-                                }
+                                // only process scripts that have not already been made includable.
+                                newScripts.Add(script);
                             }
                         }
                     }
+                    requiredScriptsAsIncludeLine = new HashSet<String>();
+                    collateIncludesForAllScripts(requiredScriptsAsIncludeLine, newScripts);
+
                 }
             }
             return allModelScripts;
         }
+
+        private static void collateIncludesForAllScripts(HashSet<string> intoSet, IEnumerable<Script>scripts)
+        {
+            foreach (var script in scripts)
+            {
+                List<String> includes = script.getIncludes(script.code);
+                foreach (var include in includes)
+                {
+                    intoSet.Add(include);
+                }
+            }
+        }
+
+        private static Script createScriptFromNotes(Model model, XmlNode scriptNode, XmlNode notesNode)
+        {
+            Script script = null;
+
+            //we have an actual script.
+            //the name of the script
+            string scriptName = getValueByName(notesNode.InnerText, scriptNameIndicator);
+            //now figure out the language
+            string language = getValueByName(notesNode.InnerText, scriptLanguageIndicator);
+            //get the ID
+            XmlNode IDNode = scriptNode.SelectSingleNode(model.formatXPath("ScriptID"));
+            string ScriptID = IDNode.InnerText;
+            //get the group
+            XmlNode groupNode = scriptNode.SelectSingleNode(model.formatXPath("SCRIPTGROUP"));
+            string groupName = groupNode.InnerText;
+            //then get teh code
+            XmlNode codeNode = scriptNode.SelectSingleNode(model.formatXPath("Script"));
+            if (codeNode != null && language != string.Empty)
+            {
+                //if the script is still empty EA returns NULL
+                string scriptCode = codeNode.InnerText;
+                if (scriptCode.Equals("NULL", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    scriptCode = string.Empty;
+                }
+                //and create the script if both code and language are found
+                script = new Script(ScriptID, scriptName, groupName, scriptCode, language, model);
+
+                if (!allModelScripts.ContainsKey(script.scriptkey))
+                {
+                    allModelScripts.Add(script.scriptkey, script);
+                    //also add the script to the include dictionary
+                    if (!modelIncludableScripts.ContainsKey(script.scriptkey))
+                    {
+                        modelIncludableScripts.Add(script.scriptkey, script.code);
+                    }
+                }
+            }
+            return script;
+        }
+
         /// <summary>
         /// gets all scripts defined in the model
         /// </summary>
