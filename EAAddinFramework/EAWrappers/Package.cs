@@ -603,7 +603,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             string idString = string.Join(",", ids);
             return idString;
         }
-        private List<string> getPackageTreeIDs(List<string> parentIDs = null)
+        public List<string> getPackageTreeIDs(List<string> parentIDs = null)
         {
             List<string> allPackageIDs = new List<string>();
             List<string> subPackageIDs = new List<string>();

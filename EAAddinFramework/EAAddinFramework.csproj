@@ -211,6 +211,7 @@
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />
     <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EADBWrappers\EADBElementWrapper.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptCtrl.cs" />
     <Compile Include="EASpecific\ScriptCtrl32.cs" />

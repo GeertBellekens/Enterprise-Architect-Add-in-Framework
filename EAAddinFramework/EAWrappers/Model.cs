@@ -781,7 +781,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public Dictionary<string, string> getDictionaryFromQuery(string sqlQuery)
         {
-            var dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var results = this.SQLQuery(sqlQuery);
             var rows = results.SelectNodes(this.formatXPath("//Row"));
             foreach (XmlNode rowNode in rows)
@@ -812,6 +812,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return list;
         }
+        public List<List<string>> getDataSetFromQuery(string sqlQuery, bool includeHeaders)
+        {
+            var list = new List<List<string>>();
+            var results = this.SQLQuery(sqlQuery);
+            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            List<String> headers = null;
+            foreach (XmlNode rowNode in rows)
+            {
+                if (headers == null && includeHeaders)
+                {
+                    headers = new List<String>();
+                }
+                var rowList = new List<string>();
+                
+                foreach (XmlNode childNode in rowNode.ChildNodes )
+                {
+                    if (includeHeaders && list.Count == 0)
+                    {
+                        headers.Add(childNode.Name);
+                    }
+                    rowList.Add(childNode.InnerText);
+                }
+                //add the headers first (only when the list is still empty)
+                if (headers != null && list.Count == 0)
+                {
+                    list.Add(headers);
+                }
+                //then add the contents
+                list.Add(rowList);
+            }
+            return list;
+        }
+
         /// <summary>
         /// sets the correct wildcards depending on the database type.
         /// changes '%' into '*' if on ms access

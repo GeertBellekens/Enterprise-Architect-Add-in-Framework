@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 using EADatabaseTransformer;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
-
+using EAAddinFramework.Utilities;
 
 namespace EAAddinTester
 {
@@ -144,7 +144,20 @@ namespace EAAddinTester
         internal static void myTest()
         {
             EAWrappers.Model model = new EAWrappers.Model();
-            string fqn = model.selectedItem.fqn;
+            var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
+            var outputName = "EATester";
+            var packageIDs = selectedPackage.getPackageTreeIDs();
+            //test regular getting all elements
+            EAOutputLogger.clearLog(model, outputName);
+            EAOutputLogger.log(model, outputName, $"starting regular test for package '{selectedPackage?.name}'", 0);
+            var sqlGetData = $"select o.Object_ID from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
+            var elements = model.getElementWrappersByQuery(sqlGetData);
+            EAOutputLogger.log(model, outputName, $"found {elements.Count} elements", 0);
+            EAOutputLogger.log(model, outputName, $"starting new test for package '{selectedPackage?.name}'", 0);
+            sqlGetData = $"select * from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
+            var newElements = EAWrappers.EADBElementWrapper.GetEADBElementWrappersForPackageIDs(packageIDs, model);
+            EAOutputLogger.log(model, outputName, $"found {newElements.Count} new elements", 0);
+            foreach( var key in newElements[0].Prop.
         }
         /// <summary>
         /// Gets the Repository object from the currently running instance of EA.
