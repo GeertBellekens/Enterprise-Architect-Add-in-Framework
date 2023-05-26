@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class Property : ElementWrapper, UML.CompositeStructures.InternalStructures.Property
     {
-        public Property(Model model, global::EA.Element wrappedElement)
+        public Property(Model model, EADBElementWrapper wrappedElement)
           : base(model, wrappedElement)
         {
         }

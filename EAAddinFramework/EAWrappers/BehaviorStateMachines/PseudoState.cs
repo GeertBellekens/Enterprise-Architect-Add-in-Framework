@@ -32,7 +32,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 			ExitPoint = 14 ,
 			DeepHistory = 15 ,
 		}
-		public PseudoState(Model model, global::EA.Element wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
+		public PseudoState(Model model, EADBElementWrapper wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
       	: base(model,wrappedElement,containingRegion)
 		{
 		}

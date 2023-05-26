@@ -24,7 +24,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	, UML.Interactions.BasicInteractions.InteractionFragment
 	{
 		
-		public InteractionFragment(UTF_EA.Model model, global::EA.Element wrappedElement)
+		public InteractionFragment(UTF_EA.Model model, EADBElementWrapper wrappedElement)
 			: base(model,wrappedElement)
 		{
 

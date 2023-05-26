@@ -29,13 +29,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             private set => this._packageTreeIDString = value;
         }
-        public override global::EA.Element WrappedElement
+        public override EADBElementWrapper WrappedElement
         {
             get
             {
                 if (this.wrappedElement == null)
                 {
-                    this.wrappedElement = this.EAModel.wrappedModel.GetElementByGuid(this.guid);
+                    this.wrappedElement = new EADBElementWrapper(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this.guid));
                 }
                 return base.wrappedElement;
             }
@@ -60,15 +60,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                         " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
             return this.EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
         }
-        public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
+        public static EADBElementWrapper  getElementForPackage(Model model, global::EA.Package package)
         {
-            global::EA.Element foundElement = package.Element;
-            //if for some reason the Element is not filled in we get it using the package GUID.
+            var foundElement = package.Element;
             if (foundElement == null)
-            {
+            {   //if for some reason the Element is not filled in we get it using the package GUID.
                 foundElement = model.wrappedModel.GetElementByGuid(package.PackageGUID);
             }
-            return foundElement;
+            return foundElement != null ? 
+                    new EADBElementWrapper(model, foundElement) : 
+                    null;
         }
         protected void initialize(global::EA.Package package)
         {

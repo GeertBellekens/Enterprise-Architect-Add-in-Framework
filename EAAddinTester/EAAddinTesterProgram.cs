@@ -155,9 +155,8 @@ namespace EAAddinTester
             EAOutputLogger.log(model, outputName, $"found {elements.Count} elements", 0);
             EAOutputLogger.log(model, outputName, $"starting new test for package '{selectedPackage?.name}'", 0);
             sqlGetData = $"select * from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
-            var newElements = EAWrappers.EADBElementWrapper.GetEADBElementWrappersForPackageIDs(packageIDs, model);
+            var newElements = EAWrappers.EADBElementWrapper.getEADBElementWrappersForPackageIDs(packageIDs, model);
             EAOutputLogger.log(model, outputName, $"found {newElements.Count} new elements", 0);
-            foreach( var key in newElements[0].Prop.
         }
         /// <summary>
         /// Gets the Repository object from the currently running instance of EA.

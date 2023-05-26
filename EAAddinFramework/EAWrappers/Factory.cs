@@ -165,7 +165,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             if (objectToWrap is global::EA.Element)
             {
-                return this.createEAElementWrapper(objectToWrap as global::EA.Element);
+                var elementWrapper = new EADBElementWrapper(this.EAModel, (global::EA.Element)objectToWrap);
+                return this.createEAElementWrapper(elementWrapper);
             }
             else if (objectToWrap is global::EA.Attribute)
             {
@@ -299,7 +300,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         /// <param name="elementToWrap">the element to check</param>
         /// <returns>true if it is an associationclass</returns>
-        private bool isAssociationClass(global::EA.Element elementToWrap)
+        private bool isAssociationClass(EADBElementWrapper elementToWrap)
         {
             int connectorID;
             bool associationClass = false;
@@ -324,7 +325,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         /// creates a new EAElementWrapper based on the given EA.Element
         internal ElementWrapper createEAElementWrapper
-          (global::EA.Element elementToWrap)
+          (EADBElementWrapper elementToWrap)
         {
             //first check if this element already exists in the cache
             if (this.EAModel.useCache)
@@ -344,7 +345,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <param name="elementToWrap">the element to be wrapped</param>
         /// <returns>the correct ElementWrapper</returns>
         /// <exception cref="Exception"></exception>
-        private ElementWrapper getCorrectElementWrapperType(global::EA.Element elementToWrap)
+        private ElementWrapper getCorrectElementWrapperType(EADBElementWrapper elementToWrap)
         {
 
             switch (elementToWrap.Type)
@@ -425,7 +426,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         return new BehaviorStateMachines.FinalState(this.model as Model, elementToWrap, null);
 
                     }
-                    return new ElementWrapper(this.model as Model, elementToWrap);
+                    return new ElementWrapper(this.EAModel, elementToWrap);
 
                 case "Package":
                     int packageID;
@@ -460,7 +461,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return new Component(this.model as Model, elementToWrap);
 
                 default:
-                    return new ElementWrapper(this.model as Model, elementToWrap);
+                    return new ElementWrapper(this.EAModel, elementToWrap);
 
             }
         }
@@ -626,7 +627,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             HashSet<UML_SM.Vertex> newVertices =
                 new HashSet<UML_SM.Vertex>();
-            global::EA.Element parentElement = region.wrappedElement;
+            var parentElement = region.wrappedElement;
             foreach (global::EA.Element childElement in parentElement.Elements)
             {
                 UML_SM.Vertex newVertex = null;
@@ -635,7 +636,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     case "State":
                     case "StateMachine":
                     case "StateNode":
-                        newVertex = this.createEAElementWrapper(childElement) as UML_SM.Vertex;
+                        newVertex = this.createElement(childElement) as UML_SM.Vertex;
                         break;
                 }
                 if (newVertex != null)
@@ -742,7 +743,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     if (element.MetaType == "Trigger")
                     {
-                        triggers.Add(new UTF_EA.BehaviorStateMachines.Trigger(this.model as UTF_EA.Model, element));
+                        triggers.Add(this.createElement(element) as UTF_EA.BehaviorStateMachines.Trigger); //TODO check if ceateElement creates the correct type of trigger.
                     }
                 }
             }
@@ -776,7 +777,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return null;
         }
 
-        internal global::EA.Diagram getMasterStateDiagram(ElementWrapper elementWrapper, global::EA.Element stateChartElement)
+        internal global::EA.Diagram getMasterStateDiagram(ElementWrapper elementWrapper, EADBElementWrapper stateChartElement)
         {
             foreach (global::EA.Diagram diagram in elementWrapper.wrappedElement.Diagrams)
             {
@@ -866,7 +867,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //Creating Associationclasses is a bit special too. It only becomes an associationclass according to EA once it is linked to an association
             else if (typeof(T).Name == "AssociationClass")
             {
-                newElement = new AssociationClass((Model)this.model, (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType)));
+                newElement = new AssociationClass(this.EAModel
+                                        , new EADBElementWrapper(this.EAModel
+                                                    , (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType))));
             }
             else
             {

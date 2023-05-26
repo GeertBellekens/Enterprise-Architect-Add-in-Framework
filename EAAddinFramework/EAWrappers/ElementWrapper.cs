@@ -19,13 +19,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private string _linkedDocument;
         protected string _uniqueID;
 
-        public ElementWrapper(Model model, global::EA.Element wrappedElement)
+
+        public ElementWrapper(Model model, EADBElementWrapper wrappedElement)
           : base(model)
         {
             this.initialize(wrappedElement);
         }
 
-        protected virtual void initialize(global::EA.Element wrappedElement)
+        protected virtual void initialize(EADBElementWrapper wrappedElement)
         {
             this.wrappedElement = wrappedElement;
             this.isDirty = false;
@@ -101,7 +102,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         void reloadWrappedElement()
         {
-            this.wrappedElement = this.EAModel.wrappedModel.GetElementByGuid(this._uniqueID);
+            this.wrappedElement = new EADBElementWrapper(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this._uniqueID));
         }
         public ElementWrapper classifier
         {
@@ -536,7 +537,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.setProperty(getPropertyNameName(), int.Parse(value), this.wrappedElement?.Subtype);
         }
 
-        public virtual global::EA.Element WrappedElement
+        public virtual EADBElementWrapper WrappedElement
         {
             get => this.wrappedElement;
             set => this.wrappedElement = value;

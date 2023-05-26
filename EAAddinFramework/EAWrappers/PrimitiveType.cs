@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this._name = typeName;
         }
-        public PrimitiveType(Model model, global::EA.Element element) : base(model, element)
+        public PrimitiveType(Model model, EADBElementWrapper element) : base(model, element)
         {
 
         }

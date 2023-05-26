@@ -21,7 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	: Vertex, UML.StateMachines.BehaviorStateMachines.State
 	{
 
-		public State(Model model, global::EA.Element wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
+		public State(Model model, EADBElementWrapper wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
       	: base(model,wrappedElement,containingRegion)
 		{
 		}

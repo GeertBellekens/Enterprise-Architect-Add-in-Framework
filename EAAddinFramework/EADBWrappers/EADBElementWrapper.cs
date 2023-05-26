@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             columnNames = model.getDataSetFromQuery("select top 1 * from t_object o", true).FirstOrDefault();
         }
-        public static List<EADBElementWrapper> GetEADBElementWrappersForElementIDs(List<string> elementIDs, Model model)
+        public static List<EADBElementWrapper> getEADBElementWrappersForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBElementWrapper>();
             var results = model.getDataSetFromQuery($"select * from t_object o where o.Object_ID in ({String.Join(",",elementIDs)})", false);
@@ -27,7 +27,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return elements;
         }
-        public static List<EADBElementWrapper> GetEADBElementWrappersForPackageIDs(List<string> PackageIDs, Model model)
+        public static List<EADBElementWrapper> getEADBElementWrappersForPackageIDs(List<string> PackageIDs, Model model)
         {
             var elements = new List<EADBElementWrapper>();
             var results = model.getDataSetFromQuery($"select * from t_object o where o.Package_ID in ({String.Join(",", PackageIDs)})", false);
@@ -64,21 +64,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public EADBElementWrapper(Model model, List<string> propertyValues)
             : this(model)
         {
-            this.properties = new Dictionary<string, string>();
+            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < columnNames.Count; i++)
             {
                 this.properties.Add(columnNames[i], propertyValues[i]);
             }
         }
         public EADBElementWrapper(Model model, int elementID)
-            : this(model)
-        {
-            this.properties = model.getDictionaryFromQuery($"select * from t_object o where o.Object_ID = {elementID}");
-        }
+            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.Object_ID = {elementID}", false).FirstOrDefault())
+        { }
         public EADBElementWrapper(Model model, string uniqueID)
-            : this(model)
+            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}", false).FirstOrDefault())
+        { }
+        public EADBElementWrapper(Model model, global::EA.Element element)
+            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.Object_ID = {element.ElementID}", false).FirstOrDefault())
         {
-            this.properties = model.getDictionaryFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}");
+            this.eaElement = element;
         }
         public string Name
         {
@@ -470,6 +471,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool Update()
         {
+            this.eaElement.Type = this.Type;
+            this.eaElement.Name = this.Name;
+            this.eaElement.Alias = this.Alias;
+            this.eaElement.Author = this.Author;
+            this.eaElement.Version = this.Version;
+            this.eaElement.Notes = this.Notes;
+            this.eaElement.PackageID = this.PackageID;
+            this.eaElement.Stereotype = this.Stereotype;
+            this.eaElement.Subtype = this.Subtype;
+            this.eaElement.Complexity = this.Complexity;
+            this.eaElement.Created = this.Created;
+            this.eaElement.Modified = this.Modified;
+            this.eaElement.Status = this.Status;
+            this.eaElement.Abstract = this.Abstract;
+            this.eaElement.Visibility = this.Visibility;
+            this.eaElement.Persistence = this.Persistence;
+            this.eaElement.Gentype = this.Gentype;
+            this.eaElement.Genfile = this.Genfile;
+            this.eaElement.Header1 = this.Header1;
+            this.eaElement.Header2 = this.Header2;
+            this.eaElement.Phase = this.Phase;
+            this.eaElement.Genlinks = this.Genlinks;
+            this.eaElement.ClassifierID = this.ClassifierID;
+            this.eaElement.ParentID = this.ParentID;
+            this.eaElement.RunState = this.RunState;
+            this.eaElement.TreePos = this.TreePos;
+            this.eaElement.IsLeaf = this.IsLeaf;
+            this.eaElement.IsSpec = this.IsSpec;
+            this.eaElement.IsActive = this.IsActive;
+            this.eaElement.Multiplicity = this.Multiplicity;
+            this.eaElement.StyleEx = this.StyleEx;
+            this.eaElement.EventFlags = this.EventFlags;
+            this.eaElement.ActionFlags = this.ActionFlags;
             return this.eaElement.Update();
         }
 

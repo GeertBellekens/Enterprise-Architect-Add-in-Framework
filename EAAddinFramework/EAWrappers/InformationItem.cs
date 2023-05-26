@@ -11,7 +11,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// </summary>
 	public class InformationItem: ElementWrapper,UML.InfomationFlows.InformationItem
 	{
-		public InformationItem(Model model, global::EA.Element wrappedElement)
+		public InformationItem(Model model, EADBElementWrapper wrappedElement)
 			: base(model,wrappedElement){}
 
 	
