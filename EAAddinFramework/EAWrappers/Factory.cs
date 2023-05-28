@@ -168,9 +168,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 var elementWrapper = new EADBElementWrapper(this.EAModel, (global::EA.Element)objectToWrap);
                 return this.createEAElementWrapper(elementWrapper);
             }
+            else if (objectToWrap is EADBElementWrapper)
+            {
+                return this.createEAElementWrapper((EADBElementWrapper)objectToWrap);
+            }
             else if (objectToWrap is global::EA.Attribute)
             {
-                return this.createEAAttributeWrapper(objectToWrap as global::EA.Attribute);
+                var attributeWrapper = new EADBAttributeWrapper(this.EAModel, (global::EA.Attribute)objectToWrap);
+                return this.createEAAttributeWrapper(attributeWrapper);
+            }
+            else if (objectToWrap is EADBAttributeWrapper)
+            {
+                return this.createEAAttributeWrapper((EADBAttributeWrapper)objectToWrap);
             }
             else if (objectToWrap is global::EA.Connector)
             {
@@ -282,11 +291,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
         /// creates a new EAAttribute based on the given EA.Attribute
-        internal AttributeWrapper createEAAttributeWrapper(global::EA.Attribute attributeToWrap)
+        internal AttributeWrapper createEAAttributeWrapper(EADBAttributeWrapper attributeToWrap)
         {
-            if (EnumerationLiteral.isLiteralValue(this.model as Model, attributeToWrap))
+            if (EnumerationLiteral.isLiteralValue(attributeToWrap))
             {
-                return new EnumerationLiteral(this.model as Model, attributeToWrap);
+                return new EnumerationLiteral(this.EAModel, attributeToWrap);
             }
             else
             {
@@ -862,7 +871,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //creating an enumeration is a bit special because EA thinks its just an attribute
             if (typeof(T).Name == "EnumerationLiteral")
             {
-                newElement = new EnumerationLiteral((Model)this.model, (global::EA.Attribute)collection.AddNew(name, this.translateTypeName(EAType)));
+                newElement = new EnumerationLiteral((Model)this.model 
+                                       , new EADBAttributeWrapper(this.EAModel   
+                                                    ,(global::EA.Attribute)collection.AddNew(name, this.translateTypeName(EAType))));
             }
             //Creating Associationclasses is a bit special too. It only becomes an associationclass according to EA once it is linked to an association
             else if (typeof(T).Name == "AssociationClass")

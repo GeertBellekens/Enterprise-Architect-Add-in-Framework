@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         
         private string _uniqueID = null;
 
-        public AttributeWrapper(Model model, global::EA.Attribute wrappedAttribute)
+        public AttributeWrapper(Model model, EADBAttributeWrapper wrappedAttribute)
           : base(model)
         {
             this.wrappedAttribute = wrappedAttribute;
@@ -21,7 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.isDirty = false;
         }
 
-        internal global::EA.Attribute wrappedAttribute { get; set; }
+        internal EADBAttributeWrapper wrappedAttribute { get; set; }
         public int id => this.wrappedAttribute.AttributeID;
         public override UML.Classes.Kernel.Package owningPackage
         {
@@ -30,7 +30,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public global::EA.Attribute WrappedAttribute => this.wrappedAttribute;
+        public EADBAttributeWrapper WrappedAttribute => this.wrappedAttribute;
         public override string name
         {
             get

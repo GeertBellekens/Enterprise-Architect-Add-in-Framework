@@ -17,6 +17,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             columnNames = model.getDataSetFromQuery("select top 1 * from t_object o", true).FirstOrDefault();
         }
+        public static EADBElementWrapper getEADBElementWrappersForElementGUID(string elementGUID, Model model)
+        {
+            return getEADBElementWrappersForElementGUIDs(new List<string>() { elementGUID }, model).FirstOrDefault();
+        }
+        public static List<EADBElementWrapper> getEADBElementWrappersForElementGUIDs(List<string> elementGUIDs, Model model)
+        {
+            var elements = new List<EADBElementWrapper>();
+            var results = model.getDataSetFromQuery($"select * from t_object o where o.ea_guid in ('{String.Join("','", elementGUIDs)}')", false);
+            foreach (var propertyValues in results)
+            {
+                elements.Add(new EADBElementWrapper(model, propertyValues));
+            }
+            return elements;
+        }
+        public static EADBElementWrapper getEADBElementWrappersForElementID(int elementID, Model model)
+        {
+            return getEADBElementWrappersForElementIDs(new List<string>() { elementID.ToString() }, model).FirstOrDefault();
+        }
         public static List<EADBElementWrapper> getEADBElementWrappersForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBElementWrapper>();
@@ -77,7 +95,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : this(model, model.getDataSetFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBElementWrapper(Model model, global::EA.Element element)
-            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.Object_ID = {element.ElementID}", false).FirstOrDefault())
+            : this(model, element.ElementID)
         {
             this.eaElement = element;
         }
@@ -362,13 +380,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public Collection Methods => this.eaElement.Methods;
         public Collection Attributes => this.eaElement.Attributes;
         public Collection Resources => this.eaElement.Resources;
-        public Collection Elements => this.eaElement.Elements; //TODO: rework to EADBElementWrappers?
+        public Collection Elements => this.eaElement.Elements; 
         public Collection Diagrams => this.eaElement.Diagrams;
         public Collection Partitions => this.eaElement.Partitions;
         public Collection CustomProperties => this.eaElement.CustomProperties;
         public Collection StateTransitions => this.eaElement.StateTransitions;
-        public Collection EmbeddedElements => this.eaElement.EmbeddedElements; //TODO: rework to EADBElementWrappers?
-        public Collection BaseClasses => this.eaElement.BaseClasses; //TODO: rework to EADBElementWrappers?
+        public Collection EmbeddedElements => this.eaElement.EmbeddedElements; 
+        public Collection BaseClasses => this.eaElement.BaseClasses;
         public Collection Realizes => this.eaElement.Realizes;
         public Collection TaggedValuesEx => this.eaElement.TaggedValuesEx;
         public Collection AttributesEx => this.eaElement.AttributesEx;

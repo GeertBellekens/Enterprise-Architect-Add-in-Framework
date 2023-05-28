@@ -605,11 +605,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._attributeWrappers == null)
                 {
-                    //refresh attributes to make sure we have an up-to-date list
-                    this.wrappedElement?.Attributes.Refresh();
+                    var eaDBAttributes = EADBAttributeWrapper.getEADBAttributeWrappersForElementIDs(new List<string>() { this.id.ToString() }, this.EAModel);
                     //get the attribute wrappers
                     this._attributeWrappers = new HashSet<AttributeWrapper>(
-                        this.EAModel.factory.createElements(this.wrappedElement?.Attributes).OfType<AttributeWrapper>());
+                        this.EAModel.factory.createElements(eaDBAttributes).OfType<AttributeWrapper>());
                 }
                 return this._attributeWrappers;
             }

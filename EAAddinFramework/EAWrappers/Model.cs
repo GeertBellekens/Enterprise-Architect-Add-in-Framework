@@ -295,16 +295,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (elementWrapper != null) return elementWrapper; //found it
 
             //not found in cache (or cache not used) get the regular way
-            global::EA.Element eaElement;
-            try
-            {
-                eaElement = this.wrappedModel.GetElementByID(id);
-            }
-            catch (Exception)
-            {
-                // element not found, return null
-                return null;
-            }
+            var eaElement = EADBElementWrapper.getEADBElementWrappersForElementID(id, this);
+            //not found in the database return null
+            if (eaElement == null) return null;
             //create the elementWrapper
             elementWrapper = this.factory.createElement(eaElement) as ElementWrapper;
             //add to cache
@@ -339,16 +332,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return elementWrapper;
                 }
             }
-            global::EA.Element eaElement;
-            try
-            {
-                eaElement = this.wrappedModel.GetElementByGuid(GUID);
-            }
-            catch (Exception)
-            {
-                // element not found, return null
-                return null;
-            }
+            var eaElement = EADBElementWrapper.getEADBElementWrappersForElementGUID(GUID, this);
             //if not found then return empty
             if (eaElement == null) return null;
             //create elementWrapper
@@ -514,16 +498,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            global::EA.Attribute eaAttribute;
-            try
-            {
-                eaAttribute = this.wrappedModel.GetAttributeByID(attributeID);
-            }
-            catch (Exception)
-            {
-                // attribute not found, return null
-                return null;
-            }
+            EADBAttributeWrapper eaAttribute = EADBAttributeWrapper.getEADBAttributeWrapperForAttributeID(attributeID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper
@@ -548,16 +523,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            global::EA.Attribute eaAttribute;
-            try
-            {
-                eaAttribute = this.wrappedModel.GetAttributeByGuid(GUID);
-            }
-            catch (Exception)
-            {
-                // attribute not found, return null
-                return null;
-            }
+            EADBAttributeWrapper eaAttribute = EADBAttributeWrapper.getEADBAttributeWrapperForAttributeGUID(GUID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper

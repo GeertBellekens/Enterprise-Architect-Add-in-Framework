@@ -8,7 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
 
 
-        public Attribute(Model model, global::EA.Attribute wrappedAttribute)
+        public Attribute(Model model, EADBAttributeWrapper wrappedAttribute)
           : base(model, wrappedAttribute)
         { }
         public bool isID
