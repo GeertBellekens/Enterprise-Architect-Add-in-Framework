@@ -1,4 +1,5 @@
 ﻿using EA;
+using EAAddinFramework.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -314,10 +315,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.eaAttribute.RedefinedProperty;
             set => this.eaAttribute.RedefinedProperty = value;
         }
-        public string StereotypeEx //TODO: get this info from the database directly without needing to get the actual attribute
+        private string _StereotypeEx = null;
+        public string StereotypeEx 
         {
-            get => this.eaAttribute.StereotypeEx;
-            set => this.eaAttribute.StereotypeEx = value;
+            get
+            {
+                if (_StereotypeEx == null)
+                {
+                    var xrefDescription = this.model.getFirstValueFromQuery($"select x.Description from t_xref x where x.Name = 'Stereotypes' and x.Client = '{this.AttributeGUID}'", "Description");
+                    if (string.IsNullOrEmpty(xrefDescription))
+                    {
+                        this._StereotypeEx = string.Empty;
+                    }
+                    else
+                    {
+                        this._StereotypeEx = String.Join(",", KeyValuePairsHelper.getValuesForKey("Name", xrefDescription));
+                    }
+                }
+                return this._StereotypeEx;
+            }
+            set => this._StereotypeEx = value;
         }
         public Collection Constraints => this.eaAttribute.Constraints;
         public Collection TaggedValues => this.eaAttribute.TaggedValues;

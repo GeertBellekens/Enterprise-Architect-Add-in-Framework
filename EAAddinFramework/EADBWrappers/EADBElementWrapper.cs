@@ -1,4 +1,5 @@
 ﻿using EA;
+using EAAddinFramework.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -451,10 +452,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.eaElement.Header2 = value;
         }
         public Properties Properties => this.eaElement.Properties;
+        private string _StereotypeEx = null;
         public string StereotypeEx
         {
-            get => this.eaElement.StereotypeEx;
-            set => this.eaElement.StereotypeEx = value;
+            get
+            {
+                if (_StereotypeEx == null)
+                {
+                    var xrefDescription = this.model.getFirstValueFromQuery($"select x.Description from t_xref x where x.Name = 'Stereotypes' and x.Client = '{this.ElementGUID}'", "Description");
+                    if (string.IsNullOrEmpty(xrefDescription))
+                    {
+                        this._StereotypeEx = string.Empty;
+                    }
+                    else
+                    {
+                        this._StereotypeEx = String.Join(",", KeyValuePairsHelper.getValuesForKey("Name", xrefDescription));
+                    }
+                }
+                return this._StereotypeEx;
+            }
+            set => this._StereotypeEx = value;
         }
         public int PropertyType
         {

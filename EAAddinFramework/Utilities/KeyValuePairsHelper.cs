@@ -10,6 +10,26 @@ namespace EAAddinFramework.Utilities
 	public static class KeyValuePairsHelper
 	{
 		/// <summary>
+		/// parses a string that contains multiple sets of key-value pairs such as
+		/// @STEREO;Name=JSON_Attribute;FQName=JSON::JSON_Attribute;@ENDSTEREO;@STEREO;Name=attribStereo;GUID={A25EEF17-8D74-48ea-82CD-D9C2F33F33E1};@ENDSTEREO;
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="source"></param>
+		/// <returns>all values for the given keys</returns>
+		public static List<string> getValuesForKey(string key, string source)
+        {
+			var values = new List<string>();
+			foreach (var part in source.Split('@'))
+			{
+				var value = getValueForKey(key, part);
+				if (value != null)
+                {
+					values.Add(value);
+				}
+			}
+			return values;
+		}
+		/// <summary>
 		/// parses the the given source string for any keyvalue pairs and returns the value corresponding to the given key.
 		/// The format of the soure string is assumed as follows: key1=value1;key2=value2,...
 		/// </summary>
