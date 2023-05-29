@@ -39,8 +39,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBElementWrapper> getEADBElementWrappersForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBElementWrapper>();
-            var results = model.getDataSetFromQuery($"select * from t_object o where o.Object_ID in ({String.Join(",",elementIDs)})", false);
-            foreach(var propertyValues in results)
+            var results = model.getDataSetFromQuery($"select * from t_object o where o.Object_ID in ({String.Join(",", elementIDs)})", false);
+            foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElementWrapper(model, propertyValues));
             }
@@ -96,9 +96,57 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : this(model, model.getDataSetFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBElementWrapper(Model model, global::EA.Element element)
-            : this(model, element.ElementID)
+            : this(model)
         {
             this.eaElement = element;
+            //initialize properties emtpy
+            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < columnNames.Count; i++)
+            {
+                this.properties.Add(columnNames[i], String.Empty);
+            }
+            updateFromWrappedElement();
+
+        }
+        private void updateFromWrappedElement()
+        {
+            //update properties from eaElement
+            this.Type = this.eaElement.Type;
+            this.Name = this.eaElement.Name;
+            this.Alias = this.eaElement.Alias;
+            this.Author = this.eaElement.Author;
+            this.Version = this.eaElement.Version;
+            this.Notes = this.eaElement.Notes;
+            this.PackageID = this.eaElement.PackageID;
+            this.Stereotype = this.eaElement.Stereotype;
+            this.Subtype = this.eaElement.Subtype;
+            this.Complexity = this.eaElement.Complexity;
+            this.Created = this.eaElement.Created;
+            this.Modified = this.eaElement.Modified;
+            this.Status = this.eaElement.Status;
+            this.Abstract = this.eaElement.Abstract;
+            this.Visibility = this.eaElement.Visibility;
+            this.Persistence = this.eaElement.Persistence;
+            this.Gentype = this.eaElement.Gentype;
+            this.Genfile = this.eaElement.Genfile;
+            this.Header1 = this.eaElement.Header1;
+            this.Header2 = this.eaElement.Header2;
+            this.Phase = this.eaElement.Phase;
+            this.Genlinks = this.eaElement.Genlinks;
+            this.ClassifierID = this.eaElement.ClassifierID;
+            this.ParentID = this.eaElement.ParentID;
+            this.RunState = this.eaElement.RunState;
+            this.TreePos = this.eaElement.TreePos;
+            this.IsLeaf = this.eaElement.IsLeaf;
+            this.IsSpec = this.eaElement.IsSpec;
+            this.IsActive = this.eaElement.IsActive;
+            this.Multiplicity = this.eaElement.Multiplicity;
+            this.StyleEx = this.eaElement.StyleEx;
+            this.EventFlags = this.eaElement.EventFlags;
+            this.ActionFlags = this.eaElement.ActionFlags;
+            //add also id
+            this.ElementID = this.eaElement.ElementID;
+            this.ElementGUID = this.eaElement.ElementGUID;
         }
         public string Name
         {
@@ -110,7 +158,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.properties["Note"];
             set => this.properties["Note"] = value;
         }
-        
+
         public string Version
         {
             get => this.properties["Note"];
@@ -257,7 +305,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => this.properties["ModifiedDate"] = value.ToString();//TODO: check if this format is OK?
         }
-        
+
         public string Genfile
         {
             get => this.properties["GenFile"];
@@ -284,6 +332,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return 0;
                 }
             }
+            private set => this.properties["Object_ID"] = value.ToString();
         }
 
         public int PackageID
@@ -302,7 +351,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => this.properties["Package_ID"] = value.ToString();
         }
-        public string ElementGUID => this.properties["ea_guid"];
+        public string ElementGUID
+        {
+            get => this.properties["ea_guid"];
+            set => this.properties["ea_guid"] = value;
+        }
         public string StyleEx
         {
             get => this.properties["StyleEx"];
@@ -323,11 +376,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.properties["Status"];
             set => this.properties["Status"] = value;
         }
-        public List<string> MiscData => new List<string> 
-            {this.properties["PDATA1"], 
-            this.properties["PDATA2"], 
-            this.properties["PDATA3"], 
-            this.properties["PDATA4"], 
+        public List<string> MiscData => new List<string>
+            {this.properties["PDATA1"],
+            this.properties["PDATA2"],
+            this.properties["PDATA3"],
+            this.properties["PDATA4"],
             this.properties["PDATA5"] };
         public int TreePos
         {
@@ -381,12 +434,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public Collection Methods => this.eaElement.Methods;
         public Collection Attributes => this.eaElement.Attributes;
         public Collection Resources => this.eaElement.Resources;
-        public Collection Elements => this.eaElement.Elements; 
+        public Collection Elements => this.eaElement.Elements;
         public Collection Diagrams => this.eaElement.Diagrams;
         public Collection Partitions => this.eaElement.Partitions;
         public Collection CustomProperties => this.eaElement.CustomProperties;
         public Collection StateTransitions => this.eaElement.StateTransitions;
-        public Collection EmbeddedElements => this.eaElement.EmbeddedElements; 
+        public Collection EmbeddedElements => this.eaElement.EmbeddedElements;
         public Collection BaseClasses => this.eaElement.BaseClasses;
         public Collection Realizes => this.eaElement.Realizes;
         public Collection TaggedValuesEx => this.eaElement.TaggedValuesEx;
@@ -407,7 +460,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public string ExtensionPoints
         {
-            get => this.eaElement.ExtensionPoints; 
+            get => this.eaElement.ExtensionPoints;
             set => this.eaElement.ExtensionPoints = value;
         }
         public string Tablespace
@@ -539,7 +592,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.eaElement.StyleEx = this.StyleEx;
             this.eaElement.EventFlags = this.EventFlags;
             this.eaElement.ActionFlags = this.ActionFlags;
-            return this.eaElement.Update();
+
+            var updateresult = this.eaElement.Update();
+            //after saving we need to refresh the properties
+            updateFromWrappedElement();
+            return updateresult;
         }
 
         public string GetLastError()
@@ -684,7 +741,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public void SetTXName(string txCode, string translation)
         {
-            this.eaElement.SetTXName( txCode, translation);
+            this.eaElement.SetTXName(txCode, translation);
         }
 
         public void SetTXAlias(string txCode, string translation)

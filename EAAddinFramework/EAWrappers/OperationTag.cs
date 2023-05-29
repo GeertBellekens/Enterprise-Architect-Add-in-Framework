@@ -5,8 +5,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class OperationTag : TaggedValue
     {
 
-        internal global::EA.MethodTag wrappedTaggedValue { get; set; }
-        internal OperationTag(Model model, Element owner, global::EA.MethodTag eaTag) : base(model, owner)
+        internal EADBOperationTag wrappedTaggedValue { get; set; }
+        internal OperationTag(Model model, Element owner, EADBOperationTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -14,7 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID => this.wrappedTaggedValue.TagGUID;
+        public override string uniqueID => this.wrappedTaggedValue.PropertyGUID;
         public override string eaStringValue
         {
             get => this.wrappedTaggedValue.Value;
@@ -33,14 +33,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._owner == null)
                 {
-                    this._owner = this.model.getOperationByID(this.wrappedTaggedValue.MethodID);
+                    this._owner = this.model.getOperationByID(this.wrappedTaggedValue.ElementID);
                 }
                 return this._owner;
             }
             set => throw new NotImplementedException();
         }
 
-        public override string ea_guid => this.wrappedTaggedValue.TagGUID;
+        public override string ea_guid => this.wrappedTaggedValue.PropertyGUID;
 
         public override void save()
         {
@@ -56,8 +56,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.MethodTag;
-            return otherTag != null && otherTag.TagGUID == this.uniqueID;
+            var otherTag = eaTag as EADBOperationTag;
+            return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
 
         #endregion

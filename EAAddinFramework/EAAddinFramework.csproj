@@ -211,8 +211,13 @@
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />
     <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EADBWrappers\EADBAttributeTag.cs" />
     <Compile Include="EADBWrappers\EADBAttributeWrapper.cs" />
+    <Compile Include="EADBWrappers\EADBConnectorTag.cs" />
+    <Compile Include="EADBWrappers\EADBElementTag.cs" />
     <Compile Include="EADBWrappers\EADBElementWrapper.cs" />
+    <Compile Include="EADBWrappers\EADBOperationTag.cs" />
+    <Compile Include="EADBWrappers\EADBTaggedValue.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptCtrl.cs" />
     <Compile Include="EASpecific\ScriptCtrl32.cs" />

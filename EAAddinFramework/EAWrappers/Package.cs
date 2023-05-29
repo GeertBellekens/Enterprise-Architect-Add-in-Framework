@@ -213,9 +213,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                this.wrappedPackage.Elements.Refresh();
-                List<UML.Classes.Kernel.Element> elements = this.EAModel.factory.createElements(this.wrappedPackage.Elements).Cast<UML.Classes.Kernel.Element>().ToList();
-                elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
+                var EADBElementWrappers = EADBElementWrapper.getEADBElementWrappersForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                var elements = this.EAModel.factory.createElements(EADBElementWrappers).OfType<UML.Classes.Kernel.Element>().ToList();
+                this.wrappedPackage.Packages.Refresh();
+                elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<UML.Classes.Kernel.Element>());
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
             }
             set => throw new NotImplementedException();
@@ -226,8 +227,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._ownedElementWrappers == null)
                 {
-                    this.wrappedPackage.Elements.Refresh();
-                    this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedPackage.Elements).OfType<ElementWrapper>().ToList();
+                    var EADBElementWrappers = EADBElementWrapper.getEADBElementWrappersForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                    this._ownedElementWrappers = this.EAModel.factory.createElements(EADBElementWrappers).OfType<ElementWrapper>().ToList();
                     this.wrappedPackage.Packages.Refresh();
                     this._ownedElementWrappers.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<ElementWrapper>().ToList());
                 }

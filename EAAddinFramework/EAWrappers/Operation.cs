@@ -584,6 +584,9 @@ and c.StyleEx like '%LF_P=" + this.wrappedOperation.MethodGUID + "%'"
             return newOperation;
         }
 
-
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBOperationTag.getTaggedValuesForElementID(id, this.EAModel);
+        }
     }
 }

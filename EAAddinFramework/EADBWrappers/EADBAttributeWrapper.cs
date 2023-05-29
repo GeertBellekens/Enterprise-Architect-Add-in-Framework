@@ -111,9 +111,50 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBAttributeWrapper(Model model, global::EA.Attribute attribute)
-            : this(model, attribute.AttributeID)
+            : this(model)
         {
             this.eaAttribute = attribute;
+            //initialize properties emtpy
+            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < columnNames.Count; i++)
+            {
+                this.properties.Add(columnNames[i], String.Empty);
+            }
+            updateFromWrappedElement();
+
+
+        }
+
+        private void updateFromWrappedElement()
+        {
+            //update properties from eaAttribute
+            this.Name = this.eaAttribute.Name;
+            this.Visibility = this.eaAttribute.Visibility;
+            this.Stereotype = this.eaAttribute.Stereotype;
+            this.Containment = this.eaAttribute.Containment;
+            this.IsStatic = this.eaAttribute.IsStatic;
+            this.IsCollection = this.eaAttribute.IsCollection;
+            this.IsOrdered = this.eaAttribute.IsOrdered;
+            this.AllowDuplicates = this.eaAttribute.AllowDuplicates;
+            this.LowerBound = this.eaAttribute.LowerBound;
+            this.UpperBound = this.eaAttribute.UpperBound;
+            this.Container = this.eaAttribute.Container;
+            this.Notes = this.eaAttribute.Notes;
+            this.IsDerived = this.eaAttribute.IsDerived;
+            this.Pos = this.eaAttribute.Pos;
+            this.Length = this.eaAttribute.Length;
+            this.Precision = this.eaAttribute.Precision;
+            this.Scale = this.eaAttribute.Scale;
+            this.IsConst = this.eaAttribute.IsConst;
+            this.Style = this.eaAttribute.Style;
+            this.ClassifierID = this.eaAttribute.ClassifierID;
+            this.Default = this.eaAttribute.Default;
+            this.Type = this.eaAttribute.Type;
+            this.AttributeGUID = this.eaAttribute.AttributeGUID;
+            this.StyleEx = this.eaAttribute.StyleEx;
+            this.StereotypeEx = this.eaAttribute.StereotypeEx;
+            //add also ID
+            this.AttributeID = this.eaAttribute.AttributeID;
         }
 
         public string Name
@@ -195,6 +236,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return 0;
                 }
             }
+            private set => this.properties["ID"] = value.ToString();
         }
 
         public int Pos
@@ -370,7 +412,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.eaAttribute.AttributeGUID = this.AttributeGUID;
             this.eaAttribute.StyleEx = this.StyleEx;
             this.eaAttribute.StereotypeEx = this.StereotypeEx;
-            return this.eaAttribute.Update();
+            var updateResult = this.eaAttribute.Update();
+            //aver saving we need to refresh the properties
+            updateFromWrappedElement();
+            return updateResult;
         }
         public string GetLastError()
         {

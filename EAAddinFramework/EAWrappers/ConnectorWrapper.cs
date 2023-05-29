@@ -799,6 +799,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 			tv.Property = '" + taggedValueName + "' and tv.ElementID = " + this.id;
         }
 
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBConnectorTag.getTaggedValuesForElementID(id, this.EAModel);
+        }
+
         #endregion
     }
 }

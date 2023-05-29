@@ -279,5 +279,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
            return ((Factory)this.EAModel.factory).addElementToEACollection<AttributeConstraint>(this.wrappedAttribute.Constraints, name, "AttributeConstraint");
         }
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBAttributeTag.getTaggedValuesForElementID(this.id, this.EAModel);
+        }
     }
 }

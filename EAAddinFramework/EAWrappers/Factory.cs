@@ -1049,23 +1049,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 newTaggedValue = this.createElementTag((Element)owner, (global::EA.TaggedValue)objectToWrap);
             }
+            else if (objectToWrap is EADBElementTag)
+            {
+                newTaggedValue = this.createElementTag((Element)owner, (EADBElementTag)objectToWrap);
+            }
             else if (objectToWrap is global::EA.AttributeTag)
             {
                 newTaggedValue = this.createAttributeTag((Element)owner, (global::EA.AttributeTag)objectToWrap);
+            }
+            else if (objectToWrap is EADBAttributeTag)
+            {
+                newTaggedValue = this.createAttributeTag((Element)owner, (EADBAttributeTag)objectToWrap);
             }
             else if (objectToWrap is global::EA.MethodTag)
             {
                 newTaggedValue = this.createOperationTag((Element)owner, (global::EA.MethodTag)objectToWrap);
             }
+            else if (objectToWrap is EADBOperationTag)
+            {
+                newTaggedValue = this.createOperationTag((Element)owner, (EADBOperationTag)objectToWrap);
+            }
             else if (objectToWrap is global::EA.ConnectorTag)
             {
                 newTaggedValue = this.createRelationTag((Element)owner, (global::EA.ConnectorTag)objectToWrap);
             }
-            else if (objectToWrap is global::EA.ParamTag)
+            else if (objectToWrap is EADBConnectorTag)
+            {
+                newTaggedValue = this.createRelationTag((Element)owner, (EADBConnectorTag)objectToWrap);
+            }
+            else if (objectToWrap is global::EA.ParamTag) //TODO add EADB variant
             {
                 newTaggedValue = this.createParameterTag((Element)owner, (global::EA.ParamTag)objectToWrap);
             }
-            else if (objectToWrap is global::EA.RoleTag)
+            else if (objectToWrap is global::EA.RoleTag) //TODO add EADB variant
             {
                 newTaggedValue = this.createRoleTag((Element)owner, (global::EA.RoleTag)objectToWrap);
             }
@@ -1074,25 +1090,41 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public ElementTag createElementTag(Element owner, global::EA.TaggedValue objectToWrap)
         {
+            return new ElementTag((Model)this.model, owner, new EADBElementTag(this.EAModel, objectToWrap));
+        }
+        public ElementTag createElementTag(Element owner, EADBElementTag objectToWrap)
+        {
             return new ElementTag((Model)this.model, owner, objectToWrap);
         }
         public AttributeTag createAttributeTag(Element owner, global::EA.AttributeTag objectToWrap)
+        {
+            return new AttributeTag((Model)this.model, owner, new EADBAttributeTag(this.EAModel, objectToWrap));
+        }
+        public AttributeTag createAttributeTag(Element owner, EADBAttributeTag objectToWrap)
         {
             return new AttributeTag((Model)this.model, owner, objectToWrap);
         }
         public OperationTag createOperationTag(Element owner, global::EA.MethodTag objectToWrap)
         {
+            return new OperationTag((Model)this.model, owner, new EADBOperationTag(this.EAModel, objectToWrap));
+        }
+        public OperationTag createOperationTag(Element owner, EADBOperationTag objectToWrap)
+        {
             return new OperationTag((Model)this.model, owner, objectToWrap);
         }
         public RelationTag createRelationTag(Element owner, global::EA.ConnectorTag objectToWrap)
         {
+            return new RelationTag((Model)this.model, owner, new EADBConnectorTag(this.EAModel, objectToWrap));
+        }
+        public RelationTag createRelationTag(Element owner, EADBConnectorTag objectToWrap)
+        {
             return new RelationTag((Model)this.model, owner, objectToWrap);
         }
-        public ParameterTag createParameterTag(Element owner, global::EA.ParamTag objectToWrap)
+        public ParameterTag createParameterTag(Element owner, global::EA.ParamTag objectToWrap) //TODO change to EADB variant
         {
             return new ParameterTag((Model)this.model, owner, objectToWrap);
         }
-        public RoleTag createRoleTag(Element owner, global::EA.RoleTag objectToWrap)
+        public RoleTag createRoleTag(Element owner, global::EA.RoleTag objectToWrap) //TODO change to EADB variant
         {
             return new RoleTag((Model)this.model, owner, objectToWrap);
         }

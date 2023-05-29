@@ -1584,5 +1584,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 ownedElement.exportAllDiagrams(imagePath);
             }
         }
+
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBElementTag.getTaggedValuesForElementID(this.id, this.EAModel);
+        }
     }
 }

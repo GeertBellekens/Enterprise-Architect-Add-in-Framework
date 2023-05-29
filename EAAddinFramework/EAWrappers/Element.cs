@@ -338,22 +338,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._taggedValues == null)
                 {
-                    if (this.eaTaggedValuesCollection == null)
-                    {
-                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
-                    }
-                    else
-                    {
-                        //make sure we have the latest set of tagged values
-                        this.eaTaggedValuesCollection?.Refresh();
-                        //create the tagged values from the EA collection
-                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
-                    }
-                    
+                    //create the tagged values from the EA collection
+                    this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.getEADBTaggedValues()));   
                 }
                 return this._taggedValues;
             }
             set => throw new NotImplementedException();
+        }
+        public virtual List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return new List<EADBTaggedValue>();//default empty implementation TODO: fix for connector ends and parameters
         }
         protected abstract string getTaggedValueQuery(string taggedValueName);
         /// <summary>

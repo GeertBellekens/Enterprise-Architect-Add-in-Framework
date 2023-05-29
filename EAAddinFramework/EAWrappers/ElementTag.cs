@@ -5,8 +5,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class ElementTag : TaggedValue
     {
 
-        internal global::EA.TaggedValue wrappedTaggedValue { get; set; }
-        internal ElementTag(Model model, Element owner, global::EA.TaggedValue eaTag) : base(model, owner)
+        internal EADBElementTag wrappedTaggedValue { get; set; }
+        internal ElementTag(Model model, Element owner, EADBElementTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -52,7 +52,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.TaggedValue;
+            var otherTag = eaTag as EADBElementTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
     }
