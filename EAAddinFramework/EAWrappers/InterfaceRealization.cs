@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class InterfaceRealization : Realization,
                                   UML.Classes.Interfaces.InterfaceRealization 
   {
-    public InterfaceRealization(Model model, global::EA.Connector connector)
+    public InterfaceRealization(Model model, EADBConnector connector)
       : base(model, connector)
     {}
     

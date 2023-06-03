@@ -6,7 +6,7 @@
     public class Enumeration : DataType, UML.Classes.Kernel.Enumeration
     {
 
-        public Enumeration(Model model, EADBElementWrapper elementToWrap)
+        public Enumeration(Model model, EADBElement elementToWrap)
       : base(model, elementToWrap)
         { }
 

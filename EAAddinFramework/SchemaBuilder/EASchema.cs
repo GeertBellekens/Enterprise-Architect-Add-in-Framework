@@ -392,7 +392,7 @@ namespace EAAddinFramework.SchemaBuilder
                         if (!this.settings.dontCreateAttributeDependencies)
                         {
                             //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating attribute depencendies for: '" + schemaElement.name + "'"
+                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating attribute dependendies for: '" + schemaElement.name + "'"
                                                , 0, LogTypeEnum.log);
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.addAttributeTypeDependencies();

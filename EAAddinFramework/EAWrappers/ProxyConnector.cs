@@ -9,7 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	/// </summary>
 	public class ProxyConnector:ElementWrapper
 	{
-		public ProxyConnector(Model model, EADBElementWrapper wrappedElement):base(model,wrappedElement)
+		public ProxyConnector(Model model, EADBElement wrappedElement):base(model,wrappedElement)
 		{	
 		}
 		public ConnectorWrapper connector 

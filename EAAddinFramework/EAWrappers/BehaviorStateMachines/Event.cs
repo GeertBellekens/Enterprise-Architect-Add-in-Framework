@@ -14,7 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
     /// </summary>
     public class Event : UTF_EA.ElementWrapper, UML.CommonBehaviors.Communications.Event
     {
-        public Event(UTF_EA.Model model, EADBElementWrapper wrappedElement)
+        public Event(UTF_EA.Model model, EADBElement wrappedElement)
         : base(model, wrappedElement)
         {
         }

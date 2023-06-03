@@ -8,7 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public abstract class Element : UML.Classes.Kernel.Element
     {
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
-        internal EADBElementWrapper wrappedElement { get; set; }
+        internal EADBElement wrappedElement { get; set; }
         protected bool saveOwnedElements { get; set; } = true;
         /// <summary>
         /// resets teh property info making sure all properties are reset

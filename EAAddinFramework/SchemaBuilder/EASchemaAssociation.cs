@@ -333,7 +333,7 @@ namespace EAAddinFramework.SchemaBuilder
 			if (!string.Equals(subSetAssociation.alias,((UTF_EA.Association)sourceAssociation).alias))
 			{
 					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-                                              ,$"Association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has alias {subSetAssociation.alias} in the model and a different alias '{((UTF_EA.Association)sourceAssociation).alias}' in the subset"
+                                              ,$"Association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has alias '{subSetAssociation.alias}' in the model and a different alias '{((UTF_EA.Association)sourceAssociation).alias}' in the subset"
                                               ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
                                               , LogTypeEnum.warning);				
 			}

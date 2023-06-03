@@ -8,12 +8,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship
     {
-        internal global::EA.Connector wrappedConnector { get; set; }
+        internal EADBConnector wrappedConnector { get; set; }
         private UML.Classes.Kernel.Element _source;
         private UML.Classes.Kernel.Element _target;
         private AssociationEnd _sourceEnd;
         private AssociationEnd _targetEnd;
-        public ConnectorWrapper(Model model, global::EA.Connector connector)
+        public ConnectorWrapper(Model model, EADBConnector connector)
           : base(model)
         {
             this.wrappedConnector = connector;
@@ -123,7 +123,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public int id => this.wrappedConnector.ConnectorID;
 
 
-        public global::EA.Connector WrappedConnector => this.wrappedConnector;
+        public EADBConnector WrappedConnector => this.wrappedConnector;
         public override void open()
         {
             var diagrams = this.getDependentDiagrams();
@@ -479,7 +479,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._sourceEnd == null)
                 {
-                    this._sourceEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd, false);
+                    this._sourceEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd);
                 }
                 return this._sourceEnd;
             }
@@ -490,7 +490,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._targetEnd == null)
                 {
-                    this._targetEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd, true);
+                    this._targetEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd);
                 }
                 return this._targetEnd;
             }

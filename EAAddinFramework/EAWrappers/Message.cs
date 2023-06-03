@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
     public class Message : ConnectorWrapper, UML.Interactions.BasicInteractions.Message{
         
         //creates a new Message based on the given EA.connector of type message
-        public Message(Model model, global::EA.Connector message)
+        public Message(Model model, EADBConnector message)
           : base(model, message)
         {}
         

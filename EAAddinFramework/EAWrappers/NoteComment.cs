@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   /// A comment is a textual annotation that can be attached to a set of 
   /// elements. This class wraps notes that can be made visible on a diagram.
   public class NoteComment : ElementWrapper, UML.Classes.Kernel.Comment {
-    public NoteComment(Model model, EADBElementWrapper wrappedNote) 
+    public NoteComment(Model model, EADBElement wrappedNote) 
       : base(model, wrappedNote)
     {}
 

@@ -8,65 +8,65 @@ using System.Threading.Tasks;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public class EADBAttributeWrapper
+    public class EADBAttribute
     {
         internal static List<String> columnNames;
         private static void initializeColumnNames(Model model)
         {
             columnNames = model.getDataSetFromQuery("select top 1 * from t_attribute ", true).FirstOrDefault();
         }
-        public static EADBAttributeWrapper getEADBAttributeWrapperForAttributeID(int attributeID, Model model)
+        public static EADBAttribute getEADBAttributeForAttributeID(int attributeID, Model model)
         {
-            return getEADBAttributeWrappersForAttributeIDs(new List<string>() { attributeID.ToString() }, model).FirstOrDefault();
+            return getEADBAttributesForAttributeIDs(new List<string>() { attributeID.ToString() }, model).FirstOrDefault();
         }
 
-        public static List<EADBAttributeWrapper> getEADBAttributeWrappersForAttributeIDs(List<string> attributeIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForAttributeIDs(List<string> attributeIDs, Model model)
         {
-            var elements = new List<EADBAttributeWrapper>();
+            var elements = new List<EADBAttribute>();
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ID in ({string.Join(",", attributeIDs)})", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBAttributeWrapper(model, propertyValues));
+                elements.Add(new EADBAttribute(model, propertyValues));
             }
             return elements;
         }
-        public static EADBAttributeWrapper getEADBAttributeWrapperForAttributeGUID(string attributeGUID, Model model)
+        public static EADBAttribute getEADBAttributeForAttributeGUID(string attributeGUID, Model model)
         {
-            return getEADBAttributeWrappersForAttributeGUIDs(new List<string>() { attributeGUID }, model).FirstOrDefault();
+            return getEADBAttributesForAttributeGUIDs(new List<string>() { attributeGUID }, model).FirstOrDefault();
         }
-        public static List<EADBAttributeWrapper> getEADBAttributeWrappersForAttributeGUIDs(List<string> attributeGUIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForAttributeGUIDs(List<string> attributeGUIDs, Model model)
         {
-            var elements = new List<EADBAttributeWrapper>();
+            var elements = new List<EADBAttribute>();
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid in ('{string.Join("','", attributeGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBAttributeWrapper(model, propertyValues));
+                elements.Add(new EADBAttribute(model, propertyValues));
             }
             return elements;
         }
-        public static List<EADBAttributeWrapper> getEADBAttributeWrappersForElementID(int elementID, Model model)
+        public static List<EADBAttribute> getEADBAttributesForElementID(int elementID, Model model)
         {
-            return getEADBAttributeWrappersForElementIDs(new List<string>() { elementID.ToString() }, model);
+            return getEADBAttributesForElementIDs(new List<string>() { elementID.ToString() }, model);
         }
-        public static List<EADBAttributeWrapper> getEADBAttributeWrappersForElementIDs(List<string> elementIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForElementIDs(List<string> elementIDs, Model model)
         {
-            var elements = new List<EADBAttributeWrapper>();
+            var elements = new List<EADBAttribute>();
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.Object_ID in ({string.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBAttributeWrapper(model, propertyValues));
+                elements.Add(new EADBAttribute(model, propertyValues));
             }
             return elements;
         }
-        public static List<EADBAttributeWrapper> getEADBAttributeWrappersForPackageIDs(List<string> PackageIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForPackageIDs(List<string> PackageIDs, Model model)
         {
-            var elements = new List<EADBAttributeWrapper>();
+            var elements = new List<EADBAttribute>();
             var results = model.getDataSetFromQuery($@"select * from (t_attribute a 
                                                     inner join t_object o on o.Object_ID = a.Object_ID)
                                                     where o.Package_ID in ({string.Join(",", PackageIDs)})", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBAttributeWrapper(model, propertyValues));
+                elements.Add(new EADBAttribute(model, propertyValues));
             }
             return elements;
         }
@@ -87,7 +87,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         private Dictionary<string, string> properties { get; set; }
 
-        private EADBAttributeWrapper(Model model)
+        private EADBAttribute(Model model)
         {
             if (columnNames == null)
             {
@@ -95,7 +95,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             this.model = model;
         }
-        public EADBAttributeWrapper(Model model, List<string> propertyValues)
+        public EADBAttribute(Model model, List<string> propertyValues)
             : this(model)
         {
             this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -104,13 +104,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.properties.Add(columnNames[i], propertyValues[i]);
             }
         }
-        public EADBAttributeWrapper(Model model, int attributeID)
+        public EADBAttribute(Model model, int attributeID)
             : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ID = {attributeID}", false).FirstOrDefault())
         { }
-        public EADBAttributeWrapper(Model model, string uniqueID)
+        public EADBAttribute(Model model, string uniqueID)
             : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
-        public EADBAttributeWrapper(Model model, global::EA.Attribute attribute)
+        public EADBAttribute(Model model, global::EA.Attribute attribute)
             : this(model)
         {
             this.eaAttribute = attribute;
@@ -153,6 +153,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.AttributeGUID = this.eaAttribute.AttributeGUID;
             this.StyleEx = this.eaAttribute.StyleEx;
             this.StereotypeEx = this.eaAttribute.StereotypeEx;
+            this.IsID = this.eaAttribute.IsID;
             //add also ID
             this.AttributeID = this.eaAttribute.AttributeID;
         }
@@ -342,10 +343,30 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.Style;
             set => this.Style = value;
         }
+        private bool _isID;
         public bool IsID
         {
-            get => this.eaAttribute.IsID;
-            set => this.eaAttribute.IsID = value;
+            get
+            {
+                if (this._eaAttribute != null)
+                {
+                    this._isID = this.eaAttribute.IsID;
+                }
+                else
+                {
+                    //getIsID property from database
+                    var sqlGetData = $@"select count(x.xrefID) as isID
+                                    from t_xref x
+                                    where 1=1
+                                    and x.Name = 'CustomProperties'
+                                    and x.type = 'attribute property'
+                                    and x.Description like '%@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1@%' 
+                                    and x.client = '{this.AttributeGUID}'";
+                    this._isID = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isID")) > 0;
+                }
+                return this._isID;
+            }
+            set => this._isID = value;
         }
         public string SubsettedProperty
         {
@@ -412,6 +433,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.eaAttribute.AttributeGUID = this.AttributeGUID;
             this.eaAttribute.StyleEx = this.StyleEx;
             this.eaAttribute.StereotypeEx = this.StereotypeEx;
+            this.eaAttribute.IsID = this.IsID;
             var updateResult = this.eaAttribute.Update();
             //aver saving we need to refresh the properties
             updateFromWrappedElement();

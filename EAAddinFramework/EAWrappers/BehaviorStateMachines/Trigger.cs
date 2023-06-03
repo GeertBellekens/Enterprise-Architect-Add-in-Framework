@@ -27,7 +27,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
 
 		UML.CommonBehaviors.Communications.Event _event = null;
 		
-		public Trigger(UTF_EA.Model model, EADBElementWrapper wrappedElement)
+		public Trigger(UTF_EA.Model model, EADBElement wrappedElement)
 			: base(model,wrappedElement)
 		{
 			_event = new UTF_EA.BehaviorStateMachines.Event(model,wrappedElement);

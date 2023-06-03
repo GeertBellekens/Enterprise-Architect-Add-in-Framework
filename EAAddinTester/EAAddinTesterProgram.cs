@@ -155,7 +155,7 @@ namespace EAAddinTester
             EAOutputLogger.log(model, outputName, $"found {elements.Count} elements", 0);
             EAOutputLogger.log(model, outputName, $"starting new test for package '{selectedPackage?.name}'", 0);
             sqlGetData = $"select * from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
-            var newElements = EAWrappers.EADBElementWrapper.getEADBElementWrappersForPackageIDs(packageIDs, model);
+            var newElements = EAWrappers.EADBElement.getEADBElementsForPackageIDs(packageIDs, model);
             EAOutputLogger.log(model, outputName, $"found {newElements.Count} new elements", 0);
         }
         /// <summary>

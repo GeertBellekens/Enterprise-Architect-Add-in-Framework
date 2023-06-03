@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class InstanceSpecification : ElementWrapper, UML.Classes.Kernel.InstanceSpecification
     {
 
-        public InstanceSpecification(Model model, EADBElementWrapper elementToWrap)
+        public InstanceSpecification(Model model, EADBElement elementToWrap)
       : base(model, elementToWrap)
         { }
 

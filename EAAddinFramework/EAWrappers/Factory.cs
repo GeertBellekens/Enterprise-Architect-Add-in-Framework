@@ -165,21 +165,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             if (objectToWrap is global::EA.Element)
             {
-                var elementWrapper = new EADBElementWrapper(this.EAModel, (global::EA.Element)objectToWrap);
+                var elementWrapper = new EADBElement(this.EAModel, (global::EA.Element)objectToWrap);
                 return this.createEAElementWrapper(elementWrapper);
             }
-            else if (objectToWrap is EADBElementWrapper)
+            else if (objectToWrap is EADBElement)
             {
-                return this.createEAElementWrapper((EADBElementWrapper)objectToWrap);
+                return this.createEAElementWrapper((EADBElement)objectToWrap);
             }
             else if (objectToWrap is global::EA.Attribute)
             {
-                var attributeWrapper = new EADBAttributeWrapper(this.EAModel, (global::EA.Attribute)objectToWrap);
+                var attributeWrapper = new EADBAttribute(this.EAModel, (global::EA.Attribute)objectToWrap);
                 return this.createEAAttributeWrapper(attributeWrapper);
             }
-            else if (objectToWrap is EADBAttributeWrapper)
+            else if (objectToWrap is EADBAttribute)
             {
-                return this.createEAAttributeWrapper((EADBAttributeWrapper)objectToWrap);
+                return this.createEAAttributeWrapper((EADBAttribute)objectToWrap);
+            }
+            else if (objectToWrap is EADBConnector)
+            {
+                return this.createEAConnectorWrapper((EADBConnector)objectToWrap);
             }
             else if (objectToWrap is global::EA.Connector)
             {
@@ -205,6 +209,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 return this.createAttributeConstraint(objectToWrap as global::EA.AttributeConstraint);
             }
+            else if (objectToWrap is EADBAttributeConstraint)
+            {
+                return this.createAttributeConstraint(objectToWrap as EADBAttributeConstraint);
+            }
 
             return null;
         }
@@ -214,6 +222,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return new Constraint(this.model as UTF_EA.Model, constraint);
         }
         public UML.Classes.Kernel.Element createAttributeConstraint(global::EA.AttributeConstraint constraint)
+        {
+            return new AttributeConstraint(this.model as UTF_EA.Model, new EADBAttributeConstraint(this.EAModel, constraint));
+        }
+        public UML.Classes.Kernel.Element createAttributeConstraint(EADBAttributeConstraint constraint)
         {
             return new AttributeConstraint(this.model as UTF_EA.Model, constraint);
         }
@@ -242,10 +254,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return new Operation(this.model as Model, operation);
         }
+        private ConnectorWrapper createEAConnectorWrapper
+        (global::EA.Connector connector)
+        {
+            return this.createEAConnectorWrapper(new EADBConnector(this.EAModel, connector));
+        }
 
         /// creates a new EAConnectorWrapper wrapping the given EA.Connector
-        private ConnectorWrapper createEAConnectorWrapper
-          (global::EA.Connector connector)
+        private ConnectorWrapper createEAConnectorWrapper(EADBConnector connector)
         {
             switch (connector.Type)
             {
@@ -275,7 +291,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
         }
 
-        private Realization createEARealization(global::EA.Connector connector)
+        private Realization createEARealization(EADBConnector connector)
         {
             // first create an EARealization, then check if this realization is 
             // between an interface and a behaviored classifier.
@@ -291,7 +307,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
         /// creates a new EAAttribute based on the given EA.Attribute
-        internal AttributeWrapper createEAAttributeWrapper(EADBAttributeWrapper attributeToWrap)
+        internal AttributeWrapper createEAAttributeWrapper(EADBAttribute attributeToWrap)
         {
             if (EnumerationLiteral.isLiteralValue(attributeToWrap))
             {
@@ -309,7 +325,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         /// <param name="elementToWrap">the element to check</param>
         /// <returns>true if it is an associationclass</returns>
-        private bool isAssociationClass(EADBElementWrapper elementToWrap)
+        private bool isAssociationClass(EADBElement elementToWrap)
         {
             int connectorID;
             bool associationClass = false;
@@ -334,7 +350,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         /// creates a new EAElementWrapper based on the given EA.Element
         internal ElementWrapper createEAElementWrapper
-          (EADBElementWrapper elementToWrap)
+          (EADBElement elementToWrap)
         {
             //first check if this element already exists in the cache
             if (this.EAModel.useCache)
@@ -354,7 +370,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <param name="elementToWrap">the element to be wrapped</param>
         /// <returns>the correct ElementWrapper</returns>
         /// <exception cref="Exception"></exception>
-        private ElementWrapper getCorrectElementWrapperType(EADBElementWrapper elementToWrap)
+        private ElementWrapper getCorrectElementWrapperType(EADBElement elementToWrap)
         {
 
             switch (elementToWrap.Type)
@@ -786,7 +802,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return null;
         }
 
-        internal global::EA.Diagram getMasterStateDiagram(ElementWrapper elementWrapper, EADBElementWrapper stateChartElement)
+        internal global::EA.Diagram getMasterStateDiagram(ElementWrapper elementWrapper, EADBElement stateChartElement)
         {
             foreach (global::EA.Diagram diagram in elementWrapper.wrappedElement.Diagrams)
             {
@@ -806,9 +822,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return null;
         }
 
-        internal AssociationEnd createAssociationEnd(ConnectorWrapper connector, global::EA.ConnectorEnd associationEnd, bool isTarget)
+        internal AssociationEnd createAssociationEnd(ConnectorWrapper connector, EADBConnectorEnd associationEnd)
         {
-            return new AssociationEnd(this.model as Model, connector, associationEnd, isTarget);
+            return new AssociationEnd(this.model as Model, connector, associationEnd);
         }
         public override UML.Profiles.TaggedValue createNewTaggedValue(UML.Classes.Kernel.Element owner, string name)
         {
@@ -872,14 +888,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (typeof(T).Name == "EnumerationLiteral")
             {
                 newElement = new EnumerationLiteral((Model)this.model 
-                                       , new EADBAttributeWrapper(this.EAModel   
+                                       , new EADBAttribute(this.EAModel   
                                                     ,(global::EA.Attribute)collection.AddNew(name, this.translateTypeName(EAType))));
             }
             //Creating Associationclasses is a bit special too. It only becomes an associationclass according to EA once it is linked to an association
             else if (typeof(T).Name == "AssociationClass")
             {
                 newElement = new AssociationClass(this.EAModel
-                                        , new EADBElementWrapper(this.EAModel
+                                        , new EADBElement(this.EAModel
                                                     , (global::EA.Element)collection.AddNew(name, this.translateTypeName(EAType))));
             }
             else

@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         
         private string _uniqueID = null;
 
-        public AttributeWrapper(Model model, EADBAttributeWrapper wrappedAttribute)
+        public AttributeWrapper(Model model, EADBAttribute wrappedAttribute)
           : base(model)
         {
             this.wrappedAttribute = wrappedAttribute;
@@ -21,7 +21,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.isDirty = false;
         }
 
-        internal EADBAttributeWrapper wrappedAttribute { get; set; }
+        internal EADBAttribute wrappedAttribute { get; set; }
         public int id => this.wrappedAttribute.AttributeID;
         public override UML.Classes.Kernel.Package owningPackage
         {
@@ -30,7 +30,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public EADBAttributeWrapper WrappedAttribute => this.wrappedAttribute;
+        public EADBAttribute WrappedAttribute => this.wrappedAttribute;
         public override string name
         {
             get
@@ -67,7 +67,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 if (this._constraints == null)
                 {
                     this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
-                    foreach (var constraint in this.EAModel.factory.createElements(this.wrappedAttribute.Constraints).Cast<AttributeConstraint>())
+                    var eaDBConstraints = EADBAttributeConstraint.getEADBAttributeConstraintsForAttributeIDs
+                        (new List<string>() { this.id.ToString() }, this.EAModel);
+                    foreach (var constraint in this.EAModel.factory.createElements(eaDBConstraints).Cast<AttributeConstraint>())
                     {
                         this._constraints.Add(constraint);
                     }

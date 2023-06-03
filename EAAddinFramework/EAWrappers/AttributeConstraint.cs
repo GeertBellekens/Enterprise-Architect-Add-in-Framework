@@ -9,12 +9,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class AttributeConstraint : Element, UML.Classes.Kernel.Constraint
     {
-        internal global::EA.AttributeConstraint wrappedConstraint { get; set; }
+        internal EADBAttributeConstraint wrappedConstraint { get; set; }
        // private Element _owner;
         private OpaqueExpression _opaqueExpression;
         private AttributeWrapper attributeWrapper => this.owner as AttributeWrapper;
         //private ElementWrapper elementWrapperOwner => this.owner as ElementWrapper;
-        public AttributeConstraint(Model model, global::EA.AttributeConstraint wrappedConstraint) : base(model)
+        public AttributeConstraint(Model model, EADBAttributeConstraint wrappedConstraint) : base(model)
         {
             this.wrappedConstraint = wrappedConstraint;
             this.isDirty = true;

@@ -269,6 +269,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get { return Factory.getInstance(this); }
         }
+        public Factory eaFactory => (Factory)this.factory;
 
         public ElementWrapper getElementFromCache(int id)
         {
@@ -295,7 +296,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (elementWrapper != null) return elementWrapper; //found it
 
             //not found in cache (or cache not used) get the regular way
-            var eaElement = EADBElementWrapper.getEADBElementWrappersForElementID(id, this);
+            var eaElement = EADBElement.getEADBElementsForElementID(id, this);
             //not found in the database return null
             if (eaElement == null) return null;
             //create the elementWrapper
@@ -332,7 +333,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return elementWrapper;
                 }
             }
-            var eaElement = EADBElementWrapper.getEADBElementWrappersForElementGUID(GUID, this);
+            var eaElement = EADBElement.getEADBElementsForElementGUID(GUID, this);
             //if not found then return empty
             if (eaElement == null) return null;
             //create elementWrapper
@@ -498,7 +499,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            EADBAttributeWrapper eaAttribute = EADBAttributeWrapper.getEADBAttributeWrapperForAttributeID(attributeID, this);
+            EADBAttribute eaAttribute = EADBAttribute.getEADBAttributeForAttributeID(attributeID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper
@@ -523,7 +524,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            EADBAttributeWrapper eaAttribute = EADBAttributeWrapper.getEADBAttributeWrapperForAttributeGUID(GUID, this);
+            EADBAttribute eaAttribute = EADBAttribute.getEADBAttributeForAttributeGUID(GUID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper
@@ -595,13 +596,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public ConnectorWrapper getRelationByID(int relationID)
         {
             return ((Factory)this.factory).createElement
-              (this.wrappedModel.GetConnectorByID(relationID)) as ConnectorWrapper;
+              (EADBConnector.getEADBConnectorForConnectorID(relationID, this)) as ConnectorWrapper;
         }
 
         public ConnectorWrapper getRelationByGUID(string relationGUID)
         {
             return ((Factory)this.factory).createElement
-              (this.wrappedModel.GetConnectorByGuid(relationGUID)) as ConnectorWrapper;
+              (EADBConnector.getEADBConnectorForConnectorGUID(relationGUID, this)) as ConnectorWrapper;
         }
 
         public List<ConnectorWrapper> getRelationsByQuery(string SQLQuery)
@@ -611,14 +612,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             XmlNodeList relationIDNodes =
                 xmlrelationIDs.SelectNodes(formatXPath("//Connector_ID"));
             List<ConnectorWrapper> relations = new List<ConnectorWrapper>();
+            var connectorIDs = new List<string>();
             foreach (XmlNode relationIDNode in relationIDNodes)
             {
                 int relationID;
                 if (int.TryParse(relationIDNode.InnerText, out relationID))
                 {
-                    ConnectorWrapper relation = this.getRelationByID(relationID);
-                    relations.Add(relation);
+                    connectorIDs.Add(relationID.ToString());
                 }
+            }
+            var eaDBConnectors = EADBConnector.getEADBConnectorsForConnectorIDs(connectorIDs, this);
+            foreach (var eaDBConnector in eaDBConnectors)
+            {
+                relations.Add(this.eaFactory.createElement(eaDBConnector) as ConnectorWrapper);
             }
             return relations;
         }

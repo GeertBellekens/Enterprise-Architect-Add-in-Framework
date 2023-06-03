@@ -11,48 +11,48 @@ using System.Xml;
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
 
-    public class EADBElementWrapper
+    public class EADBElement
     {
         internal static List<String> columnNames;
         private static void initializeColumnNames(Model model)
         {
             columnNames = model.getDataSetFromQuery("select top 1 * from t_object o", true).FirstOrDefault();
         }
-        public static EADBElementWrapper getEADBElementWrappersForElementGUID(string elementGUID, Model model)
+        public static EADBElement getEADBElementsForElementGUID(string elementGUID, Model model)
         {
-            return getEADBElementWrappersForElementGUIDs(new List<string>() { elementGUID }, model).FirstOrDefault();
+            return getEADBElementsForElementGUIDs(new List<string>() { elementGUID }, model).FirstOrDefault();
         }
-        public static List<EADBElementWrapper> getEADBElementWrappersForElementGUIDs(List<string> elementGUIDs, Model model)
+        public static List<EADBElement> getEADBElementsForElementGUIDs(List<string> elementGUIDs, Model model)
         {
-            var elements = new List<EADBElementWrapper>();
+            var elements = new List<EADBElement>();
             var results = model.getDataSetFromQuery($"select * from t_object o where o.ea_guid in ('{String.Join("','", elementGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBElementWrapper(model, propertyValues));
+                elements.Add(new EADBElement(model, propertyValues));
             }
             return elements;
         }
-        public static EADBElementWrapper getEADBElementWrappersForElementID(int elementID, Model model)
+        public static EADBElement getEADBElementsForElementID(int elementID, Model model)
         {
-            return getEADBElementWrappersForElementIDs(new List<string>() { elementID.ToString() }, model).FirstOrDefault();
+            return getEADBElementsForElementIDs(new List<string>() { elementID.ToString() }, model).FirstOrDefault();
         }
-        public static List<EADBElementWrapper> getEADBElementWrappersForElementIDs(List<string> elementIDs, Model model)
+        public static List<EADBElement> getEADBElementsForElementIDs(List<string> elementIDs, Model model)
         {
-            var elements = new List<EADBElementWrapper>();
+            var elements = new List<EADBElement>();
             var results = model.getDataSetFromQuery($"select * from t_object o where o.Object_ID in ({String.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBElementWrapper(model, propertyValues));
+                elements.Add(new EADBElement(model, propertyValues));
             }
             return elements;
         }
-        public static List<EADBElementWrapper> getEADBElementWrappersForPackageIDs(List<string> PackageIDs, Model model)
+        public static List<EADBElement> getEADBElementsForPackageIDs(List<string> PackageIDs, Model model)
         {
-            var elements = new List<EADBElementWrapper>();
+            var elements = new List<EADBElement>();
             var results = model.getDataSetFromQuery($"select * from t_object o where o.Package_ID in ({String.Join(",", PackageIDs)})", false);
             foreach (var propertyValues in results)
             {
-                elements.Add(new EADBElementWrapper(model, propertyValues));
+                elements.Add(new EADBElement(model, propertyValues));
             }
             return elements;
         }
@@ -72,7 +72,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         private Dictionary<string, string> properties { get; set; }
 
-        private EADBElementWrapper(Model model)
+        private EADBElement(Model model)
         {
             if (columnNames == null)
             {
@@ -80,7 +80,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             this.model = model;
         }
-        public EADBElementWrapper(Model model, List<string> propertyValues)
+        public EADBElement(Model model, List<string> propertyValues)
             : this(model)
         {
             this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -89,13 +89,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.properties.Add(columnNames[i], propertyValues[i]);
             }
         }
-        public EADBElementWrapper(Model model, int elementID)
+        public EADBElement(Model model, int elementID)
             : this(model, model.getDataSetFromQuery($"select * from t_object o where o.Object_ID = {elementID}", false).FirstOrDefault())
         { }
-        public EADBElementWrapper(Model model, string uniqueID)
+        public EADBElement(Model model, string uniqueID)
             : this(model, model.getDataSetFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
-        public EADBElementWrapper(Model model, global::EA.Element element)
+        public EADBElement(Model model, global::EA.Element element)
             : this(model)
         {
             this.eaElement = element;

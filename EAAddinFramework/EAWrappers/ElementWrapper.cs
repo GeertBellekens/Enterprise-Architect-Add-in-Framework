@@ -20,13 +20,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         protected string _uniqueID;
 
 
-        public ElementWrapper(Model model, EADBElementWrapper wrappedElement)
+        public ElementWrapper(Model model, EADBElement wrappedElement)
           : base(model)
         {
             this.initialize(wrappedElement);
         }
 
-        protected virtual void initialize(EADBElementWrapper wrappedElement)
+        protected virtual void initialize(EADBElement wrappedElement)
         {
             this.wrappedElement = wrappedElement;
             this.isDirty = false;
@@ -102,7 +102,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         void reloadWrappedElement()
         {
-            this.wrappedElement = new EADBElementWrapper(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this._uniqueID));
+            this.wrappedElement = new EADBElement(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this._uniqueID));
         }
         public ElementWrapper classifier
         {
@@ -537,7 +537,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.setProperty(getPropertyNameName(), int.Parse(value), this.wrappedElement?.Subtype);
         }
 
-        public virtual EADBElementWrapper WrappedElement
+        public virtual EADBElement WrappedElement
         {
             get => this.wrappedElement;
             set => this.wrappedElement = value;
@@ -605,7 +605,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._attributeWrappers == null)
                 {
-                    var eaDBAttributes = EADBAttributeWrapper.getEADBAttributeWrappersForElementIDs(new List<string>() { this.id.ToString() }, this.EAModel);
+                    var eaDBAttributes = EADBAttribute.getEADBAttributesForElementIDs(new List<string>() { this.id.ToString() }, this.EAModel);
                     //get the attribute wrappers
                     this._attributeWrappers = new HashSet<AttributeWrapper>(
                         this.EAModel.factory.createElements(eaDBAttributes).OfType<AttributeWrapper>());
@@ -824,9 +824,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 var typedRelations = getRelationsByQuery<T>(outgoing, incoming);
                 if (typedRelations != null) return typedRelations;
                 //get them the regular way
-                //to make sure the connectors collection is still accurate we do a refresh first
-                this.wrappedElement?.Connectors.Refresh();
-                this._allRelationships = this.EAModel.factory.createElements(this.wrappedElement?.Connectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
+                var EADBconnectors = EADBConnector.getEADBConnectorsForElementID(this.id, this.EAModel);
+                this._allRelationships = this.EAModel.factory.createElements(EADBconnectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
             }
             List<T> returnedRelationships = new List<T>();
             // we still need to filter out those relationships that are there because of linked features

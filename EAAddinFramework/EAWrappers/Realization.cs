@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Realization : Abstraction, 
                              UML.Classes.Dependencies.Realization 
   {
-    public Realization(Model model, global::EA.Connector realization)
+    public Realization(Model model, EADBConnector realization)
       : base(model, realization)
     {}
   }

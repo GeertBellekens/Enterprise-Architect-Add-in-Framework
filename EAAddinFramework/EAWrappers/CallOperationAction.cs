@@ -23,7 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		/// </summary>
 		/// <param name="model">the model</param>
 		/// <param name="wrappedElement">the EA.Element to wrap</param>
-		public CallOperationAction(Model model, EADBElementWrapper wrappedElement) 
+		public CallOperationAction(Model model, EADBElement wrappedElement) 
       : base(model,wrappedElement)
     	{
     	}

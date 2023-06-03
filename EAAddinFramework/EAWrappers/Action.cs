@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 	/// </summary>
 	public class Action: ElementWrapper,UML.Actions.BasicActions.Action
 	{
-		public Action(Model model, EADBElementWrapper wrappedElement)
+		public Action(Model model, EADBElement wrappedElement)
       	: base(model,wrappedElement)
     	{
     	}

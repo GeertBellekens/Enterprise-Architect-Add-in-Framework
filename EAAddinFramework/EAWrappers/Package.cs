@@ -29,13 +29,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             private set => this._packageTreeIDString = value;
         }
-        public override EADBElementWrapper WrappedElement
+        public override EADBElement WrappedElement
         {
             get
             {
                 if (this.wrappedElement == null)
                 {
-                    this.wrappedElement = new EADBElementWrapper(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this.guid));
+                    this.wrappedElement = new EADBElement(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this.guid));
                 }
                 return base.wrappedElement;
             }
@@ -60,7 +60,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                         " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
             return this.EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
         }
-        public static EADBElementWrapper  getElementForPackage(Model model, global::EA.Package package)
+        public static EADBElement  getElementForPackage(Model model, global::EA.Package package)
         {
             var foundElement = package.Element;
             if (foundElement == null)
@@ -68,7 +68,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 foundElement = model.wrappedModel.GetElementByGuid(package.PackageGUID);
             }
             return foundElement != null ? 
-                    new EADBElementWrapper(model, foundElement) : 
+                    new EADBElement(model, foundElement) : 
                     null;
         }
         protected void initialize(global::EA.Package package)
@@ -213,8 +213,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                var EADBElementWrappers = EADBElementWrapper.getEADBElementWrappersForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
-                var elements = this.EAModel.factory.createElements(EADBElementWrappers).OfType<UML.Classes.Kernel.Element>().ToList();
+                var EADBElements = EADBElement.getEADBElementsForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                var elements = this.EAModel.factory.createElements(EADBElements).OfType<UML.Classes.Kernel.Element>().ToList();
                 this.wrappedPackage.Packages.Refresh();
                 elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<UML.Classes.Kernel.Element>());
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
@@ -227,8 +227,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._ownedElementWrappers == null)
                 {
-                    var EADBElementWrappers = EADBElementWrapper.getEADBElementWrappersForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
-                    this._ownedElementWrappers = this.EAModel.factory.createElements(EADBElementWrappers).OfType<ElementWrapper>().ToList();
+                    var EADBElements = EADBElement.getEADBElementsForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                    this._ownedElementWrappers = this.EAModel.factory.createElements(EADBElements).OfType<ElementWrapper>().ToList();
                     this.wrappedPackage.Packages.Refresh();
                     this._ownedElementWrappers.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<ElementWrapper>().ToList());
                 }

@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Generalization : ConnectorWrapper, 
                                 UML.Classes.Kernel.Generalization 
   {
-    public Generalization(Model model, global::EA.Connector connector) 
+    public Generalization(Model model, EADBConnector connector) 
       : base(model, connector)
     {}
     

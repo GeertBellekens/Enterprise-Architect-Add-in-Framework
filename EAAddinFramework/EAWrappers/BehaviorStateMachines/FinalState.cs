@@ -19,7 +19,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	public class FinalState
 	: State, UML.StateMachines.BehaviorStateMachines.FinalState
 	{
-		public FinalState(Model model, EADBElementWrapper wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
+		public FinalState(Model model, EADBElement wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
       	: base(model,wrappedElement,containingRegion)
 		{
 		}

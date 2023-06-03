@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class EnumerationLiteral : AttributeWrapper, UML.Classes.Kernel.EnumerationLiteral
     {
-        public EnumerationLiteral(Model model, EADBAttributeWrapper wrappedAttribute)
+        public EnumerationLiteral(Model model, EADBAttribute wrappedAttribute)
       : base(model, wrappedAttribute)
         {
             if (!this.wrappedAttribute.StyleEx.Contains("IsLiteral="))
@@ -26,7 +26,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override bool isLocked => ((Element)this.owner).isLocked;
 
-        public static bool isLiteralValue( EADBAttributeWrapper wrappedAttribute)
+        public static bool isLiteralValue( EADBAttribute wrappedAttribute)
         {
             //if the field StyleEx contains "IsLiteral=1" then it is a literal value
             return (wrappedAttribute.StyleEx.Contains("IsLiteral=1"));

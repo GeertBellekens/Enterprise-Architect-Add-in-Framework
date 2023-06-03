@@ -5,7 +5,7 @@ using UML=TSF.UmlToolingFramework.UML;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Interface : ElementWrapper, UML.Classes.Interfaces.Interface {
-    public Interface(Model model, EADBElementWrapper element) : 
+    public Interface(Model model, EADBElement element) : 
       base(model, element)
     {}
 

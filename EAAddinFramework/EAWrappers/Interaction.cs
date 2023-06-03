@@ -15,7 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
 		/// </summary>
 		/// <param name="model">the model containing the element</param>
 		/// <param name="wrappedElement">the EA.Element to be wrapped</param>
-		public Interaction(Model model, EADBElementWrapper wrappedElement)
+		public Interaction(Model model, EADBElement wrappedElement)
       	: base(model,wrappedElement)
     	{
     	}

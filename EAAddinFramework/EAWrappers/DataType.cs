@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class DataType : ElementWrapper, UML.Classes.Kernel.DataType
     {
-        public DataType(Model model, EADBElementWrapper elementToWrap) : base(model, elementToWrap)
+        public DataType(Model model, EADBElement elementToWrap) : base(model, elementToWrap)
         { }
 
 
