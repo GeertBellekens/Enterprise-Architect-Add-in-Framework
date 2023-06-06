@@ -343,6 +343,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return it
             return elementWrapper;
         }
+        public List<ElementWrapper> getElementWrapperByGUIDs(List<string> GUIDs)
+        {
+            var elementWrappers = new List<ElementWrapper>();
+            List<EADBElement> EADBElements;
+            if (this.useCache)
+            {
+                foreach(var guid in GUIDs.Where(x => this.elementsByGUID.ContainsKey(x)))
+                {
+                    elementWrappers.Add(this.elementsByGUID[guid]);
+                }
+                EADBElements = EADBElement.getEADBElementsForElementGUIDs(
+                GUIDs.Where(x => !this.elementsByGUID.ContainsKey(x)).ToList(), this);
+            }
+            else
+            {
+                //get all of them
+                EADBElements = EADBElement.getEADBElementsForElementGUIDs(GUIDs, this);
+            }
+            //add the ones that were not cached
+            elementWrappers.AddRange(factory.createElements(EADBElements).OfType<ElementWrapper>());
+            //return
+            return elementWrappers;
+        }
         public void addElementToCache(ElementWrapper element)
         {
             if (!this.elementsByID.ContainsKey(element.id))
@@ -534,6 +557,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return
             return attributeWrapper;
         }
+        public List<AttributeWrapper> getAttributeWrapperByGUIDs (List<string> attributeGUIDs)
+        {
+            var attributeWrappers = new List<AttributeWrapper>();
+            List<EADBAttribute> EADBAttributes;
+            if (this.useCache)
+            {
+                foreach (var guid in attributeGUIDs.Where(x => this.attributesByGUID.ContainsKey(x)))
+                {
+                    attributeWrappers.Add(this.attributesByGUID[guid]);
+                }
+                EADBAttributes = EADBAttribute.getEADBAttributesForAttributeGUIDs(
+                attributeGUIDs.Where(x => !this.attributesByGUID.ContainsKey(x)).ToList(), this);
+            }
+            else
+            {
+                EADBAttributes = EADBAttribute.getEADBAttributesForAttributeGUIDs(attributeGUIDs, this);
+            }
+            //add the ones that were not cached
+            attributeWrappers.AddRange(factory.createElements(EADBAttributes).OfType<AttributeWrapper>());
+            //return
+            return attributeWrappers;
+        }
         private void addAttributeToCache(AttributeWrapper attributeWrapper)
         {
             this.attributesByID.Add(attributeWrapper.id, attributeWrapper);
@@ -603,6 +648,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return ((Factory)this.factory).createElement
               (EADBConnector.getEADBConnectorForConnectorGUID(relationGUID, this)) as ConnectorWrapper;
+        }
+        public List<ConnectorWrapper> getRelationsByGUIDs(List<string> relationGUIDs)
+        {
+            return this.eaFactory.createElements(
+                EADBConnector.getEADBConnectorsForConnectorGUIDs(relationGUIDs, this))
+                .OfType<ConnectorWrapper>().ToList();
         }
 
         public List<ConnectorWrapper> getRelationsByQuery(string SQLQuery)

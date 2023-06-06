@@ -216,13 +216,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 UML.Classes.Kernel.VisibilityKind._public);
             set => this.setProperty(getPropertyNameName(), VisibilityKind.getEAVisibility(value), this.wrappedElement?.Visibility);
         }
-        public void setStereotype(string stereotype)
-        {
-
-            this.setProperty("stereotypes", stereotype, this.wrappedElement?.FQStereotype);
-        }
-
-        
+  
         public string fqStereotype
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.FQStereotype);
@@ -574,15 +568,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 if (this._constraints == null)
                 {
                     //refresh attributes to make sure we have an up-to-date list
-                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
-                    foreach (var constraint in this.EAModel.factory.createElements(this.wrappedElement?.Constraints).Cast<Constraint>())
-                    {
-                        this._constraints.Add(constraint);
-                    }
+                    var eaDBconstraints = EADBElementConstraint.getEADBElementConstraintsForElementIDs
+                                    (new List<string>() { this.id.ToString() }, this.EAModel);
+                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>(
+                        this.EAModel.factory.createElements(eaDBconstraints).Cast<Constraint>());
+                    
                 }
                 return this._constraints;
             }
             set => throw new NotImplementedException();
+        }
+        public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
+        {
+            if (constraint== null) return;
+            if (this._constraints == null)
+            {
+                this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
+            }
+            this._constraints.Add(constraint);
         }
 
         public HashSet<UML.Classes.Kernel.Property> attributes
@@ -613,8 +616,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._attributeWrappers;
             }
         }
-
-
+        /// <summary>
+        /// only to be used to fill
+        /// </summary>
+        /// <param name="attributeWrapper"></param>
+        internal void addExistingAttributeWrapper (AttributeWrapper attributeWrapper)
+        {
+            if (attributeWrapper == null) return;
+            if (this._attributeWrappers == null)
+            {
+                this._attributeWrappers = new HashSet<AttributeWrapper>();
+            }
+            this._attributeWrappers.Add(attributeWrapper);
+        }
 
         /// represents the internal EA's elementID
         public int id => this.wrappedElement?.ElementID ?? 0;
@@ -684,9 +698,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._ownedElementWrappers == null)
                 {
-                    this.wrappedElement.Elements.Refresh();
-                    this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedElement.Elements).OfType<ElementWrapper>().ToList();
-                    this._ownedElementWrappers.AddRange(this.embeddedElementWrappers);
+                    var sqlGetData = $"select o.Object_ID from t_object o where o.ParentID = {this.id}";
+                    this._ownedElementWrappers = this.EAModel.getElementWrappersByQuery(sqlGetData);
                 }
                 return this._ownedElementWrappers;
             }
@@ -828,26 +841,42 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this._allRelationships = this.EAModel.factory.createElements(EADBconnectors).Cast<UML.Classes.Kernel.Relationship>().ToList();
             }
             List<T> returnedRelationships = new List<T>();
-            // we still need to filter out those relationships that are there because of linked features
-            foreach (UML.Classes.Kernel.Relationship relationship in this._allRelationships)
+            // TODO we still need to filter out those relationships that are there because of linked features or linked connectors
+            foreach (var relationship in this._allRelationships)
             {
                 if (relationship is T)
                 {
-                    foreach (UML.Classes.Kernel.Element relatedElement in relationship.relatedElements)
+                    var connectorWrapper = (ConnectorWrapper)relationship;
+                    if (incoming && outgoing)
                     {
-                        if (this.Equals(relatedElement))
-                        {
-                            if (incoming && outgoing)
-                                returnedRelationships.Add((T)relationship);
-                            else if (incoming && this.Equals(((ConnectorWrapper) relationship).sourceElement))
-                                returnedRelationships.Add((T)relationship);
-                            else if (outgoing && this.Equals(((ConnectorWrapper)relationship).targetElement))
-                                returnedRelationships.Add((T)relationship);
-                        }
+                        returnedRelationships.Add((T)relationship);
+                    }
+                    else if (incoming && this.id == connectorWrapper.SupplierID)
+                    {
+                        returnedRelationships.Add((T)relationship);
+                    }
+                    else if (outgoing && this.id == connectorWrapper.ClientID)
+                    {
+                        returnedRelationships.Add((T)relationship);
                     }
                 }
             }
             return returnedRelationships;
+        }
+        /// <summary>
+        /// only to be used to fill the whole allRelationships collection 
+        /// </summary>
+        /// <param name="connector"></param>
+        internal void addExistingConnectorWrapper(ConnectorWrapper connector)
+        {
+            if (connector == null) return;
+            //create new list if needed
+            if (this._allRelationships == null)
+            {
+                this._allRelationships = new List<UML.Classes.Kernel.Relationship>();
+            }
+            //add the connectorwrapper
+            this._allRelationships.Add(connector);
         }
         /// <summary>
         /// gets the relations of the given type using a query (a lot faster)

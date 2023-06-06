@@ -13,7 +13,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private Element _owner;
         private OpaqueExpression _opaqueExpression;
         private ElementWrapper elementWrapperOwner => this.owner as ElementWrapper;
-        public Constraint(Model model, global::EA.Constraint wrappedConstraint) : base(model)
+        public Constraint(Model model, EADBElementConstraint wrappedConstraint) : base(model)
         {
             this.wrappedConstraint = wrappedConstraint;
             this.isDirty = true;
@@ -309,5 +309,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 
         #endregion
+        public int elementID => this.wrappedConstraint.ParentID;
     }
 }

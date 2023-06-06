@@ -14,9 +14,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class EADBElement
     {
         internal static List<String> columnNames;
+        const string selectQuery = @"select o.*, x.Description as StereotypesXref 
+                                    from t_object o 
+                                    left join t_xref x on x.Client = o.ea_guid
+				                                    and x.Name = 'Stereotypes'";
         private static void initializeColumnNames(Model model)
         {
-            columnNames = model.getDataSetFromQuery("select top 1 * from t_object o", true).FirstOrDefault();
+            var columnNamesQuery = @"select top 1 o.*, x.Description as StereotypesXref 
+                                    from t_object o
+                                    inner join t_xref x on x.Client = o.ea_guid
+				                                    and x.Name = 'Stereotypes'";
+            columnNames = model.getDataSetFromQuery(columnNamesQuery, true).FirstOrDefault();
         }
         public static EADBElement getEADBElementsForElementGUID(string elementGUID, Model model)
         {
@@ -25,7 +33,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBElement> getEADBElementsForElementGUIDs(List<string> elementGUIDs, Model model)
         {
             var elements = new List<EADBElement>();
-            var results = model.getDataSetFromQuery($"select * from t_object o where o.ea_guid in ('{String.Join("','", elementGUIDs)}')", false);
+            if (elementGUIDs == null || elementGUIDs.Count() == 0) return elements;
+            var results = model.getDataSetFromQuery($@"{selectQuery}                
+                                                    where o.ea_guid in ('{String.Join("','", elementGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElement(model, propertyValues));
@@ -39,7 +49,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBElement> getEADBElementsForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBElement>();
-            var results = model.getDataSetFromQuery($"select * from t_object o where o.Object_ID in ({String.Join(",", elementIDs)})", false);
+            if (elementIDs == null || elementIDs.Count() == 0) return elements;
+            var results = model.getDataSetFromQuery($@"{selectQuery}  
+                                                    where o.Object_ID in ({String.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElement(model, propertyValues));
@@ -49,7 +61,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBElement> getEADBElementsForPackageIDs(List<string> PackageIDs, Model model)
         {
             var elements = new List<EADBElement>();
-            var results = model.getDataSetFromQuery($"select * from t_object o where o.Package_ID in ({String.Join(",", PackageIDs)})", false);
+            if (PackageIDs == null || PackageIDs.Count() == 0) return elements;
+            var results = model.getDataSetFromQuery($@"{selectQuery}  
+                                                    where o.Package_ID in ({String.Join(",", PackageIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElement(model, propertyValues));
@@ -90,10 +104,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
         }
         public EADBElement(Model model, int elementID)
-            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.Object_ID = {elementID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($@"select o.*, x.Description from t_object o 
+                                                    left join t_xref x on x.Client = o.ea_guid   
+                                                    and x.Name = 'Stereotypes'
+                                                    where o.Object_ID = {elementID}", false).FirstOrDefault())
         { }
         public EADBElement(Model model, string uniqueID)
-            : this(model, model.getDataSetFromQuery($"select * from t_object o where o.ea_guid = {uniqueID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($@"select o.*, x.Description from t_object o
+                                                    left join t_xref x on x.Client = o.ea_guid
+                                                                    and x.Name = 'Stereotypes'  
+                                                    where o.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBElement(Model model, global::EA.Element element)
             : this(model)
@@ -107,6 +127,48 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             updateFromWrappedElement();
 
+        }
+        public bool Update()
+        {
+            this.eaElement.Type = this.Type;
+            this.eaElement.Name = this.Name;
+            this.eaElement.Alias = this.Alias;
+            this.eaElement.Author = this.Author;
+            this.eaElement.Version = this.Version;
+            this.eaElement.Notes = this.Notes;
+            this.eaElement.PackageID = this.PackageID;
+            this.eaElement.Stereotype = this.Stereotype;
+            this.eaElement.Subtype = this.Subtype;
+            this.eaElement.Complexity = this.Complexity;
+            this.eaElement.Created = this.Created;
+            this.eaElement.Modified = this.Modified;
+            this.eaElement.Status = this.Status;
+            this.eaElement.Abstract = this.Abstract;
+            this.eaElement.Visibility = this.Visibility;
+            this.eaElement.Persistence = this.Persistence;
+            this.eaElement.Gentype = this.Gentype;
+            this.eaElement.Genfile = this.Genfile;
+            this.eaElement.Header1 = this.Header1;
+            this.eaElement.Header2 = this.Header2;
+            this.eaElement.Phase = this.Phase;
+            this.eaElement.Genlinks = this.Genlinks;
+            this.eaElement.ClassifierID = this.ClassifierID;
+            this.eaElement.ParentID = this.ParentID;
+            this.eaElement.RunState = this.RunState;
+            this.eaElement.TreePos = this.TreePos;
+            this.eaElement.IsLeaf = this.IsLeaf;
+            this.eaElement.IsSpec = this.IsSpec;
+            this.eaElement.IsActive = this.IsActive;
+            this.eaElement.Multiplicity = this.Multiplicity;
+            this.eaElement.StyleEx = this.StyleEx;
+            this.eaElement.EventFlags = this.EventFlags;
+            this.eaElement.ActionFlags = this.ActionFlags;
+            this.eaElement.Stereotype = this.StereotypeEx;
+            this.eaElement.Tag = this.Tag;
+            var updateresult = this.eaElement.Update();
+            //after saving we need to refresh the properties
+            updateFromWrappedElement();
+            return updateresult;
         }
         private void updateFromWrappedElement()
         {
@@ -144,6 +206,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.StyleEx = this.eaElement.StyleEx;
             this.EventFlags = this.eaElement.EventFlags;
             this.ActionFlags = this.eaElement.ActionFlags;
+            this.StereotypeEx = this.eaElement.StereotypeEx;
+            this.FQStereotype = this.eaElement.FQStereotype;
+            this.Tag = this.eaElement.Tag;
             //add also id
             this.ElementID = this.eaElement.ElementID;
             this.ElementGUID = this.eaElement.ElementGUID;
@@ -419,6 +484,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.properties["RunState"];
             set => this.properties["RunState"] = value;
         }
+        public string Tag
+        {
+            get => this.properties["PDATA5"];
+            set => this.properties["PDATA5"] = value;
+        }
         public ObjectType ObjectType => ObjectType.otElement;
         public Collection Requirements => this.eaElement.Requirements;
         public Collection Constraints => this.eaElement.Constraints;
@@ -468,11 +538,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.eaElement.Tablespace;
             set => this.eaElement.Tablespace = value;
         }
-        public string Tag
-        {
-            get => this.eaElement.Tag;
-            set => this.eaElement.Tag = value;
-        }
+        
         public string Priority
         {
             get => this.eaElement.Priority;
@@ -512,7 +578,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (_StereotypeEx == null)
                 {
-                    var xrefDescription = this.model.getFirstValueFromQuery($"select x.Description from t_xref x where x.Name = 'Stereotypes' and x.Client = '{this.ElementGUID}'", "Description");
+                    var xrefDescription = this.properties["StereotypesXref"];
                     if (string.IsNullOrEmpty(xrefDescription))
                     {
                         this._StereotypeEx = string.Empty;
@@ -525,6 +591,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._StereotypeEx;
             }
             set => this._StereotypeEx = value;
+        }
+        private string _FQStereotype = null;
+        public string FQStereotype
+        {
+            get
+            {
+                if (_FQStereotype == null)
+                {
+                    var xrefDescription = this.properties["StereotypesXref"];
+                    if (string.IsNullOrEmpty(xrefDescription))
+                    {
+                        this._FQStereotype = string.Empty;
+                    }
+                    else
+                    {
+                        this._FQStereotype =  KeyValuePairsHelper.getValueForKey("FQName", xrefDescription);
+                        //if FQName is not found then try name
+                        if (string.IsNullOrEmpty(this._FQStereotype))
+                        {
+                            this._FQStereotype = KeyValuePairsHelper.getValueForKey("Name", xrefDescription);
+                        } 
+                        //if still null then return empty string
+                        if (this._FQStereotype == null)
+                        {
+                            this._FQStereotype = String.Empty;
+                        }
+                    }
+                }
+                return this._FQStereotype;
+            }
+            private set => this._FQStereotype = value ?? String.Empty;
         }
         public int PropertyType
         {
@@ -547,7 +644,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool IsInternalDocArtifact => this.eaElement.IsInternalDocArtifact;
 
-        public string FQStereotype => this.eaElement.FQStereotype;
+        
 
         public bool IsRoot { set => this.eaElement.IsRoot = value; }
 
@@ -556,49 +653,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public TypeInfoProperties TypeInfoProperties => this.eaElement.TypeInfoProperties;
 
         public Collection FeatureLinks => this.eaElement.FeatureLinks;
-
-        public bool Update()
-        {
-            this.eaElement.Type = this.Type;
-            this.eaElement.Name = this.Name;
-            this.eaElement.Alias = this.Alias;
-            this.eaElement.Author = this.Author;
-            this.eaElement.Version = this.Version;
-            this.eaElement.Notes = this.Notes;
-            this.eaElement.PackageID = this.PackageID;
-            this.eaElement.Stereotype = this.Stereotype;
-            this.eaElement.Subtype = this.Subtype;
-            this.eaElement.Complexity = this.Complexity;
-            this.eaElement.Created = this.Created;
-            this.eaElement.Modified = this.Modified;
-            this.eaElement.Status = this.Status;
-            this.eaElement.Abstract = this.Abstract;
-            this.eaElement.Visibility = this.Visibility;
-            this.eaElement.Persistence = this.Persistence;
-            this.eaElement.Gentype = this.Gentype;
-            this.eaElement.Genfile = this.Genfile;
-            this.eaElement.Header1 = this.Header1;
-            this.eaElement.Header2 = this.Header2;
-            this.eaElement.Phase = this.Phase;
-            this.eaElement.Genlinks = this.Genlinks;
-            this.eaElement.ClassifierID = this.ClassifierID;
-            this.eaElement.ParentID = this.ParentID;
-            this.eaElement.RunState = this.RunState;
-            this.eaElement.TreePos = this.TreePos;
-            this.eaElement.IsLeaf = this.IsLeaf;
-            this.eaElement.IsSpec = this.IsSpec;
-            this.eaElement.IsActive = this.IsActive;
-            this.eaElement.Multiplicity = this.Multiplicity;
-            this.eaElement.StyleEx = this.StyleEx;
-            this.eaElement.EventFlags = this.EventFlags;
-            this.eaElement.ActionFlags = this.ActionFlags;
-
-            var updateresult = this.eaElement.Update();
-            //after saving we need to refresh the properties
-            updateFromWrappedElement();
-            return updateresult;
-        }
-
         public string GetLastError()
         {
             return this.eaElement.GetLastError();

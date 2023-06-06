@@ -78,6 +78,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
+        public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
+        {
+            if (constraint == null) return;
+            if (this._constraints == null)
+            {
+                this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
+            }
+            this._constraints.Add(constraint);
+        }
         private string getWrappedStereotypeString()
         {
             //in some cases the StereotypeEx is empty while Stereotyp is not. (smells like a bug in the EA API)

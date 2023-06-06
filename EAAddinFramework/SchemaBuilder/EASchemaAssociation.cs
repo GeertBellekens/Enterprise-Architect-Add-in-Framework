@@ -71,10 +71,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceAssociation;
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => this._sourceAssociation = value as UTF_EA.Association;
         }
         public UTF_EA.Association eaSourceAssociation => this.sourceAssociation as UTF_EA.Association;
         

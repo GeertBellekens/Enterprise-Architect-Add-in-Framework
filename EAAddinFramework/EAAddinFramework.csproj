@@ -218,6 +218,7 @@
     <Compile Include="EADBWrappers\EADBConnector.cs" />
     <Compile Include="EADBWrappers\EADBConnectorEnd.cs" />
     <Compile Include="EADBWrappers\EADBConnectorTag.cs" />
+    <Compile Include="EADBWrappers\EADBElementConstraint.cs" />
     <Compile Include="EADBWrappers\EADBElementTag.cs" />
     <Compile Include="EADBWrappers\EADBElement.cs" />
     <Compile Include="EADBWrappers\EADBOperationTag.cs" />

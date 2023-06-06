@@ -9,7 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
         internal EADBElement wrappedElement { get; set; }
-        protected bool saveOwnedElements { get; set; } = true;
+        protected bool saveOwnedElements { get; set; } = false;
         /// <summary>
         /// resets teh property info making sure all properties are reset
         /// </summary>
@@ -344,6 +344,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._taggedValues;
             }
             set => throw new NotImplementedException();
+        }
+        public void addExistingTaggedValue(UML.Profiles.TaggedValue taggedValue)
+        {
+            if (taggedValue == null) return;
+            if (this._taggedValues == null)
+            {
+                //create the tagged values from the EA collection
+                this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
+            }
+            this._taggedValues.Add(taggedValue);
         }
         public virtual List<EADBTaggedValue> getEADBTaggedValues()
         {

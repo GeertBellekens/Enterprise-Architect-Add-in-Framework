@@ -321,5 +321,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 
         #endregion
+        public int attributeID => this.wrappedConstraint.AttributeID;
     }
 }

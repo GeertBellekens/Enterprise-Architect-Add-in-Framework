@@ -84,6 +84,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return null;
             }
         }
+        internal int ClientID => this.wrappedConnector.ClientID;
+        internal int SupplierID => this.wrappedConnector.SupplierID;
         internal Element targetElement
         {
             get
@@ -408,29 +410,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool isDerived
         {
-            get
-            {
-                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
-                {
-                    if (property.Name == "isDerived")
-                    {
-                        return property.Value != "0" 
-                            && ! property.Value.Equals("false",StringComparison.InvariantCultureIgnoreCase) ;
-                    }
-                }
-                //return false by default
-                return false;
-            }
-            set
-            {
-                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
-                {
-                    if (property.Name == "isDerived")
-                    {
-                        property.Value = value ? "-1" : "0";
-                    }
-                }
-            }
+            get => this.wrappedConnector.isDerived;
+            set => this.wrappedConnector.isDerived = value;
         }
 
         public List<UML.Classes.Kernel.Property> navigableOwnedEnds

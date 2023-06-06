@@ -203,7 +203,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else if (objectToWrap is global::EA.Constraint)
             {
-                return this.createConstraint(objectToWrap as global::EA.Constraint);
+                return this.createConstraint(new EADBElementConstraint(this.EAModel, (global::EA.Constraint)objectToWrap));
+            }
+            else if (objectToWrap is EADBElementConstraint)
+            {
+                return this.createConstraint((EADBElementConstraint)objectToWrap);
             }
             else if (objectToWrap is global::EA.AttributeConstraint)
             {
@@ -217,7 +221,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return null;
         }
         //create a new constraint based on the given EA.Constraint
-        public UML.Classes.Kernel.Element createConstraint(global::EA.Constraint constraint)
+        public UML.Classes.Kernel.Element createConstraint(EADBElementConstraint constraint)
         {
             return new Constraint(this.model as UTF_EA.Model, constraint);
         }
@@ -309,7 +313,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// creates a new EAAttribute based on the given EA.Attribute
         internal AttributeWrapper createEAAttributeWrapper(EADBAttribute attributeToWrap)
         {
-            if (EnumerationLiteral.isLiteralValue(attributeToWrap))
+            if (EnumerationLiteral.isLiteralValue(attributeToWrap, this.EAModel))
             {
                 return new EnumerationLiteral(this.EAModel, attributeToWrap);
             }

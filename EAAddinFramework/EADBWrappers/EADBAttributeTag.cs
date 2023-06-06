@@ -10,16 +10,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBAttributeTag : EADBTaggedValue
     {
-        public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
+        public static List<EADBTaggedValue> getTaggedValuesForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBTaggedValue>();
-            string sqlGetData = $"select * from t_attributeTag tv where tv.ElementID = {elementID}";
+            if (elementIDs == null || elementIDs.Count() == 0) return elements;
+            string sqlGetData = $"select * from t_attributeTag tv where tv.ElementID in ({string.Join(",",elementIDs)})";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttributeTag(model, propertyValues));
             }
             return elements;
+        }
+        public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
+        {
+            return getTaggedValuesForElementIDs(new List<int> { elementID }, model);
         }
         public EADBAttributeTag(Model model, List<string> propertyValues)
             : base(model, propertyValues)

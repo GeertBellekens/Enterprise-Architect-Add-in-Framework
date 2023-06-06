@@ -17,9 +17,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public static List<EADBAttributeConstraint> getEADBAttributeConstraintsForAttributeIDs(List<string> attributeIDs, Model model)
+        public static List<EADBAttributeConstraint> getEADBAttributeConstraintsForAttributeIDs(IEnumerable<string> attributeIDs, Model model)
         {
             var elements = new List<EADBAttributeConstraint>();
+            if (attributeIDs == null || attributeIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($"select * from t_attributeconstraints a where a.ID in ({string.Join(",", attributeIDs)})", false);
             foreach (var propertyValues in results)
             {

@@ -50,7 +50,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceProperty;
             }
-            set => throw new NotImplementedException();
+            set => this._sourceProperty = value as UTF_EA.Attribute;
         }
         /// <summary>
         /// the property in the subset model generated from this property

@@ -47,7 +47,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceLiteral;
             }
-            set => throw new NotImplementedException();
+            set => this._sourceLiteral = value as UTF_EA.EnumerationLiteral;
         }
         /// <summary>
         /// the property in the subset model generated from this property

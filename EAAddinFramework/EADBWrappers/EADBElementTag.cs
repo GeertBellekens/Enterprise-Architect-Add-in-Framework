@@ -12,8 +12,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
         public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
         {
+            return getTaggedValuesForElementIDs(new List<int> { elementID }, model);
+        }
+        public static List<EADBTaggedValue> getTaggedValuesForElementIDs(List<int> elementIDs, Model model)
+        {
             var elements = new List<EADBTaggedValue>();
-            string sqlGetData = $"select * from t_objectproperties tv where tv.Object_ID = {elementID}";
+            if (elementIDs == null || elementIDs.Count() == 0) return elements;
+            string sqlGetData = $"select * from t_objectproperties tv where tv.Object_ID in ({string.Join(",", elementIDs)})";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {

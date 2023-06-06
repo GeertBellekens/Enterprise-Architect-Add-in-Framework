@@ -23,6 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBAttribute> getEADBAttributesForAttributeIDs(List<string> attributeIDs, Model model)
         {
             var elements = new List<EADBAttribute>();
+            if (attributeIDs == null || attributeIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ID in ({string.Join(",", attributeIDs)})", false);
             foreach (var propertyValues in results)
             {
@@ -37,6 +38,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBAttribute> getEADBAttributesForAttributeGUIDs(List<string> attributeGUIDs, Model model)
         {
             var elements = new List<EADBAttribute>();
+            if (attributeGUIDs == null || attributeGUIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid in ('{string.Join("','", attributeGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
@@ -51,6 +53,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBAttribute> getEADBAttributesForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBAttribute>();
+            if (elementIDs == null || elementIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($"select * from t_attribute a where a.Object_ID in ({string.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
@@ -58,12 +61,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return elements;
         }
-        public static List<EADBAttribute> getEADBAttributesForPackageIDs(List<string> PackageIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForPackageIDs(List<string> packageIDs, Model model)
         {
             var elements = new List<EADBAttribute>();
+            if (packageIDs == null || packageIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($@"select * from (t_attribute a 
                                                     inner join t_object o on o.Object_ID = a.Object_ID)
-                                                    where o.Package_ID in ({string.Join(",", PackageIDs)})", false);
+                                                    where o.Package_ID in ({string.Join(",", packageIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttribute(model, propertyValues));
@@ -121,8 +125,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.properties.Add(columnNames[i], String.Empty);
             }
             updateFromWrappedElement();
-
-
         }
 
         private void updateFromWrappedElement()

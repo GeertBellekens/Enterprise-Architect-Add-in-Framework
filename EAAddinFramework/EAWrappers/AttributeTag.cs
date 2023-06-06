@@ -57,5 +57,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var otherTag = eaTag as EADBAttributeTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
+        public int attributeID => this.wrappedTaggedValue.ElementID;
     }
 }

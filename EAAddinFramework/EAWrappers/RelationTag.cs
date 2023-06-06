@@ -62,5 +62,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var otherTag = eaTag as EADBConnectorTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
+        public int connectorID => this.wrappedTaggedValue.ElementID;
     }
 }

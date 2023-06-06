@@ -87,7 +87,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceElement as UML.Classes.Kernel.Classifier;
             }
-            set => throw new NotImplementedException();
+            set => this._sourceElement = value as TSF_EA.ElementWrapper;
         }
         internal TSF_EA.ElementWrapper eaSourceElement => this.sourceElement as TSF_EA.ElementWrapper;
         public UML.Classes.Kernel.Classifier subsetElement { get; set; }
@@ -897,11 +897,12 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching attributes of subset element: '" + this.subsetElement.name + "' to the schema"
+                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
                 foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes.ToList())
                 {
-                    //tell the user what we are doing 
-                    EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching subset attribute: '" + attribute.name + "' to a schema property"
-                                       , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
+                    
                     EASchemaProperty matchingProperty = this.getMatchingSchemaProperty(attribute);
                     if (matchingProperty != null)
                     {
@@ -938,14 +939,14 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching literals of subset element: '" + this.subsetElement.name + "' to the schema"
+                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
                 var subsetElementWrapper = this.subsetElement as TSF_EA.ElementWrapper;
                 if (subsetElementWrapper != null)
                 {
                     foreach (TSF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals)
                     {
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Matching subset literal: '{literal.name}' to a schema property"
-                                       , subsetElementWrapper.id, LogTypeEnum.log);
                         EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
                         if (matchingLiteral != null)
                         {

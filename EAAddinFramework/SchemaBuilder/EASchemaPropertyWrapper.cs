@@ -22,8 +22,9 @@ namespace EAAddinFramework.SchemaBuilder
         private Dictionary<string, string> _restriction;
         private List<EASchemaElement> _choiceElements;
         List<UML.Classes.Kernel.Classifier> _choiceTypes;
-        internal abstract UTF_EA.AttributeWrapper sourceAttributeWrapper {get;}
+        internal abstract UTF_EA.AttributeWrapper sourceAttributeWrapper { get; }
         internal abstract UTF_EA.AttributeWrapper subsetAttributeWrapper {get;}
+        public string GUID => this.wrappedProperty.GUID;
 
         protected SBF.SchemaSettings settings => this.owner.owner.settings;
 

@@ -49,6 +49,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBConnector> getEADBConnectorsForConnectorGUIDs(List<string> connectorGUIDs, Model model)
         {
             var elements = new List<EADBConnector>();
+            if (connectorGUIDs == null || connectorGUIDs.Count() == 0) return elements;
             var results = model.getDataSetFromQuery($"select * from t_connector c where c.ea_guid in ('{string.Join("','", connectorGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
@@ -75,11 +76,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBConnector> getEADBConnectorsForPackageIDs(List<string> PackageIDs, Model model)
         {
             var elements = new List<EADBConnector>();
-            var results = model.getDataSetFromQuery($@"select * from t_connector c 
+            var results = model.getDataSetFromQuery($@"select c.* from t_connector c 
                                                     inner join t_object o on o.Object_ID = c.Start_Object_ID
                                                     where o.Package_ID in ({string.Join(",", PackageIDs)})
                                                     union
-                                                    select * from t_connector c 
+                                                    select c.* from t_connector c 
                                                     inner join t_object o on o.Object_ID = c.End_Object_ID
                                                     where o.Package_ID in ({string.Join(",", PackageIDs)})", false);
             foreach (var propertyValues in results)
@@ -97,7 +98,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._eaConnector == null)
                 {
-                    this._eaConnector = this.model.wrappedModel.GetConnectorByGuid(this.properties["ea_guid"]);
+                    this._eaConnector = this.model.wrappedModel.GetConnectorByGuid(this.ConnectorGUID);
                 }
                 return this._eaConnector;
             }
@@ -153,6 +154,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.EndPointX = this.eaConnector.EndPointX;
             this.EndPointY = this.eaConnector.EndPointY;
             this.StateFlags = this.eaConnector.StateFlags;
+            this.StereotypeEx = this.eaConnector.StereotypeEx;
 
             //add also ID
             this.ConnectorID = this.eaConnector.ConnectorID;
@@ -333,10 +335,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.eaConnector.EndPointX = this.EndPointX;
             this.eaConnector.EndPointY = this.EndPointY;
             this.eaConnector.StateFlags = this.StateFlags;
+            this.eaConnector.StereotypeEx = this.StereotypeEx;
+            //isderived is a bit special because it's stored in the custom properties
+            this.updateIsDerived();
             var updateResult = this.eaConnector.Update();
             this.updateFromWrappedElement();
             return updateResult;
 
+        }
+        private void updateIsDerived()
+        {
+            foreach (global::EA.CustomProperty property in this.eaConnector.CustomProperties)
+            {
+                if (property.Name == "isDerived")
+                {
+                    property.Value = this.isDerived ? "-1" : "0";
+                    break;
+                }
+            }
         }
         public bool IsConnectorValid()
         {
@@ -418,6 +434,52 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.eaConnector.Width = value;
         }
         public Collection CustomProperties => this.eaConnector.CustomProperties;
+        private bool? _isDerived;
+        public bool isDerived
+        {
+            get
+            {
+                if (this._isDerived == null)
+                {
+                    if (this._eaConnector != null)
+                    {
+                        //get it from the customproperties
+                        foreach (global::EA.CustomProperty property in this.eaConnector.CustomProperties)
+                        {
+                            if (property.Name == "isDerived")
+                            {
+                                this._isDerived = property.Value != "0"
+                                    && !property.Value.Equals("false", StringComparison.InvariantCultureIgnoreCase);
+                                break;
+                            }
+                        }
+                        //if still not set, then it's false
+                        if (this._isDerived == null)
+                        {
+                            this._isDerived = false;
+                        }
+                    }
+                    else
+                    {
+                        //get it from the database
+                        var sqlGetData = $@"select count(x.xrefID) as isDerived
+                                    from t_xref x
+                                    where 1=1
+                                    and x.Name = 'CustomProperties'
+                                    and x.type = 'connector property'
+                                    and x.Description like '%@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1@%' 
+                                    and x.client = '{this.ConnectorGUID}'";
+                        this._isDerived = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isDerived")) > 0;
+                    }
+                }
+                
+                return this._isDerived.Value;
+            }
+            set
+            {
+                this._isDerived = value;
+            }
+        }
         public Properties Properties => this.eaConnector.Properties;
 
         public string MetaType
