@@ -322,5 +322,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         #endregion
         public int attributeID => this.wrappedConstraint.AttributeID;
+        public static void loadConstraints(Dictionary<int, AttributeWrapper> attributeDictionary, Model model)
+        {
+            var eaDBAttributeConstraints =
+                    EADBAttributeConstraint.getEADBAttributeConstraintsForAttributeIDs(attributeDictionary.Keys, model);
+            var attributeConstraints = model.factory.createElements(eaDBAttributeConstraints).OfType<AttributeConstraint>();
+            //add the attributes to their respective elements
+            foreach (var attributeConstraint in attributeConstraints)
+            {
+                if (attributeDictionary.TryGetValue(attributeConstraint.attributeID, out AttributeWrapper attributeWrapper))
+                {
+                    attributeWrapper.addExistingConstraint(attributeConstraint);
+                }
+            }
+        }
     }
 }

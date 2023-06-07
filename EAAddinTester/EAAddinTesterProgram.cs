@@ -146,17 +146,11 @@ namespace EAAddinTester
             EAWrappers.Model model = new EAWrappers.Model();
             var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
             var outputName = "EATester";
-            var packageIDs = selectedPackage.getPackageTreeIDs();
             //test regular getting all elements
             EAOutputLogger.clearLog(model, outputName);
             EAOutputLogger.log(model, outputName, $"starting regular test for package '{selectedPackage?.name}'", 0);
-            var sqlGetData = $"select o.Object_ID from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
-            var elements = model.getElementWrappersByQuery(sqlGetData);
-            EAOutputLogger.log(model, outputName, $"found {elements.Count} elements", 0);
-            EAOutputLogger.log(model, outputName, $"starting new test for package '{selectedPackage?.name}'", 0);
-            sqlGetData = $"select * from t_object o where o.Package_ID in ({string.Join(",", packageIDs)})";
-            var newElements = EAWrappers.EADBElement.getEADBElementsForPackageIDs(packageIDs, model);
-            EAOutputLogger.log(model, outputName, $"found {newElements.Count} new elements", 0);
+            var elements = selectedPackage.getAllOwnedElements();
+            EAOutputLogger.log(model, outputName, $"found {elements.Count} new elements", 0);
         }
         /// <summary>
         /// Gets the Repository object from the currently running instance of EA.

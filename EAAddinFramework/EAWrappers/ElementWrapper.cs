@@ -10,7 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
     public class ElementWrapper : Element, UML.Classes.Kernel.PackageableElement
     {
-        
+
         private HashSet<UML.Classes.Kernel.Property> _attributes;
         private List<UML.Classes.Kernel.Relationship> _allRelationships;
         private HashSet<AttributeWrapper> _attributeWrappers;
@@ -190,7 +190,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
             }
         }
-                
+
         public override String notes
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Notes);
@@ -216,19 +216,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 UML.Classes.Kernel.VisibilityKind._public);
             set => this.setProperty(getPropertyNameName(), VisibilityKind.getEAVisibility(value), this.wrappedElement?.Visibility);
         }
-  
+
         public string fqStereotype
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.FQStereotype);
             set => this.setProperty("stereotypes", value, this.wrappedElement?.FQStereotype);
         }
-        
+
         public override HashSet<UML.Profiles.Stereotype> stereotypes
         {
             get => ((Factory)this.EAModel.factory).createStereotypes(this, (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.StereotypeEx));
             set => this.setProperty(getPropertyNameName(), Stereotype.getStereotypeEx(value), this.wrappedElement?.StereotypeEx);
         }
-        
+
         public string author
         {
             get => (string)this.getProperty(getPropertyNameName(), this.wrappedElement?.Author);
@@ -569,10 +569,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     //refresh attributes to make sure we have an up-to-date list
                     var eaDBconstraints = EADBElementConstraint.getEADBElementConstraintsForElementIDs
-                                    (new List<string>() { this.id.ToString() }, this.EAModel);
+                                    (new List<int>() { this.id }, this.EAModel);
                     this._constraints = new HashSet<UML.Classes.Kernel.Constraint>(
                         this.EAModel.factory.createElements(eaDBconstraints).Cast<Constraint>());
-                    
+
                 }
                 return this._constraints;
             }
@@ -580,7 +580,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
         {
-            if (constraint== null) return;
+            if (constraint == null) return;
             if (this._constraints == null)
             {
                 this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
@@ -608,7 +608,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._attributeWrappers == null)
                 {
-                    var eaDBAttributes = EADBAttribute.getEADBAttributesForElementIDs(new List<string>() { this.id.ToString() }, this.EAModel);
+                    var eaDBAttributes = EADBAttribute.getEADBAttributesForElementIDs(new List<int>() { this.id }, this.EAModel);
                     //get the attribute wrappers
                     this._attributeWrappers = new HashSet<AttributeWrapper>(
                         this.EAModel.factory.createElements(eaDBAttributes).OfType<AttributeWrapper>());
@@ -620,7 +620,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// only to be used to fill
         /// </summary>
         /// <param name="attributeWrapper"></param>
-        internal void addExistingAttributeWrapper (AttributeWrapper attributeWrapper)
+        internal void addExistingAttributeWrapper(AttributeWrapper attributeWrapper)
         {
             if (attributeWrapper == null) return;
             if (this._attributeWrappers == null)
@@ -759,13 +759,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (_superClasses == null)
                 {
-                   _superClasses = new HashSet<UML.Classes.Kernel.Classifier>
-                                    (this.EAModel.factory.createElements(this.wrappedElement?.BaseClasses)
-                                    .OfType<UML.Classes.Kernel.Classifier>());
+                    _superClasses = new HashSet<UML.Classes.Kernel.Classifier>
+                                     (this.EAModel.factory.createElements(this.wrappedElement?.BaseClasses)
+                                     .OfType<UML.Classes.Kernel.Classifier>());
                 }
                 return _superClasses;
             }
-            
+
             set => throw new NotImplementedException();
         }
 
@@ -793,7 +793,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 var _allSubclasses = this.subClasses.Cast<ElementWrapper>().ToList();
                 var directSubClasses = new List<ElementWrapper>(_allSubclasses);
-                foreach(var directSubClass in directSubClasses)
+                foreach (var directSubClass in directSubClasses)
                 {
                     _allSubclasses.AddRange(directSubClass.allSubClasses.Cast<ElementWrapper>());
                 }
@@ -986,9 +986,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public UML.Classes.Kernel.Namespace owningNamespace
         {
-            get =>this.wrappedElement != null ? 
+            get => this.wrappedElement != null ?
                 this.EAModel.getElementWrapperByPackageID(this.wrappedElement.PackageID) as Package
-                :null;
+                : null;
             set => throw new NotImplementedException();
         }
 
@@ -1616,6 +1616,77 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public override List<EADBTaggedValue> getEADBTaggedValues()
         {
             return EADBElementTag.getTaggedValuesForElementID(this.id, this.EAModel);
+        }
+        public static void loadDetailsForElementWrappers(IEnumerable<ElementWrapper> elementWrappers, Model model)
+        {
+            if (elementWrappers == null || !elementWrappers.Any()) return;// don't do anything if nothing is passed
+            var elementIDs = elementWrappers.Select(x => x.id);
+            var elementDictionary = new Dictionary<int, ElementWrapper>();
+            foreach (var elementWrapper in elementWrappers)
+            {
+                if (!elementDictionary.ContainsKey(elementWrapper.id))
+                {
+                    elementDictionary.Add(elementWrapper.id, elementWrapper);
+                }
+            }
+            // get all element constraints
+            Constraint.loadConstraints(elementDictionary, model);
+            //load tagged values
+            ElementTag.loadElementTags(elementDictionary, model);
+
+            //get all attributes
+            var eaDBAttributes = EADBAttribute.getEADBAttributesForElementIDs(elementIDs, model);
+            var attributeWrappers = model.factory.createElements(eaDBAttributes).OfType<AttributeWrapper>();
+            var attributeDictionary = new Dictionary<int, AttributeWrapper>();
+            //add the attributes to their respective elements
+            foreach (var attributeWrapper in attributeWrappers)
+            {
+                if (elementDictionary.TryGetValue(attributeWrapper.id, out ElementWrapper elementWrapper))
+                {
+                    elementWrapper.addExistingAttributeWrapper(attributeWrapper);
+                }
+                //add to dictionary
+                if (!attributeDictionary.ContainsKey(attributeWrapper.id))
+                {
+                    attributeDictionary.Add(attributeWrapper.id, attributeWrapper);
+                }
+            }
+            //get all connectors
+            var eaDBconnectors = EADBConnector.getEADBConnectorsForElementIDs(elementIDs, model);
+            var connectorWrappers = model.factory.createElements(eaDBconnectors).OfType<ConnectorWrapper>();
+            var connectorDictionary = new Dictionary<int, ConnectorWrapper>();
+            //add the connectors to their respective elements
+            foreach (var connectorWrapper in connectorWrappers)
+            {
+                if (elementDictionary.TryGetValue(connectorWrapper.wrappedConnector.ClientID, out ElementWrapper elementWrapper))
+                {
+                    elementWrapper.addExistingConnectorWrapper(connectorWrapper);
+                }
+                if (elementDictionary.TryGetValue(connectorWrapper.wrappedConnector.SupplierID, out elementWrapper))
+                {
+                    elementWrapper.addExistingConnectorWrapper(connectorWrapper);
+                }
+                //add to connectorDictionary
+                if (!connectorDictionary.ContainsKey(connectorWrapper.id))
+                {
+                    connectorDictionary.Add(connectorWrapper.id, connectorWrapper);
+                }
+            }
+           
+            if (attributeWrappers.Count() > 0)
+            {
+                //attributeTags
+                AttributeTag.loadAttributeTags(attributeDictionary, model);
+                //get all attributeConstraints
+                AttributeConstraint.loadConstraints(attributeDictionary, model);
+            }
+            if (connectorWrappers.Count() > 0)
+            {
+                //connectorTags
+                RelationTag.loadConnectorTags(connectorDictionary, model);
+            }
+            
+
         }
     }
 }

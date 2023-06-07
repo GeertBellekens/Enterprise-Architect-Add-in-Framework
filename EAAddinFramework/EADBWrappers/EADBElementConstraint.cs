@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public static List<EADBElementConstraint> getEADBElementConstraintsForElementIDs(IEnumerable<string> elementIDs, Model model)
+        public static List<EADBElementConstraint> getEADBElementConstraintsForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBElementConstraint>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;

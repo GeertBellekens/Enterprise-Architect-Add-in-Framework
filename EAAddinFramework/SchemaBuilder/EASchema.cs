@@ -126,11 +126,16 @@ namespace EAAddinFramework.SchemaBuilder
             var elementWrappers = this.model.getElementWrapperByGUIDs(elementGuids);
             //create a dictionary based on the GUID of the element
             var sourceElementDictionary = new Dictionary<string, TSF_EA.ElementWrapper>();
+            var elementDictionary = new Dictionary<int, TSF_EA.ElementWrapper>();
             foreach (var elementWrapper in elementWrappers)
             {
                 if (! sourceElementDictionary.ContainsKey(elementWrapper.uniqueID))
                 {
                     sourceElementDictionary.Add(elementWrapper.uniqueID, elementWrapper);
+                }
+                if (! elementDictionary.ContainsKey(elementWrapper.id))
+                {
+                    elementDictionary.Add(elementWrapper.id, elementWrapper);
                 }
             }
             //loop all elements and link set the source element
@@ -141,6 +146,10 @@ namespace EAAddinFramework.SchemaBuilder
                     schemaElement.sourceElement = elementWrapper as UML.Classes.Kernel.Classifier;
                }
             }
+            //load tagged values
+            TSF_EA.Constraint.loadConstraints(elementDictionary, model);
+            //load tagged values
+            TSF_EA.ElementTag.loadElementTags(elementDictionary, model);
             //tell the user what we are doing 
             EAOutputLogger.log(this.model, this.settings.outputName, "Loading schema source attributes and connectors"
                                , 0, LogTypeEnum.log);
@@ -155,26 +164,42 @@ namespace EAAddinFramework.SchemaBuilder
                 connectorGUIDs.AddRange(schemaElement.schemaAssociations.OfType<EASchemaAssociation>().Select(x => x.GUID));
             }
             var attributeWrappers = this.model.getAttributeWrapperByGUIDs(attributeGUIDs);
-            //create dictionary
+            //create dictionaries (both on id and GUID)
             var sourceAttributeDictionary = new Dictionary<string, TSF_EA.AttributeWrapper>();
+            var attributeDictionary = new Dictionary<int, TSF_EA.AttributeWrapper>();
             foreach (var attributeWrapper in attributeWrappers)
             {
                 if (!sourceAttributeDictionary.ContainsKey(attributeWrapper.uniqueID))
                 {
                     sourceAttributeDictionary.Add(attributeWrapper.uniqueID, attributeWrapper);
                 }
+                if (! attributeDictionary.ContainsKey(attributeWrapper.id))
+                {
+                    attributeDictionary.Add(attributeWrapper.id, attributeWrapper);
+                }
             }
+            //load tagged values for attributes
+            TSF_EA.AttributeTag.loadAttributeTags(attributeDictionary, this.model);
+            //load constraints for attributes
+            TSF_EA.AttributeConstraint.loadConstraints(attributeDictionary, model);
+            //load source associations
             var associations = this.model.getRelationsByGUIDs(connectorGUIDs);
             //create dictionary
             var sourceAssociationDictionary = new Dictionary<string, TSF_EA.ConnectorWrapper>();
+            var connectorDictionary = new Dictionary<int, TSF_EA.ConnectorWrapper>();
             foreach (var association in associations)
             {
                 if (!sourceAssociationDictionary.ContainsKey(association.uniqueID))
                 {
                     sourceAssociationDictionary.Add(association.uniqueID, association);
                 }
+                if (!connectorDictionary.ContainsKey(association.id))
+                {
+                    connectorDictionary.Add(association.id, association);
+                }
             }
-
+            //load connector tags
+            TSF_EA.RelationTag.loadConnectorTags(connectorDictionary, model);
             //set attribute/literal/connector sources
             foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
             {
@@ -790,18 +815,19 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
             EAOutputLogger.log(this.model, this.settings.outputName, $"Loading subsetmodel for package '{destinationPackage.name}'");
+            //we only need classes, enumerations, datatypes and primitivetypes
+            var classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType" };
             if (generateChangesOnly)
             {
-
                 // this will delete the subset elements that are no longer needed
-                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements(classifierObjectTypes).OfType<Classifier>()));
                 //then process only the elementsToUpdate and ElementsToCreate
                 matchAndUpdateSubsetModel(destinationPackage, elementsToCreate, elementsToUpdate);
             }
             else
             {
                 //regenerate completely
-                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements(classifierObjectTypes).OfType<Classifier>()));
                 matchAndUpdateSubsetModel(destinationPackage);
             }
         }

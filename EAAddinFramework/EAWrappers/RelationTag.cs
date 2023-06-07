@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -63,5 +64,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
         public int connectorID => this.wrappedTaggedValue.ElementID;
+        public static void loadConnectorTags(Dictionary<int, ConnectorWrapper> connectorDictionary, Model model)
+        {
+            //connectorTags
+            var eaDBConnectorTags = EADBConnectorTag.getTaggedValuesForElementIDs(connectorDictionary.Keys, model);
+            foreach (var dbConnectorTag in eaDBConnectorTags)
+            {
+                if (connectorDictionary.TryGetValue(dbConnectorTag.ElementID, out ConnectorWrapper connectorWrapper))
+                {
+                    var connectorTag = model.factory.createTaggedValue(connectorWrapper, dbConnectorTag);
+                    connectorWrapper.addExistingTaggedValue(connectorTag);
+                }
+            }
+        }
     }
 }

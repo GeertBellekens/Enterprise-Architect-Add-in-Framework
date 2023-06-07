@@ -48,9 +48,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public static List<EADBAttribute> getEADBAttributesForElementID(int elementID, Model model)
         {
-            return getEADBAttributesForElementIDs(new List<string>() { elementID.ToString() }, model);
+            return getEADBAttributesForElementIDs(new List<int>() { elementID }, model);
         }
-        public static List<EADBAttribute> getEADBAttributesForElementIDs(List<string> elementIDs, Model model)
+        public static List<EADBAttribute> getEADBAttributesForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBAttribute>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;

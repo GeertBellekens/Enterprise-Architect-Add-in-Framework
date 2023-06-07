@@ -68,7 +68,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
                     var eaDBConstraints = EADBAttributeConstraint.getEADBAttributeConstraintsForAttributeIDs
-                        (new List<string>() { this.id.ToString() }, this.EAModel);
+                        (new List<int>() { this.id }, this.EAModel);
                     foreach (var constraint in this.EAModel.factory.createElements(eaDBConstraints).Cast<AttributeConstraint>())
                     {
                         this._constraints.Add(constraint);

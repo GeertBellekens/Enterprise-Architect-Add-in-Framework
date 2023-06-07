@@ -14,7 +14,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return getTaggedValuesForElementIDs(new List<int> { elementID }, model);
         }
-        public static List<EADBTaggedValue> getTaggedValuesForElementIDs(List<int> elementIDs, Model model)
+        public static List<EADBTaggedValue> getTaggedValuesForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBTaggedValue>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;

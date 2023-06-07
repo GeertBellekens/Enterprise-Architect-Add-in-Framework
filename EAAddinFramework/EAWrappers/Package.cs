@@ -586,126 +586,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return nestedPackageTree;
         }
 
-        public HashSet<UML.Classes.Kernel.Element> getAllOwnedElements()
+        public HashSet<UML.Classes.Kernel.Element> getAllOwnedElements(IEnumerable<string> objectTypes = null)
         {
             var packageTreeIDs = this.getPackageTreeIDs();
             //load all elements completely from the database
-            var eaDBElements = EADBElement.getEADBElementsForPackageIDs(packageTreeIDs, this.EAModel);
+            var eaDBElements = EADBElement.getEADBElementsForPackageIDs(packageTreeIDs, this.EAModel, objectTypes);
             //create the EAElementWrappers for them
             var elementWrappers = this.model.factory.createElements(eaDBElements).OfType<ElementWrapper>();
             //make a dictionary of them based on their id
-            var elementDictionary = new Dictionary<int, ElementWrapper>();
-            foreach (var elementWrapper in elementWrappers)
-            {
-                if (!elementDictionary.ContainsKey(elementWrapper.id))
-                {
-                    elementDictionary.Add(elementWrapper.id, elementWrapper);
-                }
-            }
-            if (elementWrappers.Count() > 0)
-            {
-                //get all attributes
-                var eaDBAttributes = EADBAttribute.getEADBAttributesForPackageIDs(packageTreeIDs, this.EAModel);
-                var attributeWrappers = this.model.factory.createElements(eaDBAttributes).OfType<AttributeWrapper>();
-                var attributeDictionary = new Dictionary<int, AttributeWrapper>();
-                //add the attributes to their respective elements
-                foreach (var attributeWrapper in attributeWrappers)
-                {
-                    if (elementDictionary.TryGetValue(attributeWrapper.id, out ElementWrapper elementWrapper))
-                    {
-                        elementWrapper.addExistingAttributeWrapper(attributeWrapper);
-                    }
-                    //add to dictionary
-                    if (!attributeDictionary.ContainsKey(attributeWrapper.id))
-                    {
-                        attributeDictionary.Add(attributeWrapper.id, attributeWrapper);
-                    }
-                }
-                //get all connectors
-                var eaDBconnectors = EADBConnector.getEADBConnectorsForPackageIDs(packageTreeIDs, this.EAModel);
-                var connectorWrappers = this.model.factory.createElements(eaDBconnectors).OfType<ConnectorWrapper>();
-                var connectorDictionary = new Dictionary<int, ConnectorWrapper>();
-                //add the connectors to their respective elements
-                foreach (var connectorWrapper in connectorWrappers)
-                {
-                    if (elementDictionary.TryGetValue(connectorWrapper.wrappedConnector.ClientID, out ElementWrapper elementWrapper))
-                    {
-                        elementWrapper.addExistingConnectorWrapper(connectorWrapper);
-                    }
-                    if (elementDictionary.TryGetValue(connectorWrapper.wrappedConnector.SupplierID, out elementWrapper))
-                    {
-                        elementWrapper.addExistingConnectorWrapper(connectorWrapper);
-                    }
-                    //add to connectorDictionary
-                    if (!connectorDictionary.ContainsKey(connectorWrapper.id))
-                    {
-                        connectorDictionary.Add(connectorWrapper.id, connectorWrapper);
-                    }
-                }
 
-                //get all tagged values?
-                var eaDBElementTags = EADBElementTag.getTaggedValuesForElementIDs(elementWrappers.Select(x => x.id).ToList(), this.EAModel);
-                
-                //add the attributes to their respective elements
-                foreach (var eaDBElementTag in eaDBElementTags)
-                {
-                    if (elementDictionary.TryGetValue(eaDBElementTag.ElementID, out ElementWrapper elementWrapper))
-                    {
-                        var elementTag = this.model.factory.createTaggedValue(elementWrapper, eaDBElementTag);
-                        elementWrapper.addExistingTaggedValue(elementTag);
-                    }
-                }
-                if (attributeWrappers.Count() > 0)
-                {
-                    //attributeTags
-                    var eaDBAttributeTags = EADBAttributeTag.getTaggedValuesForElementIDs(attributeWrappers.Select(x => x.id).ToList(), this.EAModel);
-                    //add the attributes to their respective elements
-                    foreach (var dbAttributeTag in eaDBAttributeTags)
-                    {
-                        if (attributeDictionary.TryGetValue(dbAttributeTag.ElementID, out AttributeWrapper attributeWrapper))
-                        {
-                            var attributeTag = this.model.factory.createTaggedValue(attributeWrapper, dbAttributeTag);
-                            attributeWrapper.addExistingTaggedValue(attributeTag);
-                        }
-                    }
-                    //get all attributeConstraints
-                    var eaDBAttributeConstraints = EADBAttributeConstraint.getEADBAttributeConstraintsForAttributeIDs(attributeWrappers.Select(x => x.id.ToString()), this.EAModel);
-                    var attributeConstraints = this.model.factory.createElements(eaDBAttributeConstraints).OfType<AttributeConstraint>();
-                    //add the attributes to their respective elements
-                    foreach (var attributeConstraint in attributeConstraints)
-                    {
-                        if (attributeDictionary.TryGetValue(attributeConstraint.attributeID, out AttributeWrapper attributeWrapper))
-                        {
-                            attributeWrapper.addExistingConstraint(attributeConstraint);
-                        }
-                    }
-                }
-                if (connectorWrappers.Count() > 0)
-                {
-                    //connectorTags
-                    var eaDBConnectorTags = EADBConnectorTag.getTaggedValuesForElementIDs(connectorWrappers.Select(x => x.id).ToList(), this.EAModel);
-                    foreach (var dbConnectorTag in eaDBConnectorTags)
-                    {
-                        if (connectorDictionary.TryGetValue(dbConnectorTag.ElementID, out ConnectorWrapper connectorWrapper))
-                        {
-                            var connectorTag = this.model.factory.createTaggedValue(connectorWrapper, dbConnectorTag);
-                            connectorWrapper.addExistingTaggedValue(connectorTag);
-                        }
-                    }
-                }
-                // get all element constraints
-                var eaDBElementConstraints = EADBElementConstraint.getEADBElementConstraintsForElementIDs(elementWrappers.Select(x => x.id.ToString()), this.EAModel);
-                var elementConstraints = this.model.factory.createElements(eaDBElementConstraints).OfType<Constraint>();
-                //add the constraints to their respective elements
-                foreach (var elementConstraint in elementConstraints)
-                {
-                    if (elementDictionary.TryGetValue(elementConstraint.elementID, out ElementWrapper elementWrapper))
-                    {
-                        elementWrapper.addExistingConstraint(elementConstraint);
-                    }
-                }
-
-            }
+            ElementWrapper.loadDetailsForElementWrappers(elementWrappers, this.EAModel);
 
             return new HashSet<UML.Classes.Kernel.Element>(elementWrappers);
         }

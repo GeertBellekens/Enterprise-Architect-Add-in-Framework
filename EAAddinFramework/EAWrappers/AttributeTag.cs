@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
@@ -58,5 +59,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
         public int attributeID => this.wrappedTaggedValue.ElementID;
+
+        public static void loadAttributeTags(Dictionary<int,AttributeWrapper> attributeDictionary, Model model)
+        {
+            var attributeIDs = attributeDictionary.Keys;
+            var eaDBAttributeTags = EADBAttributeTag.getTaggedValuesForElementIDs(attributeIDs, model);
+            //add the attributes to their respective elements
+            foreach (var dbAttributeTag in eaDBAttributeTags)
+            {
+                if (attributeDictionary.TryGetValue(dbAttributeTag.ElementID, out AttributeWrapper attributeWrapper))
+                {
+                    var attributeTag = model.factory.createTaggedValue(attributeWrapper, dbAttributeTag);
+                    attributeWrapper.addExistingTaggedValue(attributeTag);
+                }
+            }
+        }
+
     }
 }

@@ -49,7 +49,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBElement> getEADBElementsForElementIDs(List<string> elementIDs, Model model)
         {
             var elements = new List<EADBElement>();
-            if (elementIDs == null || elementIDs.Count() == 0) return elements;
+            if (elementIDs == null || ! elementIDs.Any()) return elements;
             var results = model.getDataSetFromQuery($@"{selectQuery}  
                                                     where o.Object_ID in ({String.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
@@ -58,12 +58,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return elements;
         }
-        public static List<EADBElement> getEADBElementsForPackageIDs(List<string> PackageIDs, Model model)
+        public static List<EADBElement> getEADBElementsForPackageIDs(List<string> PackageIDs, Model model, IEnumerable<string> objectTypes = null)
         {
             var elements = new List<EADBElement>();
-            if (PackageIDs == null || PackageIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($@"{selectQuery}  
-                                                    where o.Package_ID in ({String.Join(",", PackageIDs)})", false);
+            if (PackageIDs == null || ! PackageIDs.Any()) return elements;
+            var sqlGetData = $@"{selectQuery}  
+                              where 1=1
+                              and o.Package_ID in ({String.Join(",", PackageIDs)})";
+            if (objectTypes != null && objectTypes.Any())
+            {
+                sqlGetData += $"{Environment.NewLine} and o.Object_Type in ('{string.Join("','", objectTypes)}')";
+            }
+            var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElement(model, propertyValues));

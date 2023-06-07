@@ -59,9 +59,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public static List<EADBConnector> getEADBConnectorsForElementID(int elementID, Model model)
         {
-            return getEADBConnectorsForElementIDs(new List<string>() { elementID.ToString() }, model);
+            return getEADBConnectorsForElementIDs(new List<int>() { elementID}, model);
         }
-        public static List<EADBConnector> getEADBConnectorsForElementIDs(List<string> elementIDs, Model model)
+        public static List<EADBConnector> getEADBConnectorsForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBConnector>();
             var results = model.getDataSetFromQuery($@"select * from t_connector c where c.Start_Object_ID in ({string.Join(",", elementIDs)})
