@@ -11,9 +11,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class EADBAttribute
     {
         internal static List<String> columnNames;
+        const string selectQuery = @"select a.*, x.Description as StereotypesXref , x2.Description as CustomPropertiesXref
+                from t_attribute a  
+                left join t_xref x on x.Client = a.ea_guid
+				                and x.Name = 'Stereotypes'
+				left join t_xref x2 on x2.Client = a.ea_guid
+									and x2.Name = 'CustomProperties'";
         private static void initializeColumnNames(Model model)
         {
-            columnNames = model.getDataSetFromQuery("select top 1 * from t_attribute ", true).FirstOrDefault();
+            columnNames = model.getDataSetFromQuery( selectQuery.Replace("a.*", "top 1 a.*"), true).FirstOrDefault();
         }
         public static EADBAttribute getEADBAttributeForAttributeID(int attributeID, Model model)
         {
@@ -24,7 +30,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBAttribute>();
             if (attributeIDs == null || attributeIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ID in ({string.Join(",", attributeIDs)})", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where a.ID in ({string.Join(",", attributeIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttribute(model, propertyValues));
@@ -39,7 +45,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBAttribute>();
             if (attributeGUIDs == null || attributeGUIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid in ('{string.Join("','", attributeGUIDs)}')", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where a.ea_guid in ('{string.Join("','", attributeGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttribute(model, propertyValues));
@@ -54,7 +60,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBAttribute>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_attribute a where a.Object_ID in ({string.Join(",", elementIDs)})", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where a.Object_ID in ({string.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttribute(model, propertyValues));
@@ -65,9 +71,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBAttribute>();
             if (packageIDs == null || packageIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($@"select * from (t_attribute a 
-                                                    inner join t_object o on o.Object_ID = a.Object_ID)
-                                                    where o.Package_ID in ({string.Join(",", packageIDs)})", false);
+            var results = model.getDataSetFromQuery($@"{selectQuery}
+                                                    where a.Object_ID in 
+                                                        (select o.object_ID 
+                                                        from t_object o 
+                                                         where o.Package_ID in ({string.Join(",", packageIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttribute(model, propertyValues));
@@ -346,27 +354,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.Style = value;
         }
         private bool? _isID = null;
-        public bool IsID //TODO: get directly from database in inital query
+        public bool IsID
         {
             get
             {
-                if (this._isID == null)
+                if (_isID == null)
                 {
-                    if (this._eaAttribute != null)
+                    var xrefDescription = this.properties["CustomPropertiesXref"];
+                    if (string.IsNullOrEmpty(xrefDescription))
                     {
-                        this._isID = this.eaAttribute.IsID;
+                        this._isID = false;
                     }
                     else
                     {
-                        //getIsID property from database
-                        var sqlGetData = $@"select count(x.xrefID) as isID
-                                    from t_xref x
-                                    where 1=1
-                                    and x.Name = 'CustomProperties'
-                                    and x.type = 'attribute property'
-                                    and x.Description like '%@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1@%' 
-                                    and x.client = '{this.AttributeGUID}'";
-                        this._isID = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isID")) > 0;
+                        this._isID = xrefDescription.Contains("@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1");
                     }
                 }
                 return this._isID.Value;
@@ -384,13 +385,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this.eaAttribute.RedefinedProperty = value;
         }
         private string _StereotypeEx = null;
-        public string StereotypeEx 
+        public string StereotypeEx
         {
             get
             {
                 if (_StereotypeEx == null)
                 {
-                    var xrefDescription = this.model.getFirstValueFromQuery($"select x.Description from t_xref x where x.Name = 'Stereotypes' and x.Client = '{this.AttributeGUID}'", "Description");
+                    var xrefDescription = this.properties["StereotypesXref"];
                     if (string.IsNullOrEmpty(xrefDescription))
                     {
                         this._StereotypeEx = string.Empty;

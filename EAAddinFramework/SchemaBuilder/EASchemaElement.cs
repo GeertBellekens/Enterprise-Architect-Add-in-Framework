@@ -897,9 +897,7 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching attributes of subset element: '" + this.subsetElement.name + "' to the schema"
-                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
+
                 foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes.ToList())
                 {
                     
@@ -939,9 +937,6 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching literals of subset element: '" + this.subsetElement.name + "' to the schema"
-                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
                 var subsetElementWrapper = this.subsetElement as TSF_EA.ElementWrapper;
                 if (subsetElementWrapper != null)
                 {
@@ -1078,9 +1073,6 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching relations of subset element: '" + this.subsetElement.name + "' to the schema"
-                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
                 //get outgoing associations of the subset element
                 foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>(true, false))
                 {

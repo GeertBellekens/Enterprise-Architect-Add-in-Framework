@@ -20,11 +20,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 				                                    and x.Name = 'Stereotypes'";
         private static void initializeColumnNames(Model model)
         {
-            var columnNamesQuery = @"select top 1 o.*, x.Description as StereotypesXref 
-                                    from t_object o
-                                    inner join t_xref x on x.Client = o.ea_guid
-				                                    and x.Name = 'Stereotypes'";
-            columnNames = model.getDataSetFromQuery(columnNamesQuery, true).FirstOrDefault();
+            columnNames = model.getDataSetFromQuery(selectQuery.Replace("a.*", "top 1 o.*"), true).FirstOrDefault();
         }
         public static EADBElement getEADBElementsForElementGUID(string elementGUID, Model model)
         {

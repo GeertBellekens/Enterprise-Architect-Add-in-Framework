@@ -22,6 +22,8 @@ namespace EAAddinFramework.SchemaBuilder
     {
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
+        //we only need classes, enumerations, datatypes and primitivetypes
+        private List<string> classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType" };
 
         private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
@@ -480,24 +482,14 @@ namespace EAAddinFramework.SchemaBuilder
                         || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
                     {
                         //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset associations for: '" + schemaElement.name + "'"
+                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset details for: '" + schemaElement.name + "'"
                                            , 0, LogTypeEnum.log);
                         schemaElement.createSubsetAssociations();
-                        //Logger.log("after EASchema::creating single subset association");
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset attributes for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         // and to resolve the attributes types to subset types if required
                         schemaElement.createSubsetAttributes();
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset literals for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         if (this.settings.copyAllOperations)
                         {
                             schemaElement.createSubsetOperations();
-                            //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset operations for: '" + schemaElement.name + "'"
-                                               , 0, LogTypeEnum.log);
                         }
                         //Logger.log("after EASchema::createSubsetAttributes ");
                         schemaElement.createSubsetLiterals();
@@ -505,9 +497,6 @@ namespace EAAddinFramework.SchemaBuilder
                         schemaElement.cleanupAttributeDependencies();
                         if (!this.settings.dontCreateAttributeDependencies)
                         {
-                            //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating attribute dependendies for: '" + schemaElement.name + "'"
-                                               , 0, LogTypeEnum.log);
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.addAttributeTypeDependencies();
                         }
@@ -527,10 +516,6 @@ namespace EAAddinFramework.SchemaBuilder
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.orderAssociationsAlphabetically();
                         }
-                        //Logger.log("after EASchema::addAttributeTypeDependencies");
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating generalizations for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         //add generalizations if both elements are in the subset
                         schemaElement.addGeneralizations();
                     }
@@ -815,8 +800,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
             }
             EAOutputLogger.log(this.model, this.settings.outputName, $"Loading subsetmodel for package '{destinationPackage.name}'");
-            //we only need classes, enumerations, datatypes and primitivetypes
-            var classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType" };
+            
             if (generateChangesOnly)
             {
                 // this will delete the subset elements that are no longer needed
@@ -971,6 +955,8 @@ namespace EAAddinFramework.SchemaBuilder
             //first match the elementsToUpdate with their subset model equivalent
             foreach (var schemaElement in elementsToUpdate)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema", 0, LogTypeEnum.log);
                 schemaElement.matchSubsetElement(destinationPackage);
                 //match the attributes
                 schemaElement.matchSubsetAttributes();
@@ -990,6 +976,8 @@ namespace EAAddinFramework.SchemaBuilder
         {
             foreach (EASchemaElement schemaElement in this.elements)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema",0, LogTypeEnum.log);
                 //match the attributes
                 schemaElement.matchSubsetAttributes();
                 //Logger.log("after EASchema::matchSubsetAttributes");
@@ -1177,9 +1165,12 @@ namespace EAAddinFramework.SchemaBuilder
             EAOutputLogger.log(this.model, this.settings.outputName
                                , $"Getting {allElementIDs.Count} possible subsetElement objects", 0, LogTypeEnum.log);
             //get all elements from the IDs
-            foreach (var elementID in allElementIDs)
+            var eaDBElements = TSF_EA.EADBElement.getEADBElementsForElementIDs (allElementIDs, this.model);
+            //create the EAElementWrappers for them
+            var elementWrappers = this.model.factory.createElements(eaDBElements).OfType<TSF_EA.ElementWrapper>();
+            TSF_EA.ElementWrapper.loadDetailsForElementWrappers(elementWrappers, model);
+            foreach (var subsetElement in elementWrappers.OfType<Classifier>())
             {
-                var subsetElement = model.getElementWrapperByID(int.Parse(elementID)) as Classifier;
                 if (subsetElement != null
                   && !subsetElements.Contains(subsetElement))
                 {

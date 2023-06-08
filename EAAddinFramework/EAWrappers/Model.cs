@@ -306,6 +306,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return it
             return elementWrapper;
         }
+
         /// <summary>
         /// close the tab with the given name
         /// </summary>
