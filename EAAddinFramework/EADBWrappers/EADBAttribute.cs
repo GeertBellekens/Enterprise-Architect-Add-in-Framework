@@ -345,28 +345,31 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.Style;
             set => this.Style = value;
         }
-        private bool _isID;
-        public bool IsID
+        private bool? _isID = null;
+        public bool IsID //TODO: get directly from database in inital query
         {
             get
             {
-                if (this._eaAttribute != null)
+                if (this._isID == null)
                 {
-                    this._isID = this.eaAttribute.IsID;
-                }
-                else
-                {
-                    //getIsID property from database
-                    var sqlGetData = $@"select count(x.xrefID) as isID
+                    if (this._eaAttribute != null)
+                    {
+                        this._isID = this.eaAttribute.IsID;
+                    }
+                    else
+                    {
+                        //getIsID property from database
+                        var sqlGetData = $@"select count(x.xrefID) as isID
                                     from t_xref x
                                     where 1=1
                                     and x.Name = 'CustomProperties'
                                     and x.type = 'attribute property'
                                     and x.Description like '%@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1@%' 
                                     and x.client = '{this.AttributeGUID}'";
-                    this._isID = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isID")) > 0;
+                        this._isID = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isID")) > 0;
+                    }
                 }
-                return this._isID;
+                return this._isID.Value;
             }
             set => this._isID = value;
         }
