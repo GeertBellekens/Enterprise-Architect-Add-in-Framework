@@ -174,8 +174,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var multiplicityProperty = this.getPropertyInfo("EAMultiplicity");
             if (multiplicityProperty != null && multiplicityProperty.isDirty)
             {
-                this.WrappedAttribute.LowerBound = ((Multiplicity)multiplicityProperty.propertyValue).lower.ToString();
-                this.WrappedAttribute.UpperBound = ((Multiplicity)multiplicityProperty.propertyValue).upper.ToString();
+                this.wrappedAttribute.LowerBound = ((Multiplicity)multiplicityProperty.propertyValue).lower.ToString();
+                this.wrappedAttribute.UpperBound = ((Multiplicity)multiplicityProperty.propertyValue).upper.ToString();
             }
             base.saveElement();
         }
@@ -210,11 +210,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             string lowerString = "1";
             string upperString = "1";
             //debug
-            if (this.WrappedAttribute.LowerBound.Length > 0)
+            if (this.wrappedAttribute.LowerBound.Length > 0)
             {
                 lowerString = this.wrappedAttribute.LowerBound;
             }
-            if (this.WrappedAttribute.UpperBound.Length > 0)
+            if (this.wrappedAttribute.UpperBound.Length > 0)
             {
                 upperString = this.wrappedAttribute.UpperBound;
             }

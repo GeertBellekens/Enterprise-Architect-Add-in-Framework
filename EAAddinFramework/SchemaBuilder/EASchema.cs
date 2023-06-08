@@ -159,8 +159,7 @@ namespace EAAddinFramework.SchemaBuilder
             var connectorGUIDs = new List<string>();
             foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
             {
-                attributeGUIDs.AddRange(schemaElement.schemaProperties.OfType<EASchemaPropertyWrapper>().Select(x => x.GUID));
-                attributeGUIDs.AddRange(schemaElement.schemaLiterals.OfType<EASchemaPropertyWrapper>().Select(x => x.GUID));
+                attributeGUIDs.AddRange(schemaElement.schemaPropertyWrappers.OfType<EASchemaProperty>().Select(x => x.GUID));//attributes and literals
                 connectorGUIDs.AddRange(schemaElement.schemaAssociations.OfType<EASchemaAssociation>().Select(x => x.GUID));
             }
             var attributeWrappers = this.model.getAttributeWrapperByGUIDs(attributeGUIDs);
@@ -204,21 +203,22 @@ namespace EAAddinFramework.SchemaBuilder
             foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
             {
                 //Loop all attribute and link the source attribute
-                foreach (var schemaProperty in schemaElement.schemaProperties.OfType<EASchemaProperty>())
+                foreach (var schemaProperty in schemaElement.schemaPropertyWrappers.OfType<EASchemaProperty>())
                 {
                     if (sourceAttributeDictionary.TryGetValue(schemaProperty.GUID, out TSF_EA.AttributeWrapper attributeWrapper))
                     {
-                        schemaProperty.sourceProperty = attributeWrapper as TSF_EA.Attribute;
+                        if (attributeWrapper is TSF_EA.Attribute)
+                        {
+                            schemaProperty.sourceProperty = attributeWrapper as TSF_EA.Attribute;
+                        }
+                        else
+                        {
+                            schemaProperty.sourceLiteral = attributeWrapper as TSF_EA.EnumerationLiteral;
+                        }
+                        
                     }
                 }
-                //do the same for all literals
-                foreach (var schemaProperty in schemaElement.schemaLiterals.OfType<EASchemaLiteral>())
-                {
-                    if (sourceAttributeDictionary.TryGetValue(schemaProperty.GUID, out TSF_EA.AttributeWrapper attributeWrapper))
-                    {
-                        schemaProperty.sourceLiteral = attributeWrapper as TSF_EA.EnumerationLiteral;
-                    }
-                }
+
                 //and for all connectors
                 foreach (var schemaAssociation in schemaElement.schemaAssociations.OfType<EASchemaAssociation>())
                 {

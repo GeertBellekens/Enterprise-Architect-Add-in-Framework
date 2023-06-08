@@ -22,8 +22,21 @@ namespace EAAddinFramework.SchemaBuilder
         private Dictionary<string, string> _restriction;
         private List<EASchemaElement> _choiceElements;
         List<UML.Classes.Kernel.Classifier> _choiceTypes;
-        internal abstract UTF_EA.AttributeWrapper sourceAttributeWrapper { get; }
-        internal abstract UTF_EA.AttributeWrapper subsetAttributeWrapper {get;}
+
+        private UTF_EA.AttributeWrapper _sourceAttributeWrapper;
+        internal UTF_EA.AttributeWrapper sourceAttributeWrapper
+        {
+            get
+            {
+                if (this._sourceAttributeWrapper == null)
+                {
+                    this._sourceAttributeWrapper = this.model.getAttributeWrapperByGUID(this.wrappedProperty.GUID);
+                }
+                return this._sourceAttributeWrapper;
+            }
+            set => this._sourceAttributeWrapper = value;
+        }
+        internal UTF_EA.AttributeWrapper subsetAttributeWrapper { get; set; }
         public string GUID => this.wrappedProperty.GUID;
 
         protected SBF.SchemaSettings settings => this.owner.owner.settings;
@@ -34,9 +47,9 @@ namespace EAAddinFramework.SchemaBuilder
             this.model = model;
             this.wrappedProperty = objectToWrap;
         }
-        public bool isNew { get; protected set;}
-		
-        
+        public bool isNew { get; protected set; }
+
+
         public SBF.SchemaElement owner
         {
             get
@@ -50,19 +63,19 @@ namespace EAAddinFramework.SchemaBuilder
         }
         public EASchemaElement redefinedElement
         {
-        	get
-        	{
-        		if (this._redefinedElement == null)
-        		{
-	        		string redefinedName;
-	        		if (this.restriction.TryGetValue("redefines", out redefinedName))
-	        		{
-	        			//redefinitions are defined by their name. The name has to be unique in the schema, so it is safe to use it to find the element.
-	        			this._redefinedElement = this.owner.owner.elements.FirstOrDefault(x => x.name == redefinedName) as EASchemaElement;
-	        		}
-	        	}
-        		return this._redefinedElement;
-        	}
+            get
+            {
+                if (this._redefinedElement == null)
+                {
+                    string redefinedName;
+                    if (this.restriction.TryGetValue("redefines", out redefinedName))
+                    {
+                        //redefinitions are defined by their name. The name has to be unique in the schema, so it is safe to use it to find the element.
+                        this._redefinedElement = this.owner.owner.elements.FirstOrDefault(x => x.name == redefinedName) as EASchemaElement;
+                    }
+                }
+                return this._redefinedElement;
+            }
         }
         /// <summary>
         /// choiceElements
@@ -89,16 +102,16 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         foreach (var schemaElement in schemaElements.ToList())
                         {
-                            var element = (EASchemaElement) schemaElement;
-                            if (choices.Contains(element.TypeID) 
+                            var element = (EASchemaElement)schemaElement;
+                            if (choices.Contains(element.TypeID)
                                 || choices.Contains(element.name))//has this changed from guid to name based?
-                                
-                                //&& element.name == this.wrappedProperty.TypeName) //this caused a restricted association to a subtype to not be generated. 
-                                //Not sure why the check was originally added, so this might break something again.
+
+                            //&& element.name == this.wrappedProperty.TypeName) //this caused a restricted association to a subtype to not be generated. 
+                            //Not sure why the check was originally added, so this might break something again.
                             {
                                 _choiceElements.Add(element);
                             }
-                        }                  
+                        }
                     }
                 }
                 return _choiceElements;
@@ -149,9 +162,9 @@ namespace EAAddinFramework.SchemaBuilder
 
                     if (this._multiplicity == null)
                     {
-                    	// we cannot trust the cardinality on the SchemaProperty. On attributes with multiplicity [0..1] it reports [0]
-                    	// but since there is no restriction, the multiplicity is the same as the source attribute or association.
-                    	return this.sourceMultiplicity;
+                        // we cannot trust the cardinality on the SchemaProperty. On attributes with multiplicity [0..1] it reports [0]
+                        // but since there is no restriction, the multiplicity is the same as the source attribute or association.
+                        return this.sourceMultiplicity;
                     }
                 }
                 return this._multiplicity;

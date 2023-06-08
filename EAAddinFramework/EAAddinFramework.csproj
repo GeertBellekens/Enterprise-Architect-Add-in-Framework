@@ -350,7 +350,6 @@
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
     <Compile Include="SchemaBuilder\EASchema.cs" />
     <Compile Include="SchemaBuilder\EASchemaElement.cs" />
-    <Compile Include="SchemaBuilder\EASchemaLiteral.cs" />
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs">

@@ -29,8 +29,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => ((ElementWrapper)this.owner).owningPackage = value;
         }
 
+        public int parentID => this.wrappedAttribute.ParentID;
 
-        public EADBAttribute WrappedAttribute => this.wrappedAttribute;
+      
         public override string name
         {
             get
@@ -242,8 +243,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         #endregion
 
 
-        internal override global::EA.Collection eaTaggedValuesCollection => this.WrappedAttribute.TaggedValues;
-        public override string guid => this.WrappedAttribute.AttributeGUID;
+        internal override global::EA.Collection eaTaggedValuesCollection => this.wrappedAttribute.TaggedValues;
+        public override string guid => this.wrappedAttribute.AttributeGUID;
 
         #region implemented abstract members of Element
 

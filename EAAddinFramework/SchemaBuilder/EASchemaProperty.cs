@@ -13,8 +13,31 @@ namespace EAAddinFramework.SchemaBuilder
     /// </summary>
     public class EASchemaProperty : EASchemaPropertyWrapper, SBF.SchemaProperty
     {
-        private UTF_EA.Attribute _sourceProperty;
-        
+        public bool isLiteral => this.sourceLiteral != null;
+        public UML.Classes.Kernel.EnumerationLiteral sourceLiteral
+        {
+            get => this.sourceAttributeWrapper as UML.Classes.Kernel.EnumerationLiteral;
+            set => this.sourceAttributeWrapper = value as UTF_EA.AttributeWrapper;
+        }
+        public UML.Classes.Kernel.Property sourceProperty
+        {
+            get => this.sourceAttributeWrapper as UML.Classes.Kernel.Property;
+            set => this.sourceAttributeWrapper = value as UTF_EA.AttributeWrapper;
+        }
+        /// <summary>
+        /// the property in the subset model generated from this property
+        /// </summary>
+        public UML.Classes.Kernel.EnumerationLiteral subSetLiteral
+        {
+            get => this.subsetAttributeWrapper as UML.Classes.Kernel.EnumerationLiteral;
+            set => this.subsetAttributeWrapper = value as UTF_EA.AttributeWrapper;
+        }
+        public UML.Classes.Kernel.Property subSetProperty
+        {
+            get => this.subsetAttributeWrapper as UML.Classes.Kernel.Property;
+            set => this.subsetAttributeWrapper = value as UTF_EA.AttributeWrapper;
+        }
+
         /// <summary>
         /// constructor. Nothing specific, just calling base constructor
         /// </summary>
@@ -22,43 +45,11 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="owner">the owner Schema Element</param>
         /// <param name="objectToWrap">the EA.SchemaProperty object to wrap</param>
         public EASchemaProperty(UTF_EA.Model model, EASchemaElement owner, EA.SchemaProperty objectToWrap) : base(model, owner, objectToWrap) { }
-
-
-
-        #region implemented abstract members of EASchemaPropertyWrapper
         protected override UTF_EA.Multiplicity defaultMultiplicity => new UTF_EA.Multiplicity("1..1");
-
-        #region implemented abstract members of EASchemaPropertyWrapper
-
 
         protected override UTF_EA.Multiplicity sourceMultiplicity => (this.sourceProperty != null ? this.sourceProperty.multiplicity : this.defaultMultiplicity) as UTF_EA.Multiplicity;
 
 
-        #endregion
-
-        #endregion
-        /// <summary>
-        /// The property int he model where this Schema property was derived from
-        /// </summary>
-        public UML.Classes.Kernel.Property sourceProperty
-        {
-            get
-            {
-                if (this._sourceProperty == null)
-                {
-                    this._sourceProperty = this.model.getAttributeWrapperByGUID(this.wrappedProperty.GUID) as UTF_EA.Attribute;
-                }
-                return this._sourceProperty;
-            }
-            set => this._sourceProperty = value as UTF_EA.Attribute;
-        }
-        /// <summary>
-        /// the property in the subset model generated from this property
-        /// </summary>
-        public UML.Classes.Kernel.Property subSetProperty { get; set; }
-
-        internal override UTF_EA.AttributeWrapper sourceAttributeWrapper => this.sourceProperty as UTF_EA.AttributeWrapper;
-        internal override UTF_EA.AttributeWrapper subsetAttributeWrapper => this.subSetProperty as UTF_EA.AttributeWrapper;
         /// <summary>
         /// Checks if the attribute type is present as the source element of one of the schema elements
         /// If it finds a match the type is set to the subset elemnt of this schema element
@@ -119,8 +110,8 @@ namespace EAAddinFramework.SchemaBuilder
                 this.subSetProperty.isDerived = this.sourceProperty.isDerived;
                 this.subSetProperty.isUnique = this.sourceProperty.isUnique;
                 this.subSetProperty.isStatic = this.sourceProperty.isStatic;
-                this.subSetProperty.isOrdered= this.sourceProperty.isOrdered;
-                
+                this.subSetProperty.isOrdered = this.sourceProperty.isOrdered;
+
                 //properties used by database columns in EA
                 ((UTF_EA.Attribute)this.subSetProperty).allowDuplicates = ((UTF_EA.Attribute)this.sourceProperty).allowDuplicates;
                 ((UTF_EA.Attribute)this.subSetProperty).length = ((UTF_EA.Attribute)this.sourceProperty).length;
@@ -157,7 +148,7 @@ namespace EAAddinFramework.SchemaBuilder
                     || this.owner.owner.settings.keepNotesInSync)
                 {
                     this.subSetProperty.ownedComments = this.sourceProperty.ownedComments;
-                    if (! this.owner.owner.settings.keepNotesInSync
+                    if (!this.owner.owner.settings.keepNotesInSync
                         && this.owner.owner.settings.prefixNotes
                         && this.owner.owner.settings.prefixNotesText.Length > 0
                         && this.subSetProperty.ownedComments.Any(x => x.body.Length > 0))
@@ -223,7 +214,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
 
-       
+
 
         /// <summary>
         /// adds a dependency from the attributes owner to the type of the attributes
@@ -256,6 +247,81 @@ namespace EAAddinFramework.SchemaBuilder
                     }
                 }
             }
+        }
+
+        public void createSubsetLiteral()
+        {
+            //no need to do anything if the subset element does not exist
+            if (this.owner.subsetElement == null || this.sourceLiteral == null)
+            {
+                return;
+            }
+
+            HashSet<SBF.SchemaElement> schemaElements = this.owner.owner.elements;
+            if (this.subSetLiteral == null)
+            {
+                this.isNew = true;
+                this.subSetLiteral = this.model.factory.createNewElement<UML.Classes.Kernel.EnumerationLiteral>(this.owner.subsetElement, this.sourceLiteral.name);
+            }
+            else
+            {
+                if (this.subSetLiteral.name != this.sourceLiteral.name)
+                {
+                    EAOutputLogger.log(this.model, this.settings.outputName
+                                              , string.Format("Literal value '{0}' has been renamed from '{1}' since the last schema generation"
+                                                      , this.sourceLiteral.owner.name + "." + this.sourceLiteral.name
+                                                      , this.subSetLiteral.name)
+                                              , ((UTF_EA.ElementWrapper)this.sourceLiteral.owner).id
+                                              , LogTypeEnum.warning);
+                }
+            }
+            this.subSetLiteral.name = this.sourceLiteral.name;
+            this.subSetLiteral.stereotypes = this.sourceLiteral.stereotypes;
+            //Set position for new items
+            if (this.isNew)
+            {
+                this.subSetLiteral.position = this.sourceLiteral.position;
+            }
+            //Set position
+            if (this.settings.keepOriginalAttributeOrder)
+            {
+                this.subSetLiteral.position = this.sourceLiteral.position;
+            }
+            if (this.settings.setAttributeOrderZero)
+            {
+                this.subSetLiteral.position = 0;
+            }
+            //alias (only if source alias is not empty)
+            if (!string.IsNullOrEmpty(((UTF_EA.EnumerationLiteral)this.sourceLiteral).alias))
+            {
+                ((UTF_EA.EnumerationLiteral)this.subSetLiteral).alias = ((UTF_EA.EnumerationLiteral)this.sourceLiteral).alias;
+            }
+
+            //notes only update them if they are empty
+            if (this.subSetLiteral.ownedComments.Count == 0 || !this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0)
+                || this.owner.owner.settings.keepNotesInSync)
+            {
+                this.subSetLiteral.ownedComments = this.sourceLiteral.ownedComments;
+                if (!this.owner.owner.settings.keepNotesInSync
+                    && this.owner.owner.settings.prefixNotes
+                    && this.owner.owner.settings.prefixNotesText.Length > 0
+                    && this.subSetLiteral.ownedComments.Any(x => x.body.Length > 0))
+                {
+                    foreach (var comment in this.subSetLiteral.ownedComments)
+                    {
+                        comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+                    }
+                }
+            }
+            //save
+            ((UTF_EA.Element)this.subSetLiteral).save();
+            //copy constraints
+            this.copyConstraints();
+            //copy tagged values
+            ((EASchema)this.owner.owner).copyTaggedValues((UTF_EA.Element)this.sourceLiteral, (UTF_EA.Element)this.subSetLiteral);
+            //add tagged value with reference to source literal value
+            ((UTF_EA.Element)this.subSetLiteral).addTaggedValue(this.owner.owner.settings.sourceAttributeTagName, ((UTF_EA.Element)this.sourceLiteral).guid);
+
         }
     }
 }

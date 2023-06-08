@@ -21,7 +21,7 @@ namespace EAAddinFramework.SchemaBuilder
         private HashSet<SBF.SchemaProperty> _schemaProperties;
         private TSF_EA.ElementWrapper _sourceElement;
         private HashSet<SBF.SchemaAssociation> _schemaAssociations;
-        private HashSet<SBF.SchemaLiteral> _schemaLiterals;
+        private HashSet<SBF.SchemaProperty> _schemaLiterals;
 
         public EASchemaElement(TSF_EA.Model model, EASchema owner, EA.SchemaType objectToWrap)
         {
@@ -111,7 +111,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
         private HashSet<EASchemaPropertyWrapper> _schemaPropertyWrappers;
-        private HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
+        internal HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
         {
             get
             {
@@ -148,20 +148,20 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._schemaProperties == null)
                 {
-                    this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<SBF.SchemaProperty>());
+                    this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<EASchemaProperty>().Where(x => ! x.isLiteral));
                 }
                 return this._schemaProperties;
             }
             set => throw new NotImplementedException();
         }
 
-        public HashSet<SBF.SchemaLiteral> schemaLiterals
+        public HashSet<SBF.SchemaProperty> schemaLiterals
         {
             get
             {
                 if (this._schemaLiterals == null)
                 {
-                    this._schemaLiterals = new HashSet<SBF.SchemaLiteral>(this.schemaPropertyWrappers.OfType<SBF.SchemaLiteral>());
+                    this._schemaLiterals = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<EASchemaProperty>().Where(x => x.isLiteral));
                 }
                 return this._schemaLiterals;
             }
@@ -630,7 +630,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         public void createSubsetLiterals()
         {
-            foreach (EASchemaLiteral schemaLiteral in this.schemaLiterals)
+            foreach (var schemaLiteral in this.schemaLiterals.OfType<EASchemaProperty>())
             {
                 schemaLiteral.createSubsetLiteral();
             }
@@ -947,7 +947,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     foreach (TSF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals)
                     {
-                        EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
+                        var matchingLiteral = this.getMatchingSchemaLiteral(literal);
                         if (matchingLiteral != null)
                         {
                             //found a match
@@ -981,14 +981,14 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="literal">the literal to match</param>
         /// <returns>the corresponding SchemaLiteral</returns>
-        EASchemaLiteral getMatchingSchemaLiteral(TSF_EA.EnumerationLiteral literal)
+        EASchemaProperty getMatchingSchemaLiteral(TSF_EA.EnumerationLiteral literal)
         {
-            EASchemaLiteral result = null;
+            EASchemaProperty result = null;
             var sourceAttributeTag = literal.getTaggedValue(this.owner.settings.sourceAttributeTagName);
             if (sourceAttributeTag != null)
             {
                 string tagReference = sourceAttributeTag.eaStringValue;
-                result = this.schemaLiterals.OfType<EASchemaLiteral>().FirstOrDefault(x => x.sourceLiteral?.uniqueID == tagReference);
+                result = this.schemaLiterals.OfType<EASchemaProperty>().FirstOrDefault(x => x.sourceLiteral?.uniqueID == tagReference);
             }
             return result;
         }

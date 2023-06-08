@@ -1641,7 +1641,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //add the attributes to their respective elements
             foreach (var attributeWrapper in attributeWrappers)
             {
-                if (elementDictionary.TryGetValue(attributeWrapper.id, out ElementWrapper elementWrapper))
+                if (elementDictionary.TryGetValue(attributeWrapper.parentID, out ElementWrapper elementWrapper))
                 {
                     elementWrapper.addExistingAttributeWrapper(attributeWrapper);
                 }
