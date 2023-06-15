@@ -24,7 +24,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
         {
-            return getTaggedValuesForElementIDs(new List<int>(elementID), model);
+            return getTaggedValuesForElementIDs(new List<int>() { elementID }, model);
         }
         public EADBConnectorTag(Model model, List<string> propertyValues)
             : base(model, propertyValues)

@@ -8,77 +8,33 @@ using System.Threading.Tasks;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public abstract class EADBTaggedValue
+    public abstract class EADBTaggedValue: EADBBase
     {
-        internal static List<String> columnNames;
-        private static void initializeColumnNames(Model model)
-        {
-            columnNames = model.getDataSetFromQuery("select top 1 * from t_attributeTag ", true).FirstOrDefault();
-        }
-        //public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, global::EA.ObjectType ownerType, Model model)
-        //{
-        //    var elements = new List<EADBTaggedValue>();
-        //    string sqlGetData;
-        //    switch ( ownerType)
-        //    {
-        //        case ObjectType.otElement:
-        //            sqlGetData = $@"select tv.PropertyID, tv.Object_ID as ElementID, tv.Property, tv.Notes, tv.ea_guid 
-        //                         from t_objectproperties tv 
-        //                         where tv.Object_ID = {elementID}";
-        //            break;
-        //        case ObjectType.otAttribute:
-        //            sqlGetData = $"select * from t_attributeTag tv where tv.ElementID = {elementID}";
-        //            break;
-        //        case ObjectType.otConnector:
-        //            sqlGetData = "select * from t_connectorTag tv where tv.ElementID = {elementID}";
-        //            break;
-        //        case ObjectType.otMethod:
-        //            sqlGetData = "select * from t_operationTag tv where tv.ElementID = { elementID}";
-        //            break;
-        //    }
-        //    var results = model.getDataSetFromQuery(sqlGetData, false);
-        //    foreach (var propertyValues in results)
-        //    {
-        //        elements.Add(new T(model, propertyValues));
-        //    }
-        //    return elements;
-
-        //}
-        protected Model model { get; set; }
-  
-        protected Dictionary<string, string> properties { get; set; }
-
-        protected EADBTaggedValue(Model model)
-        {
-            if (columnNames == null)
-            {
-                initializeColumnNames(model);
-            }
-            this.model = model;
-        }
-        protected EADBTaggedValue(Model model, List<string> propertyValues)
-            : this(model)
-        {
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
-        public virtual int PropertyID  
+        private static List<string> staticColumnNames = null;
+        protected override List<string> columnNames
         {
             get
             {
-                int result;
-                if (int.TryParse(this.properties["PropertyID"], out result))
+                if (staticColumnNames == null)
                 {
-                    return result;
+                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_attributeTag ", true).FirstOrDefault();
                 }
-                else
-                {
-                    return 0;
-                }
+                return staticColumnNames;
             }
+
+        }
+
+        protected EADBTaggedValue(Model model): base(model)
+        {
+        }
+        
+        protected EADBTaggedValue(Model model, List<string> propertyValues)
+            : base(model,  propertyValues)
+        {
+        }
+        public virtual int PropertyID  
+        {
+            get => this.getIntFromProperty("PropertyID");
             protected set => this.properties["PropertyID"] = value.ToString();
         }
 
@@ -104,18 +60,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public virtual int ElementID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["ElementID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("ElementID");
             set => this.properties["ElementID"] = Value.ToString();
         }
 

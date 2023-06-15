@@ -10,18 +10,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBConnector : EADBBase
     {
-        internal static List<String> columnNames;
-        private static List<String> getColumnNames(Model model)
+        private static List<string> staticColumnNames = null;
+        protected override List<string> columnNames
         {
-            if (columnNames == null)
+            get
             {
-                columnNames = model.getDataSetFromQuery("select top 1 * from t_connector ", true).FirstOrDefault();
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_connector ", true).FirstOrDefault();
+                }
+                return staticColumnNames;
             }
-            return columnNames;
-        }
-        protected override void initializeColumnNames()
-        {
-            getColumnNames(this.model);
         }
         public static EADBConnector getEADBConnectorForConnectorID(int connectorID, Model model)
         {
@@ -108,7 +107,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 
         public EADBConnector(Model model, List<string> propertyValues)
-            : base(model, getColumnNames(model), propertyValues)
+            : base(model,  propertyValues)
         { }
         public EADBConnector(Model model, int connectorID)
             : this(model, model.getDataSetFromQuery($"select * from t_connector c where c.Connector_ID = {connectorID}", false).FirstOrDefault())
@@ -121,7 +120,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.eaConnector = connector;
             //initialize properties empty
-            this.fillPropertiesEmpty(columnNames);
+            this.fillPropertiesEmpty();
             updateFromWrappedElement();
         }
 

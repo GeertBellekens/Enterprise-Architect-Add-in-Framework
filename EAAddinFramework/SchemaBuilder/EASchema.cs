@@ -1255,6 +1255,12 @@ namespace EAAddinFramework.SchemaBuilder
                     this.taggedValuesToSynchronize.Add(new Tuple<TSF_EA.TaggedValue, TSF_EA.Element>(sourceTaggedValue, target));
                     continue;
                 }
+                if (sourceTaggedValue.name.Equals(this.settings.elementTagName, StringComparison.InvariantCultureIgnoreCase)
+                    || sourceTaggedValue.name.Equals(this.settings.sourceAttributeTagName, StringComparison.InvariantCultureIgnoreCase)
+                    || sourceTaggedValue.name.Equals(this.settings.sourceAssociationTagName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;//skip if the tagged value is one of the configured traceability tagged values
+                }
                 bool updateTaggedValue = true;
                 var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);
                 if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name)

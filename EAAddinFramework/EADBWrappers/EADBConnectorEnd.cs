@@ -7,10 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBConnectorEnd : EADBBase
     {
-        protected override void initializeColumnNames()
-        {
-            //nothing
-        }
+        
 
         public bool isSource { get; private set; }
         public EADBConnectorEnd(Model model, Dictionary<string, string> properties, bool isSource)
@@ -254,6 +251,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public ObjectType ObjectType => global::EA.ObjectType.otConnectorEnd;
 
-
+        protected override List<string> columnNames => throw new NotImplementedException();
     }
 }

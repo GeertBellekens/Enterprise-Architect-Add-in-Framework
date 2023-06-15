@@ -1101,9 +1101,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 newTaggedValue = this.createParameterTag((Element)owner, (global::EA.ParamTag)objectToWrap);
             }
-            else if (objectToWrap is global::EA.RoleTag) //TODO add EADB variant
+            else if (objectToWrap is global::EA.RoleTag) 
             {
                 newTaggedValue = this.createRoleTag((Element)owner, (global::EA.RoleTag)objectToWrap);
+            }
+            else if (objectToWrap is EADBRoleTag) 
+            {
+                newTaggedValue = this.createRoleTag((Element)owner, (EADBRoleTag)objectToWrap);
             }
             return newTaggedValue;
         }
@@ -1144,7 +1148,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return new ParameterTag((Model)this.model, owner, objectToWrap);
         }
-        public RoleTag createRoleTag(Element owner, global::EA.RoleTag objectToWrap) //TODO change to EADB variant
+        public RoleTag createRoleTag(Element owner, global::EA.RoleTag objectToWrap)
+        {
+            return this.createRoleTag(owner, new EADBRoleTag(this.EAModel, objectToWrap));
+        }
+        public RoleTag createRoleTag(Element owner, EADBRoleTag objectToWrap)
         {
             return new RoleTag((Model)this.model, owner, objectToWrap);
         }

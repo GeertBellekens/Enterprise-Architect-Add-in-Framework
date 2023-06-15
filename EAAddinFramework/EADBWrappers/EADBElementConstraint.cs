@@ -10,10 +10,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBElementConstraint : EADBBase, global::EA.Constraint
     {
-        internal static List<String> columnNames;
-        private static void getColumnNames(Model model)
+        private static List<string> staticColumnNames = null;
+        protected override List<string> columnNames
         {
-            columnNames = model.getDataSetFromQuery("select top 1 * from t_objectconstraint ", true).FirstOrDefault();
+            get
+            {
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_objectconstraint ", true).FirstOrDefault();
+                }
+                return staticColumnNames;
+            }
         }
 
 
@@ -137,16 +144,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public ObjectType ObjectType => ObjectType.otConstraint;
 
 
-        
-
-        protected override void initializeColumnNames()
-        {
-            getColumnNames(this.model);
-        }
-
         public string GetLastError()
         {
-            throw new NotImplementedException();
+            return this.eaElementConstraint.GetLastError();
         }
 
 

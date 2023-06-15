@@ -10,28 +10,27 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public abstract class EADBBase
     {
+        protected abstract List<String> columnNames { get; }
         protected EADBBase(Model model)
         {
             this.model = model;
             this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            this.initializeColumnNames();
         }
-        protected EADBBase(Model model, List<string> columnNames, List<string> propertyValues)
+        protected EADBBase(Model model, List<string> propertyValues)
         :this(model)
         {
-            this.fillProperties(columnNames, propertyValues);
+            this.fillProperties( propertyValues);
         }
-        protected abstract void initializeColumnNames();
         protected Model model { get; set; }
         protected Dictionary<string, string> properties { get; set; }
-        protected void fillProperties(List<string> columnNames, List<string> propertyValues)
+        protected void fillProperties(List<string> propertyValues)
         {
             for (int i = 0; i < columnNames.Count; i++)
             {
                 this.properties.Add(columnNames[i], propertyValues[i]);
             }
         }
-        protected void fillPropertiesEmpty(List<string> columnNames)
+        protected void fillPropertiesEmpty()
         {
             for (int i = 0; i < columnNames.Count; i++)
             {

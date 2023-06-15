@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using UML = TSF.UmlToolingFramework.UML;
@@ -156,6 +156,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
+        }
+
+        public Association EAAssociation
+        {
+            get { return (Association)this.association; }
+            set { this.association = value; }
         }
 
         public UML.Classes.Kernel.Association owningAssociation
@@ -523,6 +529,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return @"select tv.PropertyID from t_taggedvalue tv
 			where tv.TagValue like '" + taggedValueName + "' "
                 + " and tv.ElementID = '" + this.owningAssociation.uniqueID + "'";
+        }
+
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBRoleTag.getTaggedValuesForElementID(this.EAAssociation.id, this.EAModel)
+                .OfType<EADBRoleTag>().Where(x => x.isSource == this.isSource).ToList<EADBTaggedValue>();
         }
 
         #endregion
