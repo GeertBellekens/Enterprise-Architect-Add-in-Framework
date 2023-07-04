@@ -141,24 +141,26 @@ namespace EAAddinTester
         /// <summary>
         /// generic test method. To be filled in with whatever needs to be tested.
         /// </summary>
-        internal static void myTest()
+        internal static void myTest(string command, string arguments)
         {
-            EAWrappers.Model model = new EAWrappers.Model();
-            var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
-            var outputName = "EATester";
-            //test regular getting all elements
-            //EAOutputLogger.clearLog(model, outputName);
-            //EAOutputLogger.log(model, outputName, $"starting regular test for package '{selectedPackage?.name}'", 0);
-            //var elements = selectedPackage.getAllOwnedElements();
-            //EAOutputLogger.log(model, outputName, $"found {elements.Count} new elements", 0);
-            var connector = model.getRelationByGUID("{B34E3FAE-B047-46be-B4BD-EFA5D1DD1B27}");
-            var sourceEnd = connector.sourceEnd;
-            foreach(var tag in sourceEnd.taggedValues)
-            {
-                EAOutputLogger.log(model, outputName, $"found {tag.name} with value {tag.tagValue} ", 0);
-                tag.tagValue = "12";
-                tag.save();
-            }
+            var progresBarWindows = new ProgressBarWindow();
+            progresBarWindows.execute(command, arguments, "executing command title", "currently running this command");
+            //EAWrappers.Model model = new EAWrappers.Model();
+            //var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
+            //var outputName = "EATester";
+            ////test regular getting all elements
+            ////EAOutputLogger.clearLog(model, outputName);
+            ////EAOutputLogger.log(model, outputName, $"starting regular test for package '{selectedPackage?.name}'", 0);
+            ////var elements = selectedPackage.getAllOwnedElements();
+            ////EAOutputLogger.log(model, outputName, $"found {elements.Count} new elements", 0);
+            //var connector = model.getRelationByGUID("{B34E3FAE-B047-46be-B4BD-EFA5D1DD1B27}");
+            //var sourceEnd = connector.sourceEnd;
+            //foreach(var tag in sourceEnd.taggedValues)
+            //{
+            //    EAOutputLogger.log(model, outputName, $"found {tag.name} with value {tag.tagValue} ", 0);
+            //    tag.tagValue = "12";
+            //    tag.save();
+            //}
 
         }
         /// <summary>

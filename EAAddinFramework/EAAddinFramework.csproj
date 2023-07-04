@@ -373,6 +373,12 @@
     <Compile Include="Utilities\KeyValuePairsHelper.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\LogTypeEnum.cs" />
+    <Compile Include="Utilities\ProgressBarWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utilities\ProgressBarWindow.Designer.cs">
+      <DependentUpon>ProgressBarWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\ScriptingInteropHelper.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="WorkTracking\Project.cs" />
@@ -391,6 +397,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Utilities\AddinSettingsForm.resx">
       <DependentUpon>AddinSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\ProgressBarWindow.resx">
+      <DependentUpon>ProgressBarWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx" />
   </ItemGroup>
