@@ -144,7 +144,7 @@ namespace EAAddinTester
         internal static void myTest(string command, string arguments)
         {
             var progresBarWindows = new ProgressBarWindow();
-            progresBarWindows.execute(command, arguments, "executing command title", "currently running this command");
+            progresBarWindows.execute(command, arguments, "executing command title", "currently running this command", false);
             //EAWrappers.Model model = new EAWrappers.Model();
             //var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
             //var outputName = "EATester";

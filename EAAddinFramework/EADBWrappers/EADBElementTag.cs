@@ -10,6 +10,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBElementTag : EADBTaggedValue
     {
+        const string selectQuery = "select * from t_objectproperties tv";
         public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
         {
             return getTaggedValuesForElementIDs(new List<int> { elementID }, model);
@@ -18,7 +19,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBTaggedValue>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;
-            string sqlGetData = $"select * from t_objectproperties tv where tv.Object_ID in ({string.Join(",", elementIDs)})";
+            string sqlGetData = $"{selectQuery} where tv.Object_ID in ({string.Join(",", elementIDs)})";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {
@@ -34,12 +35,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             //set wrapped property
             this.eaTaggedValue = taggedValue;
-            //Initialize empty
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], string.Empty);
-            }
             //set properties
             updateFromWrappedElement();
         }

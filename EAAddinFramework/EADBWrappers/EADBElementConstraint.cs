@@ -8,16 +8,17 @@ using System.Threading.Tasks;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public class EADBElementConstraint : EADBBase, global::EA.Constraint
+    public class EADBElementConstraint : EADBBase
     {
-        private static List<string> staticColumnNames = null;
-        protected override List<string> columnNames
+        internal static Dictionary<string, int> staticColumnNames;
+        const string selectQuery = "select * from t_objectconstraint oc ";
+        protected override Dictionary<string, int> columnNames
         {
             get
             {
                 if (staticColumnNames == null)
                 {
-                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_objectconstraint ", true).FirstOrDefault();
+                    staticColumnNames = this.getColumnNames(selectQuery);
                 }
                 return staticColumnNames;
             }
@@ -28,7 +29,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBElementConstraint>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_objectconstraint oc where oc.Object_ID in ({string.Join(",", elementIDs)})", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where oc.Object_ID in ({string.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBElementConstraint(model, propertyValues));
@@ -58,30 +59,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this._eaElementConstraint = value;
         }
 
-        private EADBElementConstraint(Model model)
-            : base (model)
-        {
-        }
+
         public EADBElementConstraint(Model model, List<string> propertyValues)
-            : this(model)
-        {
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
+            : base(model, propertyValues)
+        { }
 
         public EADBElementConstraint(Model model, global::EA.Constraint elementConstraint)
-            : this(model)
+            : base(model)
         {
             this.eaElementConstraint = elementConstraint;
-            //initialize properties emtpy
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], String.Empty);
-            }
             updateFromWrappedElement();
 
 

@@ -8,27 +8,33 @@ using System.Threading.Tasks;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public class EADBAttributeConstraint
+    public class EADBAttributeConstraint: EADBBase
     {
-        internal static List<String> columnNames;
-        private static void initializeColumnNames(Model model)
+        internal static Dictionary<string, int> staticColumnNames;
+        const string selectQuery = "select a.* from t_attributeconstraints a";
+        protected override Dictionary<String, int> columnNames
         {
-            columnNames = model.getDataSetFromQuery("select top 1 * from t_attributeconstraints ", true).FirstOrDefault();
+            get
+            {
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = this.getColumnNames(selectQuery);
+                }
+                return staticColumnNames;
+            }
         }
-
 
         public static List<EADBAttributeConstraint> getEADBAttributeConstraintsForAttributeIDs(IEnumerable<int> attributeIDs, Model model)
         {
             var elements = new List<EADBAttributeConstraint>();
             if (attributeIDs == null || attributeIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_attributeconstraints a where a.ID in ({string.Join(",", attributeIDs)})", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where a.ID in ({string.Join(",", attributeIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBAttributeConstraint(model, propertyValues));
             }
             return elements;
         }
-        private Model model { get; set; }
         private global::EA.AttributeConstraint _eaAttributeConstraint;
         private global::EA.AttributeConstraint eaAttributeConstraint
         {
@@ -51,39 +57,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => this._eaAttributeConstraint = value;
         }
-        private Dictionary<string, string> properties { get; set; }
 
-        private EADBAttributeConstraint(Model model)
-        {
-            if (columnNames == null)
-            {
-                initializeColumnNames(model);
-            }
-            this.model = model;
-        }
+        private EADBAttributeConstraint(Model model) : base(model) { }
+        
         public EADBAttributeConstraint(Model model, List<string> propertyValues)
-            : this(model)
-        {
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
+            : base(model, propertyValues)
+        {}
 
         public EADBAttributeConstraint(Model model, global::EA.AttributeConstraint attributeConstraint)
             : this(model)
         {
             this.eaAttributeConstraint = attributeConstraint;
-            //initialize properties emtpy
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], String.Empty);
-            }
             updateFromWrappedElement();
-
-
         }
 
         private void updateFromWrappedElement()

@@ -15,17 +15,19 @@ namespace EAAddinFramework.Utilities
     {
         private string command;
         private string arguments;
+        private bool closeWhenFinished;
         public ProgressBarWindow()
         {
             Application.EnableVisualStyles();
             InitializeComponent();
         }
-        public string execute(string command, string arguments, string title, string label)
+        public string execute(string command, string arguments, string title, string label, bool closeWhenFinished)
         {
             this.Text = title;
             this.label.Text = label;
             this.command = command;
             this.arguments = arguments;
+            this.closeWhenFinished = closeWhenFinished;
             this.ShowDialog();
             return this.outputTextBox.Text;
         }
@@ -51,6 +53,10 @@ namespace EAAddinFramework.Utilities
                 this.label.Text = "Finished";
                 this.progressBar.Style = ProgressBarStyle.Continuous;
                 this.progressBar.MarqueeAnimationSpeed = 0;
+            }
+            if (this.closeWhenFinished)
+            {
+                this.Close();
             }
         }
     }

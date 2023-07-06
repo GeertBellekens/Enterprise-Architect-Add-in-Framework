@@ -10,11 +10,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBConnectorTag : EADBTaggedValue
     {
+        const string selectQuery = "select * from t_connectorTag tv";
         public static List<EADBTaggedValue> getTaggedValuesForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBTaggedValue>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;
-            string sqlGetData = $"select * from t_connectorTag tv where tv.ElementID in ({string.Join(",", elementIDs)})";
+            string sqlGetData = $"{selectQuery} where tv.ElementID in ({string.Join(",", elementIDs)})";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {
@@ -34,12 +35,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             //set wrapped property
             this.eaTaggedValue = taggedValue;
-            //Initialize empty
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], string.Empty);
-            }
             //set properties
             updateFromWrappedElement();
 

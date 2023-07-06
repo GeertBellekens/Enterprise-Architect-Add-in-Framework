@@ -10,14 +10,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBConnector : EADBBase
     {
-        private static List<string> staticColumnNames = null;
-        protected override List<string> columnNames
+        private static Dictionary<String, int> staticColumnNames = null;
+        const string selectQuery = "select c.* from t_connector c";
+        protected override Dictionary<String, int> columnNames
         {
             get
             {
                 if (staticColumnNames == null)
                 {
-                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_connector ", true).FirstOrDefault();
+                    staticColumnNames = this.getColumnNames(selectQuery);
                 }
                 return staticColumnNames;
             }
@@ -34,7 +35,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 return elements; //return emtpy
             }
-            var results = model.getDataSetFromQuery($"select * from t_connector c where c.Connector_ID in ({string.Join(",", connectorIDs)})", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where c.Connector_ID in ({string.Join(",", connectorIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBConnector(model, propertyValues));
@@ -49,7 +50,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBConnector>();
             if (connectorGUIDs == null || connectorGUIDs.Count() == 0) return elements;
-            var results = model.getDataSetFromQuery($"select * from t_connector c where c.ea_guid in ('{string.Join("','", connectorGUIDs)}')", false);
+            var results = model.getDataSetFromQuery($"{selectQuery} where c.ea_guid in ('{string.Join("','", connectorGUIDs)}')", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBConnector(model, propertyValues));
@@ -63,9 +64,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBConnector> getEADBConnectorsForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBConnector>();
-            var results = model.getDataSetFromQuery($@"select * from t_connector c where c.Start_Object_ID in ({string.Join(",", elementIDs)})
+            var results = model.getDataSetFromQuery($@"{selectQuery} where c.Start_Object_ID in ({string.Join(",", elementIDs)})
                                                     union
-                                                    select * from t_connector c where c.End_Object_ID in ({string.Join(",", elementIDs)})", false);
+                                                    {selectQuery} where c.End_Object_ID in ({string.Join(",", elementIDs)})", false);
             foreach (var propertyValues in results)
             {
                 elements.Add(new EADBConnector(model, propertyValues));
@@ -75,11 +76,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBConnector> getEADBConnectorsForPackageIDs(List<string> PackageIDs, Model model)
         {
             var elements = new List<EADBConnector>();
-            var results = model.getDataSetFromQuery($@"select c.* from t_connector c 
+            var results = model.getDataSetFromQuery($@"{selectQuery} 
                                                     inner join t_object o on o.Object_ID = c.Start_Object_ID
                                                     where o.Package_ID in ({string.Join(",", PackageIDs)})
                                                     union
-                                                    select c.* from t_connector c 
+                                                    {selectQuery} 
                                                     inner join t_object o on o.Object_ID = c.End_Object_ID
                                                     where o.Package_ID in ({string.Join(",", PackageIDs)})", false);
             foreach (var propertyValues in results)
@@ -110,17 +111,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : base(model,  propertyValues)
         { }
         public EADBConnector(Model model, int connectorID)
-            : this(model, model.getDataSetFromQuery($"select * from t_connector c where c.Connector_ID = {connectorID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($"{selectQuery} where c.Connector_ID = {connectorID}", false).FirstOrDefault())
         { }
         public EADBConnector(Model model, string uniqueID)
-            : this(model, model.getDataSetFromQuery($"select * from t_connector c where c.ea_guid = {uniqueID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($"{selectQuery} where c.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBConnector(Model model, global::EA.Connector connector)
             : base(model)
         {
             this.eaConnector = connector;
-            //initialize properties empty
-            this.fillPropertiesEmpty();
             updateFromWrappedElement();
         }
 

@@ -10,15 +10,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBRoleTag : EADBTaggedValue
     {
-        private static List<string> staticColumnNames = null;
-        protected override List<string> columnNames
+        
+        internal static new Dictionary<string, int> staticColumnNames;
+        const string selectQuery = @"select 0 as PropertyID, c.ea_guid as ElementID , tv.TagValue as Property
+                            , tv.Notes as VALUE, '' as NOTES, tv.PropertyID as ea_guid, tv.BaseClass
+                            from t_taggedvalue tv
+                            inner join t_connector c on c.ea_guid = tv.ElementID
+                            where tv.BaseClass like 'ASSOCIATION_%' ";
+        protected override Dictionary<string, int> columnNames
         {
             get
             {
                 if (staticColumnNames == null)
                 {
-                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_attributeTag ", true).FirstOrDefault();
-                    staticColumnNames.Add("BaseClass");
+                    staticColumnNames = this.getColumnNames(selectQuery);
                 }
                 return staticColumnNames;
             }
@@ -27,11 +32,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var elements = new List<EADBTaggedValue>();
             if (elementIDs == null || elementIDs.Count() == 0) return elements;
-            string sqlGetData = $@"select 0 as PropertyID, c.ea_guid as ElementID , tv.TagValue as Property
-                            , tv.Notes as VALUE, '' as NOTES, tv.PropertyID as ea_guid, tv.BaseClass
-                            from t_taggedvalue tv
-                            inner join t_connector c on c.ea_guid = tv.ElementID
-                            where tv.BaseClass like 'ASSOCIATION_%' 
+            string sqlGetData = $@"{selectQuery}
                             and c.Connector_ID in ({string.Join(",", elementIDs)})";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
@@ -52,12 +53,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             //set wrapped property
             this.eaTaggedValue = taggedValue;
-            //Initialize empty
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], string.Empty);
-            }
             //set properties
             updateFromWrappedElement();
 

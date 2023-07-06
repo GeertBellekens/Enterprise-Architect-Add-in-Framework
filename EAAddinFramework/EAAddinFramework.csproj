@@ -224,6 +224,7 @@
     <Compile Include="EADBWrappers\EADBOperationTag.cs" />
     <Compile Include="EADBWrappers\EADBRoleTag.cs" />
     <Compile Include="EADBWrappers\EADBTaggedValue.cs" />
+    <Compile Include="EADBWrappers\IndexedList.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\ScriptCtrl.cs" />
     <Compile Include="EASpecific\ScriptCtrl32.cs" />

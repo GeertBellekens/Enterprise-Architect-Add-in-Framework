@@ -7,10 +7,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBConnectorEnd : EADBBase
     {
-        
+        private static Dictionary<String, int> staticColumnNames = null;
+        const string selectQuery = "select c.* from t_connector c";
+        protected override Dictionary<String, int> columnNames
+        {
+            get
+            {
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = this.getColumnNames(selectQuery);
+                }
+                return staticColumnNames;
+            }
+        }
 
         public bool isSource { get; private set; }
-        public EADBConnectorEnd(Model model, Dictionary<string, string> properties, bool isSource)
+        public EADBConnectorEnd(Model model, IndexedList properties, bool isSource)
             : base(model)
         {
             this.properties = properties;
@@ -251,6 +263,5 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public ObjectType ObjectType => global::EA.ObjectType.otConnectorEnd;
 
-        protected override List<string> columnNames => throw new NotImplementedException();
     }
 }

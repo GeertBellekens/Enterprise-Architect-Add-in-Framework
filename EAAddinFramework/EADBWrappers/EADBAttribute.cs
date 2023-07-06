@@ -8,18 +8,26 @@ using System.Threading.Tasks;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
-    public class EADBAttribute
+    public class EADBAttribute: EADBBase
     {
-        internal static List<String> columnNames;
+        internal static Dictionary<string, int> staticColumnNames;
         const string selectQuery = @"select a.*, x.Description as StereotypesXref , x2.Description as CustomPropertiesXref
                 from t_attribute a  
                 left join t_xref x on x.Client = a.ea_guid
 				                and x.Name = 'Stereotypes'
 				left join t_xref x2 on x2.Client = a.ea_guid
 									and x2.Name = 'CustomProperties'";
-        private static void initializeColumnNames(Model model)
+        
+        protected override Dictionary<string, int> columnNames
         {
-            columnNames = model.getDataSetFromQuery( selectQuery.Replace("a.*", "top 1 a.*"), true).FirstOrDefault();
+            get
+            {
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = this.getColumnNames(selectQuery);
+                }
+                return staticColumnNames;
+            }
         }
         public static EADBAttribute getEADBAttributeForAttributeID(int attributeID, Model model)
         {
@@ -83,7 +91,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return elements;
         }
 
-        private Model model { get; set; }
         private global::EA.Attribute _eaAttribute;
         private global::EA.Attribute eaAttribute
         {
@@ -97,25 +104,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => this._eaAttribute = value;
         }
-        private Dictionary<string, string> properties { get; set; }
-
-        private EADBAttribute(Model model)
-        {
-            if (columnNames == null)
-            {
-                initializeColumnNames(model);
-            }
-            this.model = model;
-        }
+        
         public EADBAttribute(Model model, List<string> propertyValues)
-            : this(model)
-        {
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
+            : base(model, propertyValues)
+        { }
         public EADBAttribute(Model model, int attributeID)
             : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ID = {attributeID}", false).FirstOrDefault())
         { }
@@ -123,15 +115,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBAttribute(Model model, global::EA.Attribute attribute)
-            : this(model)
+            : base(model)
         {
             this.eaAttribute = attribute;
-            //initialize properties emtpy
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], String.Empty);
-            }
+            //initialize properties emtpy 
             updateFromWrappedElement();
         }
 
@@ -190,23 +177,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public bool IsStatic
         {
-            get => this.properties["IsStatic"] == "1" ? true : false;
-            set => this.properties["IsStatic"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsStatic");
+            set => this.setBoolToProperty("IsStatic", value);
         }
         public bool IsCollection
         {
-            get => this.properties["IsCollection"] == "1" ? true : false;
-            set => this.properties["IsCollection"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsCollection");
+            set => this.setBoolToProperty("IsCollection", value);
         }
         public bool IsOrdered
         {
-            get => this.properties["IsOrdered"] == "1" ? true : false;
-            set => this.properties["IsOrdered"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsOrdered");
+            set => this.setBoolToProperty("IsOrdered", value);
         }
         public bool AllowDuplicates
         {
-            get => this.properties["AllowDuplicates"] == "1" ? true : false;
-            set => this.properties["AllowDuplicates"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("AllowDuplicates");
+            set => this.setBoolToProperty("AllowDuplicates", value);
         }
         public string LowerBound
         {
@@ -230,40 +217,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public bool IsDerived
         {
-            get => this.properties["Derived"] == "1" ? true : false;
-            set => this.properties["Derived"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("Derived");
+            set => this.setBoolToProperty("Derived", value);
         }
         public int AttributeID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["ID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("ID");
             private set => this.properties["ID"] = value.ToString();
         }
 
         public int Pos
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Pos"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("Pos");
             set => this.properties["Pos"] = value.ToString();
         }
         public string Length
@@ -283,8 +248,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public bool IsConst
         {
-            get => this.properties["Const"] == "1" ? true : false;
-            set => this.properties["Const"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("Const");
+            set => this.setBoolToProperty("Const", value);
         }
         public string Style
         {
@@ -293,18 +258,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public int ClassifierID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Classifier"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("Classifier");
             set => this.properties["Classifier"] = value.ToString();
         }
         public string Default
@@ -332,18 +286,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public int ParentID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Object_ID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("Object_ID");
             set => this.properties["Object_ID"] = value.ToString();
         }
 

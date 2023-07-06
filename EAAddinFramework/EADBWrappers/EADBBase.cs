@@ -10,33 +10,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public abstract class EADBBase
     {
-        protected abstract List<String> columnNames { get; }
+
+        protected abstract Dictionary<String, int> columnNames { get; }
         protected EADBBase(Model model)
         {
             this.model = model;
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            this.properties = new IndexedList(columnNames);
         }
         protected EADBBase(Model model, List<string> propertyValues)
-        :this(model)
         {
-            this.fillProperties( propertyValues);
+            this.model = model;
+            this.properties = new IndexedList(this.columnNames, propertyValues);
         }
         protected Model model { get; set; }
-        protected Dictionary<string, string> properties { get; set; }
-        protected void fillProperties(List<string> propertyValues)
-        {
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
-        protected void fillPropertiesEmpty()
-        {
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], String.Empty);
-            }
-        }
+        protected IndexedList properties { get; set; }
+        
         protected int getIntFromProperty(string propertyName)
         {
             int result;
@@ -58,6 +46,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.properties[propertyName] = value ? "1" : "0";
         }
 
+        protected DateTime getDateTimeFromProperty(string propertyName)
+        {
+            DateTime result;
+            if (DateTime.TryParse(this.properties[propertyName], out result))
+            {
+                return result;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        public Dictionary<string, int> getColumnNames(string selectQuery)
+        {
+            var newColumnNames = new Dictionary<String, int>(StringComparer.OrdinalIgnoreCase);
+            var headers = model.getDataSetFromQuery(selectQuery.Replace("select ", "select top 1 "), true).FirstOrDefault();
+            for (int i = 0; i < headers.Count; i++)
+            {
+                newColumnNames.Add(headers[i], i);
+            }
+            return newColumnNames;
+        }
 
     }
 }

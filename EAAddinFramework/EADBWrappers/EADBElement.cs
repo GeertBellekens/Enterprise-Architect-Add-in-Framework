@@ -11,16 +11,23 @@ using System.Xml;
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
 
-    public class EADBElement
+    public class EADBElement: EADBBase
     {
-        internal static List<String> columnNames;
+        internal static Dictionary<string, int> staticColumnNames;
         const string selectQuery = @"select o.*, x.Description as StereotypesXref 
                                     from t_object o 
                                     left join t_xref x on x.Client = o.ea_guid
 				                                    and x.Name = 'Stereotypes'";
-        private static void initializeColumnNames(Model model)
+        protected override Dictionary<string, int> columnNames
         {
-            columnNames = model.getDataSetFromQuery(selectQuery.Replace("a.*", "top 1 o.*"), true).FirstOrDefault();
+            get
+            {
+                if (staticColumnNames == null)
+                {
+                    staticColumnNames = this.getColumnNames(selectQuery);
+                }
+                return staticColumnNames;
+            }
         }
         public static EADBElement getEADBElementsForElementGUID(string elementGUID, Model model)
         {
@@ -72,7 +79,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return elements;
         }
-        private Model model { get; set; }
+        
         private global::EA.Element _eaElement;
         private global::EA.Element eaElement
         {
@@ -86,47 +93,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => this._eaElement = value;
         }
-        private Dictionary<string, string> properties { get; set; }
 
-        private EADBElement(Model model)
-        {
-            if (columnNames == null)
-            {
-                initializeColumnNames(model);
-            }
-            this.model = model;
-        }
+
+
         public EADBElement(Model model, List<string> propertyValues)
-            : this(model)
-        {
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], propertyValues[i]);
-            }
-        }
+            : base(model, propertyValues)
+        { }
         public EADBElement(Model model, int elementID)
-            : this(model, model.getDataSetFromQuery($@"select o.*, x.Description from t_object o 
-                                                    left join t_xref x on x.Client = o.ea_guid   
-                                                    and x.Name = 'Stereotypes'
+            : this(model, model.getDataSetFromQuery($@"{selectQuery}
                                                     where o.Object_ID = {elementID}", false).FirstOrDefault())
         { }
         public EADBElement(Model model, string uniqueID)
-            : this(model, model.getDataSetFromQuery($@"select o.*, x.Description from t_object o
-                                                    left join t_xref x on x.Client = o.ea_guid
-                                                                    and x.Name = 'Stereotypes'  
+            : this(model, model.getDataSetFromQuery($@"{selectQuery}  
                                                     where o.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBElement(Model model, global::EA.Element element)
-            : this(model)
+            : base(model)
         {
             this.eaElement = element;
-            //initialize properties emtpy
-            this.properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < columnNames.Count; i++)
-            {
-                this.properties.Add(columnNames[i], String.Empty);
-            }
             updateFromWrappedElement();
 
         }
@@ -284,33 +268,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public bool IsActive
         {
-            get => this.properties["IsActive"] == "1" ? true : false;
-            set => this.properties["IsActive"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsActive");
+            set => this.setBoolToProperty("IsActive", value);
         }
         public bool IsLeaf
         {
-            get => this.properties["IsLeaf"] == "1" ? true : false;
-            set => this.properties["IsLeaf"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsLeaf");
+            set => this.setBoolToProperty("IsLeaf", value);
+
         }
         public bool IsSpec
         {
-            get => this.properties["IsSpec"] == "1" ? true : false;
-            set => this.properties["IsSpec"] = value ? "1" : "0";
+            get => this.getBoolFromProperty("IsSpec");
+            set => this.setBoolToProperty("IsSpec", value);
         }
         public int Subtype
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["NType"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("NType");
             set => this.properties["NType"] = value.ToString();
         }
         public string Type
@@ -320,18 +294,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public int ClassifierID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Classifier"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => getIntFromProperty("Classifier");
             set => this.properties["Classifier"] = value.ToString();
         }
         public int ClassfierID
@@ -342,34 +305,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public DateTime Created
         {
-            get
-            {
-                DateTime result;
-                if (DateTime.TryParse(this.properties["CreatedDate"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return default(DateTime);
-                }
-            }
+            get => getDateTimeFromProperty("CreatedDate");
             set => this.properties["CreatedDate"] = value.ToString();//TODO: check if this format is OK?
         }
         public DateTime Modified
         {
-            get
-            {
-                DateTime result;
-                if (DateTime.TryParse(this.properties["ModifiedDate"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return default(DateTime);
-                }
-            }
+            get => getDateTimeFromProperty("ModifiedDate");
             set => this.properties["ModifiedDate"] = value.ToString();//TODO: check if this format is OK?
         }
 
@@ -387,35 +328,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public int ElementID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Object_ID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("Object_ID");
             private set => this.properties["Object_ID"] = value.ToString();
         }
 
         public int PackageID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["Package_ID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("Package_ID");
             set => this.properties["Package_ID"] = value.ToString();
         }
         public string ElementGUID
@@ -451,34 +370,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.properties["PDATA5"] };
         public int TreePos
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["TPos"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("TPos");
             set => this.properties["TPos"] = value.ToString();
         }
         public int ParentID
         {
-            get
-            {
-                int result;
-                if (int.TryParse(this.properties["ParentID"], out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => this.getIntFromProperty("ParentID");
             set => this.properties["ParentID"] = value.ToString();
         }
         public string RunState

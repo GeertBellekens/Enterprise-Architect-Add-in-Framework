@@ -9,7 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class Constraint : Element, UML.Classes.Kernel.Constraint
     {
-        internal global::EA.Constraint wrappedConstraint { get; set; }
+        internal EADBElementConstraint wrappedConstraint { get; set; }
         private Element _owner;
         private OpaqueExpression _opaqueExpression;
         private ElementWrapper elementWrapperOwner => this.owner as ElementWrapper;

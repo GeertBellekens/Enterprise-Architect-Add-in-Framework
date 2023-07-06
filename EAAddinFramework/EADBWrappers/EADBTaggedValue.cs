@@ -10,14 +10,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public abstract class EADBTaggedValue: EADBBase
     {
-        private static List<string> staticColumnNames = null;
-        protected override List<string> columnNames
+        internal static Dictionary<String, int> staticColumnNames;
+        protected override Dictionary<String, int> columnNames
         {
             get
             {
                 if (staticColumnNames == null)
                 {
-                    staticColumnNames = model.getDataSetFromQuery("select top 1 * from t_attributeTag ", true).FirstOrDefault();
+                    staticColumnNames = this.getColumnNames("select * from t_attributeTag ");
                 }
                 return staticColumnNames;
             }
