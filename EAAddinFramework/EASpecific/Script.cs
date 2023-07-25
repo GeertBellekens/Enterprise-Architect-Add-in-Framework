@@ -657,6 +657,14 @@ namespace EAAddinFramework.EASpecific
                 List<String> includes = script.getIncludes(script.code);
                 foreach (var include in includes)
                 {
+                    // Validate !INC is of format <group>.<script>
+                    // throw away leading !INC leaving just the <group>.<script>
+                    string groupAndScriptAsString = include.Substring("!INC ".Length);
+                    string[] groupAndScript = groupAndScriptAsString.Split('.');
+                    if (groupAndScript.Length != 2)
+                    {
+                        throw new InvalidOperationException($"{script.groupName}.{script.name} contains malformed !INC, must be <group>.<script> but was instead: '{include}'");
+                    }
                     intoSet.Add(include);
                 }
             }
