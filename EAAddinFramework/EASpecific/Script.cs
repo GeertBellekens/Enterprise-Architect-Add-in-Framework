@@ -5,6 +5,7 @@
  * Time: 19:22
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ * 
  */
 using System;
 using System.Collections;
@@ -21,6 +22,7 @@ using EAAddinFramework.Utilities;
 using System.Text.RegularExpressions;
 using TSF.UmlToolingFramework.Wrappers.EA;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 
 namespace EAAddinFramework.EASpecific
 {
@@ -177,12 +179,13 @@ namespace EAAddinFramework.EASpecific
             }
             catch (Exception e)
             {
-                //the addCode didn't work, probably because of a syntax error, or unsupported syntaxt in the code
+                //the addCode didn't work, probably because of a syntax error, or unsupported syntax in the code
                 this.errorMessage = e.Message + " ERROR : " + this.scriptController.Error.Description + " | Line of error: " + this.scriptController.Error.Line + " | Code error: " + this.scriptController.Error.Text;
-                var errorMessageToLog = $"Error in loading code for script {this.name}: {this.errorMessage}";
+                var errorMessageToLog = $"Error in loading code for script {this.groupName}.{this.name}: {this.errorMessage}";
                 Logger.logError(errorMessageToLog);
                 EAOutputLogger.log(this.model, "EA-Matic", errorMessageToLog, 0, LogTypeEnum.error);
-            }           
+                MessageBox.Show(errorMessageToLog, "EA-Matic Failed to Load Code", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         /// <summary>
         /// loads all static includable scripts. These scripts are stored outside the model and can not be changed by the user
@@ -624,7 +627,7 @@ namespace EAAddinFramework.EASpecific
                     sqlGetScripts += Environment.NewLine + "      " + String.Join(Environment.NewLine + "   or ", whereGroupAndNameMatches);
                     sqlGetScripts += Environment.NewLine + ")";
 
-                    EAOutputLogger.log(model, "EA-Matic", sqlGetScripts, 0, LogTypeEnum.log);
+                    Logger.log("DEBUG: " + sqlGetScripts);
                     xmlScripts = model.SQLQuery(sqlGetScripts);
                     scriptNodes = xmlScripts.SelectNodes("//Row");
                     List<Script> newScripts = new List<Script>();
