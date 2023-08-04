@@ -46,6 +46,12 @@ namespace EAAddinFramework.EASpecific
             this.owner = owner;
             this.name = name;
         }
+
+        public override string ToString()
+        {
+            return this.fullName;
+        }
+
         /// <summary>
         /// execute this function
         /// </summary>
