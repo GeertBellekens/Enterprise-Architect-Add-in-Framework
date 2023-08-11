@@ -151,16 +151,16 @@ namespace EAAddinFramework.EASpecific
         public override void resetScripts()
         {
             // MDG Script Repository does not need to be reset as the contents in a MDG never change at runtime
-        }
-
-        public override void saveScripts(string scriptPath)
-        {
-            // MDG Script Repository does not support saving scripts
             if (!_loaded)
             {
                 loadScripts();
                 _loaded = true;
             }
         }
+
+        public override void saveScripts(string scriptPath)
+        {
+            // MDG Script Repository does not support saving scripts
+                    }
     }
 }
