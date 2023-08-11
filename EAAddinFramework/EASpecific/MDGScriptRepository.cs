@@ -161,6 +161,6 @@ namespace EAAddinFramework.EASpecific
         public override void saveScripts(string scriptPath)
         {
             // MDG Script Repository does not support saving scripts
-                    }
+        }
     }
 }
