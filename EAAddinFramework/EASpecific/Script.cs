@@ -405,7 +405,14 @@ namespace EAAddinFramework.EASpecific
         /// <returns>whathever (if anything) the function returns</returns>
         internal object executeFunction(string functionName, object[] parameters)
         {
-            return this.scriptController.Run(functionName, parameters);
+            try
+            {
+                return this.scriptController.Run(functionName, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Script '{fullyQualifiedName}' failed: {ex.Message}", ex);
+            }
         }
         /// <summary>
         /// executes the function with the given name
@@ -414,7 +421,7 @@ namespace EAAddinFramework.EASpecific
         /// <returns>whathever (if anything) the function returns</returns>
         internal object executeFunction(string functionName)
         {
-            return this.scriptController.Run(functionName, new object[0]);
+            return executeFunction(functionName, new object[0]);
         }
         /// <summary>
         /// add a function with based on the given operation
