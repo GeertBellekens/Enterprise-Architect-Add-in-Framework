@@ -68,6 +68,24 @@ namespace EAAddinFramework.Utilities
         {
             log("Warning: " + logmessage);
         }
+
+        /// <summary>
+        /// log a debug
+        /// </summary>
+        /// <param name="logmessage">the debug message</param>
+        public static void logDebug(string logmessage)
+        {
+            log("Debug: " + logmessage);
+        }
+
+        /// <summary>
+        /// log a trace
+        /// </summary>
+        /// <param name="logmessage">the debug message</param>
+        public static void logTrace(string logmessage)
+        {
+            log("Trace: " + logmessage);
+        }
     }
 }
 

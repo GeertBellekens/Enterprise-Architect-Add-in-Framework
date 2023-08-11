@@ -136,7 +136,7 @@ namespace EAAddinFramework.EASpecific
                 //remove "as xxx" statements
                 processedCode = removeAsTypeStatements(processedCode);
                 processedCode = replaceSessionOuputWithRepositoryWriteOutput(processedCode);
-                Logger.log($"DEBUG: script={this.fullyQualifiedName}\n" + processedCode);
+                Logger.logDebug($"script={this.fullyQualifiedName}\n" + processedCode);
 
                 //then add the included code to the scriptcontroller
                 this.scriptController.AddCode(processedCode);

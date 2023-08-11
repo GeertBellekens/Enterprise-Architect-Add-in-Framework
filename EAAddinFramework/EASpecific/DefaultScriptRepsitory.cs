@@ -24,7 +24,7 @@ namespace EAAddinFramework.EASpecific
 
         public override void addScript(Script script)
         {
-            Logger.log($"INFO: Adding script: {script.fullyQualifiedName}");
+            Logger.logDebug($"Adding script: {script.fullyQualifiedName}");
             cachedScripts.Add(script.fullyQualifiedName, script);
         }
 
