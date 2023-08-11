@@ -26,7 +26,7 @@ namespace EAAddinFramework.EASpecific
     {
         public static string scriptLanguageIndicator = "Language=\"";
         public static string scriptNameIndicator = "Script Name=\"";
-        public static string eaMaticScriptIndicator = "EA-Matic";
+        public static string eaMaticScriptIndicator = "'EA-Matic";
 
         private readonly Model model;
         private readonly ScriptRepository scriptRepository;
