@@ -13,6 +13,8 @@ namespace EAAddinFramework.EASpecific
 {
     public class LocalScriptRepository : DefaultScriptRepsitory
     {
+        private bool _loaded = false;
+
         public LocalScriptRepository(ScriptRepository scriptRepository) : base(scriptRepository)
         {
         }
@@ -30,17 +32,25 @@ namespace EAAddinFramework.EASpecific
             try
             {
                 string scriptsDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\Scripts";
+                Logger.logDebug($"scriptsDirectory={scriptsDirectory}");
                 if (Directory.Exists(scriptsDirectory))
                 {
                     string[] scriptFiles = Directory.GetFiles(scriptsDirectory, "*.*", SearchOption.AllDirectories);
                     foreach (string scriptfile in scriptFiles)
                     {
-                        string scriptGroup = "Local Scripts";
-                        string scriptCode = File.ReadAllText(scriptfile);
-                        string scriptName = Path.GetFileNameWithoutExtension(scriptfile);
                         string scriptLanguage = Script.getLanguageFromPath(scriptfile);
-                        Script script = new Script(scriptRepository, scriptGroup + "." + scriptName, scriptName, scriptGroup, scriptCode, scriptLanguage, null, true);
-                        this.addScript(script);
+
+                        if (scriptLanguage == "VBScript")
+                        {
+                            Logger.logDebug($"scriptfile={scriptfile}");
+
+                            string scriptGroup = "Local Scripts";
+                            string scriptCode = File.ReadAllText(scriptfile);
+                            string scriptName = Path.GetFileNameWithoutExtension(scriptfile);
+                            Script script = new Script(scriptRepository, scriptGroup + "." + scriptName, scriptName, scriptGroup, scriptCode, scriptLanguage, null, true);
+                            this.addScript(script);
+                        }
+
                     }
                 }
             }
@@ -48,12 +58,16 @@ namespace EAAddinFramework.EASpecific
             {
                 Logger.logError(string.Format("Error occured: {0} stacktrace: {1}", e.Message, e.StackTrace));
             }
-
         }
 
         public override void resetScripts()
         {
             // Local Script Repository does not need to be reset as the contents on disk never change at runtime
+            if (!_loaded)
+            {
+                loadScripts();
+                _loaded = true;
+            }
         }
     }
 }
