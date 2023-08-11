@@ -11,6 +11,8 @@ namespace EAAddinFramework.EASpecific
 {
     public class MDGScriptRepository : DefaultScriptRepsitory
     {
+        private bool _loaded = false;
+
         public MDGScriptRepository(ScriptRepository scriptRepository) : base(scriptRepository)
         {
         }
@@ -154,6 +156,11 @@ namespace EAAddinFramework.EASpecific
         public override void saveScripts(string scriptPath)
         {
             // MDG Script Repository does not support saving scripts
+            if (!_loaded)
+            {
+                loadScripts();
+                _loaded = true;
+            }
         }
     }
 }
