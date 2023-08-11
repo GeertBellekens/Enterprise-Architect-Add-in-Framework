@@ -67,7 +67,7 @@ namespace EAAddinFramework.EASpecific
                 sqlGetScripts += Environment.NewLine + " and s.Script like '%EA-Matic%'";
             }
             List<Script> scriptsFromModel = loadScriptBySQL(sqlGetScripts);
-            Logger.log($"INFO: Loaded Model Scripts: {(scriptsFromModel.Any() ? string.Join(", ", scriptsFromModel) : "<Empty>")}");
+            Logger.log($"Model Scripts Loaded: {(scriptsFromModel.Any() ? string.Join(", ", scriptsFromModel) : "<Empty>")}");
             loadIncludeDependenciesFor(scriptsFromModel);
         }
 
