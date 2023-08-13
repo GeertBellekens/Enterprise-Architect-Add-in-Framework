@@ -24,13 +24,24 @@ namespace EAAddinFramework.EASpecific
 
         public override void addScript(Script script)
         {
-            Logger.logDebug($"Adding script: {script.fullyQualifiedName}");
-            cachedScripts.Add(script.fullyQualifiedName, script);
+            string scriptKey = script.fullyQualifiedName;
+            // VBScript is case-insensitive
+            string scriptKeyLowerCase = scriptKey.ToLower();
+            if (cachedScripts.ContainsKey(scriptKeyLowerCase))
+            {
+                throw new Exception($"script already exists in cache: {scriptKey}");
+            }
+            else
+            {
+                Logger.logDebug($"Adding script: {scriptKey}");
+                cachedScripts.Add(scriptKeyLowerCase, script);
+            }
         }
 
         public override Script getScriptByGroupAndName(string group, string name)
         {
-            string key = $"{group}.{name}";
+            // VBScript is case-insensitive
+            string key = $"{group}.{name}".ToLower();
             Script result = null;
             if (cachedScripts.ContainsKey(key))
             {
