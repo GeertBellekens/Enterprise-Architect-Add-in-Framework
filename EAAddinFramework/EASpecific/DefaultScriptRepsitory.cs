@@ -9,6 +9,8 @@ namespace EAAddinFramework.EASpecific
 {
     public abstract class DefaultScriptRepsitory : ScriptRepository
     {
+        private static string VBSCRIPT = new VBScriptLanguage().name;
+
         private readonly Dictionary<string, Script> cachedScripts = new Dictionary<string, Script>();
 
         public ScriptRepository scriptRepository { get; }
@@ -24,6 +26,12 @@ namespace EAAddinFramework.EASpecific
 
         public override void addScript(Script script)
         {
+            if (script.language.name != VBSCRIPT)
+            {
+                Logger.logWarning($"Ignoring non-{VBSCRIPT} script {script.fullyQualifiedName}");
+                return;
+            }
+
             string scriptKey = script.fullyQualifiedName;
             // VBScript is case-insensitive
             string scriptKeyLowerCase = scriptKey.ToLower();

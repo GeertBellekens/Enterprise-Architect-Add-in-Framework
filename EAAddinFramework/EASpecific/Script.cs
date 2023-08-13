@@ -50,7 +50,7 @@ namespace EAAddinFramework.EASpecific
         private ScriptCtrl scriptController;
         public List<ScriptFunction> functions { get; set; }
         public List<ScriptFunction> addinFunctions => this.functions.Where(x => x.isAddinFunction).ToList();
-        private ScriptLanguage language;
+        public ScriptLanguage language { get; private set; }
         public string fullyQualifiedName
         {
             get => $"{this.groupName}.{this.name}";
@@ -294,6 +294,9 @@ namespace EAAddinFramework.EASpecific
                     break;
                 case "JavaScript":
                     this.language = new JavaScriptLanguage();
+                    break;
+                default: 
+                    this.language = new UnsupportedLanguage(language);
                     break;
             }
         }

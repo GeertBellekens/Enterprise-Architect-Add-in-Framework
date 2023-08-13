@@ -29,38 +29,31 @@ namespace EAAddinFramework.EASpecific
         /// <param name="mdgXmlContent">the string content of the mdg file</param>
         private void loadMDGScripts(string mdgXmlContent)
         {
-            try
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(mdgXmlContent);
+            //first get the name of the MDG
+            XmlElement documentationElement = xmlDoc.SelectSingleNode("//Documentation") as XmlElement;
+            if (documentationElement != null)
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(mdgXmlContent);
-                //first get the name of the MDG
-                XmlElement documentationElement = xmlDoc.SelectSingleNode("//Documentation") as XmlElement;
-                if (documentationElement != null)
+                string mdgName = documentationElement.GetAttribute("id");
+                //then get the scripts
+                XmlNodeList scriptNodes = xmlDoc.SelectNodes("//Script");
+                foreach (XmlNode scriptNode in scriptNodes)
                 {
-                    string mdgName = documentationElement.GetAttribute("id");
-                    //then get the scripts
-                    XmlNodeList scriptNodes = xmlDoc.SelectNodes("//Script");
-                    foreach (XmlNode scriptNode in scriptNodes)
+                    XmlElement scriptElement = (XmlElement)scriptNode;
+                    //get the name of the script
+                    string scriptName = scriptElement.GetAttribute("name");
+                    //get the language of the script
+                    string scriptLanguage = scriptElement.GetAttribute("language");
+                    //get the script itself
+                    XmlNode contentNode = scriptElement.SelectSingleNode("Content");
+                    if (contentNode != null)
                     {
-                        XmlElement scriptElement = (XmlElement)scriptNode;
-                        //get the name of the script
-                        string scriptName = scriptElement.GetAttribute("name");
-                        //get the language of the script
-                        string scriptLanguage = scriptElement.GetAttribute("language");
-                        //get the script itself
-                        XmlNode contentNode = scriptElement.SelectSingleNode("Content");
-                        if (contentNode != null)
-                        {
-                            //the script itstelf is base64 endcoded in the content tag
-                            string scriptcontent = System.Text.Encoding.Unicode.GetString(System.Convert.FromBase64String(contentNode.InnerText));
-                            createScript(scriptName, mdgName, scriptcontent, scriptLanguage);
-                        }
+                        //the script itstelf is base64 endcoded in the content tag
+                        string scriptcontent = System.Text.Encoding.Unicode.GetString(System.Convert.FromBase64String(contentNode.InnerText));
+                        createScript(scriptName, mdgName, scriptcontent, scriptLanguage);
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.logError("Error in loadMDGScripts: " + e.Message);
             }
         }
 
@@ -78,19 +71,14 @@ namespace EAAddinFramework.EASpecific
         /// <param name="folderPath">the path to the directory</param>
         private void loadMDGScriptsFromFolder(string folderPath)
         {
-            try
+            string[] mdgFiles = Directory.GetFiles(folderPath, "*.xml", SearchOption.TopDirectoryOnly);
+            foreach (string mdgfile in mdgFiles)
             {
-                string[] mdgFiles = Directory.GetFiles(folderPath, "*.xml", SearchOption.TopDirectoryOnly);
-                foreach (string mdgfile in mdgFiles)
+                if (File.Exists(mdgfile))
                 {
-                    if (File.Exists(mdgfile))
-                        loadMDGScripts(File.ReadAllText(mdgfile));
+                    loadMDGScripts(File.ReadAllText(mdgfile));
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.logError("Error in loadMDGScriptsFromFolder: " + e.Message);
-            }
+            }   
         }
 
         /// <summary>
@@ -141,7 +129,7 @@ namespace EAAddinFramework.EASpecific
         public override void loadScripts()
         {
             // These scripts are stored outside the model and can not be changed by the user
-         
+
             //MDG scripts in the program folder
             loadLocalMDGScripts();
             // MDG scripts in other locations
