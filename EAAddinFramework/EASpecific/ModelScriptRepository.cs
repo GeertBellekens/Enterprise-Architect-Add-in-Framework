@@ -14,20 +14,6 @@ namespace EAAddinFramework.EASpecific
                                                         inner join t_script ps on s.ScriptAuthor = ps.ScriptName
                                                         where s.ScriptAuthor <> 'ScriptDebugging'";
 
-        /// <summary>
-        /// WARNING: scriptHash and savedScriptHash assume the sql return values from the model query are the only queries.
-        /// The top level query doesn't load any dependencies of scripts.
-        /// Therefore a gloabl script hash won't work.
-        /// The hash should be per Script, not by ModelScriptRepository.
-        /// TODO: Test for performance and whether checking hashes actually is a performance improvement.
-        /// Creating a script from the string should be negligible in performance (the Script32/64 code might not be).
-        /// The penalty would be in querying the database and that is necessary to check for stale scripts.
-        /// If the database returned a last modified time that would be a better indicator.
-        /// Also as the hash is for the entire query (not a single script query), any change to any script invalidates the hash for all scripts.
-        /// This is means scripts that have not changed will be rebuilt unecessarily.
-        /// Again performance data will indicate whether this is necessary.
-        /// </summary>
-
         private Model model;
 
         public bool onlyLoadEAMaticScripts { get; set; }
