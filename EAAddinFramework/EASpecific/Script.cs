@@ -136,7 +136,8 @@ namespace EAAddinFramework.EASpecific
                 //remove "as xxx" statements
                 processedCode = removeAsTypeStatements(processedCode);
                 processedCode = replaceSessionOuputWithRepositoryWriteOutput(processedCode);
-                Logger.logDebug($"script={this.fullyQualifiedName}\n" + processedCode);
+                string processedCodeWithLineNumbers = addLineNumbersToCode(processedCode);
+                Logger.logDebug($"script={this.fullyQualifiedName}\n" + processedCodeWithLineNumbers);
 
                 //then add the included code to the scriptcontroller
                 this.scriptController.AddCode(processedCode);
@@ -156,6 +157,21 @@ namespace EAAddinFramework.EASpecific
                 EAOutputLogger.log(this.model, "EA-Matic", errorMessageToLog, 0, LogTypeEnum.error);
                 MessageBox.Show(errorMessageToLog, "EA-Matic Failed to Load Code", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        /// <summary>
+        /// Return the code with libe numbers at the front of each line
+        /// </summary>
+        /// <param name="code">the original code</param>
+        /// <returns>code with line numbers at front</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private string addLineNumbersToCode(string code)
+        {
+            string[] codeLines = code.Split(new char[] { '\n', });
+            for (int lineNumber = 0; lineNumber < codeLines.Length; lineNumber++)
+            {
+                codeLines[lineNumber] = $"{lineNumber+1} {codeLines[lineNumber]}";
+            }
+            return String.Join("\n", codeLines);
         }
 
         internal static string getLanguageFromPath(string path)
