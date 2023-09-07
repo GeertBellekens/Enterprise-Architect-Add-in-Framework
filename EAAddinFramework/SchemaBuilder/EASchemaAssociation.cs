@@ -249,6 +249,9 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="associationTarget">the target for the association</param>
         private void addSubsetAssociation(UML.Classes.Kernel.Classifier associationTarget)
         {
+            //check if duplicate. In that case don't do anything
+            if (this.isDuplicate) return;
+            
             UTF_EA.Association existingAssociation = this.subsetAssociations.OfType<UTF_EA.Association>().FirstOrDefault(x => x.target.Equals(associationTarget));
         	var subsetAssociation = CreateSubSetAssociation(associationTarget,existingAssociation);
 	        if (existingAssociation == null
@@ -259,6 +262,28 @@ namespace EAAddinFramework.SchemaBuilder
         	//if the association is part of an associationclass then create the link
         	this.setAssociationClassProperties();
         	
+        }
+        /// <summary>
+        /// a schema association is considered a duplicate if there is another schemaAssociation that points to the same association, and this association is selected from the target.
+        /// </summary>
+        private bool isDuplicate
+        {
+            get
+            {
+                return this.owner.owner.elements.Any( x=> ! x.Equals(this) && x.schemaAssociations.Any(y => y.sourceAssociation?.Equals(this.sourceAssociation) == true))
+                    && this.eaSourceAssociation?.target?.Equals(this.owner.sourceElement) == true;
+            }
+        }
+        internal void addExistingSubsetAssociation(Association association)
+        {
+            if (this.subsetAssociations == null)
+            {
+                subsetAssociations = new List<Association>();
+            }
+            if (!this.subsetAssociations.Any(x => x.uniqueID == association.uniqueID))
+            {
+                this.subsetAssociations.Add(association);
+            }
         }
         private void setAssociationClassProperties()
         {
