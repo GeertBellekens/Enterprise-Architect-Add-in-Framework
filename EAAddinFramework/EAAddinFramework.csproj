@@ -283,6 +283,7 @@
     <Compile Include="EAWrappers\LiteralString.cs" />
     <Compile Include="EAWrappers\LiteralUnlimitedNatural.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
+    <Compile Include="EAWrappers\NaryAssociation.cs" />
     <Compile Include="EAWrappers\OpaqueExpression.cs" />
     <Compile Include="EAWrappers\Property.cs" />
     <Compile Include="EAWrappers\ProxyConnector.cs" />

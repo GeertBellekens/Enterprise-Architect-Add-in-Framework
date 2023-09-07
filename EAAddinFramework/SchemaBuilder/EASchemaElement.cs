@@ -209,6 +209,10 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     this.subsetElement = this.model.factory.createNewElement<DataType>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
+                else if (this.sourceElement is Association)
+                {
+                    this.subsetElement = this.model.factory.createNewElement<TSF_EA.NaryAssociation>(destinationPackage, this.wrappedSchemaType.TypeName);
+                }
             }
             else
             {

@@ -45,47 +45,47 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 switch (eaDiagramToWrap.Type)
                 {
                     case "Sequence":
-                        newDiagram = new SequenceDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new SequenceDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Collaboration":
-                        newDiagram = new CommunicationDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new CommunicationDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Activity":
-                        newDiagram = new ActivityDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new ActivityDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Logical":
-                        newDiagram = new ClassDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new ClassDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Component":
-                        newDiagram = new ComponentDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new ComponentDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "CompositeStructure":
-                        newDiagram = new CompositeStructureDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new CompositeStructureDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Deployment":
-                        newDiagram = new DeploymentDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new DeploymentDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "InteractionOverview":
-                        newDiagram = new InteractionOverviewDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new InteractionOverviewDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Object":
-                        newDiagram = new ObjectDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new ObjectDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Package":
-                        newDiagram = new PackageDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new PackageDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Statechart":
-                        newDiagram = new StateMachineDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new StateMachineDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Timing":
-                        newDiagram = new TimingDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new TimingDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     case "Use Case":
-                        newDiagram = new UseCaseDiagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new UseCaseDiagram(this.EAModel, eaDiagramToWrap);
                         break;
                     // TODO add creation of profile diagram					
                     default:
-                        newDiagram = new Diagram(this.model as Model, eaDiagramToWrap);
+                        newDiagram = new Diagram(this.EAModel, eaDiagramToWrap);
                         break;
                 }
             }
@@ -96,11 +96,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public UML.Diagrams.DiagramElement createDiagramElement
           (global::EA.DiagramObject objectToWrap)
         {
-            return new DiagramObjectWrapper(this.model as Model, objectToWrap);
+            return new DiagramObjectWrapper(this.EAModel, objectToWrap);
         }
         public UML.Diagrams.DiagramElement createDiagramElement(global::EA.DiagramLink objectToWrap)
         {
-            return new DiagramLinkWrapper(this.model as Model, objectToWrap);
+            return new DiagramLinkWrapper(this.EAModel, objectToWrap);
         }
 
         public HashSet<UML.Diagrams.DiagramElement> createDiagramElements
@@ -126,7 +126,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 if (element is ConnectorWrapper)
                 {
                     diagramElement = new DiagramLinkWrapper
-                      (this.model as Model, element as ConnectorWrapper, diagram);
+                      (this.EAModel, element as ConnectorWrapper, diagram);
                     // don't return isHidden relations
                     if (((DiagramLinkWrapper)diagramElement).isHidden)
                     {
@@ -136,7 +136,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 else if (element is ElementWrapper)
                 {
                     diagramElement = new DiagramObjectWrapper
-                      (this.model as Model, element as ElementWrapper, diagram);
+                      (this.EAModel, element as ElementWrapper, diagram);
                 }
                 if (diagramElement != null)
                 {
@@ -239,24 +239,24 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (package.ParentID == 0
                 || Package.getElementForPackage((Model)this.model, package) == null)
             {
-                return new RootPackage(this.model as Model, package);
+                return new RootPackage(this.EAModel, package);
             }
             else
             {
-                return new Package(this.model as Model, package);
+                return new Package(this.EAModel, package);
             }
         }
 
         /// returns a new EAParameter based on the given EA.Parameter
         private ParameterWrapper createParameter(global::EA.Parameter parameter)
         {
-            return new ParameterWrapper(this.model as Model, parameter);
+            return new ParameterWrapper(this.EAModel, parameter);
         }
 
         /// returns a new EAOperatation wrapping the given EA.Method
         private Operation createOperation(global::EA.Method operation)
         {
-            return new Operation(this.model as Model, operation);
+            return new Operation(this.EAModel, operation);
         }
         private ConnectorWrapper createEAConnectorWrapper
         (global::EA.Connector connector)
@@ -270,28 +270,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             switch (connector.Type)
             {
                 case "Abstraction":
-                    return new Abstraction(this.model as Model, connector);
+                    return new Abstraction(this.EAModel, connector);
                 case "Generalization":
-                    return new Generalization(this.model as Model, connector);
+                    return new Generalization(this.EAModel, connector);
                 case "Aggregation":
                 case "Association":
-                    return new Association(this.model as Model, connector);
+                    return new Association(this.EAModel, connector);
                 case "Dependency":
-                    return new Dependency(this.model as Model, connector);
+                    return new Dependency(this.EAModel, connector);
                 case "Usage":
-                    return new Usage(this.model as Model, connector);
+                    return new Usage(this.EAModel, connector);
                 case "Sequence":
                 case "Collaboration":
-                    return new Message(this.model as Model, connector);
+                    return new Message(this.EAModel, connector);
                 case "Realization":
                 case "Realisation":
                     return this.createEARealization(connector);
                 case "StateFlow":
-                    return new BehaviorStateMachines.Transition(this.model as Model, connector);
+                    return new BehaviorStateMachines.Transition(this.EAModel, connector);
                 case "InformationFlow":
-                    return new InformationFlow(this.model as Model, connector);
+                    return new InformationFlow(this.EAModel, connector);
                 default:
-                    return new ConnectorWrapper(this.model as Model, connector);
+                    return new ConnectorWrapper(this.EAModel, connector);
             }
         }
 
@@ -300,12 +300,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             // first create an EARealization, then check if this realization is 
             // between an interface and a behaviored classifier.
             // in that case create a new EAInterfaceRealization
-            Realization realization = new Realization(this.model as Model,
+            Realization realization = new Realization(this.EAModel,
                                                        connector);
             if (realization.supplier is UML.Classes.Interfaces.Interface &&
                 realization.client is UML.Classes.Interfaces.BehavioredClassifier)
             {
-                realization = new InterfaceRealization(this.model as Model, connector);
+                realization = new InterfaceRealization(this.EAModel, connector);
             }
             return realization;
         }
@@ -319,7 +319,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else
             {
-                return new Attribute(this.model as Model, attributeToWrap);
+                return new Attribute(this.EAModel, attributeToWrap);
             }
         }
         /// <summary>
@@ -384,7 +384,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     // Enumerations are stored as type Class but with the stereotype enumeration
                     if (elementToWrap.StereotypeEx.Contains("enumeration"))
                     {
-                        return new Enumeration(this.model as Model, elementToWrap);
+                        return new Enumeration(this.EAModel, elementToWrap);
                     }
                     else
                     {
@@ -392,23 +392,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         //elementToWrap.IsAssocationClass() returns an exception when used in a background thread so we use our own method to figure out if its an associationClass.
                         if (this.isAssociationClass(elementToWrap))
                         {
-                            return new AssociationClass(this.model as Model, elementToWrap);
+                            return new AssociationClass(this.EAModel, elementToWrap);
                         }
                         else
                         {
                             //just a regular class
-                            return new Class(this.model as Model, elementToWrap);
+                            return new Class(this.EAModel, elementToWrap);
                         }
                     }
                 case "Object":
-                    return new InstanceSpecification(this.model as Model, elementToWrap);
+                    return new InstanceSpecification(this.EAModel, elementToWrap);
                 case "Enumeration":
                     // since version 10 there are also "real" enumerations Both are still supported
-                    return new Enumeration(this.model as Model, elementToWrap);
+                    return new Enumeration(this.EAModel, elementToWrap);
                 case "Interface":
-                    return new Interface(this.model as Model, elementToWrap);
+                    return new Interface(this.EAModel, elementToWrap);
+                case "Association":
+                    return new NaryAssociation(this.EAModel, elementToWrap);
                 case "Note":
-                    return new NoteComment(this.model as Model, elementToWrap);
+                    return new NoteComment(this.EAModel, elementToWrap);
 
                 case "Action":
                     // figure out wether this Action is a standard action or a
@@ -422,37 +424,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     {
                         if (descriptionNode.InnerText.Contains("CallOperation"))
                         {
-                            return new CallOperationAction(this.model as Model, elementToWrap);
+                            return new CallOperationAction(this.EAModel, elementToWrap);
 
                         }
                     }
 
                     // simple Action
-                    return new Action(this.model as Model, elementToWrap);
+                    return new Action(this.EAModel, elementToWrap);
 
                 case "Interaction":
-                    return new Interaction(this.model as Model, elementToWrap);
+                    return new Interaction(this.EAModel, elementToWrap);
 
                 case "Activity":
-                    return new Activity(this.model as Model, elementToWrap);
+                    return new Activity(this.EAModel, elementToWrap);
 
                 case "StateMachine":
-                    return new BehaviorStateMachines.StateMachine(this.model as Model, elementToWrap);
+                    return new BehaviorStateMachines.StateMachine(this.EAModel, elementToWrap);
 
                 case "State":
-                    return new BehaviorStateMachines.State(this.model as Model, elementToWrap, null);
+                    return new BehaviorStateMachines.State(this.EAModel, elementToWrap, null);
 
                 case "StateNode":
                     string metaType = elementToWrap.MetaType;
                     if (metaType == "Pseudostate" ||
                        metaType == "Synchronisation")
                     {
-                        return new BehaviorStateMachines.PseudoState(this.model as Model, elementToWrap, null);
+                        return new BehaviorStateMachines.PseudoState(this.EAModel, elementToWrap, null);
 
                     }
                     else if (metaType == "FinalState")
                     {
-                        return new BehaviorStateMachines.FinalState(this.model as Model, elementToWrap, null);
+                        return new BehaviorStateMachines.FinalState(this.EAModel, elementToWrap, null);
 
                     }
                     return new ElementWrapper(this.EAModel, elementToWrap);
@@ -469,25 +471,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         throw new Exception("WrappedElement " + elementToWrap.Name + " is not a package");
                     }
                 case "DataType":
-                    return new DataType(this.model as Model, elementToWrap);
+                    return new DataType(this.EAModel, elementToWrap);
 
                 case "PrimitiveType":
-                    return new PrimitiveType(this.model as Model, elementToWrap);
+                    return new PrimitiveType(this.EAModel, elementToWrap);
 
                 case "InformationItem":
-                    return new InformationItem(this.model as Model, elementToWrap);
+                    return new InformationItem(this.EAModel, elementToWrap);
 
                 case "ProxyConnector":
-                    return new ProxyConnector(this.model as Model, elementToWrap);
+                    return new ProxyConnector(this.EAModel, elementToWrap);
 
                 case "Part":
-                    return new Property(this.model as Model, elementToWrap);
+                    return new Property(this.EAModel, elementToWrap);
 
                 case "InteractionFragment":
-                    return new InteractionFragment(this.model as Model, elementToWrap);
+                    return new InteractionFragment(this.EAModel, elementToWrap);
 
                 case "Component":
-                    return new Component(this.model as Model, elementToWrap);
+                    return new Component(this.EAModel, elementToWrap);
 
                 default:
                     return new ElementWrapper(this.EAModel, elementToWrap);
@@ -499,7 +501,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public override UML.Classes.Kernel.PrimitiveType createPrimitiveType
           (Object typeName)
         {
-            return new PrimitiveType(this.model as Model, typeName as string);
+            return new PrimitiveType(this.EAModel, typeName as string);
         }
 
         /// creates a new EAParameterReturnType based on the given operation
@@ -507,7 +509,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
           (Operation operation)
         {
             ParameterReturnType returntype = new ParameterReturnType
-              (this.model as Model, operation);
+              (this.EAModel, operation);
             // if the name of the returntype is empty that means that there is no 
             // returntype defined in EA.
             return returntype.type.name == string.Empty ? null : returntype;
@@ -518,14 +520,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public override UML.Profiles.Stereotype createStereotype
           (UML.Classes.Kernel.Element owner, String name)
         {
-            return new Stereotype(this.model as Model, owner as Element, name);
+            return new Stereotype(this.EAModel, owner as Element, name);
         }
         /// returns a new stereotype based on the given name and attached to the 
         /// given diagram
         public UML.Profiles.Stereotype createStereotype
           (UML.Diagrams.Diagram owner, String name)
         {
-            return new Stereotype(this.model as Model, owner as Element, name);
+            return new Stereotype(this.EAModel, owner as Element, name);
         }
         /// creates a set of stereotypes based on the comma seperated names string
         /// and attaches it to the given element
@@ -600,7 +602,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     // Create an implicit default region
                     UML.StateMachines.BehaviorStateMachines.Region defaultRegion =
-                        new BehaviorStateMachines.Region(this.model as Model, elementWrapper, masterDiagram, null);
+                        new BehaviorStateMachines.Region(this.EAModel, elementWrapper, masterDiagram, null);
                     newRegions.Add(defaultRegion);
                 }
             }
@@ -611,7 +613,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 foreach (global::EA.Partition partition in elementWrapper.wrappedElement.Partitions)
                 {
                     UML.StateMachines.BehaviorStateMachines.Region newRegion =
-                        new BehaviorStateMachines.Region(this.model as Model, elementWrapper, masterDiagram, partition, regionPos);
+                        new BehaviorStateMachines.Region(this.EAModel, elementWrapper, masterDiagram, partition, regionPos);
                     newRegions.Add(newRegion);
                     ++regionPos;
                 }
@@ -828,7 +830,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         internal AssociationEnd createAssociationEnd(ConnectorWrapper connector, EADBConnectorEnd associationEnd)
         {
-            return new AssociationEnd(this.model as Model, connector, associationEnd);
+            return new AssociationEnd(this.EAModel, connector, associationEnd);
         }
         public override UML.Profiles.TaggedValue createNewTaggedValue(UML.Classes.Kernel.Element owner, string name)
         {
@@ -940,6 +942,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return "Note";
                 case "InstanceSpecification":
                     return "Object";
+                case "NaryAssociation":
+                    return "Association";
                 default:
                     return typeName;
             }

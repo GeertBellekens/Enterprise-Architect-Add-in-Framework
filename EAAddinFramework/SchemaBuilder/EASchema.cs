@@ -23,7 +23,7 @@ namespace EAAddinFramework.SchemaBuilder
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
         //we only need classes, enumerations, datatypes and primitivetypes
-        private List<string> classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType" };
+        private List<string> classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType", "Association" };
 
         private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
@@ -334,7 +334,7 @@ namespace EAAddinFramework.SchemaBuilder
             //first check if we already have this subset element registered on one of the elements
             result = this.elements
                     .OfType<EASchemaElement>()
-                    .FirstOrDefault(x => x.sourceElement.uniqueID == subsetElement.uniqueID);
+                    .FirstOrDefault(x => x.sourceElement?.uniqueID == subsetElement.uniqueID);
             if (result != null)
             {
                 return result;
@@ -456,7 +456,8 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     //only create subset elements for classes, not for datatypes
                     if (schemaElement.sourceElement is UML.Classes.Kernel.Class
-                       || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
+                       || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
+                       || schemaElement.sourceElement is UML.Classes.Kernel.Association)
                     {
                         schemaElement.createSubsetElement(destinationPackage);
                         //Logger.log("after EASchema::creating single subset element");
@@ -476,10 +477,11 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (!schemaElement.isShared)
                 {
-                    //only create subset elements for classes and enumerations and datatypes
+                    //only create subset elements for classes and enumerations and datatypes and n-ary associations
                     if (schemaElement.sourceElement is UML.Classes.Kernel.Class
                        || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
-                        || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
+                        || schemaElement.sourceElement is UML.Classes.Kernel.DataType
+                        || schemaElement.sourceElement is UML.Classes.Kernel.Association)
                     {
                         //tell the user what we are doing 
                         EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset details for: '" + schemaElement.name + "'"
@@ -1104,7 +1106,7 @@ namespace EAAddinFramework.SchemaBuilder
 
         private bool shouldElementExistAsDatatype(Classifier subsetElement)
         {
-            if (subsetElement is Class || subsetElement is Enumeration)
+            if (subsetElement is Class || subsetElement is Enumeration || subsetElement is Association )
             {
                 return true;
             }
@@ -1156,7 +1158,7 @@ namespace EAAddinFramework.SchemaBuilder
             var parentElementIDs = new List<string>();
 
             var sqlGetData = $@"select o.Object_ID from t_object o
-                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                             and o.Package_ID in ({((TSF_EA.Package)element.owningPackage).packageTreeIDString})";
             //start at the message root
             parentElementIDs.AddRange(this.model.getListFromQuery(sqlGetData));
@@ -1198,14 +1200,14 @@ namespace EAAddinFramework.SchemaBuilder
                                                 and c.Connector_Type in ('Aggregation', 'Association')))
                     inner join t_object oo on (oo.Object_ID = c.Start_Object_ID
                                             and oo.Object_ID <> o.Object_ID))
-                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     union
                     select o.Object_ID from ((t_object o
                     inner join t_attribute a on a.Classifier = o.Object_ID)
                     inner join t_object oo on oo.Object_ID = a.Object_ID)
-                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     )o
