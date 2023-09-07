@@ -238,7 +238,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override int GetHashCode()
         {
-            return new Guid(this.wrappedAttribute.AttributeGUID).GetHashCode();
+            return this.wrappedAttribute.AttributeGUID.GetHashCode();
         }
         #endregion
 

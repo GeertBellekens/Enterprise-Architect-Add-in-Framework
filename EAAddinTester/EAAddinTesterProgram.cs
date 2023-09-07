@@ -45,7 +45,7 @@ namespace EAAddinTester
             //addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
             //addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
             //addins.Add(new GlossaryManager.GlossaryManagerAddin());
-            addins.Add(new EAJSON.EAJSONAddin());
+            addins.Add(new SAP2EAImporter.SAP2EAImporterAddin());
         }
         private static void initializeAddins()
         {
