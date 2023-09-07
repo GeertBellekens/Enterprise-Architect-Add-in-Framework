@@ -1073,17 +1073,19 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                //get outgoing & incoming associations of the subset element
+                //get outgoing associations of the subset element
                 foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>(true, false))
                 {
 
-                    var matchingAssociations = this.getMatchingSchemaAssociations(association);
-                    if (matchingAssociations.Any())
+                    EASchemaAssociation matchingAssociation = this.getMatchingSchemaAssociation(association);
+                    if (matchingAssociation != null)
                     {
-                        foreach (var matchingAssociation in matchingAssociations)
+                        if (matchingAssociation.subsetAssociations == null)
                         {
-                            matchingAssociation.addExistingSubsetAssociation(association);
+                            matchingAssociation.subsetAssociations = new List<Association>();
+
                         }
+                        matchingAssociation.subsetAssociations.Add(association);
                     }
                     else
                     {
@@ -1114,9 +1116,9 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="association">the association to match</param>
         /// <returns>the matching SchemaAssociation</returns>
-        public IEnumerable<EASchemaAssociation> getMatchingSchemaAssociations(TSF_EA.Association association)
+        public EASchemaAssociation getMatchingSchemaAssociation(TSF_EA.Association association)
         {
-            List<EASchemaAssociation> result = new List<EASchemaAssociation>();
+            EASchemaAssociation result = null;
             var sourceAssociationTag = association.getTaggedValue(this.owner.settings.sourceAssociationTagName);
             if (sourceAssociationTag != null)
             {
@@ -1126,7 +1128,7 @@ namespace EAAddinFramework.SchemaBuilder
                                     .OfType<EASchemaAssociation>()
                                     .Where(x => tagReference.Equals(x.sourceAssociation?.uniqueID, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    //we have the same association if the given association has a tagged value 
+                    //we have the same attribute if the given attribute has a tagged value 
                     //called sourceAssociation that refences the source association of the schema Association
                     //if the schema association has choiceElements then the target of the association should match one of the choice elements
                     //if it has a redefinedElement, then the target of the association should be the subset element of the redefinedElement
@@ -1134,32 +1136,11 @@ namespace EAAddinFramework.SchemaBuilder
                        || association.target?.Equals(schemaAssociation.redefinedElement?.subsetElement) == true
                         || schemaAssociation.choiceElements?.Any() != true && schemaAssociation.redefinedElement == null
                            && association.target?.Equals(schemaAssociation.otherElement?.subsetElement) == true)
-                           
                     {
-                        result.Add(schemaAssociation);
+                        result = schemaAssociation;
+                        break;
                     }
-                }
-                //check if the other schemaElement has a matching association
-                var otherElement = this.ownerSchema.elements.FirstOrDefault(x => x.subsetElement?.Equals(association.target) == true);
-                if (otherElement != null)
-                {
-                    foreach (var schemaAssociation in otherElement.schemaAssociations
-                    .OfType<EASchemaAssociation>()
-                    .Where(x => tagReference.Equals(x.sourceAssociation?.uniqueID, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        //we have the same association if the given association has a tagged value 
-                        //called sourceAssociation that refences the source association of the schema Association
-                        //if the schema association has choiceElements then the target of the association should match one of the choice elements
-                        //if it has a redefinedElement, then the target of the association should be the subset element of the redefinedElement
-                        if (schemaAssociation.choiceElements?.Exists(x => association.source?.Equals(x.subsetElement) == true) == true
-                           || association.source?.Equals(schemaAssociation.redefinedElement?.subsetElement) == true
-                            || schemaAssociation.choiceElements?.Any() != true && schemaAssociation.redefinedElement == null
-                               && association.source?.Equals(schemaAssociation.otherElement?.subsetElement) == true)
 
-                        {
-                            result.Add(schemaAssociation);
-                        }
-                    }
                 }
             }
             return result;
