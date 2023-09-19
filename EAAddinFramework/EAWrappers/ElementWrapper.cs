@@ -74,6 +74,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this._attributeWrappers = null;
             this._ownedLiterals = null;
         }
+
         public string linkedDocument
         {
             get
@@ -578,6 +579,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => throw new NotImplementedException();
         }
+        internal void resetConstraints()
+        {
+            this._constraints = null;
+        }
         public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
         {
             if (constraint == null) return;
@@ -647,6 +652,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
             }
             set => throw new NotImplementedException();
+        }
+        internal virtual void resetOwnedElementWrapperss()
+        {
+            this._ownedElementWrappers = null;
         }
 
         internal bool hasDependentTypedAttributes()
@@ -823,6 +832,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this._ownedOperations;
             }
             set => throw new NotImplementedException();
+        }
+        internal void resetOwnedOperations()
+        {
+            this._ownedOperations = null;
         }
 
         /// <summary>
@@ -1045,6 +1058,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             else if (((Factory)this.EAModel.factory).isEAOperation(type))
             {
                 newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>(this.wrappedElement.Methods, name, string.Empty);
+                this.resetOwnedOperations();
             }
             else if (((Factory)this.EAModel.factory).isEAConnector(type))
             {
@@ -1059,10 +1073,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             else if (type.Name == "Constraint")
             {
                 newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>(this.wrappedElement.Constraints, name, EAType);
+                this.resetConstraints();
             }
             else
             {
                 newElement = ((Factory)this.EAModel.factory).addElementToEACollection<T>(this.wrappedElement.Elements, name, EAType);
+                this.resetOwnedElementWrapperss();
             }
             return newElement;
         }
