@@ -756,7 +756,7 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         //if there are not attributes that have the same name as the depencency and the same type as the target then
                         //the dependency can be deleted
-                        if (!this.subsetElement.attributes.Any(x => dependency.target.Equals(x.type) && dependency.name == x.name))
+                        if (!this.subsetElement.attributes.Any(x => dependency.target?.Equals(x.type) == true && dependency.name == x.name))
                         {
                             dependency.delete();
                         }

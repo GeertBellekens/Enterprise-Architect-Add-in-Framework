@@ -379,7 +379,7 @@ namespace EAAddinFramework.SchemaBuilder
                             sourceElementUniqueID = this.elements
                                 .OfType<EASchemaElement>()
                                 .FirstOrDefault(x => x.eaSourceElement?.id == elementID)
-                                ?.sourceElement.uniqueID;
+                                ?.sourceElement?.uniqueID;
                             break;
                         }
                     }
@@ -396,7 +396,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
                                                                         && x.name == elementWrapperSubsetElement.alias
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 //if not found with redefined elemnet then find as regular element
@@ -404,7 +404,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
                                                                         && x.name == subsetElement.name
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 }
@@ -413,14 +413,14 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 //find based on name, regardless of redefined or not
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
             //if the subset element is renamed, then we won't find it based on the name, so we use the unique ID only
             if (result == null)
             {
-                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement.uniqueID == sourceElementUniqueID
+                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
