@@ -247,8 +247,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public string Navigable
         {
-            get => KeyValuePairsHelper.getValueForKey(this.properties[this.isSource ? "SourceStyle" : "SourceStyle"], "Navigable");
-            set => KeyValuePairsHelper.setValueForKey(this.properties[this.isSource ? "SourceStyle" : "SourceStyle"], "Navigable", value);
+            get
+            {
+                var navigableValue = KeyValuePairsHelper.getValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable");
+                if (! string.IsNullOrEmpty(navigableValue))
+                {
+                    return navigableValue;
+                }
+                //If not specified in the database we use the value of the EAConnectorEnd.
+                //There is no simple default as it changes between types of connectors
+                return this.eaConnectorEnd.Navigable;
+            }
+            set => KeyValuePairsHelper.setValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable", value);
         }
         
 
@@ -257,7 +267,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => KeyValuePairsHelper.getValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "AllowDuplicates")
-                             == "1" ? true : false;
+                             == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] = 
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
@@ -269,7 +279,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => KeyValuePairsHelper.getValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "Owned")
-                            == "1" ? true : false;
+                            == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
@@ -281,7 +291,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => KeyValuePairsHelper.getValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "Derived")
-                            == "1" ? true : false;
+                            == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
@@ -293,7 +303,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => KeyValuePairsHelper.getValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "Union")
-                            == "1" ? true : false;
+                            == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
@@ -304,7 +314,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get => KeyValuePairsHelper.getValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "alias");
+                            , "alias") ?? String.Empty;
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
@@ -312,7 +322,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             , value );
         }
 
-        private string _StereotypeEx = null;
+        private string _StereotypeEx = null; 
         public string StereotypeEx
         {
             get
