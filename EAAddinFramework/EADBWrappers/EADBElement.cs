@@ -15,9 +15,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     {
         internal static Dictionary<string, int> staticColumnNames;
         const string selectQuery = @"select o.*, x.Description as StereotypesXref 
-                                    from t_object o 
-                                    left join t_xref x on x.Client = o.ea_guid
-				                                    and x.Name = 'Stereotypes'";
+                                    from (t_object o 
+                                    left join t_xref x on (x.Client = o.ea_guid
+				                                    and x.Name = 'Stereotypes'))";
         protected override Dictionary<string, int> columnNames
         {
             get
