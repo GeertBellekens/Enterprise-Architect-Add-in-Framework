@@ -109,10 +109,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             : base(model, propertyValues)
         { }
         public EADBAttribute(Model model, int attributeID)
-            : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ID = {attributeID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($"{selectQuery} where a.ID = {attributeID}", false).FirstOrDefault())
         { }
         public EADBAttribute(Model model, string uniqueID)
-            : this(model, model.getDataSetFromQuery($"select * from t_attribute a where a.ea_guid = {uniqueID}", false).FirstOrDefault())
+            : this(model, model.getDataSetFromQuery($"{selectQuery} where a.ea_guid = {uniqueID}", false).FirstOrDefault())
         { }
         public EADBAttribute(Model model, global::EA.Attribute attribute)
             : base(model)
@@ -151,8 +151,42 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.StyleEx = this.eaAttribute.StyleEx;
             this.StereotypeEx = this.eaAttribute.StereotypeEx;
             this.IsID = this.eaAttribute.IsID;
+            this.ParentID = this.eaAttribute.ParentID;
             //add also ID
             this.AttributeID = this.eaAttribute.AttributeID;
+        }
+        public bool Update()
+        {
+            this.eaAttribute.Name = this.Name;
+            this.eaAttribute.Visibility = this.Visibility;
+            this.eaAttribute.Stereotype = this.Stereotype;
+            this.eaAttribute.Containment = this.Containment;
+            this.eaAttribute.IsStatic = this.IsStatic;
+            this.eaAttribute.IsCollection = this.IsCollection;
+            this.eaAttribute.IsOrdered = this.IsOrdered;
+            this.eaAttribute.AllowDuplicates = this.AllowDuplicates;
+            this.eaAttribute.LowerBound = this.LowerBound;
+            this.eaAttribute.UpperBound = this.UpperBound;
+            this.eaAttribute.Container = this.Container;
+            this.eaAttribute.Notes = this.Notes;
+            this.eaAttribute.IsDerived = this.IsDerived;
+            this.eaAttribute.Pos = this.Pos;
+            this.eaAttribute.Length = this.Length;
+            this.eaAttribute.Precision = this.Precision;
+            this.eaAttribute.Scale = this.Scale;
+            this.eaAttribute.IsConst = this.IsConst;
+            this.eaAttribute.Style = this.Style;
+            this.eaAttribute.ClassifierID = this.ClassifierID;
+            this.eaAttribute.Default = this.Default;
+            this.eaAttribute.Type = this.Type;
+            this.eaAttribute.AttributeGUID = this.AttributeGUID;
+            this.eaAttribute.StyleEx = this.StyleEx;
+            this.eaAttribute.StereotypeEx = this.StereotypeEx;
+            this.eaAttribute.IsID = this.IsID;
+            var updateResult = this.eaAttribute.Update();
+            //aver saving we need to refresh the properties
+            updateFromWrappedElement();
+            return updateResult;
         }
 
         public string Name
@@ -355,39 +389,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
  
         public TypeInfoProperties TypeInfoProperties => this.eaAttribute.TypeInfoProperties;
 
-        public bool Update()
-        {
-            this.eaAttribute.Name = this.Name;
-            this.eaAttribute.Visibility = this.Visibility;
-            this.eaAttribute.Stereotype = this.Stereotype;
-            this.eaAttribute.Containment = this.Containment;
-            this.eaAttribute.IsStatic = this.IsStatic;
-            this.eaAttribute.IsCollection = this.IsCollection;
-            this.eaAttribute.IsOrdered = this.IsOrdered;
-            this.eaAttribute.AllowDuplicates = this.AllowDuplicates;
-            this.eaAttribute.LowerBound = this.LowerBound;
-            this.eaAttribute.UpperBound = this.UpperBound;
-            this.eaAttribute.Container = this.Container;
-            this.eaAttribute.Notes = this.Notes;
-            this.eaAttribute.IsDerived = this.IsDerived;
-            this.eaAttribute.Pos = this.Pos;
-            this.eaAttribute.Length = this.Length;
-            this.eaAttribute.Precision = this.Precision;
-            this.eaAttribute.Scale = this.Scale;
-            this.eaAttribute.IsConst = this.IsConst;
-            this.eaAttribute.Style = this.Style;
-            this.eaAttribute.ClassifierID = this.ClassifierID;
-            this.eaAttribute.Default = this.Default;
-            this.eaAttribute.Type = this.Type;
-            this.eaAttribute.AttributeGUID = this.AttributeGUID;
-            this.eaAttribute.StyleEx = this.StyleEx;
-            this.eaAttribute.StereotypeEx = this.StereotypeEx;
-            this.eaAttribute.IsID = this.IsID;
-            var updateResult = this.eaAttribute.Update();
-            //aver saving we need to refresh the properties
-            updateFromWrappedElement();
-            return updateResult;
-        }
+
         public string GetLastError()
         {
             return this.eaAttribute.GetLastError();
