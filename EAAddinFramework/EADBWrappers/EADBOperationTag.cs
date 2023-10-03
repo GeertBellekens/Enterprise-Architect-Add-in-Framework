@@ -15,7 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public static List<EADBTaggedValue> getTaggedValuesForElementID(int elementID, Model model)
         {
             var elements = new List<EADBTaggedValue>();
-            string sqlGetData = $"{selectQuery} tv where tv.ElementID = {elementID}";
+            string sqlGetData = $"{selectQuery} where tv.ElementID = {elementID}";
             var results = model.getDataSetFromQuery(sqlGetData, false);
             foreach (var propertyValues in results)
             {
