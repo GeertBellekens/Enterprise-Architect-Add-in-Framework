@@ -321,7 +321,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="subsetElement">the element to search a match for</param>
         /// <returns>the corresponding SchemaElement</returns>
-        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary)
+        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary, bool secondPass)
         {
             
             
@@ -418,7 +418,8 @@ namespace EAAddinFramework.SchemaBuilder
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
             //if the subset element is renamed, then we won't find it based on the name, so we use the unique ID only
-            if (result == null)
+            // we do this only on a second pass
+            if (result == null && secondPass)
             {
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
@@ -1052,13 +1053,30 @@ namespace EAAddinFramework.SchemaBuilder
             //get a dictionary of subset element guid's with their source GUID
             var subsetDictionary = this.getSubsetElementDictionary(subsetElements);
             //loop subset elements ordered by name
-            foreach (Classifier subsetElement in subsetElements.OrderBy(x => name))
+            var subsetElementsToDelete = new List<Classifier>();
+            foreach (var subsetElement in subsetElements.OrderBy(x => name))
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.settings.outputName, $"Matching subset element: '{subsetElement.name}' to a schema element"
                                    , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
                 //get the corrsponding schema element
-                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary);
+                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary, false);
+
+                //found a corresponding schema element
+                if (schemaElement != null && shouldElementExistAsDatatype(subsetElement))
+                {
+                    schemaElement.matchSubsetElement(subsetElement);
+                }
+                else
+                {
+                    subsetElementsToDelete.Add(subsetElement);
+                }
+            }
+            foreach (var subsetElement in subsetElementsToDelete)
+            {
+                //give the matching another go, but this time with ID match for redefined elements
+                //get the corrsponding schema element
+                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary, true);
 
                 //found a corresponding schema element
                 if (schemaElement != null && shouldElementExistAsDatatype(subsetElement))
