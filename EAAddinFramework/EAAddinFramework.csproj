@@ -216,6 +216,7 @@
     <Compile Include="EADBWrappers\EADBAttribute.cs" />
     <Compile Include="EADBWrappers\EADBBase.cs" />
     <Compile Include="EADBWrappers\EADBConnector.cs" />
+    <Compile Include="EADBWrappers\EADBConnectorConstraint.cs" />
     <Compile Include="EADBWrappers\EADBConnectorEnd.cs" />
     <Compile Include="EADBWrappers\EADBConnectorTag.cs" />
     <Compile Include="EADBWrappers\EADBElementConstraint.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="EAWrappers\Component.cs" />
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
+    <Compile Include="EAWrappers\ConnectorConstraint.cs" />
     <Compile Include="EAWrappers\Constraint.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
     <Compile Include="EAWrappers\InstanceSpecification.cs" />

@@ -52,129 +52,144 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         private void updateFromWrappedElement()
         {
-            this.isSource = this.eaConnectorEnd.End == "Client";
-            this.Cardinality = this.eaConnectorEnd.Cardinality;
-            this.Visibility = this.eaConnectorEnd.Visibility;
-            this.Role = this.eaConnectorEnd.Role;
-            this.RoleType = this.eaConnectorEnd.RoleType;
-            this.RoleNote = this.eaConnectorEnd.RoleNote;
-            this.Containment = this.eaConnectorEnd.Containment;
-            this.Aggregation = this.eaConnectorEnd.Aggregation;
-            this.Ordering = this.eaConnectorEnd.Ordering;
-            this.Qualifier = this.eaConnectorEnd.Qualifier;
-            this.IsChangeable = this.eaConnectorEnd.IsChangeable;
-            this.StereotypeEx = this.eaConnectorEnd.StereotypeEx;
-            this.eaConnectorEnd.Stereotype = this.Stereotype;
-            this.eaConnectorEnd.Navigable = this.Navigable;
-            this.eaConnectorEnd.AllowDuplicates = this.AllowDuplicates;
-            this.eaConnectorEnd.OwnedByClassifier = this.OwnedByClassifier;
-            this.eaConnectorEnd.Derived = this.Derived;
-            this.eaConnectorEnd.DerivedUnion = this.DerivedUnion;
-            this.eaConnectorEnd.Alias = this.Alias;
+            try
+            {
+                this.isSource = this.eaConnectorEnd.End == "Client";
+                this.Cardinality = this.eaConnectorEnd.Cardinality;
+                this.Visibility = this.eaConnectorEnd.Visibility;
+                this.Role = this.eaConnectorEnd.Role;
+                this.RoleType = this.eaConnectorEnd.RoleType;
+                this.RoleNote = this.eaConnectorEnd.RoleNote;
+                this.Containment = this.eaConnectorEnd.Containment;
+                this.Aggregation = this.eaConnectorEnd.Aggregation;
+                this.Ordering = this.eaConnectorEnd.Ordering;
+                this.Qualifier = this.eaConnectorEnd.Qualifier;
+                this.IsChangeable = this.eaConnectorEnd.IsChangeable;
+                this.StereotypeEx = this.eaConnectorEnd.StereotypeEx;
+                this.Stereotype = this.eaConnectorEnd.Stereotype;
+                this.Navigable = this.eaConnectorEnd.Navigable;
+                this.AllowDuplicates = this.eaConnectorEnd.AllowDuplicates;
+                this.OwnedByClassifier = this.eaConnectorEnd.OwnedByClassifier;
+                this.Derived = this.eaConnectorEnd.Derived;
+                this.DerivedUnion = this.eaConnectorEnd.DerivedUnion;
+                this.Alias = this.eaConnectorEnd.Alias;
+            }
+            catch (Exception e)
+            {
+                Logger.logError($"{e.Message} {e.StackTrace}");
+            }
+
 
         }
         public bool Update()
         {
-
-            bool toUpdate = false;
-            if (this.eaConnectorEnd.Cardinality != this.Cardinality)
+            try
             {
-                this.eaConnectorEnd.Cardinality = this.Cardinality;
-                toUpdate = true;
+                bool toUpdate = false;
+                if (this.eaConnectorEnd.Cardinality != this.Cardinality)
+                {
+                    this.eaConnectorEnd.Cardinality = this.Cardinality;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Visibility != this.Visibility)
+                {
+                    this.eaConnectorEnd.Visibility = this.Visibility;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Role != this.Role)
+                {
+                    this.eaConnectorEnd.Role = this.Role;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.RoleType != this.RoleType)
+                {
+                    this.eaConnectorEnd.RoleType = this.RoleType;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.RoleNote != this.RoleNote)
+                {
+                    this.eaConnectorEnd.RoleNote = this.RoleNote;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Containment != this.Containment)
+                {
+                    this.eaConnectorEnd.Containment = this.Containment;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Aggregation != this.Aggregation)
+                {
+                    this.eaConnectorEnd.Aggregation = this.Aggregation;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Ordering != this.Ordering)
+                {
+                    this.eaConnectorEnd.Ordering = this.Ordering;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Qualifier != this.Qualifier)
+                {
+                    this.eaConnectorEnd.Qualifier = this.Qualifier;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.IsChangeable != this.IsChangeable)
+                {
+                    this.eaConnectorEnd.IsChangeable = this.IsChangeable;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.StereotypeEx != this.StereotypeEx)
+                {
+                    this.eaConnectorEnd.StereotypeEx = this.StereotypeEx;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Stereotype != this.Stereotype)
+                {
+                    this.eaConnectorEnd.Stereotype = this.Stereotype;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Navigable != this.Navigable)
+                {
+                    this.eaConnectorEnd.Navigable = this.Navigable;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.AllowDuplicates != this.AllowDuplicates)
+                {
+                    this.eaConnectorEnd.AllowDuplicates = this.AllowDuplicates;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.OwnedByClassifier != this.OwnedByClassifier)
+                {
+                    this.eaConnectorEnd.OwnedByClassifier = this.OwnedByClassifier;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Derived != this.Derived)
+                {
+                    this.eaConnectorEnd.Derived = this.Derived;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.DerivedUnion != this.DerivedUnion)
+                {
+                    this.eaConnectorEnd.DerivedUnion = this.DerivedUnion;
+                    toUpdate = true;
+                }
+                if (this.eaConnectorEnd.Alias != this.Alias)
+                {
+                    this.eaConnectorEnd.Alias = this.Alias;
+                    toUpdate = true;
+                }
+                // Only update the API object if needed
+                var updateResult = true;
+                if (toUpdate)
+                {
+                    updateResult = this.eaConnectorEnd.Update();
+                }
+                this.updateFromWrappedElement();
+                return updateResult;
             }
-            if (this.eaConnectorEnd.Visibility != this.Visibility)
+            catch (Exception e)
             {
-                this.eaConnectorEnd.Visibility = this.Visibility;
-                toUpdate = true;
+                Logger.logError($"{e.Message} {e.StackTrace}");
+                return false;
             }
-            if (this.eaConnectorEnd.Role != this.Role)
-            {
-                this.eaConnectorEnd.Role = this.Role;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.RoleType != this.RoleType)
-            {
-                this.eaConnectorEnd.RoleType = this.RoleType;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.RoleNote != this.RoleNote)
-            {
-                this.eaConnectorEnd.RoleNote = this.RoleNote;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Containment != this.Containment)
-            {
-                this.eaConnectorEnd.Containment = this.Containment;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Aggregation != this.Aggregation)
-            {
-                this.eaConnectorEnd.Aggregation = this.Aggregation;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Ordering != this.Ordering)
-            {
-                this.eaConnectorEnd.Ordering = this.Ordering;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Qualifier != this.Qualifier)
-            {
-                this.eaConnectorEnd.Qualifier = this.Qualifier;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.IsChangeable != this.IsChangeable)
-            {
-                this.eaConnectorEnd.IsChangeable = this.IsChangeable;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.StereotypeEx != this.StereotypeEx)
-            {
-                this.eaConnectorEnd.StereotypeEx = this.StereotypeEx;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Stereotype != this.Stereotype)
-            {
-                this.eaConnectorEnd.Stereotype = this.Stereotype;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Navigable != this.Navigable)
-            {
-                this.eaConnectorEnd.Navigable = this.Navigable;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.AllowDuplicates != this.AllowDuplicates)
-            {
-                this.eaConnectorEnd.AllowDuplicates = this.AllowDuplicates;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.OwnedByClassifier != this.OwnedByClassifier)
-            {
-                this.eaConnectorEnd.OwnedByClassifier = this.OwnedByClassifier;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Derived != this.Derived)
-            {
-                this.eaConnectorEnd.Derived = this.Derived;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.DerivedUnion != this.DerivedUnion)
-            {
-                this.eaConnectorEnd.DerivedUnion = this.DerivedUnion;
-                toUpdate = true;
-            }
-            if (this.eaConnectorEnd.Alias != this.Alias)
-            {
-                this.eaConnectorEnd.Alias = this.Alias;
-                toUpdate = true;
-            }
-            // Only update the API object if needed
-            var updateResult = true;
-            if (toUpdate)
-            {
-                updateResult = this.eaConnectorEnd.Update();
-            }
-            this.updateFromWrappedElement();
-            return updateResult;
         }
 
         public string GetLastError()
@@ -250,7 +265,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get
             {
                 var navigableValue = KeyValuePairsHelper.getValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable");
-                if (! string.IsNullOrEmpty(navigableValue))
+                if (!string.IsNullOrEmpty(navigableValue))
                 {
                     return navigableValue;
                 }
@@ -260,7 +275,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set => KeyValuePairsHelper.setValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable", value);
         }
-        
+
 
         public bool AllowDuplicates
         {
@@ -268,7 +283,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "AllowDuplicates")
                              == "1";
-            set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] = 
+            set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "AllowDuplicates"
@@ -319,10 +334,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     KeyValuePairsHelper.setValueForKey(
                             this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
                             , "alias"
-                            , value );
+                            , value);
         }
 
-        private string _StereotypeEx = null; 
+        private string _StereotypeEx = null;
         public string StereotypeEx
         {
             get

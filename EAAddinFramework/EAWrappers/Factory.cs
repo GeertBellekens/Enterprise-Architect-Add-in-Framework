@@ -185,6 +185,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 return this.createEAConnectorWrapper((EADBConnector)objectToWrap);
             }
+            else if (objectToWrap is EADBConnectorConstraint)
+            {
+                return this.createConnectorConstraint((EADBConnectorConstraint)objectToWrap);
+            }
+            else if (objectToWrap is global::EA.ConnectorConstraint)
+            {
+                return this.createConnectorConstraint(objectToWrap as global::EA.ConnectorConstraint);
+            }
             else if (objectToWrap is global::EA.Connector)
             {
                 return this.createEAConnectorWrapper(objectToWrap as global::EA.Connector);
@@ -232,6 +240,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public UML.Classes.Kernel.Element createAttributeConstraint(EADBAttributeConstraint constraint)
         {
             return new AttributeConstraint(this.model as UTF_EA.Model, constraint);
+        }
+        public UML.Classes.Kernel.Element createConnectorConstraint(EADBConnectorConstraint constraint)
+        {
+            return new ConnectorConstraint(this.model as UTF_EA.Model, constraint);
+        }
+        public UML.Classes.Kernel.Element createConnectorConstraint(global::EA.ConnectorConstraint constraint)
+        {
+            return new ConnectorConstraint(this.model as UTF_EA.Model, new EADBConnectorConstraint(this.EAModel, constraint));
         }
 
         private Package createPackage(global::EA.Package package)
@@ -864,6 +880,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     || typeof(T).Name == "Constraint")
                 {
                     returnedValue = ((AttributeWrapper)owner).addAttributeConstraint(name) as T;
+                }
+            }
+            else if (owner is ConnectorWrapper)
+            {
+                if (typeof(T).Name == "ConnectorConstraint"
+                    || typeof(T).Name == "Constraint")
+                {
+                    returnedValue = ((ConnectorWrapper)owner).addConnectorConstraint(name) as T;
                 }
             }
             else if (owner is Operation)

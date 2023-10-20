@@ -51,6 +51,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.wrappedConnector.Direction;
             set => this.wrappedConnector.Direction = value;
         }
+        private HashSet<UML.Classes.Kernel.Constraint> _constraints;
+        public override HashSet<UML.Classes.Kernel.Constraint> constraints
+        {
+            get
+            {
+                if (this._constraints == null)
+                {
+                    //refresh attributes to make sure we have an up-to-date list
+                    var eaDBconstraints = EADBConnectorConstraint.getEADBConnectorConstraintsForConnectorIDs
+                                    (new List<int>() { this.id }, this.EAModel);
+                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>(
+                        this.EAModel.factory.createElements(eaDBconstraints).Cast<UML.Classes.Kernel.Constraint>());
+
+                }
+                return this._constraints;
+            }
+            set => throw new NotImplementedException();
+        }
+        public ConnectorConstraint addConnectorConstraint(string name)
+        {
+            return this.EAModel.eaFactory.addElementToEACollection<ConnectorConstraint>(this.wrappedConnector.Constraints, name, "ConnectorConstraint");
+        }
+        public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
+        {
+            if (constraint == null) return;
+            if (this._constraints == null)
+            {
+                this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
+            }
+            this._constraints.Add(constraint);
+        }
 
         internal Element sourceElement
         {
