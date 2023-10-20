@@ -65,7 +65,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.Ordering = this.eaConnectorEnd.Ordering;
                 this.Qualifier = this.eaConnectorEnd.Qualifier;
                 this.IsChangeable = this.eaConnectorEnd.IsChangeable;
-                this.StereotypeEx = this.eaConnectorEnd.StereotypeEx;
+                //this.StereotypeEx = this.eaConnectorEnd.StereotypeEx;
                 this.Stereotype = this.eaConnectorEnd.Stereotype;
                 this.Navigable = this.eaConnectorEnd.Navigable;
                 this.AllowDuplicates = this.eaConnectorEnd.AllowDuplicates;
@@ -136,11 +136,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this.eaConnectorEnd.IsChangeable = this.IsChangeable;
                     toUpdate = true;
                 }
-                if (this.eaConnectorEnd.StereotypeEx != this.StereotypeEx)
-                {
-                    this.eaConnectorEnd.StereotypeEx = this.StereotypeEx;
-                    toUpdate = true;
-                }
+                // commented out to prevent exceptions
+                //if (this.eaConnectorEnd.StereotypeEx != this.StereotypeEx)
+                //{
+                //    this.eaConnectorEnd.StereotypeEx = this.StereotypeEx;
+                //    toUpdate = true;
+                //}
                 if (this.eaConnectorEnd.Stereotype != this.Stereotype)
                 {
                     this.eaConnectorEnd.Stereotype = this.Stereotype;

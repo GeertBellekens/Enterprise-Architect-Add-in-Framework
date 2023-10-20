@@ -47,7 +47,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get
             {
                 return ((Factory)this.EAModel.factory).createStereotypes(
-                         this, this.wrappedAssociationEnd.StereotypeEx);
+                         this, this.wrappedAssociationEnd.Stereotype);
             }
             set { throw new NotImplementedException(); }
         }
