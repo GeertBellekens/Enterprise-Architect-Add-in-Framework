@@ -149,7 +149,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.eaElement.StyleEx = this.StyleEx;
             this.eaElement.EventFlags = this.EventFlags;
             this.eaElement.ActionFlags = this.ActionFlags;
-            this.eaElement.Stereotype = this.StereotypeEx;
+            this.eaElement.StereotypeEx = this.StereotypeEx;
             this.eaElement.Tag = this.Tag;
             var updateresult = this.eaElement.Update();
             //after saving we need to refresh the properties
