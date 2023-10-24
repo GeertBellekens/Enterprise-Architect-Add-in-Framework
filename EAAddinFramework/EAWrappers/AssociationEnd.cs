@@ -239,6 +239,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                   VisibilityKind.getEAVisibility(value);
             }
         }
+        public string navigable
+        {
+            get => this.wrappedAssociationEnd.Navigable;
+            set => this.wrappedAssociationEnd.Navigable = value;
+        }
 
         public String qualifiedName
         {

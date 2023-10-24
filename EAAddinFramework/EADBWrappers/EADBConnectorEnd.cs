@@ -44,7 +44,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 if (this._eaConnectorEnd == null)
                 {
                     var connector = this.model.wrappedModel.GetConnectorByGuid(this.properties["ea_guid"]);
-                    this._eaConnectorEnd = this.isSource ? connector.ClientEnd : connector.SupplierEnd;
+                    this._eaConnectorEnd = this.isSource ? connector?.ClientEnd : connector?.SupplierEnd;
                 }
                 return this._eaConnectorEnd;
             }
@@ -265,7 +265,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                var navigableValue = KeyValuePairsHelper.getValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable");
+                var navigableValue = KeyValuePairsHelper.getValueForKey("Navigable", this.properties[this.isSource ? "SourceStyle" : "DestStyle"] );
                 if (!string.IsNullOrEmpty(navigableValue))
                 {
                     return navigableValue;
@@ -274,68 +274,73 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //There is no simple default as it changes between types of connectors
                 return this.eaConnectorEnd.Navigable;
             }
-            set => KeyValuePairsHelper.setValueForKey(this.properties[this.isSource ? "SourceStyle" : "DestStyle"], "Navigable", value);
+            set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
+                            KeyValuePairsHelper.setValueForKey( 
+                                "Navigable"
+                                , value
+                                , this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
 
 
         public bool AllowDuplicates
         {
             get => KeyValuePairsHelper.getValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "AllowDuplicates")
+                             "AllowDuplicates"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"])
                              == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "AllowDuplicates"
-                            , value ? "1" : "0");
+                            "AllowDuplicates"
+                            , value ? "1" : "0"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
         public bool OwnedByClassifier
         {
             get => KeyValuePairsHelper.getValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Owned")
+                            "Owned"
+                            ,this.properties[this.isSource ? "SourceStyle" : "DestStyle"])
                             == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Owned"
-                            , value ? "1" : "0");
+                            "Owned"
+                            , value ? "1" : "0"
+                            ,this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
         public bool Derived
         {
             get => KeyValuePairsHelper.getValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Derived")
+                             "Derived"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"])
                             == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Derived"
-                            , value ? "1" : "0");
+                            "Derived"
+                            , value ? "1" : "0"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
         public bool DerivedUnion
         {
             get => KeyValuePairsHelper.getValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Union")
+                             "Union"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"])
                             == "1";
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "Union"
-                            , value ? "1" : "0");
+                            "Union"
+                            , value ? "1" : "0"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
         public string Alias
         {
             get => KeyValuePairsHelper.getValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "alias") ?? String.Empty;
+                            "alias"
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"] ) 
+                            ?? String.Empty;
             set => this.properties[this.isSource ? "SourceStyle" : "DestStyle"] =
                     KeyValuePairsHelper.setValueForKey(
-                            this.properties[this.isSource ? "SourceStyle" : "DestStyle"]
-                            , "alias"
-                            , value);
+                             "alias"
+                            , value
+                            , this.properties[this.isSource ? "SourceStyle" : "DestStyle"]);
         }
 
         private string _StereotypeEx = null;

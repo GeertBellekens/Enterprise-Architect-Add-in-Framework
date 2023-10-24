@@ -122,7 +122,6 @@ namespace EAAddinFramework.SchemaBuilder
                 this._otherEnd = value as UTF_EA.AssociationEnd;
             }
         }
-
         private void setEnds()
         {
             UTF_EA.AssociationEnd sourceEnd = ((UTF_EA.Association)this.sourceAssociation)?.sourceEnd;
@@ -389,7 +388,53 @@ namespace EAAddinFramework.SchemaBuilder
             //set the target multiplicity to a possible redefined multiplicity from the schema
             subSetAssociation.targetEnd.EAMultiplicity = this.multiplicity;
             //set the direction
-            //subSetAssociation.direction = this.eaSourceAssociation.direction;
+            if (this.eaSourceAssociation.direction.Equals("Unspecified", StringComparison.InvariantCultureIgnoreCase)
+                || this.eaSourceAssociation.direction.Equals("Bi-Directional", StringComparison.InvariantCultureIgnoreCase)
+                || ((UTF_EA.AssociationEnd)this.thisEnd).isSource == subSetAssociation.sourceEnd.isSource)
+            {
+                subSetAssociation.direction = this.eaSourceAssociation.direction;
+            }
+            else
+            {
+                if (this.eaSourceAssociation.direction.Equals("Source -> Destination", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (this.eaSourceAssociation.targetEnd.aggregation != UML.Classes.Kernel.AggregationKind.none)
+                    {
+                        //to avoid arrows showing up that were not there before
+                        subSetAssociation.direction = "Unspecified";
+                    }
+                    else
+                    {
+                        subSetAssociation.direction = "Destination -> Source";
+                    }
+                    
+                }
+                else if (this.eaSourceAssociation.direction.Equals("Destination -> Source", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    subSetAssociation.direction = "Source -> Destination";
+                }
+            }
+            //set the navigability based on the direction
+            switch (subSetAssociation.direction)
+            {
+                case "Unspecified":
+                    subSetAssociation.sourceEnd.navigable = "Unspecified";
+                    subSetAssociation.targetEnd.navigable = "Unspecified";
+                    break;
+                case "Bi-Directional":
+                    subSetAssociation.sourceEnd.navigable = "Navigable";
+                    subSetAssociation.targetEnd.navigable = "Navigable";
+                    break;
+                case "Destination -> Source":
+                    subSetAssociation.sourceEnd.navigable = "Navigable";
+                    subSetAssociation.targetEnd.navigable = "Unspecified";
+                    break;
+                case "Source -> Destination":
+                    subSetAssociation.sourceEnd.navigable = "Unspecified";
+                    subSetAssociation.targetEnd.navigable = "Navigable";
+                    break;
+            }
+            
             //save all changes
             subSetAssociation.save();
             //copy tagged values
@@ -402,11 +447,13 @@ namespace EAAddinFramework.SchemaBuilder
 
         private void copyAssociationEndProperties(UTF_EA.AssociationEnd source, UTF_EA.AssociationEnd target)
         {
+            //the ends are reversed, and an aggregated end at the source that is navigable, should be unspecified because otherwise an arrow shows in the diagrams.
             target.name = source.name;
             target.EAMultiplicity = source.EAMultiplicity;
-            target.isNavigable = source.isNavigable;
+            target.navigable = source.navigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
+
             //TODO: copy alias of the AssociationEnd if the alias in the subset is empty.
             //target.save();
         }

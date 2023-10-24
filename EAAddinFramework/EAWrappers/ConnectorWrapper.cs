@@ -661,6 +661,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         protected virtual void setDirection()
         {
+            if ( ! string.IsNullOrEmpty(this.wrappedConnector.Direction))
+            {
+                return; //don't do anything if it's already set
+            }
             string direction = "Unspecified"; //default
             if (this.targetEnd != null && this.sourceEnd != null)
             {

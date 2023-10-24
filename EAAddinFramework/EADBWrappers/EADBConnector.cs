@@ -59,7 +59,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public static List<EADBConnector> getEADBConnectorsForElementID(int elementID, Model model)
         {
-            return getEADBConnectorsForElementIDs(new List<int>() { elementID}, model);
+            return getEADBConnectorsForElementIDs(new List<int>() { elementID }, model);
         }
         public static List<EADBConnector> getEADBConnectorsForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
@@ -98,17 +98,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._eaConnector == null)
                 {
-                    this._eaConnector = this.model.wrappedModel.GetConnectorByGuid(this.ConnectorGUID);
+                    eaConnector = this.model.wrappedModel.GetConnectorByGuid(this.ConnectorGUID);
                 }
                 return this._eaConnector;
             }
-            private set => this._eaConnector = value;
+            private set
+            {
+                this._eaConnector = value;
+                this.ClientEnd = new EADBConnectorEnd(this.model, value.ClientEnd);
+                this.SupplierEnd = new EADBConnectorEnd(this.model, value.SupplierEnd);
+            }
         }
 
 
 
         public EADBConnector(Model model, List<string> propertyValues)
-            : base(model,  propertyValues)
+            : base(model, propertyValues)
         { }
         public EADBConnector(Model model, int connectorID)
             : this(model, model.getDataSetFromQuery($"{selectQuery} where c.Connector_ID = {connectorID}", false).FirstOrDefault())
@@ -128,7 +133,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.ConnectorID = this.eaConnector.ConnectorID;
 
             //update properties from eaAttribute
-            
+
             this.Name = this.eaConnector.Name;
             this.Direction = this.eaConnector.Direction;
             this.Notes = this.eaConnector.Notes;
@@ -395,16 +400,40 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             throw new NotImplementedException();
         }
 
+        private EADBConnectorEnd _clientEnd = null;
+        public EADBConnectorEnd ClientEnd
+        {
+            get
+            {
+                if (_clientEnd == null)
+                {
+                    this._clientEnd = new EADBConnectorEnd(this.model, this.properties, true);
+                }
+                return _clientEnd;
+            }
+            set => this._clientEnd = value;
+        }
 
-        public EADBConnectorEnd ClientEnd => new EADBConnectorEnd(this.model, this.properties, true);
+        private EADBConnectorEnd _supplierEnd = null;
+        public EADBConnectorEnd SupplierEnd
+        {
+            get
+            {
+                if (_supplierEnd == null)
+                {
+                    this._supplierEnd = new EADBConnectorEnd(this.model, this.properties, false);
+                }
+                return _supplierEnd;
+            }
+            set => this._supplierEnd = value;
+        }
 
-        public EADBConnectorEnd SupplierEnd => new EADBConnectorEnd(this.model, this.properties, false);
 
 
         public Collection Constraints => this.eaConnector.Constraints;
 
         public Collection TaggedValues => this.eaConnector.TaggedValues;
-              
+
         public string TransitionEvent
         {
             get => this.eaConnector.TransitionEvent;
@@ -470,7 +499,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         this._isDerived = int.Parse(this.model.getFirstValueFromQuery(sqlGetData, "isDerived")) > 0;
                     }
                 }
-                
+
                 return this._isDerived.Value;
             }
             set
