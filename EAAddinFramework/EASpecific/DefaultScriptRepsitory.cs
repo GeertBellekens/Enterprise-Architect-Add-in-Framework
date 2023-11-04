@@ -26,18 +26,18 @@ namespace EAAddinFramework.EASpecific
 
         public override void addScript(Script script)
         {
-            if (script.language.name != VBSCRIPT)
-            {
-                Logger.logWarning($"Ignoring non-{VBSCRIPT} script {script.fullyQualifiedName}");
-                return;
-            }
+            //if (script.language.name != VBSCRIPT)
+            //{
+            //    Logger.logWarning($"Ignoring non-{VBSCRIPT} script {script.fullyQualifiedName}");
+            //    return;
+            //}
 
             string scriptKey = script.fullyQualifiedName;
             // VBScript is case-insensitive
             string scriptKeyLowerCase = scriptKey.ToLower();
             if (cachedScripts.ContainsKey(scriptKeyLowerCase))
             {
-                throw new Exception($"script already exists in cache: {scriptKey}");
+                EAOutputLogger.log($"Duplicate script found: {scriptKey}",0,LogTypeEnum.error);
             }
             else
             {

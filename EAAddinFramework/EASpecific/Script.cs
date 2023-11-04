@@ -393,7 +393,8 @@ namespace EAAddinFramework.EASpecific
             string[] groupAndName = groupAndNameAsString.Split('.');
             if (groupAndName.Length != 2)
             {
-                throw new InvalidOperationException($"{scriptGroupName}.{scriptName} contains malformed !INC, must be <group>.<script> but was instead: '{include}'");
+                EAOutputLogger.log($"{scriptGroupName}.{scriptName} contains malformed !INC, must be <group>.<script> but was instead: '{include}'"
+                    ,0,LogTypeEnum.error);
             }
             return groupAndName;
         }

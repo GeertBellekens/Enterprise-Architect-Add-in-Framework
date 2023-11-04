@@ -110,14 +110,17 @@ namespace EAAddinFramework.EASpecific
             {
                 // getINCStatements() has already parsed the INC statements properly now just needs the split parts
                 string[] groupAndScript = Script.parseGroupAndNameFromINC(includeStatement, "not used", "not used");
-                string group = groupAndScript[0];
-                string name = groupAndScript[1];
-                Script scriptInRepository = getScriptByGroupAndName(group, name);
-                if (scriptInRepository == null)
+                if (groupAndScript.Length == 2)
                 {
-                    // Group = ps.Script
-                    // Name = s.Notes like '%name="<SCRIPT>"%'
-                    whereGroupAndNameMatches.Add($"(ps.Script = '{group}' and s.Notes like '%name=\"{name}\"%')");
+                    string group = groupAndScript[0];
+                    string name = groupAndScript[1];
+                    Script scriptInRepository = getScriptByGroupAndName(group, name);
+                    if (scriptInRepository == null)
+                    {
+                        // Group = ps.Script
+                        // Name = s.Notes like '%name="<SCRIPT>"%'
+                        whereGroupAndNameMatches.Add($"(ps.Script = '{group}' and s.Notes like '%name=\"{name}\"%')");
+                    }
                 }
             }
             sqlGetScripts += Environment.NewLine + "      " + String.Join(Environment.NewLine + "   or ", whereGroupAndNameMatches);
