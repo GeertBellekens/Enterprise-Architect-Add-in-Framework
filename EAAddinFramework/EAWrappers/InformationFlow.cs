@@ -9,7 +9,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
   public class InformationFlow : ConnectorWrapper, 
                              UML.InfomationFlows.InformationFlow 
   {
-	public InformationFlow(Model model, global::EA.Connector connector)
+	public InformationFlow(Model model, EADBConnector connector)
 	  : base(model, connector){}
 	
 	private HashSet<UML.Classes.Kernel.Classifier> _conveyed = null;

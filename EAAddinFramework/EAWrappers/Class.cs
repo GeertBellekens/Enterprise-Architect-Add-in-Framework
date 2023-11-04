@@ -8,7 +8,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
                        UML.Classes.Interfaces.BehavioredClassifier 
   {
 
-    public Class(Model model, global::EA.Element elementToWrap)
+    public Class(Model model, EADBElement elementToWrap)
       : base(model, elementToWrap)
     {}
     

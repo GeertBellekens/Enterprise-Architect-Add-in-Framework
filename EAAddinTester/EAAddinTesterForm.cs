@@ -41,7 +41,7 @@ namespace EAAddinTester
         
         void MyTestButtonClick(object sender, EventArgs e)
         {
-        	EAAddinTesterProgram.myTest();
+        	EAAddinTesterProgram.myTest(this.commandTextBox.Text, this.argumentsTextBox.Text);
         }
     }
 }

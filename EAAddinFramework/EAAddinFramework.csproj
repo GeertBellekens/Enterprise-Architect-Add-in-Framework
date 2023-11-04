@@ -212,6 +212,21 @@
     <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\DefaultScriptRepsitory.cs" />
+    <Compile Include="EADBWrappers\EADBAttributeConstraint.cs" />
+    <Compile Include="EADBWrappers\EADBAttributeTag.cs" />
+    <Compile Include="EADBWrappers\EADBAttribute.cs" />
+    <Compile Include="EADBWrappers\EADBBase.cs" />
+    <Compile Include="EADBWrappers\EADBConnector.cs" />
+    <Compile Include="EADBWrappers\EADBConnectorConstraint.cs" />
+    <Compile Include="EADBWrappers\EADBConnectorEnd.cs" />
+    <Compile Include="EADBWrappers\EADBConnectorTag.cs" />
+    <Compile Include="EADBWrappers\EADBElementConstraint.cs" />
+    <Compile Include="EADBWrappers\EADBElementTag.cs" />
+    <Compile Include="EADBWrappers\EADBElement.cs" />
+    <Compile Include="EADBWrappers\EADBOperationTag.cs" />
+    <Compile Include="EADBWrappers\EADBRoleTag.cs" />
+    <Compile Include="EADBWrappers\EADBTaggedValue.cs" />
+    <Compile Include="EADBWrappers\IndexedList.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
     <Compile Include="EASpecific\IncludeNotFoundException.cs" />
     <Compile Include="EASpecific\LocalScriptRepository.cs" />
@@ -263,6 +278,7 @@
     <Compile Include="EAWrappers\Component.cs" />
     <Compile Include="EAWrappers\ComponentDiagram.cs" />
     <Compile Include="EAWrappers\CompositeStructureDiagram.cs" />
+    <Compile Include="EAWrappers\ConnectorConstraint.cs" />
     <Compile Include="EAWrappers\Constraint.cs" />
     <Compile Include="EAWrappers\DataType.cs" />
     <Compile Include="EAWrappers\InstanceSpecification.cs" />
@@ -277,6 +293,7 @@
     <Compile Include="EAWrappers\LiteralString.cs" />
     <Compile Include="EAWrappers\LiteralUnlimitedNatural.cs" />
     <Compile Include="EAWrappers\Multiplicity.cs" />
+    <Compile Include="EAWrappers\NaryAssociation.cs" />
     <Compile Include="EAWrappers\OpaqueExpression.cs" />
     <Compile Include="EAWrappers\Property.cs" />
     <Compile Include="EAWrappers\ProxyConnector.cs" />
@@ -346,7 +363,6 @@
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
     <Compile Include="SchemaBuilder\EASchema.cs" />
     <Compile Include="SchemaBuilder\EASchemaElement.cs" />
-    <Compile Include="SchemaBuilder\EASchemaLiteral.cs" />
     <Compile Include="SchemaBuilder\EASchemaProperty.cs" />
     <Compile Include="SchemaBuilder\EASchemaPropertyWrapper.cs" />
     <Compile Include="Utilities\AbortableBackgroundWorker.cs">
@@ -369,6 +385,12 @@
     <Compile Include="Utilities\KeyValuePairsHelper.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\LogTypeEnum.cs" />
+    <Compile Include="Utilities\ProgressBarWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utilities\ProgressBarWindow.Designer.cs">
+      <DependentUpon>ProgressBarWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\ScriptingInteropHelper.cs" />
     <Compile Include="Utilities\TransformationILWriter.cs" />
     <Compile Include="WorkTracking\Project.cs" />
@@ -387,6 +409,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Utilities\AddinSettingsForm.resx">
       <DependentUpon>AddinSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\ProgressBarWindow.resx">
+      <DependentUpon>ProgressBarWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkTracking\TFS\GetAuthorizationForm.resx" />
   </ItemGroup>

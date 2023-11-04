@@ -16,7 +16,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 		/// </summary>
 		/// <param name="model">the model containing the element</param>
 		/// <param name="wrappedElement">the EA.Element to be wrapped</param>
-		public StateMachine(Model model, global::EA.Element wrappedElement)
+		public StateMachine(Model model, EADBElement wrappedElement)
       	: base(model,wrappedElement)
     	{
     	}

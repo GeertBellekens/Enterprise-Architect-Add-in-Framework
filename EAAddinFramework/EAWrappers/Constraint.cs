@@ -9,11 +9,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class Constraint : Element, UML.Classes.Kernel.Constraint
     {
-        internal global::EA.Constraint wrappedConstraint { get; set; }
+        internal EADBElementConstraint wrappedConstraint { get; set; }
         private Element _owner;
         private OpaqueExpression _opaqueExpression;
         private ElementWrapper elementWrapperOwner => this.owner as ElementWrapper;
-        public Constraint(Model model, global::EA.Constraint wrappedConstraint) : base(model)
+        public Constraint(Model model, EADBElementConstraint wrappedConstraint) : base(model)
         {
             this.wrappedConstraint = wrappedConstraint;
             this.isDirty = true;
@@ -309,5 +309,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
 
         #endregion
+        public int elementID => this.wrappedConstraint.ParentID;
+        public static void loadConstraints(Dictionary<int, ElementWrapper>elementDictionary, Model model)
+        {
+            var eaDBElementConstraints =
+                EADBElementConstraint.getEADBElementConstraintsForElementIDs(elementDictionary.Keys, model);
+            var elementConstraints = model.factory.createElements(eaDBElementConstraints).OfType<Constraint>();
+            //add the constraints to their respective elements
+            foreach (var elementConstraint in elementConstraints)
+            {
+                if (elementDictionary.TryGetValue(elementConstraint.elementID, out ElementWrapper elementWrapper))
+                {
+                    elementWrapper.addExistingConstraint(elementConstraint);
+                }
+            }
+        }
     }
 }

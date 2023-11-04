@@ -22,12 +22,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines {
 	{
 		private UML_SM.Region _container = null;
 		
-		public Vertex(Model model, global::EA.Element wrappedElement)
+		public Vertex(Model model, EADBElement wrappedElement)
       	: base(model,wrappedElement)
 		{
 		}
 
-		public Vertex(Model model, global::EA.Element wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
+		public Vertex(Model model, EADBElement wrappedElement, UML.StateMachines.BehaviorStateMachines.Region containingRegion)
       	: base(model,wrappedElement)
 		{
 			this._container = containingRegion;

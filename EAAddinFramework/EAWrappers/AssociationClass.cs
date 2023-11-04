@@ -11,7 +11,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 	public class AssociationClass:Class, UML.Classes.AssociationClasses.AssociationClass
 	{
 		private Association _relatedAssociation;
-		public AssociationClass(Model model, global::EA.Element elementToWrap)
+		public AssociationClass(Model model, EADBElement elementToWrap)
       : base(model, elementToWrap){}
 		
 		public Association relatedAssociation

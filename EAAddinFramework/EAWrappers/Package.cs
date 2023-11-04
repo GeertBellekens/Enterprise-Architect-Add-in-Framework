@@ -29,13 +29,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             private set => this._packageTreeIDString = value;
         }
-        public override global::EA.Element WrappedElement
+        public override EADBElement WrappedElement
         {
             get
             {
                 if (this.wrappedElement == null)
                 {
-                    this.wrappedElement = this.EAModel.wrappedModel.GetElementByGuid(this.guid);
+                    this.wrappedElement = new EADBElement(this.EAModel, this.EAModel.wrappedModel.GetElementByGuid(this.guid));
                 }
                 return base.wrappedElement;
             }
@@ -60,15 +60,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                                         " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
             return this.EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
         }
-        public static global::EA.Element getElementForPackage(Model model, global::EA.Package package)
+        public static EADBElement getElementForPackage(Model model, global::EA.Package package)
         {
-            global::EA.Element foundElement = package.Element;
-            //if for some reason the Element is not filled in we get it using the package GUID.
+            var foundElement = package.Element;
             if (foundElement == null)
-            {
+            {   //if for some reason the Element is not filled in we get it using the package GUID.
                 foundElement = model.wrappedModel.GetElementByGuid(package.PackageGUID);
             }
-            return foundElement;
+            return foundElement != null ?
+                    new EADBElement(model, foundElement) :
+                    null;
         }
         protected void initialize(global::EA.Package package)
         {
@@ -212,9 +213,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                this.wrappedPackage.Elements.Refresh();
-                List<UML.Classes.Kernel.Element> elements = this.EAModel.factory.createElements(this.wrappedPackage.Elements).Cast<UML.Classes.Kernel.Element>().ToList();
-                elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).Cast<UML.Classes.Kernel.Element>());
+                var EADBElements = EADBElement.getEADBElementsForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                var elements = this.EAModel.factory.createElements(EADBElements).OfType<UML.Classes.Kernel.Element>().ToList();
+                this.wrappedPackage.Packages.Refresh();
+                elements.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<UML.Classes.Kernel.Element>());
                 return new HashSet<UML.Classes.Kernel.Element>(elements);
             }
             set => throw new NotImplementedException();
@@ -225,15 +227,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._ownedElementWrappers == null)
                 {
-                    this.wrappedPackage.Elements.Refresh();
-                    this._ownedElementWrappers = this.EAModel.factory.createElements(this.wrappedPackage.Elements).OfType<ElementWrapper>().ToList();
+                    var EADBElements = EADBElement.getEADBElementsForPackageIDs(new List<string>() { this.packageID.ToString() }, this.EAModel);
+                    this._ownedElementWrappers = this.EAModel.factory.createElements(EADBElements).OfType<ElementWrapper>().ToList();
                     this.wrappedPackage.Packages.Refresh();
                     this._ownedElementWrappers.AddRange(this.EAModel.factory.createElements(this.wrappedPackage.Packages).OfType<ElementWrapper>().ToList());
                 }
                 return this._ownedElementWrappers;
             }
         }
-        
+
         public override HashSet<UML.Diagrams.Diagram> ownedDiagrams
         {
             get
@@ -446,7 +448,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public void refresh()
         {
 
-            if (this.EAModel.EAVersion >= 1308 )
+            if (this.EAModel.EAVersion >= 1308)
             {
                 reloadPackage(); //new feature since v13
             }
@@ -584,17 +586,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return nestedPackageTree;
         }
 
-        public HashSet<UML.Classes.Kernel.Element> getAllOwnedElements()
+        public HashSet<UML.Classes.Kernel.Element> getAllOwnedElements(IEnumerable<string> objectTypes = null)
         {
-            var allOwnedElements = this.ownedElements;
-            foreach (var subPackage in this.getNestedPackageTree(false))
-            {
-                foreach (var element in subPackage.ownedElements)
-                {
-                    allOwnedElements.Add(element);
-                }
-            }
-            return allOwnedElements;
+            var packageTreeIDs = this.getPackageTreeIDs();
+            //load all elements completely from the database
+            var eaDBElements = EADBElement.getEADBElementsForPackageIDs(packageTreeIDs, this.EAModel, objectTypes);
+            //create the EAElementWrappers for them
+            var elementWrappers = this.model.factory.createElements(eaDBElements).OfType<ElementWrapper>();
+            //make a dictionary of them based on their id
+
+            ElementWrapper.loadDetailsForElementWrappers(elementWrappers, this.EAModel);
+
+            return new HashSet<UML.Classes.Kernel.Element>(elementWrappers);
         }
 
         public string getPackageIDString(ICollection<UML.Classes.Kernel.Package> packages)
@@ -603,7 +606,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             string idString = string.Join(",", ids);
             return idString;
         }
-        private List<string> getPackageTreeIDs(List<string> parentIDs = null)
+        public List<string> getPackageTreeIDs(List<string> parentIDs = null)
         {
             List<string> allPackageIDs = new List<string>();
             List<string> subPackageIDs = new List<string>();

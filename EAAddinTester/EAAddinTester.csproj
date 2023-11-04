@@ -187,6 +187,10 @@
       <Project>{0f163106-7c92-4bb8-b54c-0ff8315d1779}</Project>
       <Name>GlossaryManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\SAP2EAImporter\SAP2EAImporter.csproj">
+      <Project>{69f3dc26-99b2-461c-8d4f-8d47702fa90c}</Project>
+      <Name>SAP2EAImporter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UML-Tooling-Framework\UMLToolingFramework\UMLToolingFramework.csproj">
       <Project>{0FC55607-C9D0-442D-941C-F23AD00CB318}</Project>
       <Name>UMLToolingFramework</Name>

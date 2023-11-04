@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private static string _applicationFullPath;
 
 
-        public bool useCache {get;set;} = false;
+        public bool useCache { get; set; } = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
         private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
 
@@ -269,6 +270,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get { return Factory.getInstance(this); }
         }
+        public Factory eaFactory => (Factory)this.factory;
 
         public ElementWrapper getElementFromCache(int id)
         {
@@ -295,16 +297,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (elementWrapper != null) return elementWrapper; //found it
 
             //not found in cache (or cache not used) get the regular way
-            global::EA.Element eaElement;
-            try
-            {
-                eaElement = this.wrappedModel.GetElementByID(id);
-            }
-            catch (Exception)
-            {
-                // element not found, return null
-                return null;
-            }
+            var eaElement = EADBElement.getEADBElementsForElementID(id, this);
+            //not found in the database return null
+            if (eaElement == null) return null;
             //create the elementWrapper
             elementWrapper = this.factory.createElement(eaElement) as ElementWrapper;
             //add to cache
@@ -312,6 +307,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return it
             return elementWrapper;
         }
+
         /// <summary>
         /// close the tab with the given name
         /// </summary>
@@ -339,16 +335,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return elementWrapper;
                 }
             }
-            global::EA.Element eaElement;
-            try
-            {
-                eaElement = this.wrappedModel.GetElementByGuid(GUID);
-            }
-            catch (Exception)
-            {
-                // element not found, return null
-                return null;
-            }
+            var eaElement = EADBElement.getEADBElementsForElementGUID(GUID, this);
             //if not found then return empty
             if (eaElement == null) return null;
             //create elementWrapper
@@ -357,6 +344,29 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (this.useCache) addElementToCache(elementWrapper);
             //return it
             return elementWrapper;
+        }
+        public List<ElementWrapper> getElementWrapperByGUIDs(List<string> GUIDs)
+        {
+            var elementWrappers = new List<ElementWrapper>();
+            List<EADBElement> EADBElements;
+            if (this.useCache)
+            {
+                foreach (var guid in GUIDs.Where(x => this.elementsByGUID.ContainsKey(x)))
+                {
+                    elementWrappers.Add(this.elementsByGUID[guid]);
+                }
+                EADBElements = EADBElement.getEADBElementsForElementGUIDs(
+                GUIDs.Where(x => !this.elementsByGUID.ContainsKey(x)).ToList(), this);
+            }
+            else
+            {
+                //get all of them
+                EADBElements = EADBElement.getEADBElementsForElementGUIDs(GUIDs, this);
+            }
+            //add the ones that were not cached
+            elementWrappers.AddRange(factory.createElements(EADBElements).OfType<ElementWrapper>());
+            //return
+            return elementWrappers;
         }
         public void addElementToCache(ElementWrapper element)
         {
@@ -514,16 +524,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            global::EA.Attribute eaAttribute;
-            try
-            {
-                eaAttribute = this.wrappedModel.GetAttributeByID(attributeID);
-            }
-            catch (Exception)
-            {
-                // attribute not found, return null
-                return null;
-            }
+            EADBAttribute eaAttribute = EADBAttribute.getEADBAttributeForAttributeID(attributeID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper
@@ -548,16 +549,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return attributeWrapper;
                 }
             }
-            global::EA.Attribute eaAttribute;
-            try
-            {
-                eaAttribute = this.wrappedModel.GetAttributeByGuid(GUID);
-            }
-            catch (Exception)
-            {
-                // attribute not found, return null
-                return null;
-            }
+            EADBAttribute eaAttribute = EADBAttribute.getEADBAttributeForAttributeGUID(GUID, this);
             //return null if not found
             if (eaAttribute == null) return null;
             //create new attributeWrapper
@@ -566,6 +558,28 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (useCache) this.addAttributeToCache(attributeWrapper);
             //return
             return attributeWrapper;
+        }
+        public List<AttributeWrapper> getAttributeWrapperByGUIDs(List<string> attributeGUIDs)
+        {
+            var attributeWrappers = new List<AttributeWrapper>();
+            List<EADBAttribute> EADBAttributes;
+            if (this.useCache)
+            {
+                foreach (var guid in attributeGUIDs.Where(x => this.attributesByGUID.ContainsKey(x)))
+                {
+                    attributeWrappers.Add(this.attributesByGUID[guid]);
+                }
+                EADBAttributes = EADBAttribute.getEADBAttributesForAttributeGUIDs(
+                attributeGUIDs.Where(x => !this.attributesByGUID.ContainsKey(x)).ToList(), this);
+            }
+            else
+            {
+                EADBAttributes = EADBAttribute.getEADBAttributesForAttributeGUIDs(attributeGUIDs, this);
+            }
+            //add the ones that were not cached
+            attributeWrappers.AddRange(factory.createElements(EADBAttributes).OfType<AttributeWrapper>());
+            //return
+            return attributeWrappers;
         }
         private void addAttributeToCache(AttributeWrapper attributeWrapper)
         {
@@ -629,13 +643,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public ConnectorWrapper getRelationByID(int relationID)
         {
             return ((Factory)this.factory).createElement
-              (this.wrappedModel.GetConnectorByID(relationID)) as ConnectorWrapper;
+              (EADBConnector.getEADBConnectorForConnectorID(relationID, this)) as ConnectorWrapper;
         }
 
         public ConnectorWrapper getRelationByGUID(string relationGUID)
         {
             return ((Factory)this.factory).createElement
-              (this.wrappedModel.GetConnectorByGuid(relationGUID)) as ConnectorWrapper;
+              (EADBConnector.getEADBConnectorForConnectorGUID(relationGUID, this)) as ConnectorWrapper;
+        }
+        public List<ConnectorWrapper> getRelationsByGUIDs(List<string> relationGUIDs)
+        {
+            return this.eaFactory.createElements(
+                EADBConnector.getEADBConnectorsForConnectorGUIDs(relationGUIDs, this))
+                .OfType<ConnectorWrapper>().ToList();
         }
 
         public List<ConnectorWrapper> getRelationsByQuery(string SQLQuery)
@@ -645,14 +665,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             XmlNodeList relationIDNodes =
                 xmlrelationIDs.SelectNodes(formatXPath("//Connector_ID"));
             List<ConnectorWrapper> relations = new List<ConnectorWrapper>();
+            var connectorIDs = new List<string>();
             foreach (XmlNode relationIDNode in relationIDNodes)
             {
                 int relationID;
                 if (int.TryParse(relationIDNode.InnerText, out relationID))
                 {
-                    ConnectorWrapper relation = this.getRelationByID(relationID);
-                    relations.Add(relation);
+                    connectorIDs.Add(relationID.ToString());
                 }
+            }
+            var eaDBConnectors = EADBConnector.getEADBConnectorsForConnectorIDs(connectorIDs, this);
+            foreach (var eaDBConnector in eaDBConnectors)
+            {
+                relations.Add(this.eaFactory.createElement(eaDBConnector) as ConnectorWrapper);
             }
             return relations;
         }
@@ -781,7 +806,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public Dictionary<string, string> getDictionaryFromQuery(string sqlQuery)
         {
-            var dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var results = this.SQLQuery(sqlQuery);
             var rows = results.SelectNodes(this.formatXPath("//Row"));
             foreach (XmlNode rowNode in rows)
@@ -812,6 +837,78 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return list;
         }
+        public List<List<string>> getDataSetFromQuery(string sqlQuery, bool includeHeaders)
+        {
+            var list = new List<List<string>>();
+            var results = this.SQLQuery(sqlQuery);
+            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            List<String> headers = null;
+            foreach (XmlNode rowNode in rows)
+            {
+                if (headers == null && includeHeaders)
+                {
+                    headers = new List<String>();
+                }
+                var rowList = new List<string>();
+
+                foreach (XmlNode childNode in rowNode.ChildNodes)
+                {
+                    if (includeHeaders && list.Count == 0)
+                    {
+                        headers.Add(childNode.Name);
+                    }
+                    rowList.Add(childNode.InnerText);
+                }
+                //add the headers first (only when the list is still empty)
+                if (headers != null && list.Count == 0)
+                {
+                    list.Add(headers);
+                }
+                //then add the contents
+                list.Add(rowList);
+            }
+            return list;
+        }
+        private SqlConnection _connection;
+        public SqlConnection connection
+        {
+            get
+            {
+                if (_connection == null)
+                {
+                    this._connection = new SqlConnection("Integrated Security=true;Initial Catalog=TMF;Data Source=DESKTOP-BGN5EL4");
+                    this._connection.Open();
+                }
+                return this._connection;
+            }
+        }
+        public List<List<string>> getDataSetFromQuery2(string sqlQuery, bool includeHeaders)
+        {
+            var list = new List<List<string>>();
+            using (var cmd = new SqlCommand(sqlQuery, this.connection)
+                                {CommandType = System.Data.CommandType.Text})
+            {
+                using (SqlDataReader objReader = cmd.ExecuteReader())
+                {
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            var row = new List<string>();
+                            for (int i = 0; i < objReader.VisibleFieldCount; i++)
+                            {
+                                string item = objReader.GetValue(i).ToString();
+                                row.Add(item);
+                            }
+                            list.Add(row);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+
         /// <summary>
         /// sets the correct wildcards depending on the database type.
         /// changes '%' into '*' if on ms access

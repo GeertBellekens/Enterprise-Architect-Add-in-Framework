@@ -22,6 +22,8 @@ namespace EAAddinFramework.SchemaBuilder
     {
         private TSF_EA.Model model;
         private EA.SchemaComposer wrappedComposer;
+        //we only need classes, enumerations, datatypes and primitivetypes
+        private List<string> classifierObjectTypes = new List<string>() { "Class", "Enumeration", "Datatype", "PrimitiveType", "Association" };
 
         private List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>> taggedValuesToSynchronize = new List<Tuple<TSF_EA.TaggedValue, TSF_EA.Element>>();
 
@@ -107,12 +109,126 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         this._elements.Add(EASchemaBuilderFactory.getInstance(this.model).createSchemaElement(this, schemaType));
                     }
+                    //now load all source items for the whole schema
+                    loadSourceItems();
                 }
                 return this._elements;
             }
             set
             {
                 throw new NotImplementedException();
+            }
+        }
+        private void loadSourceItems()
+        {
+            //tell the user what we are doing 
+            EAOutputLogger.log(this.model, this.settings.outputName, "Loading schema source elements"
+                               , 0, LogTypeEnum.log);
+            var elementGuids = this.elements.OfType<EASchemaElement>().Select(x => x.TypeID).ToList();
+            var elementWrappers = this.model.getElementWrapperByGUIDs(elementGuids);
+            //create a dictionary based on the GUID of the element
+            var sourceElementDictionary = new Dictionary<string, TSF_EA.ElementWrapper>();
+            var elementDictionary = new Dictionary<int, TSF_EA.ElementWrapper>();
+            foreach (var elementWrapper in elementWrappers)
+            {
+                if (! sourceElementDictionary.ContainsKey(elementWrapper.uniqueID))
+                {
+                    sourceElementDictionary.Add(elementWrapper.uniqueID, elementWrapper);
+                }
+                if (! elementDictionary.ContainsKey(elementWrapper.id))
+                {
+                    elementDictionary.Add(elementWrapper.id, elementWrapper);
+                }
+            }
+            //loop all elements and link set the source element
+            foreach(var schemaElement in this.elements.OfType<EASchemaElement>())
+            {
+               if ( sourceElementDictionary.TryGetValue(schemaElement.TypeID, out TSF_EA.ElementWrapper elementWrapper))
+               {
+                    schemaElement.sourceElement = elementWrapper as UML.Classes.Kernel.Classifier;
+               }
+            }
+            //load tagged values
+            TSF_EA.Constraint.loadConstraints(elementDictionary, model);
+            //load tagged values
+            TSF_EA.ElementTag.loadElementTags(elementDictionary, model);
+            //tell the user what we are doing 
+            EAOutputLogger.log(this.model, this.settings.outputName, "Loading schema source attributes and connectors"
+                               , 0, LogTypeEnum.log);
+            //attributes/Literals
+            var attributeGUIDs = new List<string>();
+            // connectors
+            var connectorGUIDs = new List<string>();
+            foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
+            {
+                attributeGUIDs.AddRange(schemaElement.schemaPropertyWrappers.OfType<EASchemaProperty>().Select(x => x.GUID));//attributes and literals
+                connectorGUIDs.AddRange(schemaElement.schemaAssociations.OfType<EASchemaAssociation>().Select(x => x.GUID));
+            }
+            var attributeWrappers = this.model.getAttributeWrapperByGUIDs(attributeGUIDs);
+            //create dictionaries (both on id and GUID)
+            var sourceAttributeDictionary = new Dictionary<string, TSF_EA.AttributeWrapper>();
+            var attributeDictionary = new Dictionary<int, TSF_EA.AttributeWrapper>();
+            foreach (var attributeWrapper in attributeWrappers)
+            {
+                if (!sourceAttributeDictionary.ContainsKey(attributeWrapper.uniqueID))
+                {
+                    sourceAttributeDictionary.Add(attributeWrapper.uniqueID, attributeWrapper);
+                }
+                if (! attributeDictionary.ContainsKey(attributeWrapper.id))
+                {
+                    attributeDictionary.Add(attributeWrapper.id, attributeWrapper);
+                }
+            }
+            //load tagged values for attributes
+            TSF_EA.AttributeTag.loadAttributeTags(attributeDictionary, this.model);
+            //load constraints for attributes
+            TSF_EA.AttributeConstraint.loadConstraints(attributeDictionary, model);
+            //load source associations
+            var associations = this.model.getRelationsByGUIDs(connectorGUIDs);
+            //create dictionary
+            var sourceAssociationDictionary = new Dictionary<string, TSF_EA.ConnectorWrapper>();
+            var connectorDictionary = new Dictionary<int, TSF_EA.ConnectorWrapper>();
+            foreach (var association in associations)
+            {
+                if (!sourceAssociationDictionary.ContainsKey(association.uniqueID))
+                {
+                    sourceAssociationDictionary.Add(association.uniqueID, association);
+                }
+                if (!connectorDictionary.ContainsKey(association.id))
+                {
+                    connectorDictionary.Add(association.id, association);
+                }
+            }
+            //load connector tags
+            TSF_EA.RelationTag.loadConnectorTags(connectorDictionary, model);
+            //set attribute/literal/connector sources
+            foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
+            {
+                //Loop all attribute and link the source attribute
+                foreach (var schemaProperty in schemaElement.schemaPropertyWrappers.OfType<EASchemaProperty>())
+                {
+                    if (sourceAttributeDictionary.TryGetValue(schemaProperty.GUID, out TSF_EA.AttributeWrapper attributeWrapper))
+                    {
+                        if (attributeWrapper is TSF_EA.Attribute)
+                        {
+                            schemaProperty.sourceProperty = attributeWrapper as TSF_EA.Attribute;
+                        }
+                        else
+                        {
+                            schemaProperty.sourceLiteral = attributeWrapper as TSF_EA.EnumerationLiteral;
+                        }
+                        
+                    }
+                }
+
+                //and for all connectors
+                foreach (var schemaAssociation in schemaElement.schemaAssociations.OfType<EASchemaAssociation>())
+                {
+                    if (sourceAssociationDictionary.TryGetValue(schemaAssociation.GUID, out TSF_EA.ConnectorWrapper association))
+                    {
+                        schemaAssociation.sourceAssociation = association as Association; ;
+                    }
+                }
             }
         }
         private string _elementGUIDstring = null;
@@ -205,7 +321,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="subsetElement">the element to search a match for</param>
         /// <returns>the corresponding SchemaElement</returns>
-        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary)
+        internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary, bool secondPass)
         {
             
             
@@ -218,7 +334,7 @@ namespace EAAddinFramework.SchemaBuilder
             //first check if we already have this subset element registered on one of the elements
             result = this.elements
                     .OfType<EASchemaElement>()
-                    .FirstOrDefault(x => x.sourceElement.uniqueID == subsetElement.uniqueID);
+                    .FirstOrDefault(x => x.sourceElement?.uniqueID == subsetElement.uniqueID);
             if (result != null)
             {
                 return result;
@@ -263,7 +379,7 @@ namespace EAAddinFramework.SchemaBuilder
                             sourceElementUniqueID = this.elements
                                 .OfType<EASchemaElement>()
                                 .FirstOrDefault(x => x.eaSourceElement?.id == elementID)
-                                ?.sourceElement.uniqueID;
+                                ?.sourceElement?.uniqueID;
                             break;
                         }
                     }
@@ -280,7 +396,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //find redefined element with same source element, and where the name corresponds to the alias of the sourceElement
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.isRedefined
                                                                         && x.name == elementWrapperSubsetElement.alias
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 //if not found with redefined elemnet then find as regular element
@@ -288,7 +404,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
                                                                         && x.name == subsetElement.name
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
                 }
@@ -297,14 +413,15 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 //find based on name, regardless of redefined or not
                 result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.name == subsetElement.name
-                                                                        && x.sourceElement.uniqueID == sourceElementUniqueID
+                                                                        && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
             //if the subset element is renamed, then we won't find it based on the name, so we use the unique ID only
-            if (result == null)
+            // we do this only on a second pass
+            if (result == null && secondPass)
             {
-                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement.uniqueID == sourceElementUniqueID
+                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
             }
@@ -333,14 +450,15 @@ namespace EAAddinFramework.SchemaBuilder
             foreach (EASchemaElement schemaElement in elements)
             {
                 //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset element for : '" + schemaElement.name + "'"
+                EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset element for: '" + schemaElement.name + "'"
                                    , 0, LogTypeEnum.log);
                 //do not copy elements that are shared
                 if (!schemaElement.isShared)
                 {
                     //only create subset elements for classes, not for datatypes
                     if (schemaElement.sourceElement is UML.Classes.Kernel.Class
-                       || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration)
+                       || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
+                       || schemaElement.sourceElement is UML.Classes.Kernel.Association)
                     {
                         schemaElement.createSubsetElement(destinationPackage);
                         //Logger.log("after EASchema::creating single subset element");
@@ -360,30 +478,21 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (!schemaElement.isShared)
                 {
-                    //only create subset elements for classes and enumerations and datatypes
+                    //only create subset elements for classes and enumerations and datatypes and n-ary associations
                     if (schemaElement.sourceElement is UML.Classes.Kernel.Class
                        || schemaElement.sourceElement is UML.Classes.Kernel.Enumeration
-                        || schemaElement.sourceElement is UML.Classes.Kernel.DataType)
+                        || schemaElement.sourceElement is UML.Classes.Kernel.DataType
+                        || schemaElement.sourceElement is UML.Classes.Kernel.Association)
                     {
                         //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset associations for: '" + schemaElement.name + "'"
+                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset details for: '" + schemaElement.name + "'"
                                            , 0, LogTypeEnum.log);
                         schemaElement.createSubsetAssociations();
-                        //Logger.log("after EASchema::creating single subset association");
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset attributes for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         // and to resolve the attributes types to subset types if required
                         schemaElement.createSubsetAttributes();
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset literals for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         if (this.settings.copyAllOperations)
                         {
                             schemaElement.createSubsetOperations();
-                            //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating subset operations for: '" + schemaElement.name + "'"
-                                               , 0, LogTypeEnum.log);
                         }
                         //Logger.log("after EASchema::createSubsetAttributes ");
                         schemaElement.createSubsetLiterals();
@@ -391,9 +500,6 @@ namespace EAAddinFramework.SchemaBuilder
                         schemaElement.cleanupAttributeDependencies();
                         if (!this.settings.dontCreateAttributeDependencies)
                         {
-                            //tell the user what we are doing 
-                            EAOutputLogger.log(this.model, this.settings.outputName, "Creating attribute depencendies for: '" + schemaElement.name + "'"
-                                               , 0, LogTypeEnum.log);
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.addAttributeTypeDependencies();
                         }
@@ -413,10 +519,6 @@ namespace EAAddinFramework.SchemaBuilder
                             //and add a dependency from the schemaElement to the type of the attributes
                             schemaElement.orderAssociationsAlphabetically();
                         }
-                        //Logger.log("after EASchema::addAttributeTypeDependencies");
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.settings.outputName, "Creating generalizations for: '" + schemaElement.name + "'"
-                                           , 0, LogTypeEnum.log);
                         //add generalizations if both elements are in the subset
                         schemaElement.addGeneralizations();
                     }
@@ -700,17 +802,19 @@ namespace EAAddinFramework.SchemaBuilder
                     else return;
                 }
             }
+            EAOutputLogger.log(this.model, this.settings.outputName, $"Loading subsetmodel for package '{destinationPackage.name}'");
+            
             if (generateChangesOnly)
             {
                 // this will delete the subset elements that are no longer needed
-                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements(classifierObjectTypes).OfType<Classifier>()));
                 //then process only the elementsToUpdate and ElementsToCreate
                 matchAndUpdateSubsetModel(destinationPackage, elementsToCreate, elementsToUpdate);
             }
             else
             {
                 //regenerate completely
-                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements().OfType<Classifier>()));
+                matchSubsetElements(destinationPackage, new HashSet<Classifier>(destinationPackage.getAllOwnedElements(classifierObjectTypes).OfType<Classifier>()));
                 matchAndUpdateSubsetModel(destinationPackage);
             }
         }
@@ -854,6 +958,8 @@ namespace EAAddinFramework.SchemaBuilder
             //first match the elementsToUpdate with their subset model equivalent
             foreach (var schemaElement in elementsToUpdate)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema", 0, LogTypeEnum.log);
                 schemaElement.matchSubsetElement(destinationPackage);
                 //match the attributes
                 schemaElement.matchSubsetAttributes();
@@ -873,6 +979,8 @@ namespace EAAddinFramework.SchemaBuilder
         {
             foreach (EASchemaElement schemaElement in this.elements)
             {
+                //tell the user what we are doing 
+                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema",0, LogTypeEnum.log);
                 //match the attributes
                 schemaElement.matchSubsetAttributes();
                 //Logger.log("after EASchema::matchSubsetAttributes");
@@ -945,13 +1053,30 @@ namespace EAAddinFramework.SchemaBuilder
             //get a dictionary of subset element guid's with their source GUID
             var subsetDictionary = this.getSubsetElementDictionary(subsetElements);
             //loop subset elements ordered by name
-            foreach (Classifier subsetElement in subsetElements.OrderBy(x => name))
+            var subsetElementsToDelete = new List<Classifier>();
+            foreach (var subsetElement in subsetElements.OrderBy(x => name))
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.settings.outputName, $"Matching subset element: '{subsetElement.name}' to a schema element"
                                    , ((TSF_EA.ElementWrapper)subsetElement).id, LogTypeEnum.log);
                 //get the corrsponding schema element
-                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary);
+                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary, false);
+
+                //found a corresponding schema element
+                if (schemaElement != null && shouldElementExistAsDatatype(subsetElement))
+                {
+                    schemaElement.matchSubsetElement(subsetElement);
+                }
+                else
+                {
+                    subsetElementsToDelete.Add(subsetElement);
+                }
+            }
+            foreach (var subsetElement in subsetElementsToDelete)
+            {
+                //give the matching another go, but this time with ID match for redefined elements
+                //get the corrsponding schema element
+                EASchemaElement schemaElement = this.getSchemaElementForSubsetElement(subsetElement, subsetDictionary, true);
 
                 //found a corresponding schema element
                 if (schemaElement != null && shouldElementExistAsDatatype(subsetElement))
@@ -999,7 +1124,7 @@ namespace EAAddinFramework.SchemaBuilder
 
         private bool shouldElementExistAsDatatype(Classifier subsetElement)
         {
-            if (subsetElement is Class || subsetElement is Enumeration)
+            if (subsetElement is Class || subsetElement is Enumeration || subsetElement is Association )
             {
                 return true;
             }
@@ -1051,7 +1176,7 @@ namespace EAAddinFramework.SchemaBuilder
             var parentElementIDs = new List<string>();
 
             var sqlGetData = $@"select o.Object_ID from t_object o
-                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                            where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                             and o.Package_ID in ({((TSF_EA.Package)element.owningPackage).packageTreeIDString})";
             //start at the message root
             parentElementIDs.AddRange(this.model.getListFromQuery(sqlGetData));
@@ -1060,9 +1185,12 @@ namespace EAAddinFramework.SchemaBuilder
             EAOutputLogger.log(this.model, this.settings.outputName
                                , $"Getting {allElementIDs.Count} possible subsetElement objects", 0, LogTypeEnum.log);
             //get all elements from the IDs
-            foreach (var elementID in allElementIDs)
+            var eaDBElements = TSF_EA.EADBElement.getEADBElementsForElementIDs (allElementIDs, this.model);
+            //create the EAElementWrappers for them
+            var elementWrappers = this.model.factory.createElements(eaDBElements).OfType<TSF_EA.ElementWrapper>();
+            TSF_EA.ElementWrapper.loadDetailsForElementWrappers(elementWrappers, model);
+            foreach (var subsetElement in elementWrappers.OfType<Classifier>())
             {
-                var subsetElement = model.getElementWrapperByID(int.Parse(elementID)) as Classifier;
                 if (subsetElement != null
                   && !subsetElements.Contains(subsetElement))
                 {
@@ -1090,14 +1218,14 @@ namespace EAAddinFramework.SchemaBuilder
                                                 and c.Connector_Type in ('Aggregation', 'Association')))
                     inner join t_object oo on (oo.Object_ID = c.Start_Object_ID
                                             and oo.Object_ID <> o.Object_ID))
-                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     union
                     select o.Object_ID from ((t_object o
                     inner join t_attribute a on a.Classifier = o.Object_ID)
                     inner join t_object oo on oo.Object_ID = a.Object_ID)
-                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType')
+                    where o.Object_Type in ('Class', 'Enumeration', 'DataType', 'PrimitiveType', 'Association')
                     and oo.Object_ID in ({parentIDString})
                     and o.Object_ID not in ({allElementIDString})
                     )o
@@ -1146,6 +1274,12 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     this.taggedValuesToSynchronize.Add(new Tuple<TSF_EA.TaggedValue, TSF_EA.Element>(sourceTaggedValue, target));
                     continue;
+                }
+                if (sourceTaggedValue.name.Equals(this.settings.elementTagName, StringComparison.InvariantCultureIgnoreCase)
+                    || sourceTaggedValue.name.Equals(this.settings.sourceAttributeTagName, StringComparison.InvariantCultureIgnoreCase)
+                    || sourceTaggedValue.name.Equals(this.settings.sourceAssociationTagName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;//skip if the tagged value is one of the configured traceability tagged values
                 }
                 bool updateTaggedValue = true;
                 var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);

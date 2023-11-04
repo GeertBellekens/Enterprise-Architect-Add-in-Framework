@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Usage : Abstraction, 
                              UML.Classes.Dependencies.Usage 
   {
-    public Usage(Model model, global::EA.Connector usage)
+    public Usage(Model model, EADBConnector usage)
       : base(model, usage)
     {}
   }

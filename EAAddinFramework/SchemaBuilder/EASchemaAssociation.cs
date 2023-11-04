@@ -22,7 +22,7 @@ namespace EAAddinFramework.SchemaBuilder
 
         public EASchemaAssociation(UTF_EA.Model model, EASchemaElement owner, EA.SchemaProperty objectToWrap) : base(model, owner, objectToWrap)
         {
-        	this.subsetAssociations = new List<Association>();
+            this.subsetAssociations = new List<Association>();
         }
 
         #region implemented abstract members of EASchemaPropertyWrapper
@@ -34,31 +34,20 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
 
-		#region implemented abstract members of EASchemaPropertyWrapper
-		internal override UTF_EA.AttributeWrapper sourceAttributeWrapper {
-			get {
-				return null;
-			}
-		}
-		internal override UTF_EA.AttributeWrapper subsetAttributeWrapper {
-			get {
-				return null;
-			}
-		}
-		#endregion
-		#region implemented abstract members of EASchemaPropertyWrapper
+
+        #region implemented abstract members of EASchemaPropertyWrapper
 
 
-		protected override UTF_EA.Multiplicity sourceMultiplicity 
-		{
-			get 
-			{
-				return (otherEnd != null ? otherEnd.multiplicity : defaultMultiplicity) as UTF_EA.Multiplicity;
-			}
-		}
+        protected override UTF_EA.Multiplicity sourceMultiplicity
+        {
+            get
+            {
+                return (otherEnd != null ? otherEnd.multiplicity : defaultMultiplicity) as UTF_EA.Multiplicity;
+            }
+        }
 
 
-		#endregion
+        #endregion
 
         #endregion
         public UML.Classes.Kernel.Association sourceAssociation
@@ -71,13 +60,10 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceAssociation;
             }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set => this._sourceAssociation = value as UTF_EA.Association;
         }
         public UTF_EA.Association eaSourceAssociation => this.sourceAssociation as UTF_EA.Association;
-        
+
 
         public List<UML.Classes.Kernel.Association> subsetAssociations { get; set; }
 
@@ -90,14 +76,14 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._otherElement == null)
                 {
-                	if (this.redefinedElement != null)
-                	{
-                		this._otherElement = this.redefinedElement;
-                	}
-                	else
-                	{
-                    	this._otherElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(this.otherEnd.type);
-                	}
+                    if (this.redefinedElement != null)
+                    {
+                        this._otherElement = this.redefinedElement;
+                    }
+                    else
+                    {
+                        this._otherElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(this.otherEnd.type);
+                    }
                 }
                 return this._otherElement;
             }
@@ -136,7 +122,6 @@ namespace EAAddinFramework.SchemaBuilder
                 this._otherEnd = value as UTF_EA.AssociationEnd;
             }
         }
-
         private void setEnds()
         {
             UTF_EA.AssociationEnd sourceEnd = ((UTF_EA.Association)this.sourceAssociation)?.sourceEnd;
@@ -234,7 +219,7 @@ namespace EAAddinFramework.SchemaBuilder
                                 associationTarget = choiceElement.sourceElement;
                             }
                             //add the actual subset association if needed
-                            addSubsetAssociation( associationTarget);
+                            addSubsetAssociation(associationTarget);
                         }
 
                     }
@@ -251,11 +236,11 @@ namespace EAAddinFramework.SchemaBuilder
                             associationTarget = this.otherElement.sourceElement;
                         }
                         //add the actual subset association if needed
-                        addSubsetAssociation( associationTarget);
+                        addSubsetAssociation(associationTarget);
                     }
                 }
             }
-        
+
         }
         /// <summary>
         /// add the subset association to the list if it does not exist
@@ -263,96 +248,132 @@ namespace EAAddinFramework.SchemaBuilder
         /// <param name="associationTarget">the target for the association</param>
         private void addSubsetAssociation(UML.Classes.Kernel.Classifier associationTarget)
         {
-            UTF_EA.Association existingAssociation = this.subsetAssociations.OfType<UTF_EA.Association>().FirstOrDefault(x => x.target.Equals(associationTarget));
-        	var subsetAssociation = CreateSubSetAssociation(associationTarget,existingAssociation);
-	        if (existingAssociation == null
-        	    && subsetAssociation != null)
-        	{
-        		this.subsetAssociations.Add(subsetAssociation);
-        	}
-        	//if the association is part of an associationclass then create the link
-        	this.setAssociationClassProperties();
-        	
+            //check if duplicate. In that case delete any existing subset associations
+            if (this.isDuplicate)
+            {
+                if (this.subsetAssociations?.Any() == true)
+                {
+                    foreach(var subsetAssociation in this.subsetAssociations)
+                    {
+                        subsetAssociation.delete();
+                    }
+                }
+            }
+            else
+            {
+                UTF_EA.Association existingAssociation = this.subsetAssociations.OfType<UTF_EA.Association>().FirstOrDefault(x => x.target.Equals(associationTarget));
+                var subsetAssociation = CreateSubSetAssociation(associationTarget, existingAssociation);
+                if (existingAssociation == null
+                    && subsetAssociation != null)
+                {
+                    this.subsetAssociations.Add(subsetAssociation);
+                }
+                //if the association is part of an associationclass then create the link
+                this.setAssociationClassProperties();
+            }
+
+        }
+        /// <summary>
+        /// a schema association is considered a duplicate if there is another schemaAssociation that points to the same association, and this association is selected from the target.
+        /// </summary>
+        private bool isDuplicate
+        {
+            get
+            {
+                return this.owner.owner.elements.Any(x => !x.Equals(this.owner) && x.schemaAssociations.Any(y => y.sourceAssociation?.Equals(this.sourceAssociation) == true))
+                    && this.eaSourceAssociation?.target?.Equals(this.owner.sourceElement) == true;
+            }
+        }
+        internal void addExistingSubsetAssociation(Association association)
+        {
+            if (this.subsetAssociations == null)
+            {
+                subsetAssociations = new List<Association>();
+            }
+            if (!this.subsetAssociations.Any(x => x.uniqueID == association.uniqueID))
+            {
+                this.subsetAssociations.Add(association);
+            }
         }
         private void setAssociationClassProperties()
         {
-        	UTF_EA.AssociationClass sourceAssociationClass = ((UTF_EA.Association)this.sourceAssociation).associationClass;
-        	if (sourceAssociationClass != null)
-        	{
-        		//find subset association class
-        		EASchemaElement associationClassSchemaElement = ((EASchema) this.owner.owner).getSchemaElementForUMLElement(sourceAssociationClass);
-        		if (associationClassSchemaElement?.subsetElement is UTF_EA.AssociationClass)
-        		{
-        			//link the corresponding subset associationclass to the subset associations
-		        	foreach (var subsetAssociation in this.subsetAssociations) 
-		        	{
-	        			((UTF_EA.AssociationClass) associationClassSchemaElement.subsetElement).relatedAssociation = subsetAssociation as UTF_EA.Association;
-	        			associationClassSchemaElement.subsetElement.save();
-	        			break; //we can only link one association to the association class, so we break after the first one
-		        	}
-        		}
-        	}
+            UTF_EA.AssociationClass sourceAssociationClass = ((UTF_EA.Association)this.sourceAssociation).associationClass;
+            if (sourceAssociationClass != null)
+            {
+                //find subset association class
+                EASchemaElement associationClassSchemaElement = ((EASchema)this.owner.owner).getSchemaElementForUMLElement(sourceAssociationClass);
+                if (associationClassSchemaElement?.subsetElement is UTF_EA.AssociationClass)
+                {
+                    //link the corresponding subset associationclass to the subset associations
+                    foreach (var subsetAssociation in this.subsetAssociations)
+                    {
+                        ((UTF_EA.AssociationClass)associationClassSchemaElement.subsetElement).relatedAssociation = subsetAssociation as UTF_EA.Association;
+                        associationClassSchemaElement.subsetElement.save();
+                        break; //we can only link one association to the association class, so we break after the first one
+                    }
+                }
+            }
         }
-        private Association CreateSubSetAssociation(UML.Classes.Kernel.Classifier associationTarget,UTF_EA.Association existingAssociation)
+        private Association CreateSubSetAssociation(UML.Classes.Kernel.Classifier associationTarget, UTF_EA.Association existingAssociation)
         {
             UTF_EA.Association subSetAssociation;
-        	if (existingAssociation == null)
-        	{
-           		subSetAssociation = (UTF_EA.Association) this.model.factory.createNewElement<UML.Classes.Kernel.Association>
-           		 					(this.owner.subsetElement,this.sourceAssociation.name);
-           		subSetAssociation.addRelatedElement(associationTarget);
-        	}
-        	else
-        	{
-        		//subset association already exists
-        		subSetAssociation = existingAssociation;
-        		//report differences
-        		//different multiplicity
-        		if (subSetAssociation.targetEnd.EAMultiplicity != this.multiplicity)
-        		{
-        			EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-						                                              ,$"Multiplicity of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.EAMultiplicity}' to '{this.multiplicity}'"
-						                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
-						                                              , LogTypeEnum.warning);
-        		}
-        		//different target rolname
-        		if (subSetAssociation.targetEnd.name != this.otherEnd.name)
-        		{
-        			EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-						                                              ,$"Target rolename of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.name}' to '{this.otherEnd.name}'"
-						                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
-						                                              , LogTypeEnum.warning);
-        		}
-        	}
-           	//update name
+            if (existingAssociation == null)
+            {
+                subSetAssociation = (UTF_EA.Association)this.model.factory.createNewElement<UML.Classes.Kernel.Association>
+                                     (this.owner.subsetElement, this.sourceAssociation.name);
+                subSetAssociation.addRelatedElement(associationTarget);
+            }
+            else
+            {
+                //subset association already exists
+                subSetAssociation = existingAssociation;
+                //report differences
+                //different multiplicity
+                if (subSetAssociation.targetEnd.EAMultiplicity != this.multiplicity)
+                {
+                    EAOutputLogger.log(this.model, this.owner.owner.settings.outputName
+                                                                      , $"Multiplicity of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.EAMultiplicity}' to '{this.multiplicity}'"
+                                                                      , ((UTF_EA.ElementWrapper)subSetAssociation.source).id
+                                                                      , LogTypeEnum.warning);
+                }
+                //different target rolname
+                if (subSetAssociation.targetEnd.name != this.otherEnd.name)
+                {
+                    EAOutputLogger.log(this.model, this.owner.owner.settings.outputName
+                                                                      , $"Target rolename of association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has changed from '{subSetAssociation.targetEnd.name}' to '{this.otherEnd.name}'"
+                                                                      , ((UTF_EA.ElementWrapper)subSetAssociation.source).id
+                                                                      , LogTypeEnum.warning);
+                }
+            }
+            //update name
             subSetAssociation.name = this.sourceAssociation.name;
             //alias only if alias in the subset is emtpy
             if (string.IsNullOrEmpty(subSetAssociation.alias))
-            	((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
+                ((UTF_EA.Association)subSetAssociation).alias = ((UTF_EA.Association)sourceAssociation).alias;
             //Check if the subset alias is different from the source alias and issue warning if that is the case
-			if (!string.Equals(subSetAssociation.alias,((UTF_EA.Association)sourceAssociation).alias))
-			{
-					EAOutputLogger.log(this.model,this.owner.owner.settings.outputName
-                                              ,$"Association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has alias {subSetAssociation.alias} in the model and a different alias '{((UTF_EA.Association)sourceAssociation).alias}' in the subset"
-                                              ,((UTF_EA.ElementWrapper)subSetAssociation.source).id
-                                              , LogTypeEnum.warning);				
-			}
+            if (!string.Equals(subSetAssociation.alias, ((UTF_EA.Association)sourceAssociation).alias))
+            {
+                EAOutputLogger.log(this.model, this.owner.owner.settings.outputName
+                                          , $"Association between '{subSetAssociation.source.name}' and '{subSetAssociation.target.name}' has alias '{subSetAssociation.alias}' in the model and a different alias '{((UTF_EA.Association)sourceAssociation).alias}' in the subset"
+                                          , ((UTF_EA.ElementWrapper)subSetAssociation.source).id
+                                          , LogTypeEnum.warning);
+            }
             //notes only update them if they are empty or if settings
-			if (subSetAssociation.ownedComments.Count == 0 || ! subSetAssociation.ownedComments.Any(x => x.body.Length > 0)
+            if (subSetAssociation.ownedComments.Count == 0 || !subSetAssociation.ownedComments.Any(x => x.body.Length > 0)
                 || this.owner.owner.settings.keepNotesInSync)
-			{
-				subSetAssociation.ownedComments = this.sourceAssociation.ownedComments;
-				if (!this.owner.owner.settings.keepNotesInSync
+            {
+                subSetAssociation.ownedComments = this.sourceAssociation.ownedComments;
+                if (!this.owner.owner.settings.keepNotesInSync
                     && this.owner.owner.settings.prefixNotes
-				    && this.owner.owner.settings.prefixNotesText.Length > 0
-				    && subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
-				{
-					foreach (var comment in subSetAssociation.ownedComments) 
-					{
-						comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
-					}	
-				}
-			}
+                    && this.owner.owner.settings.prefixNotesText.Length > 0
+                    && subSetAssociation.ownedComments.Any(x => x.body.Length > 0))
+                {
+                    foreach (var comment in subSetAssociation.ownedComments)
+                    {
+                        comment.body = this.owner.owner.settings.prefixNotesText + Environment.NewLine + comment.body;
+                    }
+                }
+            }
             //stereotype
             subSetAssociation.stereotypes = this.sourceAssociation.stereotypes;
             //derived
@@ -367,11 +388,57 @@ namespace EAAddinFramework.SchemaBuilder
             //set the target multiplicity to a possible redefined multiplicity from the schema
             subSetAssociation.targetEnd.EAMultiplicity = this.multiplicity;
             //set the direction
-            //subSetAssociation.direction = this.eaSourceAssociation.direction;
+            if (this.eaSourceAssociation.direction.Equals("Unspecified", StringComparison.InvariantCultureIgnoreCase)
+                || this.eaSourceAssociation.direction.Equals("Bi-Directional", StringComparison.InvariantCultureIgnoreCase)
+                || ((UTF_EA.AssociationEnd)this.thisEnd).isSource == subSetAssociation.sourceEnd.isSource)
+            {
+                subSetAssociation.direction = this.eaSourceAssociation.direction;
+            }
+            else
+            {
+                if (this.eaSourceAssociation.direction.Equals("Source -> Destination", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (this.eaSourceAssociation.targetEnd.aggregation != UML.Classes.Kernel.AggregationKind.none)
+                    {
+                        //to avoid arrows showing up that were not there before
+                        subSetAssociation.direction = "Unspecified";
+                    }
+                    else
+                    {
+                        subSetAssociation.direction = "Destination -> Source";
+                    }
+                    
+                }
+                else if (this.eaSourceAssociation.direction.Equals("Destination -> Source", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    subSetAssociation.direction = "Source -> Destination";
+                }
+            }
+            //set the navigability based on the direction
+            switch (subSetAssociation.direction)
+            {
+                case "Unspecified":
+                    subSetAssociation.sourceEnd.navigable = "Unspecified";
+                    subSetAssociation.targetEnd.navigable = "Unspecified";
+                    break;
+                case "Bi-Directional":
+                    subSetAssociation.sourceEnd.navigable = "Navigable";
+                    subSetAssociation.targetEnd.navigable = "Navigable";
+                    break;
+                case "Destination -> Source":
+                    subSetAssociation.sourceEnd.navigable = "Navigable";
+                    subSetAssociation.targetEnd.navigable = "Unspecified";
+                    break;
+                case "Source -> Destination":
+                    subSetAssociation.sourceEnd.navigable = "Unspecified";
+                    subSetAssociation.targetEnd.navigable = "Navigable";
+                    break;
+            }
+            
             //save all changes
             subSetAssociation.save();
             //copy tagged values
-            ((EASchema) this.owner.owner).copyTaggedValues(this.eaSourceAssociation, subSetAssociation);
+            ((EASchema)this.owner.owner).copyTaggedValues(this.eaSourceAssociation, subSetAssociation);
             //add tagged value with reference to source association
             subSetAssociation.addTaggedValue(this.owner.owner.settings.sourceAssociationTagName, ((UTF_EA.Association)this.sourceAssociation).guid);
             //return
@@ -380,11 +447,13 @@ namespace EAAddinFramework.SchemaBuilder
 
         private void copyAssociationEndProperties(UTF_EA.AssociationEnd source, UTF_EA.AssociationEnd target)
         {
+            //the ends are reversed, and an aggregated end at the source that is navigable, should be unspecified because otherwise an arrow shows in the diagrams.
             target.name = source.name;
             target.EAMultiplicity = source.EAMultiplicity;
-            target.isNavigable = source.isNavigable;
+            target.navigable = source.navigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
+
             //TODO: copy alias of the AssociationEnd if the alias in the subset is empty.
             //target.save();
         }

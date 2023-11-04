@@ -9,6 +9,7 @@ using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
 using EAScriptAddin;
 using EAAddinFramework.EASpecific;
 using System.Reflection;
+using EAAddinFramework.Utilities;
 
 namespace EAAddinTester
 {
@@ -63,7 +64,7 @@ namespace EAAddinTester
             //addins.Add(new ECDMMessageComposer.ECDMMessageComposerAddin());
             //addins.Add(new EADatabaseTransformer.EADatabaseTransformerAddin{debugMode = true});
             //addins.Add(new GlossaryManager.GlossaryManagerAddin());
-            addins.Add(new EAJSON.EAJSONAddin());
+            addins.Add(new SAP2EAImporter.SAP2EAImporterAddin());
         }
         private static void initializeAddins()
         {
@@ -159,10 +160,35 @@ namespace EAAddinTester
         /// <summary>
         /// generic test method. To be filled in with whatever needs to be tested.
         /// </summary>
-        internal static void myTest()
+        internal static void myTest(string command, string arguments)
         {
+            //var progresBarWindows = new ProgressBarWindow();
+            //progresBarWindows.execute(command, arguments, "executing command title", "currently running this command", false);
             EAWrappers.Model model = new EAWrappers.Model();
-            string fqn = model.selectedItem.fqn;
+            var sqlQuery = "select top 1000 * from t_object o order by o.Object_ID desc";
+            Logger.log("Before DatasetFromQuery");
+            var dataset1 = model.getDataSetFromQuery(sqlQuery, false);
+            Logger.log("After DatasetFromQuery");
+            var dummy = model.connection;//to force initialisation of the database connections
+            Logger.log ("Before DatasetFromQuery2");
+            var dataset2 = model.getDataSetFromQuery2(sqlQuery, false);
+            Logger.log ("After DatasetFromQuery2");
+            //var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
+            //var outputName = "EATester";
+            ////test regular getting all elements
+            ////EAOutputLogger.clearLog(model, outputName);
+            ////EAOutputLogger.log(model, outputName, $"starting regular test for package '{selectedPackage?.name}'", 0);
+            ////var elements = selectedPackage.getAllOwnedElements();
+            ////EAOutputLogger.log(model, outputName, $"found {elements.Count} new elements", 0);
+            //var connector = model.getRelationByGUID("{B34E3FAE-B047-46be-B4BD-EFA5D1DD1B27}");
+            //var sourceEnd = connector.sourceEnd;
+            //foreach(var tag in sourceEnd.taggedValues)
+            //{
+            //    EAOutputLogger.log(model, outputName, $"found {tag.name} with value {tag.tagValue} ", 0);
+            //    tag.tagValue = "12";
+            //    tag.save();
+            //}
+
         }
         /// <summary>
         /// Gets the Repository object from the currently running instance of EA.

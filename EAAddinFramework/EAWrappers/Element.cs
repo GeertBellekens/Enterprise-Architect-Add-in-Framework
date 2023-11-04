@@ -8,8 +8,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public abstract class Element : UML.Classes.Kernel.Element
     {
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
-        internal global::EA.Element wrappedElement { get; set; }
-        protected bool saveOwnedElements { get; set; } = true;
+        internal EADBElement wrappedElement { get; set; }
+        protected bool saveOwnedElements { get; set; } = false;
         /// <summary>
         /// resets teh property info making sure all properties are reset
         /// </summary>
@@ -338,22 +338,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._taggedValues == null)
                 {
-                    if (this.eaTaggedValuesCollection == null)
-                    {
-                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
-                    }
-                    else
-                    {
-                        //make sure we have the latest set of tagged values
-                        this.eaTaggedValuesCollection?.Refresh();
-                        //create the tagged values from the EA collection
-                        this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.eaTaggedValuesCollection));
-                    }
-                    
+                    //create the tagged values from the EA collection
+                    this._taggedValues = new HashSet<UML.Profiles.TaggedValue>(this.EAModel.factory.createTaggedValues(this, this.getEADBTaggedValues()));   
                 }
                 return this._taggedValues;
             }
             set => throw new NotImplementedException();
+        }
+        public void addExistingTaggedValue(UML.Profiles.TaggedValue taggedValue)
+        {
+            if (taggedValue == null) return;
+            if (this._taggedValues == null)
+            {
+                //create the tagged values from the EA collection
+                this._taggedValues = new HashSet<UML.Profiles.TaggedValue>();
+            }
+            this._taggedValues.Add(taggedValue);
+        }
+        public virtual List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return new List<EADBTaggedValue>();//default empty implementation TODO: fix for connector ends and parameters
         }
         protected abstract string getTaggedValueQuery(string taggedValueName);
         /// <summary>

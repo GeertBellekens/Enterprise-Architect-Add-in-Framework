@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class ElementTag : TaggedValue
     {
 
-        internal global::EA.TaggedValue wrappedTaggedValue { get; set; }
-        internal ElementTag(Model model, Element owner, global::EA.TaggedValue eaTag) : base(model, owner)
+        internal EADBElementTag wrappedTaggedValue { get; set; }
+        internal ElementTag(Model model, Element owner, EADBElementTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -52,8 +53,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.TaggedValue;
+            var otherTag = eaTag as EADBElementTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
+        }
+        public int elementID => this.wrappedTaggedValue.ElementID;
+        public static void loadElementTags(Dictionary<int, ElementWrapper> elementDictionary, Model model)
+        {
+            var eaDBElementTags = EADBElementTag.getTaggedValuesForElementIDs(elementDictionary.Keys, model);
+
+            //add the tags to their respective elements
+            foreach (var eaDBElementTag in eaDBElementTags)
+            {
+                if (elementDictionary.TryGetValue(eaDBElementTag.ElementID, out ElementWrapper elementWrapper))
+                {
+                    var elementTag = model.factory.createTaggedValue(elementWrapper, eaDBElementTag);
+                    elementWrapper.addExistingTaggedValue(elementTag);
+                }
+            }
         }
     }
 }

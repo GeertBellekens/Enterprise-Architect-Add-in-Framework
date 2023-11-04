@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
     {
         private UML_SM.TransitionKind _kind = UML_SM.TransitionKind._external;
 
-        public Transition(Model model, global::EA.Connector transition)
+        public Transition(Model model, EADBConnector transition)
             : base(model, transition)
         {
         }

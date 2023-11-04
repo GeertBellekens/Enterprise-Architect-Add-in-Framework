@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class AttributeTag : TaggedValue
     {
 
-        internal global::EA.AttributeTag wrappedTaggedValue { get; set; }
-        internal AttributeTag(Model model, Element owner, global::EA.AttributeTag eaTag) : base(model, owner)
+        internal EADBAttributeTag wrappedTaggedValue { get; set; }
+        internal AttributeTag(Model model, Element owner, EADBAttributeTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID => this.wrappedTaggedValue.TagGUID;
+        public override string uniqueID => this.wrappedTaggedValue.PropertyGUID;
         public override string comment
         {
             get => this.wrappedTaggedValue.Notes;
@@ -37,7 +38,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._owner == null)
                 {
-                    this._owner = this.model.getAttributeWrapperByID(this.wrappedTaggedValue.AttributeID);
+                    this._owner = this.model.getAttributeWrapperByID(this.wrappedTaggedValue.ElementID);
                 }
                 return this._owner;
             }
@@ -45,7 +46,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
 
-        public override string ea_guid => this.wrappedTaggedValue.TagGUID;
+        public override string ea_guid => this.wrappedTaggedValue.PropertyGUID;
 
         public override void save()
         {
@@ -54,8 +55,25 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.AttributeTag;
-            return otherTag != null && otherTag.TagGUID == this.uniqueID;
+            var otherTag = eaTag as EADBAttributeTag;
+            return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
+        public int attributeID => this.wrappedTaggedValue.ElementID;
+
+        public static void loadAttributeTags(Dictionary<int,AttributeWrapper> attributeDictionary, Model model)
+        {
+            var attributeIDs = attributeDictionary.Keys;
+            var eaDBAttributeTags = EADBAttributeTag.getTaggedValuesForElementIDs(attributeIDs, model);
+            //add the attributes to their respective elements
+            foreach (var dbAttributeTag in eaDBAttributeTags)
+            {
+                if (attributeDictionary.TryGetValue(dbAttributeTag.ElementID, out AttributeWrapper attributeWrapper))
+                {
+                    var attributeTag = model.factory.createTaggedValue(attributeWrapper, dbAttributeTag);
+                    attributeWrapper.addExistingTaggedValue(attributeTag);
+                }
+            }
+        }
+
     }
 }

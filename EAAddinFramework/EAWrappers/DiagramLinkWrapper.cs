@@ -181,7 +181,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public void select()
         {
             this.diagram.open();
-            ((EA.Diagram)this.diagram).wrappedDiagram.SelectedConnector = this.relation.wrappedConnector;
+            ((EA.Diagram)this.diagram).wrappedDiagram.SelectedConnector = this.relation.wrappedConnector.eaConnector;
         }
 
         public void open()

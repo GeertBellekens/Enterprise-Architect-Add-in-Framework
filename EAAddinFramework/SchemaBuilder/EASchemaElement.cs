@@ -21,7 +21,7 @@ namespace EAAddinFramework.SchemaBuilder
         private HashSet<SBF.SchemaProperty> _schemaProperties;
         private TSF_EA.ElementWrapper _sourceElement;
         private HashSet<SBF.SchemaAssociation> _schemaAssociations;
-        private HashSet<SBF.SchemaLiteral> _schemaLiterals;
+        private HashSet<SBF.SchemaProperty> _schemaLiterals;
 
         public EASchemaElement(TSF_EA.Model model, EASchema owner, EA.SchemaType objectToWrap)
         {
@@ -87,7 +87,7 @@ namespace EAAddinFramework.SchemaBuilder
                 }
                 return this._sourceElement as UML.Classes.Kernel.Classifier;
             }
-            set => throw new NotImplementedException();
+            set => this._sourceElement = value as TSF_EA.ElementWrapper;
         }
         internal TSF_EA.ElementWrapper eaSourceElement => this.sourceElement as TSF_EA.ElementWrapper;
         public UML.Classes.Kernel.Classifier subsetElement { get; set; }
@@ -111,7 +111,7 @@ namespace EAAddinFramework.SchemaBuilder
             }
         }
         private HashSet<EASchemaPropertyWrapper> _schemaPropertyWrappers;
-        private HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
+        internal HashSet<EASchemaPropertyWrapper> schemaPropertyWrappers
         {
             get
             {
@@ -148,20 +148,20 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._schemaProperties == null)
                 {
-                    this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<SBF.SchemaProperty>());
+                    this._schemaProperties = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<EASchemaProperty>().Where(x => ! x.isLiteral));
                 }
                 return this._schemaProperties;
             }
             set => throw new NotImplementedException();
         }
 
-        public HashSet<SBF.SchemaLiteral> schemaLiterals
+        public HashSet<SBF.SchemaProperty> schemaLiterals
         {
             get
             {
                 if (this._schemaLiterals == null)
                 {
-                    this._schemaLiterals = new HashSet<SBF.SchemaLiteral>(this.schemaPropertyWrappers.OfType<SBF.SchemaLiteral>());
+                    this._schemaLiterals = new HashSet<SBF.SchemaProperty>(this.schemaPropertyWrappers.OfType<EASchemaProperty>().Where(x => x.isLiteral));
                 }
                 return this._schemaLiterals;
             }
@@ -208,6 +208,10 @@ namespace EAAddinFramework.SchemaBuilder
                 else if (this.sourceElement is DataType)
                 {
                     this.subsetElement = this.model.factory.createNewElement<DataType>(destinationPackage, this.wrappedSchemaType.TypeName);
+                }
+                else if (this.sourceElement is Association)
+                {
+                    this.subsetElement = this.model.factory.createNewElement<TSF_EA.NaryAssociation>(destinationPackage, this.wrappedSchemaType.TypeName);
                 }
             }
             else
@@ -630,7 +634,7 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         public void createSubsetLiterals()
         {
-            foreach (EASchemaLiteral schemaLiteral in this.schemaLiterals)
+            foreach (var schemaLiteral in this.schemaLiterals.OfType<EASchemaProperty>())
             {
                 schemaLiteral.createSubsetLiteral();
             }
@@ -752,7 +756,7 @@ namespace EAAddinFramework.SchemaBuilder
                     {
                         //if there are not attributes that have the same name as the depencency and the same type as the target then
                         //the dependency can be deleted
-                        if (!this.subsetElement.attributes.Any(x => dependency.target.Equals(x.type) && dependency.name == x.name))
+                        if (!this.subsetElement.attributes.Any(x => dependency.target?.Equals(x.type) == true && dependency.name == x.name))
                         {
                             dependency.delete();
                         }
@@ -787,7 +791,7 @@ namespace EAAddinFramework.SchemaBuilder
                 //remove generalizations that shouldn't be there
                 foreach (var subsetGeneralization in subsetGeneralizations)
                 {
-                    var schemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier, null);
+                    var schemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier, null, false);
                     if (schemaParent == null) //the generalization does not target an element in the schema
                     {
                         schemaParent = ((EASchema)this.owner).getSchemaElementForUMLElement(subsetGeneralization.target);
@@ -897,11 +901,10 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
+
                 foreach (TSF_EA.Attribute attribute in this.subsetElement.attributes.ToList())
                 {
-                    //tell the user what we are doing 
-                    EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching subset attribute: '" + attribute.name + "' to a schema property"
-                                       , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
+                    
                     EASchemaProperty matchingProperty = this.getMatchingSchemaProperty(attribute);
                     if (matchingProperty != null)
                     {
@@ -943,10 +946,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     foreach (TSF_EA.EnumerationLiteral literal in subsetElementWrapper.ownedLiterals)
                     {
-                        //tell the user what we are doing 
-                        EAOutputLogger.log(this.model, this.owner.settings.outputName, $"Matching subset literal: '{literal.name}' to a schema property"
-                                       , subsetElementWrapper.id, LogTypeEnum.log);
-                        EASchemaLiteral matchingLiteral = this.getMatchingSchemaLiteral(literal);
+                        var matchingLiteral = this.getMatchingSchemaLiteral(literal);
                         if (matchingLiteral != null)
                         {
                             //found a match
@@ -980,14 +980,14 @@ namespace EAAddinFramework.SchemaBuilder
         /// </summary>
         /// <param name="literal">the literal to match</param>
         /// <returns>the corresponding SchemaLiteral</returns>
-        EASchemaLiteral getMatchingSchemaLiteral(TSF_EA.EnumerationLiteral literal)
+        EASchemaProperty getMatchingSchemaLiteral(TSF_EA.EnumerationLiteral literal)
         {
-            EASchemaLiteral result = null;
+            EASchemaProperty result = null;
             var sourceAttributeTag = literal.getTaggedValue(this.owner.settings.sourceAttributeTagName);
             if (sourceAttributeTag != null)
             {
                 string tagReference = sourceAttributeTag.eaStringValue;
-                result = this.schemaLiterals.OfType<EASchemaLiteral>().FirstOrDefault(x => x.sourceLiteral?.uniqueID == tagReference);
+                result = this.schemaLiterals.OfType<EASchemaProperty>().FirstOrDefault(x => x.sourceLiteral?.uniqueID == tagReference);
             }
             return result;
         }
@@ -1077,9 +1077,6 @@ namespace EAAddinFramework.SchemaBuilder
         {
             if (!this.isShared && this.subsetElement != null)
             {
-                //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.owner.settings.outputName, "Matching relations of subset element: '" + this.subsetElement.name + "' to the schema"
-                                   , ((TSF_EA.ElementWrapper)this.subsetElement).id, LogTypeEnum.log);
                 //get outgoing associations of the subset element
                 foreach (TSF_EA.Association association in this.subsetElement.getRelationships<Association>(true, false))
                 {

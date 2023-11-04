@@ -8,12 +8,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class ConnectorWrapper : Element, UML.Classes.Kernel.Relationship
     {
-        internal global::EA.Connector wrappedConnector { get; set; }
+        internal EADBConnector wrappedConnector { get; set; }
         private UML.Classes.Kernel.Element _source;
         private UML.Classes.Kernel.Element _target;
         private AssociationEnd _sourceEnd;
         private AssociationEnd _targetEnd;
-        public ConnectorWrapper(Model model, global::EA.Connector connector)
+        public ConnectorWrapper(Model model, EADBConnector connector)
           : base(model)
         {
             this.wrappedConnector = connector;
@@ -51,6 +51,37 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => this.wrappedConnector.Direction;
             set => this.wrappedConnector.Direction = value;
         }
+        private HashSet<UML.Classes.Kernel.Constraint> _constraints;
+        public override HashSet<UML.Classes.Kernel.Constraint> constraints
+        {
+            get
+            {
+                if (this._constraints == null)
+                {
+                    //refresh attributes to make sure we have an up-to-date list
+                    var eaDBconstraints = EADBConnectorConstraint.getEADBConnectorConstraintsForConnectorIDs
+                                    (new List<int>() { this.id }, this.EAModel);
+                    this._constraints = new HashSet<UML.Classes.Kernel.Constraint>(
+                        this.EAModel.factory.createElements(eaDBconstraints).Cast<UML.Classes.Kernel.Constraint>());
+
+                }
+                return this._constraints;
+            }
+            set => throw new NotImplementedException();
+        }
+        public ConnectorConstraint addConnectorConstraint(string name)
+        {
+            return this.EAModel.eaFactory.addElementToEACollection<ConnectorConstraint>(this.wrappedConnector.Constraints, name, "ConnectorConstraint");
+        }
+        public void addExistingConstraint(UML.Classes.Kernel.Constraint constraint)
+        {
+            if (constraint == null) return;
+            if (this._constraints == null)
+            {
+                this._constraints = new HashSet<UML.Classes.Kernel.Constraint>();
+            }
+            this._constraints.Add(constraint);
+        }
 
         internal Element sourceElement
         {
@@ -84,6 +115,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return null;
             }
         }
+        internal int ClientID => this.wrappedConnector.ClientID;
+        internal int SupplierID => this.wrappedConnector.SupplierID;
         internal Element targetElement
         {
             get
@@ -123,7 +156,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public int id => this.wrappedConnector.ConnectorID;
 
 
-        public global::EA.Connector WrappedConnector => this.wrappedConnector;
+        public EADBConnector WrappedConnector => this.wrappedConnector;
         public override void open()
         {
             var diagrams = this.getDependentDiagrams();
@@ -408,29 +441,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool isDerived
         {
-            get
-            {
-                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
-                {
-                    if (property.Name == "isDerived")
-                    {
-                        return property.Value != "0" 
-                            && ! property.Value.Equals("false",StringComparison.InvariantCultureIgnoreCase) ;
-                    }
-                }
-                //return false by default
-                return false;
-            }
-            set
-            {
-                foreach (global::EA.CustomProperty property in this.wrappedConnector.CustomProperties)
-                {
-                    if (property.Name == "isDerived")
-                    {
-                        property.Value = value ? "-1" : "0";
-                    }
-                }
-            }
+            get => this.wrappedConnector.isDerived;
+            set => this.wrappedConnector.isDerived = value;
         }
 
         public List<UML.Classes.Kernel.Property> navigableOwnedEnds
@@ -479,7 +491,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._sourceEnd == null)
                 {
-                    this._sourceEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd, false);
+                    this._sourceEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.ClientEnd);
                 }
                 return this._sourceEnd;
             }
@@ -490,7 +502,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._targetEnd == null)
                 {
-                    this._targetEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd, true);
+                    this._targetEnd = ((Factory)this.EAModel.factory).createAssociationEnd(this, this.wrappedConnector.SupplierEnd);
                 }
                 return this._targetEnd;
             }
@@ -649,6 +661,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// </summary>
         protected virtual void setDirection()
         {
+            if ( ! string.IsNullOrEmpty(this.wrappedConnector.Direction))
+            {
+                return; //don't do anything if it's already set
+            }
             string direction = "Unspecified"; //default
             if (this.targetEnd != null && this.sourceEnd != null)
             {
@@ -797,6 +813,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return @"select tv.ea_guid from t_connectortag tv
 			where 
 			tv.Property = '" + taggedValueName + "' and tv.ElementID = " + this.id;
+        }
+
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBConnectorTag.getTaggedValuesForElementID(id, this.EAModel);
         }
 
         #endregion

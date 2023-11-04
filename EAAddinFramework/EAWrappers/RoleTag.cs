@@ -5,8 +5,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class RoleTag : TaggedValue
     {
 
-        internal global::EA.RoleTag wrappedTaggedValue { get; set; }
-        internal RoleTag(Model model, Element owner,  global::EA.RoleTag eaTag) : base(model, owner)
+        internal EADBRoleTag wrappedTaggedValue { get; set; }
+        internal RoleTag(Model model, Element owner, EADBRoleTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -32,7 +32,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override string name
         {
-            get => this.wrappedTaggedValue.Tag;
+            get => this.wrappedTaggedValue.Name;
             set => throw new NotImplementedException();
         }
 
@@ -42,14 +42,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._owner == null)
                 {
-                    var owningRelation = this.model.getRelationByGUID(this.wrappedTaggedValue.ElementGUID) as ConnectorWrapper;
-                    if (this.wrappedTaggedValue.BaseClass == "ASSOCIATION_TARGET")
+                    var owningRelation = this.model.getRelationByGUID(this.wrappedTaggedValue.ConnectorGUID) as ConnectorWrapper;
+                    if (this.wrappedTaggedValue.isSource)
                     {
-                        this._owner = owningRelation.targetEnd;
+                        this._owner = owningRelation.sourceEnd;
                     }
                     else
                     {
-                        this._owner = owningRelation.sourceEnd;
+                        this._owner = owningRelation.targetEnd;
                     }
                 }
                 return this._owner;
@@ -65,7 +65,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.RoleTag;
+            var otherTag = eaTag as EADBRoleTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
     }

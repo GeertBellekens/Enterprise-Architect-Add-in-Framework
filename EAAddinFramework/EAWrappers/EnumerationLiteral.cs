@@ -12,7 +12,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     /// </summary>
     public class EnumerationLiteral : AttributeWrapper, UML.Classes.Kernel.EnumerationLiteral
     {
-        public EnumerationLiteral(Model model, global::EA.Attribute wrappedAttribute)
+        public EnumerationLiteral(Model model, EADBAttribute wrappedAttribute)
       : base(model, wrappedAttribute)
         {
             if (!this.wrappedAttribute.StyleEx.Contains("IsLiteral="))
@@ -26,10 +26,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public override bool isLocked => ((Element)this.owner).isLocked;
 
-        public static bool isLiteralValue(Model model, global::EA.Attribute wrappedAttribute)
+        public static bool isLiteralValue( EADBAttribute wrappedAttribute, Model model)
         {
-            //if the field StyleEx contains "IsLiteral=1" then it is a literal value
-            return (wrappedAttribute.StyleEx.Contains("IsLiteral=1"));
+            //if the field StyleEx contains "IsLiteral=1" then it is is definitely a literal value
+            if (wrappedAttribute.StyleEx.Contains("IsLiteral=1"))
+            {
+                return true;
+            }
+            //if the field StyleEx contains "IsLiteral=0" then it is is definitely not literal value
+            if (wrappedAttribute.StyleEx.Contains("IsLiteral=0"))
+            {
+                return false;
+            }
+            var owner = model.getElementWrapperByID(wrappedAttribute.ParentID);
+            //if neither is filled in, we need to check the parent. If it's an enumeration, then it's a literal value
+            return (owner != null && owner is Enumeration);
         }
         public bool? booleanValue()
         {

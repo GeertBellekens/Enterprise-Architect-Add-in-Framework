@@ -8,7 +8,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class Association : ConnectorWrapper, UML.Classes.Kernel.Association
     {
-        public Association(Model model, global::EA.Connector association): base(model, association)
+        public Association(Model model, EADBConnector association)
+            : base(model, association)
         { }
 
         public override HashSet<UML.Classes.Kernel.Element> ownedElements

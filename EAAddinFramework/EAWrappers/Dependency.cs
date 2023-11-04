@@ -7,7 +7,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA {
   public class Dependency : ConnectorWrapper, 
                             UML.Classes.Dependencies.Dependency 
   {
-    public Dependency(Model model, global::EA.Connector dependency)
+    public Dependency(Model model, EADBConnector dependency)
       : base(model, dependency)
     {}
   }

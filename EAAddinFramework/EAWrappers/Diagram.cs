@@ -369,7 +369,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         Message message = (Message)diagramLinkWrapper.relation;
                         if (itemToSelect.Equals(message.calledOperation))
                         {
-                            this.wrappedDiagram.SelectedConnector = message.wrappedConnector;
+                            this.wrappedDiagram.SelectedConnector = message.wrappedConnector.eaConnector;
                             found = true;
                             //done, no need to loop further
                             break;
@@ -406,7 +406,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             else if (itemToSelect is ConnectorWrapper)
             {
-                this.wrappedDiagram.SelectedConnector = ((ConnectorWrapper)itemToSelect).wrappedConnector;
+                this.wrappedDiagram.SelectedConnector = ((ConnectorWrapper)itemToSelect).wrappedConnector.eaConnector;
                 //check if it worked
                 if (wrappedDiagram.SelectedConnector == null
                    && itemToSelect is Message)

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class RelationTag : TaggedValue
     {
 
-        internal global::EA.ConnectorTag wrappedTaggedValue { get; set; }
-        internal RelationTag(Model model, Element owner, global::EA.ConnectorTag eaTag) : base(model, owner)
+        internal EADBConnectorTag wrappedTaggedValue { get; set; }
+        internal RelationTag(Model model, Element owner, EADBConnectorTag eaTag) : base(model, owner)
         {
             this.wrappedTaggedValue = eaTag;
         }
@@ -14,7 +15,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// <summary>
         /// return the unique ID of this element
         /// </summary>
-        public override string uniqueID => this.wrappedTaggedValue.TagGUID;
+        public override string uniqueID => this.wrappedTaggedValue.PropertyGUID;
         public override string eaStringValue
         {
             get => this.wrappedTaggedValue.Value;
@@ -44,14 +45,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             {
                 if (this._owner == null)
                 {
-                    this._owner = this.model.getRelationByID(this.wrappedTaggedValue.ConnectorID);
+                    this._owner = this.model.getRelationByID(this.wrappedTaggedValue.ElementID);
                 }
                 return this._owner;
             }
             set => throw new NotImplementedException();
         }
 
-        public override string ea_guid => this.wrappedTaggedValue.TagGUID;
+        public override string ea_guid => this.wrappedTaggedValue.PropertyGUID;
 
         public override void save()
         {
@@ -59,8 +60,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
-            var otherTag = eaTag as global::EA.ConnectorTag;
-            return otherTag != null && otherTag.TagGUID == this.uniqueID;
+            var otherTag = eaTag as EADBConnectorTag;
+            return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
+        }
+        public int connectorID => this.wrappedTaggedValue.ElementID;
+        public static void loadConnectorTags(Dictionary<int, ConnectorWrapper> connectorDictionary, Model model)
+        {
+            //connectorTags
+            var eaDBConnectorTags = EADBConnectorTag.getTaggedValuesForElementIDs(connectorDictionary.Keys, model);
+            foreach (var dbConnectorTag in eaDBConnectorTags)
+            {
+                if (connectorDictionary.TryGetValue(dbConnectorTag.ElementID, out ConnectorWrapper connectorWrapper))
+                {
+                    var connectorTag = model.factory.createTaggedValue(connectorWrapper, dbConnectorTag);
+                    connectorWrapper.addExistingTaggedValue(connectorTag);
+                }
+            }
         }
     }
 }

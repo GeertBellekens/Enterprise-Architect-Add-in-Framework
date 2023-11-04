@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using UML = TSF.UmlToolingFramework.UML;
@@ -13,26 +13,20 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         /// the default for multiplicities on associationEnds should be 0..1 but we fixed it to 1..1 to match the way EA does XSD generation.
         /// </summary>
         public const string defaultMultiplicity = "1..1";
-        internal global::EA.ConnectorEnd wrappedAssociationEnd { get; set; }
+        internal EADBConnectorEnd wrappedAssociationEnd { get; set; }
         private ConnectorWrapper connectorWrapper { get; set; }
         private bool? _isNavigable { get; set; }
 
         public AssociationEnd(Model model, ConnectorWrapper linkedConnector,
-                              global::EA.ConnectorEnd associationEnd, bool isTarget) : base(model)
+                              EADBConnectorEnd associationEnd) : base(model)
         {
             this.wrappedAssociationEnd = associationEnd;
             this.connectorWrapper = linkedConnector;
-            this.isTarget = isTarget;
             this.isDirty = true;
         }
-        public bool isTarget { get; private set; }
-        public bool isSource
-        {
-            get
-            {
-                return !this.isTarget;
-            }
-        }
+        public bool isTarget => !this.isSource;
+        public bool isSource => this.wrappedAssociationEnd.isSource;
+
         public override bool isLocked => ((Element)this.owner).isLocked;
 
         public override HashSet<UML.Classes.Kernel.Element> ownedElements
@@ -53,7 +47,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get
             {
                 return ((Factory)this.EAModel.factory).createStereotypes(
-                         this, this.wrappedAssociationEnd.StereotypeEx);
+                         this, this.wrappedAssociationEnd.Stereotype);
             }
             set { throw new NotImplementedException(); }
         }
@@ -164,6 +158,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set { throw new NotImplementedException(); }
         }
 
+        public Association EAAssociation
+        {
+            get { return (Association)this.association; }
+            set { this.association = value; }
+        }
+
         public UML.Classes.Kernel.Association owningAssociation
         {
             get { return this.association; }
@@ -238,6 +238,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.wrappedAssociationEnd.Visibility =
                   VisibilityKind.getEAVisibility(value);
             }
+        }
+        public string navigable
+        {
+            get => this.wrappedAssociationEnd.Navigable;
+            set => this.wrappedAssociationEnd.Navigable = value;
         }
 
         public String qualifiedName
@@ -408,8 +413,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         {
                             //end of workaround
 
-                            _isNavigable = this.wrappedAssociationEnd.Navigable == "Navigable"
-                                || this.wrappedAssociationEnd.IsNavigable;
+                            _isNavigable = this.wrappedAssociationEnd.Navigable == "Navigable";
+                                //|| this.wrappedAssociationEnd.IsNavigable;
                         }
                     }
                 }
@@ -417,18 +422,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             set
             {
-                //the setter apparently also doesn't work properly so we go directly to the database
-                string dbField = this.isTarget ? "DestStyle" : "SourceStyle";
-                string dbValue = value ? "Navigable=Navigable;" : "Navigable=Non-Navigable;";
                 if (value)
                 {
                     this.wrappedAssociationEnd.Navigable = "Navigable";
-                    this.wrappedAssociationEnd.IsNavigable = true;
+                    //this.wrappedAssociationEnd.IsNavigable = true; //deprecated by Sparx
                 }
                 else
                 {
                     this.wrappedAssociationEnd.Navigable = "Non-Navigable";
-                    this.wrappedAssociationEnd.IsNavigable = false;
+                    //this.wrappedAssociationEnd.IsNavigable = false; //deprecated by Sparx
                 }
                 _isNavigable = value;
             }
@@ -532,6 +534,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return @"select tv.PropertyID from t_taggedvalue tv
 			where tv.TagValue like '" + taggedValueName + "' "
                 + " and tv.ElementID = '" + this.owningAssociation.uniqueID + "'";
+        }
+
+        public override List<EADBTaggedValue> getEADBTaggedValues()
+        {
+            return EADBRoleTag.getTaggedValuesForElementID(this.EAAssociation.id, this.EAModel)
+                .OfType<EADBRoleTag>().Where(x => x.isSource == this.isSource).ToList<EADBTaggedValue>();
         }
 
         #endregion

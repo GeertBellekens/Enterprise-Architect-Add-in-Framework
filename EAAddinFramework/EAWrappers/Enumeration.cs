@@ -6,7 +6,7 @@
     public class Enumeration : DataType, UML.Classes.Kernel.Enumeration
     {
 
-        public Enumeration(Model model, global::EA.Element elementToWrap)
+        public Enumeration(Model model, EADBElement elementToWrap)
       : base(model, elementToWrap)
         { }
 
