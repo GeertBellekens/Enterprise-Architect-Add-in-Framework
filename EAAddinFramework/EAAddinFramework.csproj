@@ -211,6 +211,7 @@
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />
     <Compile Include="Databases\View.cs" />
     <Compile Include="EAAddinBase.cs" />
+    <Compile Include="EASpecific\DefaultScriptRepsitory.cs" />
     <Compile Include="EADBWrappers\EADBAttributeConstraint.cs" />
     <Compile Include="EADBWrappers\EADBAttributeTag.cs" />
     <Compile Include="EADBWrappers\EADBAttribute.cs" />
@@ -227,10 +228,16 @@
     <Compile Include="EADBWrappers\EADBTaggedValue.cs" />
     <Compile Include="EADBWrappers\IndexedList.cs" />
     <Compile Include="EASpecific\EAAddin.cs" />
+    <Compile Include="EASpecific\IncludeNotFoundException.cs" />
+    <Compile Include="EASpecific\LocalScriptRepository.cs" />
+    <Compile Include="EASpecific\MDGScriptRepository.cs" />
+    <Compile Include="EASpecific\ModelScriptRepository.cs" />
     <Compile Include="EASpecific\ScriptCtrl.cs" />
     <Compile Include="EASpecific\ScriptCtrl32.cs" />
     <Compile Include="EASpecific\ScriptCtrl64.cs" />
     <Compile Include="EASpecific\ScriptGroup.cs" />
+    <Compile Include="EASpecific\ScriptRepository.cs" />
+    <Compile Include="EASpecific\ScriptRepositoryProxy.cs" />
     <Compile Include="EASpecific\ScriptType.cs" />
     <Compile Include="EASpecific\JavaScriptLanguage.cs" />
     <Compile Include="EASpecific\JavaScriptLanguageBase.cs" />
@@ -238,6 +245,7 @@
     <Compile Include="EASpecific\Script.cs" />
     <Compile Include="EASpecific\ScriptFunction.cs" />
     <Compile Include="EASpecific\ScriptLanguage.cs" />
+    <Compile Include="EASpecific\UnsupportedLanguage.cs" />
     <Compile Include="EASpecific\User.cs" />
     <Compile Include="EASpecific\VBScriptLanguage.cs" />
     <Compile Include="EASpecific\WorkingSet.cs" />

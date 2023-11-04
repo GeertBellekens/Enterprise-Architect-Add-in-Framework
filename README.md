@@ -23,3 +23,10 @@ An Example add-in
 
 ##### More info:
 https://bellekens.com
+
+## Developing
+
+### Logging
+
+EAAddinFramework.Utilities.Logger has log() for generic messages, and specific
+ones for: logError(), logWarning(), logDebug(), logTrace()

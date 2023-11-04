@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 
 using EADatabaseTransformer;
 using EAWrappers = TSF.UmlToolingFramework.Wrappers.EA;
+using EAScriptAddin;
+using EAAddinFramework.EASpecific;
+using System.Reflection;
 using EAAddinFramework.Utilities;
 
 namespace EAAddinTester
@@ -25,6 +28,21 @@ namespace EAAddinTester
         [STAThread]
         static void Main()
         {
+            mainEAScriptAddinSettingForm();
+        }
+
+        private static void mainEAScriptAddinSettingForm()
+        {
+            List<MethodInfo> operations = new List<MethodInfo>();
+            List<ScriptFunction> functions = new List<ScriptFunction>();
+            List<Script> scripts = new List<Script>();
+            EAScriptAddinAddinClass scriptAddin = new EAScriptAddinAddinClass();
+            EAScriptAddinSettingForm form = new EAScriptAddinSettingForm(operations, functions, scripts, scriptAddin);
+            Application.Run(form);
+        }
+
+        private static void mainEAAddinTesterForm()
+        {
             addAddIns();
             eaRepository = getOpenedModel();
             if (eaRepository != null)
@@ -36,6 +54,7 @@ namespace EAAddinTester
                 Application.Run(form);
             }
         }
+
         private static void addAddIns()
         {
             //addins.Add(new MyAddin.MyAddinClass());
