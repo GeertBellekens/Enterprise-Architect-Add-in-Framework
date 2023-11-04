@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         private static string _applicationFullPath;
 
 
-        public bool useCache {get;set;} = false;
+        public bool useCache { get; set; } = false;
         private Dictionary<int, ElementWrapper> elementsByID = new Dictionary<int, ElementWrapper>();
         private Dictionary<string, ElementWrapper> elementsByGUID = new Dictionary<string, ElementWrapper>();
 
@@ -350,7 +351,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             List<EADBElement> EADBElements;
             if (this.useCache)
             {
-                foreach(var guid in GUIDs.Where(x => this.elementsByGUID.ContainsKey(x)))
+                foreach (var guid in GUIDs.Where(x => this.elementsByGUID.ContainsKey(x)))
                 {
                     elementWrappers.Add(this.elementsByGUID[guid]);
                 }
@@ -558,7 +559,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //return
             return attributeWrapper;
         }
-        public List<AttributeWrapper> getAttributeWrapperByGUIDs (List<string> attributeGUIDs)
+        public List<AttributeWrapper> getAttributeWrapperByGUIDs(List<string> attributeGUIDs)
         {
             var attributeWrappers = new List<AttributeWrapper>();
             List<EADBAttribute> EADBAttributes;
@@ -849,8 +850,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     headers = new List<String>();
                 }
                 var rowList = new List<string>();
-                
-                foreach (XmlNode childNode in rowNode.ChildNodes )
+
+                foreach (XmlNode childNode in rowNode.ChildNodes)
                 {
                     if (includeHeaders && list.Count == 0)
                     {
@@ -868,6 +869,45 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
             return list;
         }
+        private SqlConnection _connection;
+        public SqlConnection connection
+        {
+            get
+            {
+                if (_connection == null)
+                {
+                    this._connection = new SqlConnection("Integrated Security=true;Initial Catalog=TMF;Data Source=DESKTOP-BGN5EL4");
+                    this._connection.Open();
+                }
+                return this._connection;
+            }
+        }
+        public List<List<string>> getDataSetFromQuery2(string sqlQuery, bool includeHeaders)
+        {
+            var list = new List<List<string>>();
+            using (var cmd = new SqlCommand(sqlQuery, this.connection)
+                                {CommandType = System.Data.CommandType.Text})
+            {
+                using (SqlDataReader objReader = cmd.ExecuteReader())
+                {
+                    if (objReader.HasRows)
+                    {
+                        while (objReader.Read())
+                        {
+                            var row = new List<string>();
+                            for (int i = 0; i < objReader.VisibleFieldCount; i++)
+                            {
+                                string item = objReader.GetValue(i).ToString();
+                                row.Add(item);
+                            }
+                            list.Add(row);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
 
         /// <summary>
         /// sets the correct wildcards depending on the database type.

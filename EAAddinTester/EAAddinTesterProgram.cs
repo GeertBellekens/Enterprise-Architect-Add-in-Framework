@@ -143,9 +143,17 @@ namespace EAAddinTester
         /// </summary>
         internal static void myTest(string command, string arguments)
         {
-            var progresBarWindows = new ProgressBarWindow();
-            progresBarWindows.execute(command, arguments, "executing command title", "currently running this command", false);
-            //EAWrappers.Model model = new EAWrappers.Model();
+            //var progresBarWindows = new ProgressBarWindow();
+            //progresBarWindows.execute(command, arguments, "executing command title", "currently running this command", false);
+            EAWrappers.Model model = new EAWrappers.Model();
+            var sqlQuery = "select top 1000 * from t_object o order by o.Object_ID desc";
+            Logger.log("Before DatasetFromQuery");
+            var dataset1 = model.getDataSetFromQuery(sqlQuery, false);
+            Logger.log("After DatasetFromQuery");
+            var dummy = model.connection;//to force initialisation of the database connections
+            Logger.log ("Before DatasetFromQuery2");
+            var dataset2 = model.getDataSetFromQuery2(sqlQuery, false);
+            Logger.log ("After DatasetFromQuery2");
             //var selectedPackage = model.selectedTreePackage as EAWrappers.Package;
             //var outputName = "EATester";
             ////test regular getting all elements
