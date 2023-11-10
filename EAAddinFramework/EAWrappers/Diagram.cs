@@ -75,14 +75,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             return returnedDiagramElements;
         }
 
-        public String name
+        public string name
         {
-            get { return this.wrappedDiagram.Name; }
-            set { this.wrappedDiagram.Name = value; }
+            get => this.wrappedDiagram.Name;
+            set => this.wrappedDiagram.Name = value;
         }
         public string diagramType
         {
             get => this.wrappedDiagram.Type;
+        }
+        public string metaType
+        {
+            get => this.wrappedDiagram.MetaType;
+            set => this.wrappedDiagram.MetaType = value;
         }
 
         /// find the diagramlink object (if any) that represents the given 
@@ -345,7 +350,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             //clear selected objects
             short i;
-            for (i = Convert.ToInt16(this.wrappedDiagram.SelectedObjects.Count -1); i >= 0; i--)
+            for (i = Convert.ToInt16(this.wrappedDiagram.SelectedObjects.Count - 1); i >= 0; i--)
             {
                 this.wrappedDiagram.SelectedObjects.DeleteAt(i, false);
             }
