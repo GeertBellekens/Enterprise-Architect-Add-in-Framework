@@ -323,8 +323,6 @@ namespace EAAddinFramework.SchemaBuilder
         /// <returns>the corresponding SchemaElement</returns>
         internal EASchemaElement getSchemaElementForSubsetElement(Classifier subsetElement, Dictionary<string, string> subsetDictionary, bool secondPass)
         {
-            
-            
             var elementWrapperSubsetElement = subsetElement as TSF_EA.ElementWrapper;
             EASchemaElement result = null;
             if (elementWrapperSubsetElement == null)
@@ -399,7 +397,7 @@ namespace EAAddinFramework.SchemaBuilder
                                                                         && x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
-                //if not found with redefined elemnet then find as regular element
+                //if not found with redefined element then find as regular element
                 if (result == null)
                 {
                     result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => !x.isRedefined
@@ -421,11 +419,18 @@ namespace EAAddinFramework.SchemaBuilder
             // we do this only on a second pass
             if (result == null && secondPass)
             {
-                result = this.elements.OfType<EASchemaElement>().FirstOrDefault(x => x.sourceElement?.uniqueID == sourceElementUniqueID
+                //we only return a result in the second pass if in fact there is only one element left.
+                var results = this.elements.OfType<EASchemaElement>().Where(x => x.sourceElement?.uniqueID == sourceElementUniqueID
                                                                         && (x.subsetElement == null
                                                                             || x.subsetElement.uniqueID == subsetElement.uniqueID));
+                if (results.Count() > 1)
+                {
+                    //if there are multiplic matches, we stop execution because otherwise me might be updating the wrong element
+                    throw new AmbiguityException($@"Generation of subset halted because of ambiguity in determining the schema element for '{subsetElement.name}'.
+When renaming redefines in the schema, please rename only one at a time.");
+                }
+                result = results.FirstOrDefault();
             }
-
             return result;
         }
         internal EASchemaElement getSchemaElementForSchemaType(EA.SchemaType schemaType)
@@ -1054,7 +1059,11 @@ namespace EAAddinFramework.SchemaBuilder
             var subsetDictionary = this.getSubsetElementDictionary(subsetElements);
             //loop subset elements ordered by name
             var subsetElementsToDelete = new List<Classifier>();
-            foreach (var subsetElement in subsetElements.OrderBy(x => name))
+            foreach (var subsetElement in subsetElements
+                                        .OfType<TSF_EA.ElementWrapper>()
+                                        .OrderBy(x => x.name)
+                                        .ThenBy(x => x.alias)
+                                        .OfType<Classifier>())
             {
                 //tell the user what we are doing 
                 EAOutputLogger.log(this.model, this.settings.outputName, $"Matching subset element: '{subsetElement.name}' to a schema element"

@@ -82,7 +82,30 @@ namespace EAAddinFramework.Mapping
         /// </summary>
         public void loadAllMappings()
         {
-            this.source.getMappings();
+            //preload source and target package
+            //var sourceEAElement = this.source.source as ElementWrapper;
+            //if (sourceEAElement != null)
+            //{
+            //    //preload all owned elements of the source  package
+            //    var sourcePackage = sourceEAElement as TSF.UmlToolingFramework.Wrappers.EA.Package;
+            //    if (sourcePackage == null)
+            //    {
+            //        sourcePackage = sourceEAElement.owningPackage as TSF.UmlToolingFramework.Wrappers.EA.Package;
+            //    }
+            //    sourcePackage?.getAllOwnedElements(new List<string>() { "Class", "DataType", "Enumeration", "PrimitiveType" });
+            //}
+            //var targetEAElement = this.target.source as ElementWrapper;
+            //if (targetEAElement != null)
+            //{
+            //    //preload all owned elements of the target  package
+            //    var targetPackage = targetEAElement as TSF.UmlToolingFramework.Wrappers.EA.Package;
+            //    if (targetPackage == null)
+            //    {
+            //        targetPackage = targetEAElement.owningPackage as TSF.UmlToolingFramework.Wrappers.EA.Package;
+            //    }
+            //    targetPackage?.getAllOwnedElements(new List<string>() { "Class", "DataType", "Enumeration", "PrimitiveType" });
+            //}
+            this.target.getMappings();
         }
         /// <summary>
         /// load only the mappings for the given source element

@@ -359,6 +359,7 @@
     <Compile Include="Mapping\MappingSettings.cs" />
     <Compile Include="Mapping\TaggedValueMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SchemaBuilder\AmbiguityException.cs" />
     <Compile Include="SchemaBuilder\EASchemaAssociation.cs" />
     <Compile Include="SchemaBuilder\EASchemaBuilderFactory.cs" />
     <Compile Include="SchemaBuilder\EASchema.cs" />
