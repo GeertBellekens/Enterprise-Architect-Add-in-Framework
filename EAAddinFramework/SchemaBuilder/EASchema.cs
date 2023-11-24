@@ -1109,7 +1109,7 @@ When renaming redefines in the schema, please rename only one at a time.");
                         }
                         else
                         {
-                            subsetElement.delete();
+                            this.deleteSubsetElement(subsetElement);
                         }
                     }
                 }
@@ -1119,6 +1119,48 @@ When renaming redefines in the schema, please rename only one at a time.");
             {
                 schemaElement.subsetElement = schemaElement.sourceElement;
             }
+        }
+        private void deleteSubsetElement(Classifier subsetElement)
+        {
+            //check if we use the recycle bin
+            if (this.settings.useRecycleBin)
+            {
+                //move to recycle bin
+                var recycleBin = getRecyleBin(subsetElement);
+                subsetElement.owningPackage = recycleBin;
+                //add DELETED_ prefix
+                var prefix = "DELETED_";
+                if (string.IsNullOrEmpty(subsetElement.name)
+                    || subsetElement.name.Length < prefix.Length
+                    || subsetElement.name.Substring(0,prefix.Length) != prefix)
+                {
+                    subsetElement.name = prefix + subsetElement.name;
+                }
+                subsetElement.save();
+            }
+            else
+            {
+                subsetElement.delete();
+            }
+        }
+        private Package getRecyleBin(Classifier subsetElement)
+        {
+            Package recycleBin = null;
+            //check if current package is recycle bin
+            var package = subsetElement.owningPackage as TSF_EA.Package ;
+            if (package.name == this.settings.recycleBinName)
+            {
+                return package;
+            }
+            //get subPackage with recylebin name
+            recycleBin = package.ownedElements.OfType<Package>().FirstOrDefault(x => x.name ==  this.settings.recycleBinName);
+            if (recycleBin != null)
+            {
+                return recycleBin;
+            }
+            //create subpackage
+            recycleBin = package.addOwnedElement<Package>(this.settings.recycleBinName);
+            return recycleBin;
         }
         public static bool isItemUsedInASchema(UML.Classes.Kernel.Element element, TSF_EA.Model model)
         {
