@@ -249,6 +249,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 }
                 //get the linked feature
                 linkedFeature = this.EAModel.getItemFromGUID(featureGUID);
+                //make sure the linked feature is owned by the end this relation points to
+                var featureOwner = linkedFeature.owner as ElementWrapper;
+                if (!(featureOwner?.id == (isSource ? this.wrappedConnector.ClientID : this.wrappedConnector.SupplierID)))
+                {
+                    linkedFeature = null;
+                }
             }
             return linkedFeature;
         }

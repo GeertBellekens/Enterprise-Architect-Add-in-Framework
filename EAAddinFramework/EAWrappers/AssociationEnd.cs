@@ -263,14 +263,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             get
             {
-                if (this.wrappedAssociationEnd.End == "Supplier")
+                var endType = this.wrappedAssociationEnd.End == "Supplier"
+                            ? this.connectorWrapper.target as UML.Classes.Kernel.Type
+                            : this.connectorWrapper.source as UML.Classes.Kernel.Type;
+                //in case of link to element feature relations, we get the owner of the feature.
+                if (endType == null)
                 {
-                    return this.connectorWrapper.target as UML.Classes.Kernel.Type;
+                    endType = this.wrappedAssociationEnd.End == "Supplier"
+                            ? this.connectorWrapper.target.owner as UML.Classes.Kernel.Type
+                            : this.connectorWrapper.source.owner as UML.Classes.Kernel.Type;
                 }
-                else
-                {
-                    return this.connectorWrapper.source as UML.Classes.Kernel.Type;
-                }
+                return endType;
             }
             set { throw new NotImplementedException(); }
         }
