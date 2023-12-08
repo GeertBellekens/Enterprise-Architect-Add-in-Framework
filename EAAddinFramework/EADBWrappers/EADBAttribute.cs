@@ -277,8 +277,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public string Scale
         {
-            get => this.properties["Precision"];
-            set => this.properties["Precision"] = value;
+            get => this.properties["Scale"];
+            set => this.properties["Scale"] = value;
         }
         public bool IsConst
         {
