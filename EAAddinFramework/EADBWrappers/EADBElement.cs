@@ -212,8 +212,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public string Version
         {
-            get => this.properties["Note"];
-            set => this.properties["Note"] = value;
+            get => this.properties["Version"];
+            set => this.properties["Version"] = value;
         }
         public string Stereotype
         {
