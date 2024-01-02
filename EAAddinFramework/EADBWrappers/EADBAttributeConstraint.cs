@@ -2,6 +2,7 @@
 using EAAddinFramework.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         {
                             this._eaAttributeConstraint = constraint;
                             break;//found it
+                        }
+                    }
+                    //if not found on exact name match, we try with ignore symbols as sometimes EA returns \n iso \r\n as newlines in the name
+                    if (this._eaAttributeConstraint == null)
+                    {
+                        foreach (global::EA.AttributeConstraint constraint in owner.Constraints)
+                        {
+                            if (string.Compare(constraint.Name ,this.Name, CultureInfo.CurrentCulture, CompareOptions.IgnoreSymbols) == 0)
+                            {
+                                this._eaAttributeConstraint = constraint;
+                                break;//found it
+                            }
                         }
                     }
                 }

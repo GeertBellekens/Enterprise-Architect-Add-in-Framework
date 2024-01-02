@@ -65,6 +65,19 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                             break;//found it
                         }
                     }
+                    if (this._eaTaggedValue == null)
+                    {
+                        //check if the tagged value is found. If not we try again, but now based on the name
+                        //in some edge cases EA will reset the guid of the tagged value to match the stereotype
+                        foreach (global::EA.AttributeTag taggedValue in owner.TaggedValues)
+                        {
+                            if (taggedValue.Name == this.Name)
+                            {
+                                this._eaTaggedValue = taggedValue;
+                                break;//found it
+                            }
+                        }
+                    }
                 }
                 return this._eaTaggedValue;
             }
