@@ -1319,7 +1319,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public override TSF.UmlToolingFramework.UML.Diagrams.Diagram compositeDiagram
         {
             get => this.EAModel.factory.createDiagram(this.wrappedElement?.CompositeDiagram);
-            set => this.wrappedElement?.SetCompositeDiagram(((Diagram)value).diagramGUID);
+
+            set
+            {
+                this.wrappedElement?.SetCompositeDiagram(((Diagram)value).diagramGUID);
+                this.isDirty = true;
+            }
+
         }
 
 
@@ -1688,7 +1694,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     connectorDictionary.Add(connectorWrapper.id, connectorWrapper);
                 }
             }
-           
+
             if (attributeWrappers.Count() > 0)
             {
                 //attributeTags
@@ -1701,7 +1707,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //connectorTags
                 RelationTag.loadConnectorTags(connectorDictionary, model);
             }
-            
+
 
         }
     }
