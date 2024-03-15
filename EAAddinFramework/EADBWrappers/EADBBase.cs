@@ -63,9 +63,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var newColumnNames = new Dictionary<String, int>(StringComparer.OrdinalIgnoreCase);
             var headers = model.getDataSetFromQuery(selectQuery.Replace("select ", "select top 1 "), true).FirstOrDefault();
-            for (int i = 0; i < headers.Count; i++)
+            if (headers != null)
             {
-                newColumnNames.Add(headers[i], i);
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    newColumnNames.Add(headers[i], i);
+                }
             }
             return newColumnNames;
         }
