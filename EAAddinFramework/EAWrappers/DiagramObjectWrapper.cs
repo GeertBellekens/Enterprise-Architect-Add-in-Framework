@@ -48,10 +48,21 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     wrappedDiagramObject.right = wrappedDiagramObject.left + 20;
                 }
-                //move the right the same amount as the left
-                this.wrappedDiagramObject.right += value - this.wrappedDiagramObject.left;
+                var tempWidth = this.width;
                 this.wrappedDiagramObject.left = value;
+                this.wrappedDiagramObject.right = this.wrappedDiagramObject.left + tempWidth;
             }
+        }
+        public int width
+        {
+            get => this.wrappedDiagramObject.right - this.wrappedDiagramObject.left;
+            set => this.wrappedDiagramObject.right = this.wrappedDiagramObject.left + value;
+        }
+
+        public int height
+        {
+            get => (this.wrappedDiagramObject.bottom - this.wrappedDiagramObject.top) * -1;
+            set => this.wrappedDiagramObject.bottom = this.wrappedDiagramObject.top - value;
         }
 
         public int yPosition
@@ -63,9 +74,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     wrappedDiagramObject.bottom = wrappedDiagramObject.top + -20;
                 }
-                //move the top the same amount
-                this.wrappedDiagramObject.bottom += this.wrappedDiagramObject.top + (value * -1);
+                var tempHeight = this.height;
+                //set top
                 this.wrappedDiagramObject.top = value * -1;
+                this.wrappedDiagramObject.bottom = this.wrappedDiagramObject.top - tempHeight;
             }
         }
 
@@ -105,7 +117,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.open();
             this.element.select();
-            
+
         }
 
         public void open()

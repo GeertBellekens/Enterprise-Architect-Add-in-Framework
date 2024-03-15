@@ -130,6 +130,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return _diagramObjectWrappers;
             }
         }
+        public Dictionary<int, DiagramObjectWrapper> getDiagramObjectWrappersDictionary()
+        {
+            return diagramObjectWrappers.ToDictionary(x => ((ElementWrapper)x.element).id, x => x as DiagramObjectWrapper);
+        }
         public string diagramGUID
         {
             get
