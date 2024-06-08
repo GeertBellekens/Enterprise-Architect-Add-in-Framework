@@ -112,7 +112,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
         /// <summary>
         /// Designates the originating vertex (state or pseudostate) of the transition.
         /// </summary>
-        public UML_SM.Vertex source
+        public  UML_SM.Vertex sourceVertex
         {
             get
             {
@@ -127,7 +127,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
         /// <summary>
         /// Designates the target vertex that is reached when the transition is taken.
         /// </summary>
-        public UML_SM.Vertex target
+        public  UML_SM.Vertex targetVertex
         {
             get
             {
@@ -177,7 +177,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA.BehaviorStateMachines
         {
             get
             {
-                return source.container;
+                return this.sourceVertex.container;
             }
             set
             {

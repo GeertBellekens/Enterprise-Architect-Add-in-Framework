@@ -64,6 +64,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => (this.wrappedDiagramObject.bottom - this.wrappedDiagramObject.top) * -1;
             set => this.wrappedDiagramObject.bottom = this.wrappedDiagramObject.top - value;
         }
+        public int right => this.xPosition + this.width;
+        public int left => this.xPosition;
+        public int bottom => this.yPosition + this.height;
+        public int top => this.yPosition;
 
         public int yPosition
         {

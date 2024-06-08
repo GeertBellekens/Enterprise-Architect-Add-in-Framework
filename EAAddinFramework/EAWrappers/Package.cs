@@ -106,7 +106,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     //set the owner as well
                     this.owner = value;
                 }
-                catch (COMException e)
+                catch (COMException )
                 {
                     //find the new parent package
                     this.save();

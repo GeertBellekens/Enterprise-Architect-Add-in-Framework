@@ -210,6 +210,9 @@
     <Compile Include="Databases\Transformation\NameTranslator.cs" />
     <Compile Include="Databases\Transformation\TranslatedItem.cs" />
     <Compile Include="Databases\View.cs" />
+    <Compile Include="DiagramLayout\DiagramLayout.cs" />
+    <Compile Include="DiagramLayout\LateralHorizontalLayout.cs" />
+    <Compile Include="DiagramLayout\SpreadRelationsEvenlyLayout.cs" />
     <Compile Include="EAAddinBase.cs" />
     <Compile Include="EASpecific\DefaultScriptRepsitory.cs" />
     <Compile Include="EADBWrappers\EADBAttributeConstraint.cs" />

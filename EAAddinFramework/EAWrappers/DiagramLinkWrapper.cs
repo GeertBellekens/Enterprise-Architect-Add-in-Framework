@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using EAAddinFramework.Utilities;
 using TSF.UmlToolingFramework.UML.Classes.Kernel;
 using UML = TSF.UmlToolingFramework.UML;
@@ -17,7 +17,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
     public class DiagramLinkWrapper : UML.Diagrams.DiagramElement
     {
         internal global::EA.DiagramLink wrappedDiagramLink { get; set; }
-        internal ConnectorWrapper relation { get; set; }
+        public ConnectorWrapper relation { get; set; }
         internal Model model { get; set; }
         private Diagram _diagram;
 
@@ -35,6 +35,32 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             this.relation = relation;
             this._diagram = diagram;
             this.wrappedDiagramLink = diagram.getDiagramLinkForRelation(relation);
+        }
+        private DiagramObjectWrapper _sourceDiagramObject;
+        public DiagramObjectWrapper sourceDiagramObject 
+        { 
+            get
+            {
+                if (this._sourceDiagramObject == null)
+                {
+                    this._sourceDiagramObject = ((Diagram)this.diagram).diagramObjectWrappers.OfType<DiagramObjectWrapper>()
+                                                .FirstOrDefault(x => x.element.uniqueID == this.relation.sourceElement.uniqueID);
+                }
+                return this._sourceDiagramObject;
+            }
+        }
+        private DiagramObjectWrapper _targetDiagramObject;
+        public DiagramObjectWrapper targetDiagramObject
+        {
+            get
+            {
+                if (this._targetDiagramObject == null)
+                {
+                    this._targetDiagramObject = ((Diagram)this.diagram).diagramObjectWrappers.OfType<DiagramObjectWrapper>()
+                                                .FirstOrDefault(x => x.element.uniqueID == this.relation.targetElement.uniqueID);
+                }
+                return this._targetDiagramObject;
+            }
         }
         /// <summary>
         /// return the unique ID of this element
@@ -62,6 +88,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                   false : this.wrappedDiagramLink.IsHidden;
             }
         }
+
 
         public void setStyle(LinkStyle linkStyle)
         {
@@ -136,6 +163,38 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //return it's type
                 return relation != null ? relation.WrappedConnector.Type : string.Empty;
             }
+        }
+        public int startXPosition
+        {
+            get => int.TryParse(KeyValuePairsHelper.getValueForKey("SX", this.wrappedDiagramLink.Geometry), out var SX)
+                ? SX 
+                : 0;
+            set => this.wrappedDiagramLink.Geometry = KeyValuePairsHelper.setValueForKey("SX", value.ToString(), this.wrappedDiagramLink.Geometry);
+        }
+        public int startYPosition
+        {
+            get => int.TryParse(KeyValuePairsHelper.getValueForKey("SY", this.wrappedDiagramLink.Geometry), out var SX)
+                ? SX
+                : 0;
+            set => this.wrappedDiagramLink.Geometry = KeyValuePairsHelper.setValueForKey("SY", value.ToString(), this.wrappedDiagramLink.Geometry);
+        }
+        public int endXPosition
+        {
+            get => int.TryParse(KeyValuePairsHelper.getValueForKey("EX", this.wrappedDiagramLink.Geometry), out var SX)
+                ? SX
+                : 0;
+            set => this.wrappedDiagramLink.Geometry = KeyValuePairsHelper.setValueForKey("EX", value.ToString(), this.wrappedDiagramLink.Geometry);
+        }
+        public int endYPosition
+        {
+            get => int.TryParse(KeyValuePairsHelper.getValueForKey("EY", this.wrappedDiagramLink.Geometry), out var SX)
+                ? SX
+                : 0;
+            set => this.wrappedDiagramLink.Geometry = KeyValuePairsHelper.setValueForKey("EY", value.ToString(), this.wrappedDiagramLink.Geometry);
+        }
+        internal void setBend(int bendX, int bendY)
+        {
+            this.wrappedDiagramLink.Path = $"{bendX}:{bendY * -1};";
         }
         public UML.Classes.Kernel.Element element
         {
@@ -277,5 +336,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

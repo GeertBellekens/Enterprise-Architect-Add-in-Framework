@@ -686,7 +686,7 @@ namespace EAAddinFramework.SchemaBuilder
                         subsetOperation.name = operation.name;
                         updated = true;
                     }
-                    if (subsetOperation.notes != operation.notes) ;
+                    if (subsetOperation.notes != operation.notes) 
                     {
                         subsetOperation.notes = operation.notes;
                         updated = true;

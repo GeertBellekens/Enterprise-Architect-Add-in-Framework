@@ -290,7 +290,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             }
 
         }
-        public UML.Classes.Kernel.Element target
+        public virtual UML.Classes.Kernel.Element target
         {
             get
             {
@@ -402,7 +402,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             while (!string.IsNullOrEmpty(idRefValue));
             return "idref" + i;
         }
-        public UML.Classes.Kernel.Element source
+        public virtual UML.Classes.Kernel.Element source
         {
             get
             {

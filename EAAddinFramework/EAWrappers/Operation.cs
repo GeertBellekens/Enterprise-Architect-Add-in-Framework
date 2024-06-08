@@ -96,7 +96,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set { throw new NotImplementedException(); }
         }
 
-        internal ElementWrapper _owner;
         public override UML.Classes.Kernel.Element owner
         {
             get
