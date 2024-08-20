@@ -56,6 +56,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         internal override bool equalsTagObject(object eaTag)
         {
+            var otherEATag = eaTag as global::EA.MethodTag;
+            if (otherEATag != null && otherEATag.TagGUID == this.uniqueID)
+            {
+                return true;
+            }
             var otherTag = eaTag as EADBOperationTag;
             return otherTag != null && otherTag.PropertyGUID == this.uniqueID;
         }
