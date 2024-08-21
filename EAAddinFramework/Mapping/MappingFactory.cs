@@ -223,6 +223,8 @@ namespace EAAddinFramework.Mapping
             mappingSet.source.mapTo(mappingSet.target);
             //make sure the target node tree has been build
             ((MappingNode)mappingSet.target).buildNodeTree();
+            //and the source node tree
+            ((MappingNode)mappingSet.source).buildNodeTree();
             //read the csv file
             using (var textReader = new StreamReader(filePath))
             {
