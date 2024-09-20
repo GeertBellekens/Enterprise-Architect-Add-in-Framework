@@ -745,7 +745,9 @@ namespace EAAddinFramework.SchemaBuilder
             if (this.subsetElement != null)
             {
                 foreach (var dependency in this.subsetElement.getRelationships<TSF_EA.Dependency>().Where(x => x.source.Equals(this.subsetElement)
-                                                                                                          && !x.stereotypes.Any()))
+                                                                                                          && !x.stereotypes.Any() //can't have any stereotypes
+                                                                                                          && !string.IsNullOrEmpty(x.name) //delete only dependencies with a name
+                                                                                                          && string.IsNullOrEmpty(x.subtype))) //delete only dependencies without a subtype
                 {
                     //if the settings say we don't need to create attribute type dependencies then we delete them all
                     if (this.owner.settings.dontCreateAttributeDependencies)
