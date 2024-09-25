@@ -10,19 +10,18 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public abstract class EADBTaggedValue: EADBBase
     {
-        internal static Dictionary<String, int> staticColumnNames;
-        protected override Dictionary<String, int> columnNames
-        {
-            get
-            {
-                if (staticColumnNames == null)
-                {
-                    staticColumnNames = this.getColumnNames("select * from t_attributeTag ");
-                }
-                return staticColumnNames;
-            }
+        internal static Dictionary<String, int> staticColumnNames = 
+            new Dictionary<string, int>() {                    
+                                            {"PropertyID",  0},
+                                            {"ElementID",   1},
+                                            {"Property",    2},
+                                            {"VALUE",       3},
+                                            {"NOTES",       4},
+                                            {"ea_guid",     5}
+                                           };
 
-        }
+        protected override Dictionary<String, int> columnNames => staticColumnNames;
+ 
 
         protected EADBTaggedValue(Model model): base(model)
         {
