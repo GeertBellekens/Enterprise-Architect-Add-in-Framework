@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using EA;
@@ -921,19 +922,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             sqlQuery = replaceSQLWildCards(sqlQuery);
             sqlQuery = formatSQLTop(sqlQuery);
             sqlQuery = formatSQLFunctions(sqlQuery);
+            sqlQuery = formatLowerCaseTables(sqlQuery);
             return sqlQuery;
         }
 
-        /// <summary>
-        /// Operation to translate SQL functions in there equivalents in different sql syntaxes
-        /// supported functions:
-        /// 
-        /// - lcase -> lower in T-SQL (SQLSVR and ASA)
-        /// - like -> ilike in PostGres
-        /// </summary>
-        /// <param name="sqlQuery">the query to format</param>
-        /// <returns>a query with traslated functions</returns>
-        private string formatSQLFunctions(string sqlQuery)
+        private string formatLowerCaseTables(string sqlQuery)
+        {
+            switch (this.repositoryType)
+            {
+                case RepositoryType.MYSQL:
+                case RepositoryType.POSTGRES:
+                    // Regular expression to match table names starting with "t_"
+                    string pattern = @"\b(t_[a-zA-Z]+)\b";
+                    // Replace matched table names with their lowercase equivalent
+                    sqlQuery = Regex.Replace(sqlQuery, pattern, match => match.Value.ToLower());
+                    // Regular expression to match table names starting with "usys" or "usys_"
+                    pattern = @"\b(usys_?[a-zA-Z]+)\b";
+                    // Replace matched table names with their lowercase equivalent
+                    sqlQuery = Regex.Replace(sqlQuery, pattern, match => match.Value.ToLower());
+                    break;
+            }
+            return sqlQuery;
+        }
+
+            /// <summary>
+            /// Operation to translate SQL functions in there equivalents in different sql syntaxes
+            /// supported functions:
+            /// 
+            /// - lcase -> lower in T-SQL (SQLSVR and ASA)
+            /// - like -> ilike in PostGres
+            /// </summary>
+            /// <param name="sqlQuery">the query to format</param>
+            /// <returns>a query with traslated functions</returns>
+            private string formatSQLFunctions(string sqlQuery)
         {
             string formattedSQL = sqlQuery;
             //lcase -> lower 
