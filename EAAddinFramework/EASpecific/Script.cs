@@ -316,13 +316,19 @@ namespace EAAddinFramework.EASpecific
                     break;
             }
         }
+        public string getFullPath(string scriptPath)
+        {
+            var path = getPath();
+            var fullPath = scriptPath + path + this.name + this.language.extension;
+            return fullPath;
+        }
 
         internal void save(string scriptPath)
         {
             //add groupName to savecode
             addGroupNameToSaveCode();
             var path = getPath();
-            var fullPath = scriptPath + path + this.name + this.language.extension;
+            var fullPath = getFullPath(scriptPath);
             //check if the script has changed 
             if (File.Exists(fullPath))
             {
@@ -470,5 +476,8 @@ namespace EAAddinFramework.EASpecific
             string SQLUpdate = "update t_script set script = '" + this.model.escapeSQLString(this.code) + "' where ScriptID = " + this.scriptID;
             this.model.executeSQL(SQLUpdate);
         }
+
+        internal int hash => this.code.GetHashCode();
+
     }
 }

@@ -9,6 +9,8 @@ namespace EAAddinFramework.EASpecific
 {
     public class ModelScriptRepository : DefaultScriptRepsitory
     {
+        private Dictionary<string, int> lastSavedHashes = new Dictionary<string, int>();
+
         private static string baseSqlGetScripts = @"select s.ScriptID, s.Notes, s.Script,ps.Script as SCRIPTGROUP, ps.Notes as GROUPNOTES 
                                                         from t_script s
                                                         inner join t_script ps on s.ScriptAuthor = ps.ScriptName
@@ -28,7 +30,22 @@ namespace EAAddinFramework.EASpecific
         {
             foreach (Script script in getAllScripts())
             {
-                script.save(scriptPath);
+                var scriptFullPath = script.getFullPath(scriptPath);
+                if (lastSavedHashes.ContainsKey(scriptFullPath))
+                {
+                    var lastSavedHash = lastSavedHashes[scriptFullPath];
+                    var currentHash = script.hash;
+                    if (lastSavedHash != currentHash)
+                    {
+                        script.save(scriptPath);
+                        lastSavedHashes[scriptFullPath] = currentHash;
+                    }
+                }
+                else
+                {
+                    script.save(scriptPath);
+                    lastSavedHashes.Add(scriptFullPath, script.hash);
+                }
             }
         }
 
