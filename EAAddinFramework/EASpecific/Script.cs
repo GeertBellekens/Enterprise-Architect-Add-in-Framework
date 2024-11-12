@@ -476,8 +476,5 @@ namespace EAAddinFramework.EASpecific
             string SQLUpdate = "update t_script set script = '" + this.model.escapeSQLString(this.code) + "' where ScriptID = " + this.scriptID;
             this.model.executeSQL(SQLUpdate);
         }
-
-        internal int hash => this.code.GetHashCode();
-
     }
 }
