@@ -67,7 +67,7 @@ namespace EAAddinFramework.Utilities
             else
             {
                 var contextPackage = this.getOwningPackage(contextElement);
-                this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage);
+                this.currentConfig = getContextConfig((TSF_EA.Package)contextPackage) ?? tempConfig;
             }
             //return the true if the config was changed
             return !this.currentConfig.isSame(tempConfig);
@@ -87,6 +87,7 @@ namespace EAAddinFramework.Utilities
         }
         private AddinConfig getContextConfig(TSF_EA.Package contextPackage)
         {
+            if (contextPackage == null) return null;
             //check if tag exists at this package
             var configTag = contextPackage.getTaggedValue(this.currentConfig.tagName);
             if (configTag != null
