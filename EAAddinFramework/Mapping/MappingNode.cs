@@ -187,11 +187,11 @@ namespace EAAddinFramework.Mapping
             //first build tree node
             this.buildNodeTree();
             //then get mappings
+            EAOutputLogger.log($"Getting mappings...");
             return this.getOwnedMappings();
         }
         public IEnumerable<MP.Mapping> getMyMappings( )
         {
-            EAOutputLogger.log($"Getting mappings for '{this.name}'");
             if (this._mappings == null)
             {
                 this._mappings = new List<Mapping>();

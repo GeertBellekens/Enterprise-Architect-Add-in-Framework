@@ -91,11 +91,16 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return _applicationFullPath;
             }
         }
+        private string _projectGUID;
         public string projectGUID
         {
             get
             {
-                return this.wrappedModel.ProjectGUID;
+                if (string.IsNullOrEmpty(this._projectGUID))
+                {
+                    this._projectGUID = this.wrappedModel.ProjectGUID;
+                }
+                return this._projectGUID;
             }
         }
 

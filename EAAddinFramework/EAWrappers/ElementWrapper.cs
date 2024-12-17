@@ -759,38 +759,39 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
 
         private HashSet<UML.Classes.Kernel.Classifier> _superClasses;
-        /// EA provides a shortcut tot the superclasses through its 
-        /// element.BaseClasses
-        /// Normally we would get those via the element.generalizations.general
+
+
         public HashSet<UML.Classes.Kernel.Classifier> superClasses
         {
             get
             {
-                if (_superClasses == null)
+                if (this._superClasses == null)
                 {
-                    _superClasses = new HashSet<UML.Classes.Kernel.Classifier>
-                                     (this.EAModel.factory.createElements(this.wrappedElement?.BaseClasses)
-                                     .OfType<UML.Classes.Kernel.Classifier>());
+                    this._superClasses = new HashSet<UML.Classes.Kernel.Classifier>();
+                    foreach (var superClass in this.generalizations.Where(x => this.Equals(x.source)).Select(y => y.target).OfType<UML.Classes.Kernel.Classifier>())
+                    {
+                        this._superClasses.Add(superClass);
+                    }
                 }
-                return _superClasses;
+                return this._superClasses;
             }
 
             set => throw new NotImplementedException();
         }
-
+        private HashSet<UML.Classes.Kernel.Classifier> _subClasses;
         public HashSet<UML.Classes.Kernel.Classifier> subClasses
         {
             get
             {
-                var returnedSubclasses = new HashSet<UML.Classes.Kernel.Classifier>();
-                foreach (var subclass in this.generalizations.Where(x => this.Equals(x.target)).Select(y => y.source as UML.Classes.Kernel.Classifier))
+                if (this._subClasses == null)
                 {
-                    if (subclass != null)
+                    this._subClasses = new HashSet<UML.Classes.Kernel.Classifier>();
+                    foreach (var subclass in this.generalizations.Where(x => this.Equals(x.target)).Select(y => y.source).OfType<UML.Classes.Kernel.Classifier>())
                     {
-                        returnedSubclasses.Add(subclass);
+                        this._subClasses.Add(subclass);
                     }
                 }
-                return returnedSubclasses;
+                return _subClasses;
             }
         }
         /// <summary>
