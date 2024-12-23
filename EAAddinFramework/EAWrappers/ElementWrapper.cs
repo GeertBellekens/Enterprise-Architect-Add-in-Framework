@@ -1324,7 +1324,6 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set
             {
                 this.wrappedElement?.SetCompositeDiagram(((Diagram)value).diagramGUID);
-                this.isDirty = true;
             }
 
         }

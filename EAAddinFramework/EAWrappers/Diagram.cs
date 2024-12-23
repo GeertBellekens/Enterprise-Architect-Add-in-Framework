@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EAAddinFramework.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,6 +30,17 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 return this.wrappedDiagram.DiagramGUID;
             }
         }
+        public bool disableFullyScopedObjectNames
+        {
+            get => KeyValuePairsHelper.getValueForKey("NoFullScope", this.wrappedDiagram.StyleEx) == "1" ;
+            set => this.wrappedDiagram.StyleEx = KeyValuePairsHelper.setValueForKey("NoFullScope", value ? "1" : "0", this.wrappedDiagram.StyleEx);
+        }
+        public bool hideConnectorStereotypes
+        {
+            get => KeyValuePairsHelper.getValueForKey("HideConnStereotype", this.wrappedDiagram.StyleEx) == "1";
+            set => this.wrappedDiagram.StyleEx = KeyValuePairsHelper.setValueForKey("HideConnStereotype", value ? "1" : "0", this.wrappedDiagram.StyleEx);
+        }
+
         /// all elements shown on this diagram.
         /// Currently only diagramObjectWrappers and relations
         public HashSet<UML.Diagrams.DiagramElement> diagramElements
@@ -776,6 +788,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 this.model.wrappedModel.GetProjectInterface().PutDiagramImageToFile(this.model.wrappedModel.GetProjectInterface().GUIDtoXML(this.uniqueID)
                                                                                 , imagePath + "\\" + this.uniqueID + ".png", 1);
             }
+        }
+
+        public void close()
+        {
+            this.model.wrappedModel.CloseDiagram(this.DiagramID);
         }
     }
 }
