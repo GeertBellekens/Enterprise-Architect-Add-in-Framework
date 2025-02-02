@@ -260,7 +260,7 @@ namespace EAAddinFramework.Utilities
         /// </summary>
         public void save()
         {
-            Logger.logDebug($"Saving configuation to {currentConfig.path}");
+            //Logger.logDebug($"Saving configuation to {currentConfig.path}");
             this.currentConfig.Save();
         }
         public void refresh()

@@ -137,7 +137,7 @@ namespace EAAddinFramework.EASpecific
                 processedCode = removeAsTypeStatements(processedCode);
                 processedCode = replaceSessionOuputWithRepositoryWriteOutput(processedCode);
                 string processedCodeWithLineNumbers = addLineNumbersToCode(processedCode);
-                Logger.logDebug($"script={this.fullyQualifiedName}\n" + processedCodeWithLineNumbers);
+                //Logger.logDebug($"script={this.fullyQualifiedName}\n" + processedCodeWithLineNumbers);
 
                 //then add the included code to the scriptcontroller
                 this.scriptController.AddCode(processedCode);

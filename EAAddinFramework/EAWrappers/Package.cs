@@ -277,6 +277,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     return true;
                 }
                 //security is enabled. We assume the option Require User Locks To Edit is used
+                //TODO: get Require User lock to edit option from the database
+
                 //Query to check if there are any elements or diagrams that are not locked by this user
                 var treeIDs = this.packageTreeIDString;
                 var userID = this.EAModel.currentUserID;

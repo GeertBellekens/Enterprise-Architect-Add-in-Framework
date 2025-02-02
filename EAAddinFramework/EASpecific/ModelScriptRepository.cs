@@ -147,7 +147,7 @@ namespace EAAddinFramework.EASpecific
             // If all the scripts are already in the repository the whereGroupAndNameMatches will be empty
             if (whereGroupAndNameMatches.Count > 0)
             {
-                Logger.logDebug($"sqlGetScripts={sqlGetScripts}");
+                //Logger.logDebug($"sqlGetScripts={sqlGetScripts}");
                 List<Script> newScripts = loadScriptBySQL(sqlGetScripts);
                 loadIncludeDependenciesFor(newScripts);
             }

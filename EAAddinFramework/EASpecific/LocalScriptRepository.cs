@@ -32,7 +32,7 @@ namespace EAAddinFramework.EASpecific
             try
             {
                 string scriptsDirectory = Path.GetDirectoryName(EAWrappers.Model.applicationFullPath) + "\\Scripts";
-                Logger.logDebug($"scriptsDirectory={scriptsDirectory}");
+                //Logger.logDebug($"scriptsDirectory={scriptsDirectory}");
                 if (Directory.Exists(scriptsDirectory))
                 {
                     string[] scriptFiles = Directory.GetFiles(scriptsDirectory, "*.*", SearchOption.AllDirectories);
@@ -42,7 +42,7 @@ namespace EAAddinFramework.EASpecific
 
                         if (scriptLanguage == "VBScript")
                         {
-                            Logger.logDebug($"scriptfile={scriptfile}");
+                            //Logger.logDebug($"scriptfile={scriptfile}");
 
                             string scriptGroup = "Local Scripts";
                             string scriptCode = File.ReadAllText(scriptfile);

@@ -41,7 +41,7 @@ namespace EAAddinFramework.EASpecific
             }
             else
             {
-                Logger.logDebug($"Adding script: {scriptKey}");
+                //Logger.logDebug($"Adding script: {scriptKey}");
                 cachedScripts.Add(scriptKeyLowerCase, script);
             }
         }

@@ -325,9 +325,10 @@ namespace EAAddinFramework.Databases.Compare
 
 		void fixForeignkeysToSameTable()
 		{
-			//in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
-			//first find all existing tables that correspond to multiple new tables
-			foreach (Table existingTable in this.existingDatabase.tables)
+			if (this.existingDatabase == null || this._newDatabase == null) return;
+            //in case 2 logical elements are implemented in a single table we remove the foreign keys between the different "new" tables
+            //first find all existing tables that correspond to multiple new tables
+            foreach (Table existingTable in this.existingDatabase.tables)
 			{
 				var correspondingTables = this._newDatabase.getAllCorrespondingTables(existingTable);
 				if (correspondingTables.Count > 1)

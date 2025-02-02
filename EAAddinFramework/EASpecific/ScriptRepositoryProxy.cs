@@ -68,11 +68,11 @@ namespace EAAddinFramework.EASpecific
             foreach (ScriptRepository proxyRepository in proxies)
             {
                 DateTime timeStart = DateTime.Now;
-                Logger.logTrace($"resetScripts {proxyRepository.GetType()} start");
+                //Logger.logTrace($"resetScripts {proxyRepository.GetType()} start");
                 proxyRepository.resetScripts();
                 DateTime timeEnd = DateTime.Now; ;
                 TimeSpan difference = timeEnd - timeStart;
-                Logger.logTrace($"resetScripts {proxyRepository.GetType()} end: {difference.TotalSeconds}");
+                //Logger.logTrace($"resetScripts {proxyRepository.GetType()} end: {difference.TotalSeconds}");
             }
         }
 
@@ -81,13 +81,13 @@ namespace EAAddinFramework.EASpecific
             foreach (ScriptRepository proxyRepository in proxies)
             {
                 DateTime timeStart = DateTime.Now;
-                Logger.logTrace($"saveScripts start");
+                //Logger.logTrace($"saveScripts start");
 
                 proxyRepository.saveScripts(scriptPath);
 
                 DateTime timeEnd = DateTime.Now; ;
                 TimeSpan difference = timeEnd - timeStart;
-                Logger.logTrace($"saveScripts {proxyRepository.GetType()} end: {difference.TotalSeconds}");
+                //Logger.logTrace($"saveScripts {proxyRepository.GetType()} end: {difference.TotalSeconds}");
             }
         }
     }

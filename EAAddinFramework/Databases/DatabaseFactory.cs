@@ -185,6 +185,10 @@ namespace EAAddinFramework.Databases
         }
         public DataType createDataType(string compositeName)
         {
+            if (string.IsNullOrEmpty(compositeName))
+            {
+                return null;
+            }
             string baseTypeName;
             int length = 0;
             int precision = 0;

@@ -790,7 +790,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             sqlQuery = this.formatSQL(sqlQuery);
             XmlDocument results = new XmlDocument();
-            results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
+            try
+            {
+                results.LoadXml(this.wrappedModel.SQLQuery(sqlQuery));
+            }
+            catch (Exception e)
+            {
+                Logger.logError($"Error: {e.Message} excecuting query {System.Environment.NewLine}   at{System.Environment.NewLine} & {e.StackTrace}");
+            }            
             return results;
         }
         /// <summary>
