@@ -847,8 +847,8 @@ namespace EAAddinFramework.SchemaBuilder
                         // Make sure the setting to redirect to the subset is on and
                         // and the source element has an equivalent generalization.
                         if (!this.owner.settings.redirectGeneralizationsToSubset
-                            || !sourceGeneralizations.Any(x => x.target.Equals(schemaParent.sourceElement))
-                            || (this.parentSchemaElement != schemaParent && !this.owner.settings.copyAllGeneralizationsForElement(this)))
+                            || !sourceGeneralizations.Any(x => x.target.uniqueID == schemaParent.sourceElement.uniqueID)
+                            || (this.parentSchemaElement?.TypeID != schemaParent?.TypeID && !this.owner.settings.copyAllGeneralizationsForElement(this)))
                         {
                             //the source doesn't have a generalization like this
                             subsetGeneralization.delete();
@@ -862,15 +862,28 @@ namespace EAAddinFramework.SchemaBuilder
                     if (this.owner.settings.redirectGeneralizationsToSubset
                         && schemaParent != null
                         && schemaParent.subsetElement != null
-                        && (this.parentSchemaElement == schemaParent || this.owner.settings.copyAllGeneralizationsForElement(this)))
+                        && (this.parentSchemaElement?.TypeID == schemaParent.TypeID || this.owner.settings.copyAllGeneralizationsForElement(this)))
                     {
-                        if (schemaParent.subsetElement != null
-                        && !subsetGeneralizations.Any(x => x.target.Equals(schemaParent.subsetElement)))
+                        if (schemaParent.subsetElement != null)
                         {
-                            //generalization doesn't exist yet. Add it
-                            var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement, string.Empty);
-                            newGeneralization.addRelatedElement(schemaParent.subsetElement);
-                            newGeneralization.save();
+                            bool found = false;
+                            //loop all subsetGeneralizations to see if the target's corresponding schema element has the same typeID
+                            foreach (var subsetGeneralization in subsetGeneralizations)
+                            {
+                                var subsetSchemaParent = ((EASchema)this.owner).getSchemaElementForSubsetElement(subsetGeneralization.target as Classifier, null, false);
+                                if (subsetSchemaParent != null
+                                    && subsetSchemaParent.TypeID == schemaParent.TypeID)
+                                {
+                                    found = true;
+                                }
+                            }
+                            if (!found)
+                            {
+                                //generalization doesn't exist yet. Add it
+                                var newGeneralization = this.model.factory.createNewElement<TSF_EA.Generalization>(this.subsetElement, string.Empty);
+                                newGeneralization.addRelatedElement(schemaParent.subsetElement);
+                                newGeneralization.save();
+                            }
                         }
                     }
                     else
