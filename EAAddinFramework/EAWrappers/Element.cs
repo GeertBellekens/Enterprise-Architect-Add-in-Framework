@@ -375,7 +375,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 //check if tagged value exists
                 var xDoc = this.EAModel.SQLQuery(this.getTaggedValueQuery(taggedValueName));
                 //get the tagged value if there is one
-                if (xDoc.SelectNodes(this.EAModel.formatXPath("//Row")).Count > 0)
+                if (xDoc.SelectNodes("//Row").Count > 0)
                 {
                     getTag = true;
                 }

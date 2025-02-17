@@ -565,9 +565,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //TODO implement
             // get the diagramObject for an element with type "UMLDiagram" and where PDATA1 contain this diagramID
             string SQLSelect = @"select o.Object_ID from (t_object o
-			inner join t_diagramobjects do on o.Object_ID = do.Object_ID)
+			inner join t_diagramobjects dod on o.Object_ID = dod.Object_ID)
 			where o.[Object_Type] = 'UMLDiagram'
-			and do.[Diagram_ID] = " + ((Diagram)this.model.currentDiagram).DiagramID.ToString() + @" 
+			and dod.[Diagram_ID] = " + ((Diagram)this.model.currentDiagram).DiagramID.ToString() + @" 
 			and o.PDATA1 = '" + this.DiagramID.ToString() + "'";
             ElementWrapper elementDiagram = this.model.getElementWrappersByQuery(SQLSelect).FirstOrDefault();
             if (elementDiagram != null)
@@ -632,9 +632,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             //check very quickly if this element is on the diagram
             if (elementWrapper != null)
             {
-                string sqlContainsElement = "select 'true' AS ElementExists from t_diagramobjects do " +
-                                         " where do.Diagram_ID = " + this.DiagramID +
-                                           " and do.Object_ID = " + elementWrapper.id;
+                string sqlContainsElement = "select 'true' AS ElementExists from t_diagramobjects dod " +
+                                         " where dod.Diagram_ID = " + this.DiagramID +
+                                           " and dod.Object_ID = " + elementWrapper.id;
                 var containsElementXml = this.model.SQLQuery(sqlContainsElement);
                 var containsNode = containsElementXml.SelectSingleNode(this.model.formatXPath("//ElementExists"));
                 return containsNode != null && containsNode.InnerText == "true";
@@ -766,8 +766,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             var ownedElements = new List<Element>();
 
             string SQLQuery = @"select o.Object_ID from ((t_diagram d
-                                inner join t_diagramobjects do on d.Diagram_ID = do.Diagram_ID)
-                                inner join t_object o on o.Object_ID = do.Object_ID)
+                                inner join t_diagramobjects dod on d.Diagram_ID = dod.Diagram_ID)
+                                inner join t_object o on o.Object_ID = dod.Object_ID)
                                 where d.ea_guid = '" + this.diagramGUID + @"'
                                  and (d.ParentID = o.ParentID 
 	                                or 

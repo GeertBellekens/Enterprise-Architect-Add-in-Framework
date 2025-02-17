@@ -821,7 +821,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var results = this.SQLQuery(sqlQuery);
-            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            var rows = results.SelectNodes("//Row");
             foreach (XmlNode rowNode in rows)
             {
                 if (rowNode.ChildNodes.Count >= 2)
@@ -840,7 +840,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var list = new List<string>();
             var results = this.SQLQuery(sqlQuery);
-            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            var rows = results.SelectNodes("//Row");
             foreach (XmlNode rowNode in rows)
             {
                 if (rowNode.ChildNodes.Count > 0)
@@ -854,7 +854,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             var list = new List<List<string>>();
             var results = this.SQLQuery(sqlQuery);
-            var rows = results.SelectNodes(this.formatXPath("//Row"));
+            var rows = results.SelectNodes("//Row");
             List<String> headers = null;
             foreach (XmlNode rowNode in rows)
             {
@@ -1269,12 +1269,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                 {
                     //try to find a diagramObject based on the instanceID (diagramObjects don't have an ea_guid)
                     //find diagram
-                    var sqlGetData = $"select do.Diagram_ID from t_diagramobjects do where do.Instance_ID = {guidString}";
+                    var sqlGetData = $"select dod.Diagram_ID from t_diagramobjects dod where dod.Instance_ID = {guidString}";
                     var diagram = this.getDiagramsByQuery(sqlGetData).FirstOrDefault();
                     if (diagram != null)
                     {
                         //get element
-                        sqlGetData = $"select do.Object_ID from t_diagramobjects do where do.Instance_ID = {guidString}";
+                        sqlGetData = $"select dod.Object_ID from t_diagramobjects dod where dod.Instance_ID = {guidString}";
                         var element = this.getElementWrappersByQuery(sqlGetData).FirstOrDefault();
                         if (element != null)
                         {
