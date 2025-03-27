@@ -62,6 +62,9 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public static EADBElement getElementForPackage(Model model, global::EA.Package package)
         {
+            //not for root packages. If they happens to have an element, that causes a crash
+            if (package.ParentID == 0) return null;
+            //get the package element
             var foundElement = package.Element;
             if (foundElement == null)
             {   //if for some reason the Element is not filled in we get it using the package GUID.
