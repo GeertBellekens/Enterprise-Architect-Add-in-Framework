@@ -990,6 +990,7 @@ When renaming redefines in the schema, please rename only one at a time.");
                 schemaElement.matchSubsetAttributes();
                 //Logger.log("after EASchema::matchSubsetAttributes");
                 schemaElement.matchSubsetLiterals();
+                //Logger.log("after EASchema::matchSubsetLiterals");
                 //match the associations
                 schemaElement.matchSubsetAssociations();
                 //Logger.log("after EASchema::matchSubsetAssociations");

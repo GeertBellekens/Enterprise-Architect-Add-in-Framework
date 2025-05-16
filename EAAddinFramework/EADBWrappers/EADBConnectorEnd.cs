@@ -369,7 +369,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             set => this._StereotypeEx = value;
         }
 
-        public Collection TaggedValues => this.eaConnectorEnd.TaggedValues;
+        public Collection TaggedValues => this.eaConnectorEnd?.TaggedValues;
 
         public ObjectType ObjectType => global::EA.ObjectType.otConnectorEnd;
 

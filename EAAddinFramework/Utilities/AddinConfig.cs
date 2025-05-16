@@ -225,11 +225,11 @@ namespace EAAddinFramework.Utilities
                 //save config tagged value
                 if (this.package != null)
                 {
-                    Logger.log($"Before makewritable retryCount: {retryCount}");
-                    if (this.package.isReadOnly) this.package.makeWritable(true);
-                    Logger.log($"After makewritable retryCount: {retryCount}");
+                    if (this.package.isReadOnly)
+                    {
+                        this.package.makeWritable(true);
+                    }
                     this.package.addTaggedValue(this.tagName, "<memo>", xmlContent);
-                    Logger.log($"After addTaggedValue retryCount: {retryCount}");
                 }
             }
             catch (COMException e)

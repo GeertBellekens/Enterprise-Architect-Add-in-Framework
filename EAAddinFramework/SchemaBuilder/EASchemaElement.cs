@@ -789,7 +789,8 @@ namespace EAAddinFramework.SchemaBuilder
                 var sourceGeneralizations = this.sourceElement.getRelationships<UML.Classes.Kernel.Generalization>()
                     .Where(x => x.source.Equals(this.sourceElement));
                 var subsetGeneralizations = this.subsetElement.getRelationships<UML.Classes.Kernel.Generalization>()
-                    .Where(x => x.source.Equals(this.subsetElement));
+                    .Where(x => x.source.Equals(this.subsetElement) 
+                            && ! x.stereotypes.Any(y => this.owner.settings.ignoredStereotypes.Contains(y.name)));
                 //remove generalizations that shouldn't be there
                 foreach (var subsetGeneralization in subsetGeneralizations)
                 {
