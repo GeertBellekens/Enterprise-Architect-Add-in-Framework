@@ -854,7 +854,14 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             if (myOwner != null)
             {
                 var eaTaggedValues = myOwner.eaTaggedValuesCollection;
-                return this.createTaggedValue(myOwner, eaTaggedValues.AddNew(name, ""));
+                if (eaTaggedValues != null)
+                {
+                    return this.createTaggedValue(myOwner, eaTaggedValues.AddNew(name, ""));
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {

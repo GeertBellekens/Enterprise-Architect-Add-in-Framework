@@ -495,6 +495,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                     this._taggedValues.Add(newTaggedValue);
                 }
             }
+            if (newTaggedValue == null)
+            {
+                return null; //if we still don't have a tagged value then we return null
+            }
             if (!string.Equals(newTaggedValue.eaStringValue, tagValue, StringComparison.InvariantCulture))
             {
                 newTaggedValue.tagValue = tagValue;

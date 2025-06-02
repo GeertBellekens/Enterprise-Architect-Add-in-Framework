@@ -105,8 +105,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             private set
             {
                 this._eaConnector = value;
-                this.ClientEnd = new EADBConnectorEnd(this.model, value.ClientEnd);
-                this.SupplierEnd = new EADBConnectorEnd(this.model, value.SupplierEnd);
+                this.ClientEnd = new EADBConnectorEnd(this.model, value?.ClientEnd);
+                this.SupplierEnd = new EADBConnectorEnd(this.model, value?.SupplierEnd);
             }
         }
 

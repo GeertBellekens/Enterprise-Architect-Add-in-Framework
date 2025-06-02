@@ -1124,6 +1124,7 @@ namespace EAAddinFramework.SchemaBuilder
                             {
                                 //no match, delete the association
                                 association.delete();
+                                ((TSF_EA.ElementWrapper) this.subsetElement).resetRelationships(); //reset the relationships to make sure the association is removed from the subset element
                             }
                         }
                     }
