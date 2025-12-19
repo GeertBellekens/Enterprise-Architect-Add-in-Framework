@@ -52,6 +52,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             get => (int)this.getProperty(getPropertyNameName(), this.wrappedAttribute.Pos);
             set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.Pos);
         }
+        public string fqStereotype
+        {
+            get => (string)this.getProperty(getPropertyNameName(), this.wrappedAttribute?.FQStereotype);
+            set => this.setProperty("stereotypes", value, this.wrappedAttribute?.FQStereotype);
+        }
 
         public abstract UML.Classes.Kernel.Type type { get; set; }
  
