@@ -10,24 +10,26 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 {
     public class EADBRoleTag : EADBTaggedValue
     {
-        
-        internal static new Dictionary<string, int> staticColumnNames;
+        internal new static Dictionary<String, int> staticColumnNames =
+        new Dictionary<string, int>() {
+                                            {"PropertyID",  0},
+                                            {"ElementID",   1},
+                                            {"Property",    2},
+                                            {"VALUE",       3},
+                                            {"NOTES",       4},
+                                            {"ea_guid",     5},
+                                            {"BaseClass",   6}
+                                   };
+
+        protected override Dictionary<String, int> columnNames => staticColumnNames;
+
         const string selectQuery = @"select 0 as PropertyID, c.ea_guid as ElementID , tv.TagValue as Property
                             , tv.Notes as VALUE, '' as NOTES, tv.PropertyID as ea_guid, tv.BaseClass
                             from t_taggedvalue tv
                             inner join t_connector c on c.ea_guid = tv.ElementID
                             where tv.BaseClass like 'ASSOCIATION_%' ";
-        protected override Dictionary<string, int> columnNames
-        {
-            get
-            {
-                if (staticColumnNames == null)
-                {
-                    staticColumnNames = this.getColumnNames(selectQuery);
-                }
-                return staticColumnNames;
-            }
-        }
+
+
         public static List<EADBTaggedValue> getTaggedValuesForElementIDs(IEnumerable<int> elementIDs, Model model)
         {
             var elements = new List<EADBTaggedValue>();
