@@ -183,6 +183,10 @@
       <Project>{fa1df927-ed65-49ed-87d5-8aa59e18ca73}</Project>
       <Name>EADatabaseTransformer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EADataContract\EADataContract.csproj">
+      <Project>{9f073f5f-2606-4c5b-add1-6137d039a4e5}</Project>
+      <Name>EADataContract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise-Architect-Toolpack\EAJSON\EAJSON.csproj">
       <Project>{1daa7217-bb2f-4521-9764-f5759f594447}</Project>
       <Name>EAJSON</Name>
