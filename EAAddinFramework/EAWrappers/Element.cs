@@ -56,6 +56,22 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             this.EAModel = model;
         }
+        /// creates a new element of the given type as an owned element of this 
+        /// element
+        public T addOwnedElement<T>(String name)
+          where T : class, UML.Classes.Kernel.Element
+        {
+            return this.addOwnedElement<T>(name, typeof(T).Name);
+        }
+        /// creates a new element of the given type as an owned element of this 
+        /// element
+        public virtual T addOwnedElement<T>(String name, string EAType)
+          where T : class, UML.Classes.Kernel.Element
+        {
+            //default empty implementation
+            return null;
+        }
+
         internal virtual string convertFromEANotes(string newFormat)
         {
             return this.EAModel.convertFromEANotes(this.notes, newFormat);

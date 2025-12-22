@@ -42,7 +42,7 @@ namespace EAAddinFramework.Utilities
 	        	System.IO.StreamWriter logfile = new System.IO.StreamWriter(_logFileName,true);
 	            double diff = (System.DateTime.Now - lastTimeStamp).TotalMilliseconds;
 	            lastTimeStamp = System.DateTime.Now;
-	            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss.fff") + " diff: "+ diff.ToString() + " ms " + logmessage);
+	            logfile.WriteLine( System.DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss.fff") + " diff: "+ diff.ToString() + " ms " + logmessage);
 	            logfile.Close();
         		
         	} catch (Exception) 

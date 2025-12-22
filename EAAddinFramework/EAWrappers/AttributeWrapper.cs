@@ -300,5 +300,23 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             return EADBAttributeTag.getTaggedValuesForElementID(this.id, this.EAModel);
         }
+        public override T addOwnedElement<T>(String name, string EAType)
+        {
+            if (this.wrappedAttribute == null)
+            {
+                return null;
+            }
+            System.Type type = typeof(T);
+            T newElement = null;
+
+            if (type.Name == "Constraint"
+                || type.Name == "AttributeConstraint")
+            {
+                newElement = this.addAttributeConstraint(name) as T;
+                this._constraints = null; //reset constraints to force reload including the new constraint
+            }
+
+            return newElement;
+        }
     }
 }

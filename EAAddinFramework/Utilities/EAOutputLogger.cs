@@ -83,13 +83,13 @@ namespace EAAddinFramework.Utilities
 		public static void log(Model model,string outputName, string message, int elementID = 0,LogTypeEnum logType = LogTypeEnum.none)
 		{
 			var logger = getOutputLogger(model, outputName);
-
-			//log to logfile if needed
-			switch (logType) 
+			var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+            //log to logfile if needed
+            switch (logType) 
 			{
                 case LogTypeEnum.none:
                     //log to output
-                    logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
+                    logger.logToOutput($"{timestamp} {message}", elementID);
                     break;
                 case LogTypeEnum.log:
 					if (isDebugMode)
@@ -97,19 +97,19 @@ namespace EAAddinFramework.Utilities
 						Logger.log(message);
 					}
                     //log to output
-                    logger.logToOutput($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
+                    logger.logToOutput($"{timestamp} {message}", elementID);
                     break;
 				case LogTypeEnum.warning:
 					message = "Warning: " + message;
 					Logger.logWarning(message);
                     //log to output
-                    logger.logWarning($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
+                    logger.logWarning($"{timestamp} {message}", elementID);
                     break;
 				case LogTypeEnum.error:
 					message = "Error: " + message;
 					Logger.logError(message);
                     //log to output
-                    logger.logError($"{DateTime.Now.ToString("hh:mm:ss.fff")} {message}", elementID);
+                    logger.logError($"{timestamp} {message}", elementID);
                     break;
 			}
 		}
