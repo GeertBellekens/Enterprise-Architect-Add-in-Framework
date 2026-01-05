@@ -71,6 +71,10 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public abstract string eaStringValue { get; set; }
 
+        public string stringValue => this.eaStringValue;
+        public bool? booleanValue => Boolean.TryParse(this.eaStringValue, out var result) ? result : (bool?)null;
+        public int? integerValue => int.TryParse(this.eaStringValue, out var result) ? result : (int?)null;
+        public decimal? decimalValue => decimal.TryParse(this.eaStringValue, out var result) ? result : (decimal?)null;
 
         public abstract UML.Classes.Kernel.Element owner { get; set; }
         /// <summary>

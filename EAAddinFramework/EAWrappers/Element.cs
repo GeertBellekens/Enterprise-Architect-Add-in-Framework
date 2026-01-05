@@ -218,12 +218,12 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool hasStereotype(string stereotype)
         {
-            return this.stereotypes.Any(
-          x => x.name.Equals(
-            stereotype,
-            StringComparison.CurrentCultureIgnoreCase
-          )
-        );
+            //check if the stereotype is a fully qualified stereotype. In that case we only check the stereotype name, after the "::"
+            if (stereotype.Contains("::"))
+            {
+                stereotype = stereotype.Substring(stereotype.IndexOf("::") + 2);
+            }
+            return this.stereotypes.Any(x => x.name.Equals(stereotype, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public List<string> stereotypeNames
