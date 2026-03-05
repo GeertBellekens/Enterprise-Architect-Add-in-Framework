@@ -182,13 +182,13 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         public UML.Classes.Kernel.UnlimitedNatural upper
         {
             get => this.EAMultiplicity.upper;
-            set => this.EAMultiplicity.upper = value;
+            set => this.EAMultiplicity = new Multiplicity(this.lower.ToString(), value.ToString());
         }
 
         public uint lower
         {
             get => this.EAMultiplicity.lower;
-            set => this.EAMultiplicity.lower = value;
+            set => this.EAMultiplicity = new Multiplicity(value.ToString(), this.upper.ToString());
         }
         public UML.Classes.Kernel.Multiplicity multiplicity
         {

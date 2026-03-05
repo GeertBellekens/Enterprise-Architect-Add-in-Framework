@@ -128,7 +128,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public override HashSet<UML.Profiles.TaggedValue> taggedValues
         {
-            get => throw new NotImplementedException();
+            get => new HashSet<UML.Profiles.TaggedValue>();//return empty list as attribute constraints can't have tagged values
             set => throw new NotImplementedException();
         }
 
