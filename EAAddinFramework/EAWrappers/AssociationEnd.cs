@@ -286,8 +286,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool isUnique
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get => !this.wrappedAssociationEnd.AllowDuplicates;
+            set => this.wrappedAssociationEnd.AllowDuplicates = !value;
         }
 
         public UML.Classes.Kernel.UnlimitedNatural upper

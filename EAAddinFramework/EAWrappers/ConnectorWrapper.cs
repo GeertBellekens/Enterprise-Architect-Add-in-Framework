@@ -419,7 +419,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
                         var sourceElementWrapper = this.EAModel.getElementWrapperByID(this.wrappedConnector.ClientID);
                         this._source = sourceElementWrapper;
                         //in case the source is linked to a connector there's a dummy element with type ProxyConnector
-                        if (sourceElementWrapper.EAElementType == "ProxyConnector")
+                        if (sourceElementWrapper?.EAElementType == "ProxyConnector")
                         {
                             //get the source connector
                             this._source = this.EAModel.getRelationByID(sourceElementWrapper.wrappedElement.ClassifierID);

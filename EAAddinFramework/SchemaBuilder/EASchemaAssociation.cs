@@ -453,6 +453,7 @@ namespace EAAddinFramework.SchemaBuilder
             target.navigable = source.navigable;
             target.aggregation = source.aggregation;
             target.ownedComments = source.ownedComments;
+            target.isUnique = source.isUnique;
 
             //TODO: copy alias of the AssociationEnd if the alias in the subset is empty.
             //target.save();

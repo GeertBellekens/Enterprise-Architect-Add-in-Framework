@@ -276,6 +276,8 @@ namespace EAAddinFramework.SchemaBuilder
             ((TSF_EA.ElementWrapper)this.subsetElement).pdata2 = ((TSF_EA.ElementWrapper)this.sourceElement).pdata2;
             //keywords
             ((TSF_EA.ElementWrapper)this.subsetElement).keywords = ((TSF_EA.ElementWrapper)this.sourceElement).keywords;
+            //version
+            ((TSF_EA.ElementWrapper)this.subsetElement).version = ((TSF_EA.ElementWrapper)this.sourceElement).version;
             //notes only update them if they are empty
             if (this.subsetElement.ownedComments.Count == 0 || !this.subsetElement.ownedComments.Any(x => x.body.Length > 0)
                 || this.owner.settings.keepNotesInSync)
@@ -787,9 +789,9 @@ namespace EAAddinFramework.SchemaBuilder
             if (this.sourceElement != null && this.subsetElement != null)
             {
                 var sourceGeneralizations = this.sourceElement.getRelationships<UML.Classes.Kernel.Generalization>()
-                    .Where(x => x.source.Equals(this.sourceElement));
+                    .Where(x => x.source?.Equals(this.sourceElement) == true);
                 var subsetGeneralizations = this.subsetElement.getRelationships<UML.Classes.Kernel.Generalization>()
-                    .Where(x => x.source.Equals(this.subsetElement) 
+                    .Where(x => x.source?.Equals(this.subsetElement) == true 
                             && ! x.stereotypes.Any(y => this.owner.settings.ignoredStereotypes.Contains(y.name)));
                 //remove generalizations that shouldn't be there
                 foreach (var subsetGeneralization in subsetGeneralizations)
