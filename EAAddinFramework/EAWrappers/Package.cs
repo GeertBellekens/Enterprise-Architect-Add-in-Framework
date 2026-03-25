@@ -53,11 +53,15 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         {
             string packageIDString = recursive ? this.packageTreeIDString : this.packageID.ToString();
             string getGetOwnedElements = "select o.Object_ID from t_object o" +
-                                        " inner join t_xref x on x.Client = o.ea_guid " +
-                                        " where o.Object_Type = '" + typeof(T).Name + "' " +
-                                        " and o.Package_ID in (" + packageIDString + ") " +
-                                        " and x.Name = 'Stereotypes' " +
-                                        " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
+                                            " left join t_xref x on x.Client = o.ea_guid " +
+                                            " where o.Object_Type = '" + typeof(T).Name + "' " +
+                                            " and o.Package_ID in (" + packageIDString + ") ";
+            if (!string.IsNullOrEmpty(stereotype))
+            {
+                getGetOwnedElements +=      " and x.Name = 'Stereotypes' " +
+                                            " and x.Description like '%@STEREO;Name=" + stereotype + ";%'";
+
+            }
             return this.EAModel.getElementWrappersByQuery(getGetOwnedElements).Cast<T>().ToList();
         }
         public static EADBElement getElementForPackage(Model model, global::EA.Package package)
