@@ -1076,6 +1076,11 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
             int beginLike = sqlQuery.IndexOf("like", StringComparison.InvariantCultureIgnoreCase);
             if (beginLike > 1)
             {
+                //check if there is an underscore directly before the like. In that case it could be a REGEXP_LIKE and we should ignore the wildcards.
+                if (sqlQuery.Substring(beginLike - 1, 1) == "_")
+                {
+                    return sqlQuery;
+                } 
                 int beginString = sqlQuery.IndexOf("'", beginLike + "like".Length);
                 if (beginString > 0)
                 {
