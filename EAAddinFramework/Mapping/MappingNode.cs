@@ -314,7 +314,18 @@ namespace EAAddinFramework.Mapping
             return this.parent != null &&
                 (this.parent.source?.uniqueID == uniqueID || this.parent.isChildOf(uniqueID));
         }
-
+        public void addAllChildNodesToNodesDictionary(Dictionary<string, MP.MappingNode> nodesDictionary)
+        {
+            var nodeKey = this.getMappingPathExportString();
+            if (!nodesDictionary.ContainsKey(nodeKey))
+            {
+                nodesDictionary.Add(nodeKey, this);
+            }
+            foreach (var childNode in this.allChildNodes.OfType<MappingNode>())
+            {
+                childNode.addAllChildNodesToNodesDictionary(nodesDictionary);
+            }
+        }
         public string getMappingPathExportString()
         {
             if (this.parent == null)
@@ -323,8 +334,9 @@ namespace EAAddinFramework.Mapping
                 return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
         }
 
-        public virtual MP.MappingNode findNode(List<string> mappingPathNames)
+        public virtual MP.MappingNode findNode(List<string> mappingPathNames, Dictionary<string, MP.MappingNode> foundNodes)
         {
+            MP.MappingNode foundNode = null;
             //first try to find the node based on the full set of mapping path names 
             //the mappingPathNames should start with this nodes name
             //check for UN/CEFACT convention in case of message structure
@@ -336,7 +348,11 @@ namespace EAAddinFramework.Mapping
                 //if there is only one item then return this node
                 if (mappingPathNames.Count == 1 )
                 {
-                    return this;
+                    if (!foundNodes.ContainsKey(mappingPathNames[0]))
+                    {
+                        foundNodes.Add(mappingPathNames[0], this);
+                    }
+                    foundNode = this;
                 }
                 else
                 {
@@ -345,16 +361,26 @@ namespace EAAddinFramework.Mapping
                     //loop child nodes
                     foreach (var childNode in this.allChildNodes)
                     {
-                        var foundNode = childNode.findNode(reducedPathNames);
+                        foundNode = childNode.findNode(reducedPathNames, foundNodes);
                         if (foundNode != null )
                         {
-                            return foundNode;
+                            //stop looping if found.
+                            break;
                         }
                     }
                 }
             }
+            //add the node to the list of found nodes
+            if (foundNode != null)
+            {
+                var nodeKey = string.Join(".", mappingPathNames.ToArray());
+                if (!foundNodes.ContainsKey(nodeKey))
+                {
+                    foundNodes.Add(nodeKey, this);
+                }
+            }
             //return null if nothing found
-            return null;
+            return foundNode;
         }
     }
 }

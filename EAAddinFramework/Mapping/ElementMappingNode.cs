@@ -150,18 +150,27 @@ namespace EAAddinFramework.Mapping
             }
         }
 
-        public override MP.MappingNode findNode(List<string> mappingPathNames)
+        public override MP.MappingNode findNode(List<string> mappingPathNames, Dictionary<string, MP.MappingNode> foundNodes)
         {
-            var foundNode = base.findNode(mappingPathNames);
+            var foundNode = base.findNode(mappingPathNames, foundNodes);
             if (foundNode != null)
             {
                 return foundNode;
             }
             //try the alternative approach
-            return findAlternative(mappingPathNames, false);
+            foundNode = findAlternative(mappingPathNames, false, foundNodes);
+            if (foundNode != null)
+            {
+                var nodeKey = string.Join(".", mappingPathNames);
+                if (! foundNodes.ContainsKey(nodeKey))
+                {
+                    foundNodes.Add(nodeKey, foundNode);
+                }
+            }
+            return foundNode;
         }
 
-        public MP.MappingNode findAlternative (List<string> mappingPathNames, bool reversed)
+        public MP.MappingNode findAlternative (List<string> mappingPathNames, bool reversed, Dictionary<string, MP.MappingNode> foundNodes)
         {
             //if not found then it might be a Class.attribute reference (or Class.Association)
             //So if there are only two names in the mapping path, AND the source node is a package,
@@ -184,7 +193,7 @@ namespace EAAddinFramework.Mapping
                             return nodePath.Last();
                         }
                         //from this node find the attribute
-                        var foundNode = nodePath.Last().findNode(mappingPathNames);
+                        var foundNode = nodePath.Last().findNode(mappingPathNames, foundNodes);
                         if (foundNode != null)
                         {
                             return foundNode;
@@ -195,7 +204,7 @@ namespace EAAddinFramework.Mapping
                 // in that case we reverse the class2 and class1 and try again.
                 if (! reversed && mappingPathNames.Count >= 2 )
                 {
-                    return findAlternative(new List<string> { mappingPathNames[1], mappingPathNames[0] }, true);
+                    return findAlternative(new List<string> { mappingPathNames[1], mappingPathNames[0] }, true, foundNodes);
                 }
             }
             //not found, return null

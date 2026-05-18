@@ -233,7 +233,13 @@ namespace EAAddinFramework.Mapping
                 csv.Configuration.Delimiter = ";";
                 mappingRecords = csv.GetRecords<CSVMappingRecord>();
                 var sourceNodes = new Dictionary<string, MP.MappingNode>();
+                //make a dictionary of all source nodes with their mapping path as key for easy access
+                ((MappingNode)mappingSet.source).addAllChildNodesToNodesDictionary(sourceNodes);
+                
                 var targetNodes = new Dictionary<string, MP.MappingNode>();
+                //make a dictionary of all target nodes with their mapping path as key for easy access
+                ((MappingNode)mappingSet.target).addAllChildNodesToNodesDictionary(targetNodes);
+
                 //now loop the records
                 foreach (var csvRecord in mappingRecords)
                 {
@@ -260,7 +266,7 @@ namespace EAAddinFramework.Mapping
                             parentNode = mappingSet.source;
                         }
                         //find the node from the parent
-                        sourceNode = parentNode.findNode(csvRecord.sourcePath.Split('.').ToList());
+                        sourceNode = parentNode.findNode(csvRecord.sourcePath.Split('.').ToList(), sourceNodes);
                     }
                     if (sourceNode == null)
                     {
@@ -282,7 +288,7 @@ namespace EAAddinFramework.Mapping
                             parentNode = mappingSet.target;
                         }
                         //find the node from the parent
-                        targetNode = parentNode.findNode(csvRecord.targetPath.Split('.').ToList());
+                        targetNode = parentNode.findNode(csvRecord.targetPath.Split('.').ToList(), targetNodes);
                         if (targetNode == null)
                         {
                             EAOutputLogger.log($"Could not find target element corresponding to '{csvRecord.targetPath}'", 0, LogTypeEnum.warning);

@@ -63,9 +63,9 @@ namespace EAAddinFramework.Mapping
             set => this.source = value as UML.Classes.Kernel.NamedElement;
         }
 
-        public override MP.MappingNode findNode(List<string> mappingPathNames)
+        public override MP.MappingNode findNode(List<string> mappingPathNames, Dictionary<string, MP.MappingNode> foundNodes)
         {
-            var foundNode = base.findNode(mappingPathNames);
+            var foundNode = base.findNode(mappingPathNames, foundNodes);
             //if the node is not found then we look further. It might be using the UN/CEFACT naming standard.
             //in those cases the name of a node is targetRole + target ElementName with all "_" removed
             if (foundNode == null
@@ -84,13 +84,21 @@ namespace EAAddinFramework.Mapping
                     {
                         foreach (var childNode in firstChildNode.allChildNodes)
                         {
-                            foundNode = childNode.findNode(reducedPathNames);
+                            foundNode = childNode.findNode(reducedPathNames, foundNodes);
                             if (foundNode != null)
                             {
                                 break;
                             }
                         }
                     }
+                }
+            }
+            if (foundNode != null)
+            {
+                var nodeKey = string.Join(".", mappingPathNames);
+                if (!foundNodes.ContainsKey(nodeKey))
+                {
+                    foundNodes.Add(nodeKey, foundNode);
                 }
             }
             return foundNode;
