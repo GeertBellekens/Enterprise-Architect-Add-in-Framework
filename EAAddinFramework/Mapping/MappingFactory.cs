@@ -434,8 +434,8 @@ namespace EAAddinFramework.Mapping
                     {
                         //create the record
                         var mappingRecord = new CSVMappingRecord();
-                        mappingRecord.sourcePath = ((MappingNode)mapping.source).getMappingPathExportString();
-                        mappingRecord.targetPath = ((MappingNode)mapping.target).getMappingPathExportString();
+                        mappingRecord.sourcePath = ((MappingNode)mapping.source).mappingPathExportString;
+                        mappingRecord.targetPath = ((MappingNode)mapping.target).mappingPathExportString;
                         mappingRecord.mappingLogic = createMappingLogicString(mapping);
                         //add the record to the list
                         csvMappingRecords.Add(mappingRecord);

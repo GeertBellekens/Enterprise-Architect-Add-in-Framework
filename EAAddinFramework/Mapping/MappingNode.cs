@@ -27,6 +27,23 @@ namespace EAAddinFramework.Mapping
         public TSF_EA.Model model => ((TSF_EA.Element)this.source)?.EAModel;
         public virtual string name => this._source?.name;
         public virtual string displayName => this.name;
+        private bool _isSelected = false;
+        public bool isSelected 
+        {
+            get => this._isSelected;
+            set
+            {
+                //only set to selected if not read-only
+                if (value && !this.isReadOnly)
+                {
+                    this._isSelected = true;
+                }
+                else
+                {
+                    this._isSelected = false;
+                }
+            }
+        }
         public string displayMappingCount
         {
             get
@@ -37,6 +54,18 @@ namespace EAAddinFramework.Mapping
                     : $"{this.mappingCount}";
             }
             
+        }
+        private string _mappingPathExportString;
+        public string mappingPathExportString
+        {
+            get 
+            {
+                if (string.IsNullOrEmpty(this._mappingPathExportString))
+                {
+                    this._mappingPathExportString = this.getMappingPathExportString();
+                }
+                return this._mappingPathExportString;
+            }
         }
         public MappingSettings settings { get; set; }
         private List<string> _mappingPath;
@@ -316,7 +345,7 @@ namespace EAAddinFramework.Mapping
         }
         public void addAllChildNodesToNodesDictionary(Dictionary<string, MP.MappingNode> nodesDictionary)
         {
-            var nodeKey = this.getMappingPathExportString();
+            var nodeKey = this.mappingPathExportString;
             if (!nodesDictionary.ContainsKey(nodeKey))
             {
                 nodesDictionary.Add(nodeKey, this);
@@ -326,12 +355,12 @@ namespace EAAddinFramework.Mapping
                 childNode.addAllChildNodesToNodesDictionary(nodesDictionary);
             }
         }
-        public string getMappingPathExportString()
+        private string getMappingPathExportString()
         {
             if (this.parent == null)
                 return this.name;
             else
-                return ((MappingNode)this.parent).getMappingPathExportString() + "." + this.name;
+                return ((MappingNode)this.parent).mappingPathExportString + "." + this.name;
         }
 
         public virtual MP.MappingNode findNode(List<string> mappingPathNames, Dictionary<string, MP.MappingNode> foundNodes)
