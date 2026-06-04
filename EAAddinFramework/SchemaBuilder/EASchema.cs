@@ -131,22 +131,22 @@ namespace EAAddinFramework.SchemaBuilder
             var elementDictionary = new Dictionary<int, TSF_EA.ElementWrapper>();
             foreach (var elementWrapper in elementWrappers)
             {
-                if (! sourceElementDictionary.ContainsKey(elementWrapper.uniqueID))
+                if (!sourceElementDictionary.ContainsKey(elementWrapper.uniqueID))
                 {
                     sourceElementDictionary.Add(elementWrapper.uniqueID, elementWrapper);
                 }
-                if (! elementDictionary.ContainsKey(elementWrapper.id))
+                if (!elementDictionary.ContainsKey(elementWrapper.id))
                 {
                     elementDictionary.Add(elementWrapper.id, elementWrapper);
                 }
             }
             //loop all elements and link set the source element
-            foreach(var schemaElement in this.elements.OfType<EASchemaElement>())
+            foreach (var schemaElement in this.elements.OfType<EASchemaElement>())
             {
-               if ( sourceElementDictionary.TryGetValue(schemaElement.TypeID, out TSF_EA.ElementWrapper elementWrapper))
-               {
+                if (sourceElementDictionary.TryGetValue(schemaElement.TypeID, out TSF_EA.ElementWrapper elementWrapper))
+                {
                     schemaElement.sourceElement = elementWrapper as UML.Classes.Kernel.Classifier;
-               }
+                }
             }
             //load tagged values
             TSF_EA.Constraint.loadConstraints(elementDictionary, model);
@@ -174,7 +174,7 @@ namespace EAAddinFramework.SchemaBuilder
                 {
                     sourceAttributeDictionary.Add(attributeWrapper.uniqueID, attributeWrapper);
                 }
-                if (! attributeDictionary.ContainsKey(attributeWrapper.id))
+                if (!attributeDictionary.ContainsKey(attributeWrapper.id))
                 {
                     attributeDictionary.Add(attributeWrapper.id, attributeWrapper);
                 }
@@ -217,7 +217,7 @@ namespace EAAddinFramework.SchemaBuilder
                         {
                             schemaProperty.sourceLiteral = attributeWrapper as TSF_EA.EnumerationLiteral;
                         }
-                        
+
                     }
                 }
 
@@ -238,9 +238,9 @@ namespace EAAddinFramework.SchemaBuilder
             {
                 if (this._elementGUIDstring == null)
                 {
-                    this._elementGUIDstring = "'" 
-                                            + string.Join("','", this.elements.Where(x => x.sourceElement != null).Select(x => x.sourceElement.uniqueID).ToArray<string>()) 
-                                            + "'" ;
+                    this._elementGUIDstring = "'"
+                                            + string.Join("','", this.elements.Where(x => x.sourceElement != null).Select(x => x.sourceElement.uniqueID).ToArray<string>())
+                                            + "'";
                 }
                 return _elementGUIDstring;
             }
@@ -808,7 +808,7 @@ When renaming redefines in the schema, please rename only one at a time.");
                 }
             }
             EAOutputLogger.log(this.model, this.settings.outputName, $"Loading subsetmodel for package '{destinationPackage.name}'");
-            
+
             if (generateChangesOnly)
             {
                 // this will delete the subset elements that are no longer needed
@@ -985,7 +985,7 @@ When renaming redefines in the schema, please rename only one at a time.");
             foreach (EASchemaElement schemaElement in this.elements)
             {
                 //tell the user what we are doing 
-                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema",0, LogTypeEnum.log);
+                EAOutputLogger.log(this.model, this.settings.outputName, "Matching subset element '" + schemaElement.name + "' to the schema", 0, LogTypeEnum.log);
                 //match the attributes
                 schemaElement.matchSubsetAttributes();
                 //Logger.log("after EASchema::matchSubsetAttributes");
@@ -1116,7 +1116,7 @@ When renaming redefines in the schema, please rename only one at a time.");
                 }
             }
             //now we loop all schemaElements that haven't been matched yet to figure out if they should be matched with a shared class
-            foreach (var schemaElement in this.elements.Where( x=> x.subsetElement == null && x.isShared))
+            foreach (var schemaElement in this.elements.Where(x => x.subsetElement == null && x.isShared))
             {
                 schemaElement.subsetElement = schemaElement.sourceElement;
             }
@@ -1133,7 +1133,7 @@ When renaming redefines in the schema, please rename only one at a time.");
                 var prefix = "DELETED_";
                 if (string.IsNullOrEmpty(subsetElement.name)
                     || subsetElement.name.Length < prefix.Length
-                    || subsetElement.name.Substring(0,prefix.Length) != prefix)
+                    || subsetElement.name.Substring(0, prefix.Length) != prefix)
                 {
                     subsetElement.name = prefix + subsetElement.name;
                 }
@@ -1148,13 +1148,13 @@ When renaming redefines in the schema, please rename only one at a time.");
         {
             Package recycleBin = null;
             //check if current package is recycle bin
-            var package = subsetElement.owningPackage as TSF_EA.Package ;
+            var package = subsetElement.owningPackage as TSF_EA.Package;
             if (package.name == this.settings.recycleBinName)
             {
                 return package;
             }
             //get subPackage with recylebin name
-            recycleBin = package.ownedElements.OfType<Package>().FirstOrDefault(x => x.name ==  this.settings.recycleBinName);
+            recycleBin = package.ownedElements.OfType<Package>().FirstOrDefault(x => x.name == this.settings.recycleBinName);
             if (recycleBin != null)
             {
                 return recycleBin;
@@ -1176,7 +1176,7 @@ When renaming redefines in the schema, please rename only one at a time.");
 
         private bool shouldElementExistAsDatatype(Classifier subsetElement)
         {
-            if (subsetElement is Class || subsetElement is Enumeration || subsetElement is Association )
+            if (subsetElement is Class || subsetElement is Enumeration || subsetElement is Association)
             {
                 return true;
             }
@@ -1210,7 +1210,7 @@ When renaming redefines in the schema, please rename only one at a time.");
         {
             //a layered SQL approach in order to get all subset elements (similar to packageTreeID's)
             var subsetElements = new HashSet<UML.Classes.Kernel.Classifier>();
-            this.addRelatedSubsetElements(messageElement, subsetElements) ;
+            this.addRelatedSubsetElements(messageElement, subsetElements);
             return subsetElements;
         }
 
@@ -1219,9 +1219,9 @@ When renaming redefines in the schema, please rename only one at a time.");
         /// </summary>
         /// <param name="element">the element to start from </param>
         /// <param name="subsetElements">the HashSet of subset element to add to</param>
-        private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements )
+        private void addRelatedSubsetElements(UML.Classes.Kernel.Classifier element, HashSet<UML.Classes.Kernel.Classifier> subsetElements)
         {
-            
+
             EAOutputLogger.log(this.model, this.settings.outputName
                                , $"Getting subsetElement IDs level 0", 0, LogTypeEnum.log);
             var allElementIDs = new List<string>();
@@ -1237,7 +1237,7 @@ When renaming redefines in the schema, please rename only one at a time.");
             EAOutputLogger.log(this.model, this.settings.outputName
                                , $"Getting {allElementIDs.Count} possible subsetElement objects", 0, LogTypeEnum.log);
             //get all elements from the IDs
-            var eaDBElements = TSF_EA.EADBElement.getEADBElementsForElementIDs (allElementIDs, this.model);
+            var eaDBElements = TSF_EA.EADBElement.getEADBElementsForElementIDs(allElementIDs, this.model);
             //create the EAElementWrappers for them
             var elementWrappers = this.model.factory.createElements(eaDBElements).OfType<TSF_EA.ElementWrapper>();
             TSF_EA.ElementWrapper.loadDetailsForElementWrappers(elementWrappers, model);
@@ -1252,7 +1252,7 @@ When renaming redefines in the schema, please rename only one at a time.");
         }
         private void addAllRelatedElementIDs(List<string> allElementIDs, List<string> parentElementIDs, int level)
         {
-            level ++;
+            level++;
             EAOutputLogger.log(this.model, this.settings.outputName
                                , $"Getting subsetElement IDs level {level}", 0, LogTypeEnum.log);
             if (!parentElementIDs.Any())
@@ -1335,15 +1335,29 @@ When renaming redefines in the schema, please rename only one at a time.");
                 }
                 bool updateTaggedValue = true;
                 var targetTaggedValue = this.popTargetTaggedValue(targetTaggedValues, sourceTaggedValue);
-                if (this.settings.ignoredTaggedValues.Contains(sourceTaggedValue.name)
-                    || sourceTaggedValue.name.Equals(this.settings.customPositionTag, StringComparison.InvariantCultureIgnoreCase))
+                var ignoredTaggedValue = this.settings.ignoredTaggedValues.FirstOrDefault(x => x.name.Equals(sourceTaggedValue.name, StringComparison.InvariantCultureIgnoreCase));
+                if (ignoredTaggedValue != null)
                 {
-                    if (targetTaggedValue != null &&
-                        targetTaggedValue.eaStringValue != string.Empty)
+                    if (ignoredTaggedValue.dontCopy)
                     {
-                        //don't update any of the tagged values of the ignoredTaggeValues if the value is already filled in.
+                        //if the tagged value is in the list of ignored tagged values with dontCopy = true, then we don't update it at all
                         updateTaggedValue = false;
                     }
+                    else
+                    {
+                        if (targetTaggedValue != null &&
+                            targetTaggedValue.eaStringValue != ignoredTaggedValue.defaultValue)
+                        {
+                            //don't update any of the tagged values of the ignoredTaggeValues if the value is filled in with anything else then the default value.
+                            updateTaggedValue = false;
+                        }
+                    }
+                }
+                //don't update custom position of the value is already filled in.
+                if (sourceTaggedValue.name.Equals(this.settings.customPositionTag, StringComparison.InvariantCultureIgnoreCase)
+                    && !string.IsNullOrEmpty(targetTaggedValue?.eaStringValue))
+                {
+                    updateTaggedValue = false;
                 }
                 if (updateTaggedValue)
                 {
