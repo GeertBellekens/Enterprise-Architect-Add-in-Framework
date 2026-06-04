@@ -62,6 +62,8 @@ namespace EAAddinFramework.Mapping
             }
         }
 
+        
+
         public override void setChildNodes()
         {
             // log progress
@@ -79,7 +81,8 @@ namespace EAAddinFramework.Mapping
             }
 
             //create child nodes for each attribute
-            foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes)
+            foreach (TSF_EA.Attribute ownedAttribute in element.ownedAttributes
+                                                    .OrderBy(x => x.position).ThenBy(x => x.name))
             {
                 if ((this.structure == MP.ModelStructure.DataModel 
                     || !existAsParent(ownedAttribute))
@@ -92,7 +95,7 @@ namespace EAAddinFramework.Mapping
             var sourceEnum = element as TSF_EA.Enumeration;
             if (sourceEnum != null)
             {
-                foreach (var enumLiteral in sourceEnum.ownedLiterals)
+                foreach (var enumLiteral in sourceEnum.ownedLiterals.OrderBy(x => x.position).ThenBy(x => x.name))
                 {
                     if ((this.structure == MP.ModelStructure.DataModel || !existAsParent(enumLiteral))
                         && !this.allChildNodes.Any(x => x.source?.uniqueID == enumLiteral.uniqueID))
@@ -106,7 +109,8 @@ namespace EAAddinFramework.Mapping
                                     .Where(x => x.EAElementType == "Class"
                                             || x.EAElementType == "Enumeration"
                                             || x.EAElementType == "DataType"
-                                            || x.EAElementType == "Package"))
+                                            || x.EAElementType == "Package")
+                                    .OrderBy(x => x.name))
             {
                 if ((this.structure == MP.ModelStructure.DataModel
                     ||!existAsParent(ownedClassifier))
@@ -244,6 +248,38 @@ namespace EAAddinFramework.Mapping
                 //reach the root node without finding a match
                 return new List<MappingNode>();
             }
+        }
+        protected override int typeSortPriority => 1;
+        private int getSourceTypeSortPriority()
+        {
+            switch(this.sourceElement?.EAElementType)
+            {
+                case "Package":
+                    return 1;
+                case "Class":
+                    return 2;
+                case "DataType":
+                    return 3;
+                case "Enumeration":
+                    return 4;
+                default:
+                    return int.MaxValue; //unknown type, return max number
+            }
+        }
+        protected override int compareSameType(MappingNode other)
+        {
+            var otherElementMappingNode = other as ElementMappingNode;
+            var sourceTypePriorityComparison = 0;
+            if (otherElementMappingNode != null)
+            {
+                sourceTypePriorityComparison = this.getSourceTypeSortPriority().CompareTo(otherElementMappingNode.getSourceTypeSortPriority());
+            }
+            if (sourceTypePriorityComparison != 0)
+            {
+                return sourceTypePriorityComparison;
+            }
+            //compare based on name if the source type is the same
+            return string.Compare(this.name, other.name, true);
         }
     }
 }

@@ -118,5 +118,15 @@ namespace EAAddinFramework.Mapping
                 }
             }
         }
+        protected override int typeSortPriority => 2;
+        protected override int compareSameType(MappingNode other)
+        {
+            var positionComparison = this.sourceAttribute.position.CompareTo(((AttributeMappingNode)other).sourceAttribute.position);
+            if (positionComparison != 0)
+            {
+                return positionComparison;
+            }
+            return string.Compare(this.name, other.name, true);
+        }
     }
 }

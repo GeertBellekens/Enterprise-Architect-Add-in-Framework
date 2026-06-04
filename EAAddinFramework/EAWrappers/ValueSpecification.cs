@@ -31,7 +31,7 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
         }
         public HashSet<UML.Classes.Kernel.Element> ownedElements
         {
-            get => throw new NotImplementedException();
+            get => new HashSet<UML.Classes.Kernel.Element>();//return empty set
             set => throw new NotImplementedException();
         }
         public HashSet<UML.Classes.Kernel.Comment> ownedComments

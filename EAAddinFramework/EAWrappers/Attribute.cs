@@ -320,8 +320,8 @@ namespace TSF.UmlToolingFramework.Wrappers.EA
 
         public bool isUMLReadOnly
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => (bool)this.getProperty(getPropertyNameName(), this.wrappedAttribute.IsConst);
+            set => this.setProperty(getPropertyNameName(), value, this.wrappedAttribute.IsConst);
         }
 
 

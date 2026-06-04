@@ -9,7 +9,7 @@ using UML = TSF.UmlToolingFramework.UML;
 
 namespace EAAddinFramework.Mapping
 {
-    public abstract class MappingNode : MP.MappingNode
+    public abstract class MappingNode : MP.MappingNode, IComparable<MappingNode>
     {
         protected TSF_EA.Element _source;
         protected TSF_EA.Element _virtualOwner;
@@ -27,6 +27,28 @@ namespace EAAddinFramework.Mapping
         public TSF_EA.Model model => ((TSF_EA.Element)this.source)?.EAModel;
         public virtual string name => this._source?.name;
         public virtual string displayName => this.name;
+
+        protected abstract int typeSortPriority { get; }
+        
+        protected abstract int compareSameType(MappingNode other);
+
+        public int CompareTo(MappingNode other)
+        {
+            if (other == null) return 1;
+            if (ReferenceEquals(this, other)) return 0;
+
+            // First, sort by the type priority
+            int typeComparison = this.typeSortPriority.CompareTo(other.typeSortPriority);
+            if (typeComparison != 0)
+            {
+                return typeComparison;
+            }
+
+            // If they are the exact same type, delegate to the subtype's specific rules
+            return compareSameType(other);
+        }
+
+
         private bool _isSelected = false;
         public bool isSelected 
         {
@@ -179,6 +201,7 @@ namespace EAAddinFramework.Mapping
         public void addChildNode(MP.MappingNode childNode)
         {
             this._allChildNodes.Add((MappingNode)childNode);
+            this._allChildNodes.Sort();
         }
 
         public virtual IEnumerable<MP.Mapping> getOwnedMappings()
